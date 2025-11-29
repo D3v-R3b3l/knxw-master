@@ -250,81 +250,86 @@ export default function Dashboard() { // Renamed from DashboardContent
 
   if (isInitialSetupLoading && !hasClientApp) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white">
-        <div className="p-6 md:p-8 max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9]">
-                <Brain className="w-8 h-8 text-[#0a0a0a]" />
-              </div>
-              <h1 className="text-4xl font-bold text-white">Welcome to knXw</h1>
+      <div className="min-h-screen bg-[#0a0a0a] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-[#0a0a0a] to-[#0a0a0a] text-white flex items-center justify-center p-4">
+        <div className="w-full max-w-5xl">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center p-4 rounded-3xl bg-gradient-to-br from-[#00d4ff]/20 to-[#0ea5e9]/20 border border-[#00d4ff]/20 mb-6 backdrop-blur-xl">
+              <Brain className="w-12 h-12 text-[#00d4ff]" />
             </div>
-            <p className="text-xl text-[#a3a3a3] max-w-2xl mx-auto leading-relaxed">
-              Let's get you started by creating your first application to begin capturing psychographic insights.
+            <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-6">
+              Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9]">knXw</span>
+            </h1>
+            <p className="text-xl text-[#a3a3a3] max-w-2xl mx-auto leading-relaxed font-light">
+              Your journey to true psychographic intelligence starts here. 
+              Connect your first application to reveal the "why" behind user behavior.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="text-center p-6 bg-[#111111] rounded-xl border border-[#262626]">
-              <div className="w-12 h-12 bg-[#00d4ff]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Server className="w-6 h-6 text-[#00d4ff]" />
+            {[
+              {
+                step: 1,
+                title: "Create App",
+                desc: "Generate your secure API keys",
+                icon: Server,
+                color: "blue",
+                active: true
+              },
+              {
+                step: 2,
+                title: "Integrate SDK",
+                desc: "Add one line of code",
+                icon: Code,
+                color: "emerald",
+                active: false
+              },
+              {
+                step: 3,
+                title: "Reveal Insights",
+                desc: "Real-time psychological profiling",
+                icon: Sparkles,
+                color: "purple",
+                active: false
+              }
+            ].map((item) => (
+              <div 
+                key={item.step}
+                className={`relative p-8 rounded-2xl border transition-all duration-300 ${
+                  item.active 
+                    ? 'bg-[#111]/80 border-[#00d4ff]/30 shadow-[0_0_30px_rgba(0,212,255,0.1)]' 
+                    : 'bg-[#111]/40 border-white/5 opacity-70'
+                }`}
+              >
+                <div className={`absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                  item.active ? 'bg-[#00d4ff] text-black' : 'bg-[#262626] text-[#666]'
+                }`}>
+                  {item.step}
+                </div>
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 ${
+                  item.active ? `bg-${item.color}-500/20 text-${item.color}-400` : 'bg-white/5 text-gray-500'
+                }`}>
+                  <item.icon className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-gray-400">{item.desc}</p>
               </div>
-              <h3 className="font-semibold text-white mb-2">1. Create App</h3>
-              <p className="text-[#a3a3a3] text-sm">Set up your application to get your unique API key</p>
-            </div>
-            
-            <div className="text-center p-6 bg-[#111111] rounded-xl border border-[#262626] opacity-50">
-              <div className="w-12 h-12 bg-[#10b981]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Code className="w-6 h-6 text-[#10b981]" />
-              </div>
-              <h3 className="font-semibold text-white mb-2">2. Integrate SDK</h3>
-              <p className="text-[#a3a3a3] text-sm">Add our tracking script to start capturing events</p>
-            </div>
-            
-            <div className="text-center p-6 bg-[#111111] rounded-xl border border-[#262626] opacity-50">
-              <div className="w-12 h-12 bg-[#ec4899]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Brain className="w-6 h-6 text-[#ec4899]" />
-              </div>
-              <h3 className="font-semibold text-white mb-2">3. See Insights</h3>
-              <p className="text-[#a3a3a3] text-sm">Watch AI analyze user psychology in real-time</p>
-            </div>
+            ))}
           </div>
 
-          <Card className="bg-[#111111] border-[#262626] max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Rocket className="w-5 h-5 text-[#00d4ff]" />
-                Create Your First Application
-              </CardTitle>
-              <CardDescription className="text-[#a3a3a3]">
-                This will generate your API key and tracking script
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={() => window.location.href = createPageUrl('MyApps')}
-                  className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] font-semibold px-6 py-3 flex-1"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Application
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => window.location.href = createPageUrl('Documentation')}
-                  className="border-[#262626] text-[#a3a3a3] hover:bg-[#1a1a1a] px-6 py-3"
-                >
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  View Docs
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex justify-center">
+            <Button
+              onClick={() => window.location.href = createPageUrl('MyApps')}
+              className="bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#00c2eb] hover:to-[#0284c7] text-black font-bold text-lg px-10 py-6 rounded-full shadow-[0_0_40px_rgba(0,212,255,0.3)] hover:shadow-[0_0_60px_rgba(0,212,255,0.5)] transition-all hover:scale-105"
+            >
+              <Rocket className="w-5 h-5 mr-3" />
+              Start Building Now
+            </Button>
+          </div>
 
           {setupRetryCount > 0 && setupRetryCount < 5 && (
             <div className="text-center mt-8">
-              <div className="w-8 h-8 border-4 border-[#262626] border-t-[#00d4ff] rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-sm text-[#6b7280]">Checking for applications...</p>
+              <div className="w-6 h-6 border-2 border-white/10 border-t-[#00d4ff] rounded-full animate-spin mx-auto mb-2" />
+              <p className="text-xs text-[#666]">Syncing account...</p>
             </div>
           )}
         </div>
