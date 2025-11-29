@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import {
@@ -336,8 +335,8 @@ export default function Layout({ children, currentPageName }) {
             onClose={() => setShowAIAssistant(false)}
           />
 
-          <aside className={`hidden md:flex fixed top-0 left-0 h-full bg-[#0f0f0f] border-r border-[#262626] z-30 transition-all duration-300 flex-col ${isCollapsed ? 'w-16' : 'w-72'}`}>
-            <div className="border-b border-[#262626] p-4 flex items-center justify-between h-20 flex-shrink-0">
+          <aside className={`hidden md:flex fixed top-0 left-0 h-full bg-[#0a0a0a]/95 backdrop-blur-xl border-r border-white/5 z-30 transition-all duration-300 flex-col ${isCollapsed ? 'w-16' : 'w-72'}`}>
+            <div className="border-b border-white/5 p-4 flex items-center justify-between h-20 flex-shrink-0 bg-white/5 backdrop-blur-sm">
               {!isCollapsed && (
                 <Link to={createPageUrl('Landing')} className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -487,7 +486,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
           )}
 
-          <main className={`h-full overflow-y-auto bg-[#0a0a0a] transition-all duration-300 ${isCollapsed ? 'md:pl-16' : 'md:pl-72'}`}>
+          <main className={`h-full overflow-y-auto bg-[#0a0a0a] bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#1f1f1f] via-[#0a0a0a] to-[#0a0a0a] transition-all duration-300 ${isCollapsed ? 'md:pl-16' : 'md:pl-72'}`}>
             {isLoadingUser ? (
               <div className="h-full flex items-center justify-center">
                 <div className="w-12 h-12 border-4 border-[#262626] border-t-[#00d4ff] rounded-full animate-spin" />
