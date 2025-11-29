@@ -389,8 +389,8 @@ export default function Layout({ children, currentPageName }) {
                           to={href}
                           className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                             isActive
-                              ? 'bg-gradient-to-r from-[#00d4ff]/15 to-[#00d4ff]/5 border border-[#00d4ff]/30 text-white'
-                              : 'text-[#a3a3a3] hover:text-white hover:bg-[#1a1a1a]'
+                              ? 'bg-white/10 border border-white/10 text-white shadow-[0_0_15px_rgba(0,212,255,0.1)] backdrop-blur-md'
+                              : 'text-[#a3a3a3] hover:text-white hover:bg-white/5 hover:backdrop-blur-sm'
                           } ${isCollapsed ? 'justify-center' : ''}`}
                           title={isCollapsed ? `${item.title} — ${item.description}` : item.description}
                         >
@@ -418,8 +418,8 @@ export default function Layout({ children, currentPageName }) {
                           to={href}
                           className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                             isActive
-                              ? 'bg-gradient-to-r from-[#00d4ff]/15 to-[#00d4ff]/5 border border-[#00d4ff]/30 text-white'
-                              : 'text-[#a3a3a3] hover:text-white hover:bg-[#1a1a1a]'
+                              ? 'bg-white/10 border border-white/10 text-white shadow-[0_0_15px_rgba(0,212,255,0.1)] backdrop-blur-md'
+                              : 'text-[#a3a3a3] hover:text-white hover:bg-white/5 hover:backdrop-blur-sm'
                           }`}
                         >
                           <item.icon className="w-5 h-5 flex-shrink-0" />
