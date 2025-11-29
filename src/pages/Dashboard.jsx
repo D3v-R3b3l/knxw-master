@@ -344,7 +344,7 @@ export default function Dashboard() { // Renamed from DashboardContent
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white relative z-[1]">
+    <div className="min-h-screen text-white relative z-[1]">
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto relative">
         {/* Header - Title + Refresh Button */}
         <div className="mb-6 md:mb-8 relative z-[2]" data-tour="dashboard-header">
@@ -375,7 +375,7 @@ export default function Dashboard() { // Renamed from DashboardContent
         {selectedApp ? (
           <>
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 relative z-[2]" data-tour="dashboard-metrics">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 relative z-[2]" data-tour="dashboard-metrics">
               {storeIsLoading ? (
                 Array(5).fill(0).map((_, i) => (
                   <div key={i} className="bg-[#111111] border border-[#262626] rounded-xl p-6">
