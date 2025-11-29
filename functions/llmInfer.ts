@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 const memoryCache = new Map(); // key -> { ts, result }
 const CACHE_TTL_MS = 10 * 60 * 1000;

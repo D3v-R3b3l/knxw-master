@@ -1,63 +1,19 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
-function generateApiKey() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = 'knxw_';
-  for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-function generateSecretKey() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = 'knxw_sk_';
-  for (let i = 0; i < 48; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-function generateSigningSecret() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = 'knxw_sign_';
-  for (let i = 0; i < 48; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-// Normalize domain to prevent duplicates
+// Helper to normalize domain
 function normalizeDomain(domain) {
   if (!domain) return null;
-  
   let normalized = domain.trim().toLowerCase();
-  
-  // Remove trailing slashes
   normalized = normalized.replace(/\/+$/, '');
   
-  // Handle localhost variations
   if (normalized.includes('localhost') || normalized.includes('127.0.0.1')) {
-    // Strip port numbers from localhost
     normalized = normalized.replace(/:\d+$/, '');
-    
-    // Normalize all localhost variants to http://localhost
-    if (normalized.startsWith('http://localhost') || normalized.startsWith('localhost')) {
-      return 'http://localhost';
-    }
-    if (normalized.startsWith('http://127.0.0.1') || normalized.startsWith('127.0.0.1')) {
-      return 'http://localhost';
-    }
-    if (normalized.startsWith('https://localhost')) {
-      return 'http://localhost';
-    }
+    return 'http://localhost';
   }
   
-  // Ensure https:// prefix for non-localhost domains
   if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {
     normalized = `https://${normalized}`;
   }
-  
   return normalized;
 }
 
@@ -70,7 +26,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user already has a default app (prevent duplicates)
+    // Check if user already has a default app
     const existingApps = await base44.asServiceRole.entities.ClientApp.filter(
       { owner_id: user.id, status: 'active' },
       '-created_date',
@@ -94,16 +50,14 @@ Deno.serve(async (req) => {
         authorizedDomains.push(normalized);
       }
     }
-
-    // Remove duplicates
     authorizedDomains = [...new Set(authorizedDomains)];
 
-    // Create default client app
+    // Create default client app using crypto.randomUUID for simpler unique keys
     const newApp = await base44.asServiceRole.entities.ClientApp.create({
       name: `${user.full_name || user.email}'s App`,
-      api_key: generateApiKey(),
-      secret_key: generateSecretKey(),
-      client_event_signing_secret: generateSigningSecret(),
+      api_key: 'knxw_' + crypto.randomUUID().replace(/-/g, ''),
+      secret_key: 'knxw_sk_' + crypto.randomUUID().replace(/-/g, ''),
+      client_event_signing_secret: 'knxw_sign_' + crypto.randomUUID().replace(/-/g, ''),
       authorized_domains: authorizedDomains,
       owner_id: user.id,
       status: 'active'

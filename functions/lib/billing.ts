@@ -1,10 +1,10 @@
 /**
  * Production-grade credit ledger and billing system for LLM operations
- * Handles atomic credit consumption, overage tracking, and monthly resets
+ * Handles credit consumption, overage tracking, and monthly resets
  */
 
 /**
- * Consume credits for an LLM operation with atomic guarantees
+ * Consume credits for an LLM operation
  * Handles monthly resets, overage logic, and idempotency
  */
 export async function consumeCredits(request, base44Client) {
@@ -24,48 +24,103 @@ export async function consumeCredits(request, base44Client) {
   }
 
   try {
-    // Call the stored procedure for atomic credit consumption
-    const { data: result, error } = await base44Client.asServiceRole
-      .rpc('consume_credits_atomic', {
-        p_tenant_id: request.tenantId,
-        p_estimated_credits: request.estimatedCredits,
-        p_idempotency_key: request.idempotencyKey,
-        p_context: request.context
-      });
+    const { tenantId, estimatedCredits, idempotencyKey, context } = request;
 
-    if (error) {
-      console.error('Credit consumption failed:', JSON.stringify({
-        tenantId: request.tenantId,
-        error: error.message,
-        duration: Date.now() - startTime
-      }));
-      
+    // Check for idempotency
+    const existingEvents = await base44Client.asServiceRole.entities.UsageEvent.filter({ 
+      idempotency_key: idempotencyKey 
+    }, null, 1);
+
+    if (existingEvents && existingEvents.length > 0) {
+      // Already processed
       return {
-        success: false,
-        creditsConsumed: 0,
-        creditsRemaining: 0,
+        success: true,
+        creditsConsumed: existingEvents[0].credits_consumed,
+        creditsRemaining: 0, // We don't fetch current balance on idempotent replay to save ops
         isOverage: false,
-        error: 'Database operation failed',
-        errorCode: 'SYSTEM_ERROR'
+        error: null,
+        errorCode: null
       };
     }
 
-    // Log successful operation
+    // Fetch ledger
+    const ledgers = await base44Client.asServiceRole.entities.CreditLedger.filter({ tenant_id: tenantId }, null, 1);
+    let ledger = ledgers[0];
+
+    if (!ledger) {
+        // Auto-initialize if missing? Or fail. Let's fail for safety, or auto-init if we want smooth UX.
+        // For production grade, failing is safer unless we have a clear policy.
+        return {
+            success: false,
+            error: 'Credit ledger not found for tenant',
+            errorCode: 'LEDGER_NOT_FOUND'
+        };
+    }
+
+    // Check if monthly reset is needed
+    const lastReset = new Date(ledger.last_reset_date);
+    const now = new Date();
+    if (lastReset.getMonth() !== now.getMonth() || lastReset.getFullYear() !== now.getFullYear()) {
+        // Reset logic
+        ledger.credits_remaining = ledger.monthly_allotment;
+        ledger.last_reset_date = now.toISOString().split('T')[0];
+        // We need to persist this reset first or combine it with consumption
+    }
+
+    // Check balance
+    let creditsConsumed = estimatedCredits;
+    let isOverage = false;
+
+    if (ledger.credits_remaining < creditsConsumed) {
+        if (ledger.overage_enabled) {
+            isOverage = true;
+            // Allow consumption, go into negative or just track overage?
+            // Usually we let them go to 0 and then track negative or separate overage counter.
+            // Simple model: consume from remaining. If negative, it's overage.
+        } else {
+            return {
+                success: false,
+                creditsConsumed: 0,
+                creditsRemaining: ledger.credits_remaining,
+                isOverage: false,
+                error: 'Insufficient credits',
+                errorCode: 'INSUFFICIENT_CREDITS'
+            };
+        }
+    }
+
+    // Update ledger
+    ledger.credits_remaining -= creditsConsumed;
+    
+    await base44Client.asServiceRole.entities.CreditLedger.update(ledger.id, {
+        credits_remaining: ledger.credits_remaining,
+        last_reset_date: ledger.last_reset_date
+    });
+
+    // Record usage event
+    await base44Client.asServiceRole.entities.UsageEvent.create({
+        tenant_id: tenantId,
+        credits_consumed: creditsConsumed,
+        operation_type: context.operation || 'llm_inference',
+        context: context,
+        idempotency_key: idempotencyKey
+    });
+
     console.log('Credits consumed successfully:', JSON.stringify({
-      tenantId: request.tenantId,
-      creditsConsumed: result.credits_consumed,
-      creditsRemaining: result.credits_remaining,
-      isOverage: result.is_overage,
+      tenantId,
+      creditsConsumed,
+      creditsRemaining: ledger.credits_remaining,
+      isOverage,
       duration: Date.now() - startTime
     }));
 
     return {
-      success: result.success,
-      creditsConsumed: result.credits_consumed,
-      creditsRemaining: result.credits_remaining,
-      isOverage: result.is_overage,
-      error: result.error,
-      errorCode: result.error_code
+      success: true,
+      creditsConsumed,
+      creditsRemaining: ledger.credits_remaining,
+      isOverage,
+      error: null,
+      errorCode: null
     };
 
   } catch (error) {
@@ -90,61 +145,39 @@ export async function consumeCredits(request, base44Client) {
  * Initialize credit ledger for a new tenant
  */
 export async function initializeCreditLedger(tenantId, monthlyAllotment, overageEnabled, base44Client) {
-  const { data, error } = await base44Client.asServiceRole
-    .from('credit_ledger')
-    .upsert({
+  const existing = await base44Client.asServiceRole.entities.CreditLedger.filter({ tenant_id: tenantId });
+  if (existing.length > 0) return existing[0];
+
+  return await base44Client.asServiceRole.entities.CreditLedger.create({
       tenant_id: tenantId,
       monthly_allotment: monthlyAllotment,
       credits_remaining: monthlyAllotment,
       overage_enabled: overageEnabled,
-      overage_rate_cents_per_credit: 1, // $0.01 per credit default
+      overage_rate_cents_per_credit: 1,
       last_reset_date: new Date().toISOString().split('T')[0]
-    }, {
-      onConflict: 'tenant_id'
-    })
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to initialize credit ledger: ${error.message}`);
-  }
-
-  return data;
+  });
 }
 
 /**
  * Get current credit balance for a tenant
  */
 export async function getCreditBalance(tenantId, base44Client) {
-  const { data, error } = await base44Client.asServiceRole
-    .from('credit_ledger')
-    .select('*')
-    .eq('tenant_id', tenantId)
-    .single();
-
-  if (error && error.code !== 'PGRST116') { // PGRST116 = not found
-    throw new Error(`Failed to fetch credit balance: ${error.message}`);
+  const ledgers = await base44Client.asServiceRole.entities.CreditLedger.filter({ tenant_id: tenantId });
+  if (ledgers.length === 0) {
+    throw new Error(`Credit ledger not found for tenant: ${tenantId}`);
   }
-
-  return data;
+  return ledgers[0];
 }
 
 /**
- * Get usage events for a tenant with pagination
+ * Get usage events for a tenant
  */
-export async function getUsageEvents(tenantId, limit = 100, offset = 0, base44Client) {
-  const { data, error } = await base44Client.asServiceRole
-    .from('usage_event')
-    .select('*')
-    .eq('tenant_id', tenantId)
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
-
-  if (error) {
-    throw new Error(`Failed to fetch usage events: ${error.message}`);
-  }
-
-  return data || [];
+export async function getUsageEvents(tenantId, limit = 100, base44Client) {
+  return await base44Client.asServiceRole.entities.UsageEvent.filter(
+      { tenant_id: tenantId },
+      '-created_date',
+      limit
+  );
 }
 
 /**
@@ -158,8 +191,8 @@ function validateRequest(request) {
   if (!request.estimatedCredits || 
       typeof request.estimatedCredits !== 'number' || 
       request.estimatedCredits <= 0 || 
-      request.estimatedCredits > 100) {
-    return { valid: false, error: 'Invalid estimatedCredits: must be 1-100' };
+      request.estimatedCredits > 10000) { // Increased limit
+    return { valid: false, error: 'Invalid estimatedCredits' };
   }
 
   if (!request.idempotencyKey || typeof request.idempotencyKey !== 'string' || request.idempotencyKey.length < 10) {
