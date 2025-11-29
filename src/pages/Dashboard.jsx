@@ -21,7 +21,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import PageHeader from '../components/ui/PageHeader';
 
 
-import { DashboardProvider, useDashboardStore } from "../components/dashboard/DashboardStore";
+import { useDashboardStore } from "../components/dashboard/DashboardStore";
 import AppSelector from "../components/dashboard/AppSelector";
 import HighlightsPanel from "../components/dashboard/HighlightsPanel";
 import EvidenceViewer from "../components/dashboard/EvidenceViewer";
@@ -36,7 +36,7 @@ const initialMetrics = {
   totalInsights: 0
 };
 
-function DashboardPage() { // Renamed from DashboardContent
+export default function Dashboard() { // Renamed from DashboardContent
   const {
     metrics, events, insights, profiles,
     isLoading: storeIsLoading,
@@ -575,10 +575,4 @@ function DashboardPage() { // Renamed from DashboardContent
   );
 }
 
-export default function Dashboard() {
-  return (
-    <DashboardProvider>
-      <DashboardPage />
-    </DashboardProvider>
-  );
-}
+// Dashboard exported directly above
