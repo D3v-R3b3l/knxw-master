@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Journey } from "@/entities/Journey";
 import { JourneyVersion } from "@/entities/JourneyVersion";
@@ -11,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Save, Play, CheckCircle2, Clock, Menu, X, Zap, Settings, Target, Timer, ChevronLeft, ChevronRight, List, Sliders, FileText, Download, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { runJourneys } from "@/functions/runJourneys";
+import JourneyTestDialog from "@/components/journeys/JourneyTestDialog";
 
 // Journey Templates
 const JOURNEY_TEMPLATES = {
@@ -274,6 +274,7 @@ export default function JourneysPage() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showProperties, setShowProperties] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showTestDialog, setShowTestDialog] = useState(false);
 
   // Canvas state
   const [zoom, setZoom] = useState(1);
@@ -522,13 +523,10 @@ export default function JourneysPage() {
     setNodes(prev => prev.map(n => n.id === selectedNodeId ? { ...n, data: { ...n.data, [field]: value } } : n));
   };
 
-  const testRun = async () => {
-    const userId = prompt("Enter user_id to test with:");
-    if (!userId) return;
-    const type = prompt("Event type (e.g., page_view, purchase):", "page_view") || "page_view";
+  const handleTestRun = async (userId, type) => {
     try {
       await runJourneys({ user_id: userId, event: { user_id: userId, event_type: type, timestamp: new Date().toISOString() } });
-      toast({ title: "Journey executed", description: "Interpreter ran for the test event." });
+      toast({ title: "Journey executed", description: `Interpreter ran for ${type} event.` });
     } catch (error) {
       console.error('Failed to run journey:', error);
       toast({ title: "Error", description: "Failed to execute journey.", variant: "destructive" });
@@ -589,7 +587,7 @@ export default function JourneysPage() {
           <Button size="sm" variant="ghost" onClick={() => setShowProperties(!showProperties)} className="text-white hover:bg-[#333]">
             <Sliders className="w-4 h-4" />
           </Button>
-          <Button size="sm" variant="outline" onClick={testRun} className="bg-transparent border-[#555] text-white hover:bg-[#333]">
+          <Button size="sm" variant="outline" onClick={() => setShowTestDialog(true)} className="bg-transparent border-[#555] text-white hover:bg-[#333]">
             <Play className="w-4 h-4 sm:mr-2" />
             <span className="hidden sm:inline">Test</span>
           </Button>
@@ -1004,6 +1002,13 @@ export default function JourneysPage() {
             </div>
           </div>
         )}
+
+        {/* Test Dialog */}
+        <JourneyTestDialog 
+          isOpen={showTestDialog}
+          onClose={() => setShowTestDialog(false)}
+          onRun={handleTestRun}
+        />
 
         {/* Templates Modal */}
         {showTemplates && (
