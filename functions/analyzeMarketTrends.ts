@@ -15,166 +15,132 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Topic is required' }, { status: 400 });
     }
 
-    console.log('[analyzeMarketTrends] Starting analysis for:', topic);
+    console.log('[analyzeMarketTrends] Starting DEEP research for:', topic);
 
-    // Fetch live content from the web with proper rendering
-    let contentData = null;
-    let isLiveUrl = false;
+    // 1. Gather Intelligence (Web Search)
+    // We ask the LLM to use its internet access to find very specific data points.
+    const researchPrompt = `Perform a comprehensive "Deep Market Research" on the topic: "${topic}"${industry_category ? ` in the ${industry_category} industry` : ''}.
 
-    // Check if topic is a URL
-    try {
-      const url = new URL(topic);
-      isLiveUrl = true;
-      
-      console.log('[analyzeMarketTrends] Detected URL, fetching live content...');
-      
-      // Use InvokeLLM with add_context_from_internet to get live web data
-      const webDataResponse = await base44.integrations.Core.InvokeLLM({
-        prompt: `Extract and summarize the full content from this webpage: ${topic}
-        
-        Provide:
-        1. Page title
-        2. Full text content (all paragraphs, headings, key information)
-        3. Main topics discussed
-        4. Key data points or statistics mentioned
-        5. Author or company information if available
-        
-        Be comprehensive - extract ALL meaningful text content from the page.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            title: { type: "string" },
-            full_content: { type: "string" },
-            main_topics: { type: "array", items: { type: "string" } },
-            key_data: { type: "array", items: { type: "string" } },
-            author_info: { type: "string" }
-          }
-        }
-      });
+    You must use your internet access to find REAL, CURRENT data. Do not hallucinate numbers. If exact numbers aren't found, provide realistic estimates based on available data.
 
-      contentData = webDataResponse;
-      console.log('[analyzeMarketTrends] Live content extracted successfully');
+    I need a complete strategic market analysis covering:
+    1. Executive Summary: High-level state of the market.
+    2. Market Dynamics: Market size (TAM/SAM/SOM if possible), growth rates (CAGR), and major shifts.
+    3. Competitive Landscape: Who are the top players? What are their strategies?
+    4. SWOT Analysis: Strengths, Weaknesses, Opportunities, Threats for a new entrant or the subject of the query.
+    5. Consumer Psychographics: Deep dive into WHY people buy. Motivations, fears, triggers.
+    6. Strategic Recommendations: Actionable advice.
 
-    } catch (urlError) {
-      // Not a URL, treat as topic search
-      isLiveUrl = false;
-      console.log('[analyzeMarketTrends] Not a URL, performing topic search');
-    }
-
-    // Generate psychographic analysis
-    const analysisPrompt = isLiveUrl && contentData
-      ? `Perform deep psychographic analysis of this content:
-
-TITLE: ${contentData.title}
-
-FULL CONTENT:
-${contentData.full_content}
-
-TOPICS: ${contentData.main_topics?.join(', ')}
-KEY DATA: ${contentData.key_data?.join(', ')}
-
-Analyze from a psychographic marketing intelligence perspective:
-1. What psychological motivations does this content appeal to?
-2. Which cognitive styles would find this compelling?
-3. What emotional triggers are being used?
-4. What risk profile does this target?
-5. Competitive psychological positioning
-6. Strategic recommendations for marketing based on psychological insights
-
-Provide actionable intelligence for psychographic-driven marketing strategy.`
-      : `Analyze market trends and competitive intelligence for: "${topic}"${industry_category ? ` in the ${industry_category} industry` : ''}.
-
-Use real-time web search and analysis to provide:
-1. Current market trends and psychological patterns
-2. Competitor psychographic strategies
-3. Emotional triggers being used in the market
-4. Target cognitive styles and risk profiles
-5. Strategic recommendations
-
-Focus on actionable psychographic insights.`;
+    Output MUST be a valid JSON object matching the schema provided.`;
 
     const analysisResponse = await base44.integrations.Core.InvokeLLM({
-      prompt: analysisPrompt,
-      add_context_from_internet: !isLiveUrl, // Only search if not already fetched
+      prompt: researchPrompt,
+      add_context_from_internet: true,
       response_json_schema: {
         type: "object",
         properties: {
-          confidence_score: { type: "number" },
-          psychological_insights: { type: "string" },
-          primary_motivations: {
-            type: "array",
-            items: { type: "string" }
-          },
-          emotional_triggers: {
-            type: "array",
-            items: { type: "string" }
-          },
-          cognitive_style_appeal: {
-            type: "string",
-            enum: ["analytical", "intuitive", "systematic", "creative"]
-          },
-          risk_profile_target: {
-            type: "string",
-            enum: ["conservative", "moderate", "aggressive"]
-          },
-          competitive_intelligence: {
+          executive_summary: { type: "string", description: "A concise 2-3 paragraph executive summary of the market situation." },
+          market_dynamics: {
             type: "object",
             properties: {
-              market_opportunities: {
+              market_size: { type: "string", description: "Current market size with currency (e.g. $50B)" },
+              growth_rate: { type: "string", description: "Projected growth rate (e.g. 12% CAGR)" },
+              outlook: { type: "string", enum: ["Positive", "Neutral", "Negative", "Volatile"] },
+              key_trends: {
                 type: "array",
                 items: {
                   type: "object",
                   properties: {
-                    opportunity: { type: "string" },
-                    psychological_segment: { type: "string" }
-                  }
-                }
-              },
-              strategic_recommendations: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    category: { type: "string" },
-                    recommendation: { type: "string" },
-                    expected_impact: {
-                      type: "string",
-                      enum: ["high", "medium", "low"]
-                    },
-                    implementation_timeline: { type: "string" }
+                    trend: { type: "string" },
+                    impact_level: { type: "string", enum: ["Critical", "High", "Medium"] },
+                    description: { type: "string" }
                   }
                 }
               }
             }
+          },
+          competitive_landscape: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                name: { type: "string" },
+                market_share_est: { type: "string", description: "Estimated share or 'High', 'Medium', 'Low'" },
+                strategy: { type: "string" },
+                strengths: { type: "string" }
+              }
+            }
+          },
+          swot_analysis: {
+            type: "object",
+            properties: {
+              strengths: { type: "array", items: { type: "string" } },
+              weaknesses: { type: "array", items: { type: "string" } },
+              opportunities: { type: "array", items: { type: "string" } },
+              threats: { type: "array", items: { type: "string" } }
+            }
+          },
+          consumer_insights: {
+            type: "object",
+            properties: {
+              primary_motivations: { type: "array", items: { type: "string" } },
+              pain_points: { type: "array", items: { type: "string" } },
+              unmet_needs: { type: "array", items: { type: "string" } },
+              emotional_triggers: { type: "array", items: { type: "string" } },
+              psychographic_profile: { type: "string", description: "Narrative description of the ideal customer persona." }
+            }
+          },
+          strategic_recommendations: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                action: { type: "string" },
+                priority: { type: "string", enum: ["Immediate", "Short-term", "Long-term"] }
+              }
+            }
+          },
+          sources_used: {
+            type: "array",
+            items: { type: "string" },
+            description: "List of domains or sources where data was found."
           }
-        }
+        },
+        required: ["executive_summary", "market_dynamics", "swot_analysis", "consumer_insights", "strategic_recommendations"]
       }
     });
 
-    // Save to database
+    // Save to database with the new rich structure
+    // We'll map it to the existing 'psychographic_analysis' field for compatibility, but structure it well.
     const trendData = {
-      source: isLiveUrl ? 'competitor_content' : 'market_trends',
-      content_url: isLiveUrl ? topic : '#',
-      title: contentData?.title || topic,
-      content_snippet: contentData?.full_content?.substring(0, 500) || '',
-      psychographic_analysis: analysisResponse,
-      industry_category: industry_category || 'general',
-      confidence_score: analysisResponse.confidence_score || 0.8,
-      competitor_name: isLiveUrl ? (contentData?.author_info || 'Unknown Competitor') : null,
-      published_date: new Date().toISOString(),
+      title: topic,
+      source: 'deep_research',
+      content_url: '#', // Not a specific URL analysis
+      content_snippet: analysisResponse.executive_summary,
+      industry_category: industry_category || 'General',
+      
+      // We store the FULL complex object in 'psychographic_analysis'
+      psychographic_analysis: {
+        ...analysisResponse,
+        confidence_score: 0.9 // High confidence due to internet search
+      },
+      
+      competitor_name: analysisResponse.competitive_landscape?.[0]?.name || null,
+      confidence_score: 0.9,
       analyzed_at: new Date().toISOString(),
       is_demo: false
     };
 
     const savedTrend = await base44.asServiceRole.entities.MarketTrend.create(trendData);
 
-    console.log('[analyzeMarketTrends] Analysis complete, saved with ID:', savedTrend.id);
+    console.log('[analyzeMarketTrends] Deep Research complete, saved ID:', savedTrend.id);
 
     return Response.json({ 
       success: true, 
       analysis_id: savedTrend.id,
-      message: 'Market intelligence analysis completed successfully'
+      data: trendData,
+      message: 'Deep market research completed successfully'
     });
 
   } catch (error) {
