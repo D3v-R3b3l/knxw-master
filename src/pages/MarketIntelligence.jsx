@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Search, Loader2, TrendingUp, Target, Shield, Zap, 
   FileText, ArrowRight, BarChart3, Globe, AlertTriangle,
-  CheckCircle2, BookOpen, Share2, Download, Clock
+  CheckCircle2, BookOpen, Share2, Download, Clock,
+  Brain, Lightbulb
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { SubscriptionGate } from '@/components/billing/SubscriptionGate';
