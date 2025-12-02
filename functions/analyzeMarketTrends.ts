@@ -79,10 +79,55 @@ Deno.serve(async (req) => {
       } catch {}
     }
 
+    // SPECIAL HANDLING: If knxw.app, we KNOW exactly what it is - override with hardcoded accurate info
+    const isKnxwApp = domainName === 'knxw.app' || topic.toLowerCase().includes('knxw.app');
+    
+    const knxwAppDescription = `
+knXw (pronounced "know") is a PSYCHOGRAPHIC INTELLIGENCE PLATFORM - a B2B SaaS product.
+
+WHAT knXw ACTUALLY IS:
+- "The Universal Intelligence Layer" for psychographic analytics
+- A platform that provides psychological/behavioral profiling of users
+- Helps businesses understand WHY users do what they do (motivations, cognitive styles, personality traits)
+- Offers real-time psychographic profiling, AI-powered insights, and adaptive engagement tools
+
+KEY FEATURES:
+- Psychographic Profiling: Automatically generates psychological profiles revealing motivations and personality traits
+- GameDev Intelligence: Player motivation analysis, adaptive difficulty, churn prediction for games
+- Market Intelligence: Analyze competitors through a psychographic lens
+- Developer Platform: RESTful APIs, SDKs, webhooks
+- Content Engine: Auto-recommend content based on psychological profiles
+- AI Automation: Deploy intelligent agents for personalized engagements
+
+PRICING TIERS:
+- Developer: Free (1,000 monthly credits)
+- Growth: $99/mo (10K-50K credits)  
+- Pro: $499/mo (100K-500K credits)
+- Enterprise: Custom pricing
+
+TARGET MARKET: B2B SaaS - developers, e-commerce, gaming companies, EdTech, healthcare, marketing teams
+
+COMPETITIVE SPACE: Behavioral analytics, customer data platforms, personalization engines (competitors might include Segment, Amplitude, Mixpanel, but knXw focuses specifically on PSYCHOGRAPHIC/psychological profiling rather than just behavioral analytics)
+
+IMPORTANT: knXw has NOTHING to do with "KNX home automation protocol" or building automation. The similar name is coincidental. knXw is a SOFTWARE PLATFORM for PSYCHOGRAPHIC INTELLIGENCE.
+`;
+
     // 1. Gather Intelligence (Web Search)
     const researchPrompt = `Perform a comprehensive "Deep Market Research" on the topic: "${topic}"${industry_category ? ` in the ${industry_category} industry` : ''}.
 
-${fetchSuccessful ? `
+${isKnxwApp ? `
+###############################################################################
+# CRITICAL: THIS IS ABOUT knXw.app - A PSYCHOGRAPHIC INTELLIGENCE PLATFORM
+###############################################################################
+DO NOT CONFUSE WITH KNX HOME AUTOMATION. THEY ARE COMPLETELY UNRELATED.
+
+Here is the VERIFIED information about knXw.app:
+${knxwAppDescription}
+
+Your analysis MUST be about this psychographic intelligence SaaS platform.
+Analyze the B2B SaaS market for behavioral/psychographic analytics tools.
+###############################################################################
+` : fetchSuccessful ? `
 ###############################################################################
 # MANDATORY INSTRUCTION - READ CAREFULLY
 ###############################################################################
@@ -103,7 +148,7 @@ DO NOT:
 ###############################################################################
 ` : ''}
     
-${!fetchSuccessful && isUrl ? `
+${!fetchSuccessful && isUrl && !isKnxwApp ? `
 ###############################################################################
 # CRITICAL - URL PROVIDED BUT CONTENT NOT FETCHED
 ###############################################################################
