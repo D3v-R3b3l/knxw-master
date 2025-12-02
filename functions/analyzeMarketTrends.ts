@@ -15,11 +15,42 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Topic is required' }, { status: 400 });
     }
 
+    let contextData = "";
+    let isUrl = false;
+
+    try {
+        if (topic.startsWith('http')) {
+            const url = new URL(topic);
+            isUrl = true;
+            console.log('[analyzeMarketTrends] Fetching content for URL:', topic);
+            const res = await fetch(topic, { 
+                headers: { 'User-Agent': 'knXw-Market-Intelligence-Bot/1.0' },
+                signal: AbortSignal.timeout(8000) 
+            });
+            if (res.ok) {
+                const html = await res.text();
+                // Strip HTML to get raw text context for the LLM
+                const text = html.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gm, "")
+                                .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gm, "")
+                                .replace(/<[^>]+>/g, " ")
+                                .replace(/\s+/g, " ")
+                                .trim()
+                                .slice(0, 15000); 
+                contextData = `\n\n--- START WEBSITE CONTENT SOURCE (${topic}) ---\n${text}\n--- END WEBSITE CONTENT SOURCE ---\n\n`;
+            }
+        }
+    } catch (e) {
+        console.log('[analyzeMarketTrends] Fetch failed or topic not a URL:', e.message);
+    }
+
     console.log('[analyzeMarketTrends] Starting DEEP research for:', topic);
 
     // 1. Gather Intelligence (Web Search)
-    // We ask the LLM to use its internet access to find very specific data points.
     const researchPrompt = `Perform a comprehensive "Deep Market Research" on the topic: "${topic}"${industry_category ? ` in the ${industry_category} industry` : ''}.
+
+    ${isUrl ? 'CRITICAL INSTRUCTION: The user provided a specific URL. Analyze the specific product/company found at this URL. Do NOT confuse it with other acronyms (like KNX Home Automation) or similarly named companies unless the website explicitly is about that. Use the provided WEBSITE CONTENT SOURCE below as the primary source of truth.' : ''}
+
+    ${contextData}
 
     You must use your internet access to find REAL, CURRENT data. Do not hallucinate numbers. If exact numbers aren't found, provide realistic estimates based on available data.
 
