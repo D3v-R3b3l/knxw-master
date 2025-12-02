@@ -504,7 +504,7 @@ export default function MarketIntelligencePage() {
 
       // Find the new analysis and select it
       // We use the entity fetch to ensure we have full data structure
-      const newAnalysis = await base44.entities.MarketTrend.get(result.data.analysis_id);
+      const newAnalysis = await base44.entities.MarketTrend.get(result.analysis_id);
       setSelectedAnalysis(newAnalysis);
       setTopic("");
       setIndustry("");
