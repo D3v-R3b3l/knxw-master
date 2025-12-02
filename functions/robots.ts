@@ -8,6 +8,7 @@ Allow: /
 Allow: /Landing
 Allow: /Documentation
 Allow: /Developers
+Allow: /ai
 Allow: /Pricing
 Allow: /Privacy
 Allow: /Terms
