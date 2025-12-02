@@ -17,38 +17,65 @@ Deno.serve(async (req) => {
 
     let contextData = "";
     let isUrl = false;
+    let fetchSuccessful = false;
 
-    try {
-        if (topic.startsWith('http')) {
-            const url = new URL(topic);
-            isUrl = true;
-            console.log('[analyzeMarketTrends] Fetching content for URL:', topic);
-            const res = await fetch(topic, { 
-                headers: { 'User-Agent': 'knXw-Market-Intelligence-Bot/1.0' },
-                signal: AbortSignal.timeout(8000) 
-            });
-            if (res.ok) {
-                const html = await res.text();
-                // Strip HTML to get raw text context for the LLM
-                const text = html.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gm, "")
-                                .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gm, "")
-                                .replace(/<[^>]+>/g, " ")
-                                .replace(/\s+/g, " ")
-                                .trim()
-                                .slice(0, 15000); 
-                contextData = `\n\n--- START WEBSITE CONTENT SOURCE (${topic}) ---\n${text}\n--- END WEBSITE CONTENT SOURCE ---\n\n`;
-            }
+    // Helper to normalize URL
+    let urlToFetch = topic.trim();
+    // Loose check if it looks like a URL (e.g. "knxw.app" or "google.com" or "https://...")
+    const urlRegex = /^(https?:\/\/)?([\w\d-]+\.)+\w{2,}(\/.*)?$/i;
+    
+    if (urlRegex.test(urlToFetch)) {
+        isUrl = true;
+        if (!urlToFetch.startsWith('http')) {
+            urlToFetch = 'https://' + urlToFetch;
         }
-    } catch (e) {
-        console.log('[analyzeMarketTrends] Fetch failed or topic not a URL:', e.message);
     }
 
-    console.log('[analyzeMarketTrends] Starting DEEP research for:', topic);
+    if (isUrl) {
+        try {
+            console.log('[analyzeMarketTrends] Fetching content for URL:', urlToFetch);
+            const res = await fetch(urlToFetch, { 
+                headers: { 
+                    'User-Agent': 'Mozilla/5.0 (compatible; knXw-Market-Bot/1.0)',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                },
+                signal: AbortSignal.timeout(15000) // Increased timeout
+            });
+            
+            if (res.ok) {
+                const html = await res.text();
+                // Simple but robust HTML stripping
+                const text = html
+                                .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gm, "")
+                                .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gm, "")
+                                .replace(/<!--[\s\S]*?-->/gm, "")
+                                .replace(/<[^>]+>/g, "\n") // Replace tags with newlines to preserve structure
+                                .replace(/\n\s*\n/g, "\n") // Collapse multiple newlines
+                                .trim()
+                                .slice(0, 25000); // Increased limit
+                
+                if (text.length > 100) {
+                    contextData = `\n\n--- START WEBSITE CONTENT SOURCE (${urlToFetch}) ---\n${text}\n--- END WEBSITE CONTENT SOURCE ---\n\n`;
+                    fetchSuccessful = true;
+                } else {
+                    console.log('[analyzeMarketTrends] Fetched content too short/empty');
+                }
+            } else {
+                 console.log('[analyzeMarketTrends] Fetch failed with status:', res.status);
+            }
+        } catch (e) {
+            console.log('[analyzeMarketTrends] Fetch error:', e.message);
+        }
+    }
+
+    console.log('[analyzeMarketTrends] Starting DEEP research for:', topic, 'Is URL:', isUrl, 'Fetch Success:', fetchSuccessful);
 
     // 1. Gather Intelligence (Web Search)
     const researchPrompt = `Perform a comprehensive "Deep Market Research" on the topic: "${topic}"${industry_category ? ` in the ${industry_category} industry` : ''}.
 
-    ${isUrl ? 'CRITICAL INSTRUCTION: The user provided a specific URL. Analyze the specific product/company found at this URL. Do NOT confuse it with other acronyms (like KNX Home Automation) or similarly named companies unless the website explicitly is about that. Use the provided WEBSITE CONTENT SOURCE below as the primary source of truth.' : ''}
+    ${fetchSuccessful ? 'CRITICAL: The user provided a URL (' + urlToFetch + '). I have fetched the content of this page for you. YOU MUST BASE YOUR ANALYSIS PRIMARILY ON THE "WEBSITE CONTENT SOURCE" PROVIDED BELOW. Do NOT use external knowledge if it contradicts this source. This is likely a specific product or company that shares a name with something else. IGNORE unrelated famous acronyms (like "KNX Home Automation") unless the website content explicitly mentions them. Focus ONLY on what is described in the source text.' : ''}
+    
+    ${!fetchSuccessful && isUrl ? 'CRITICAL: The user provided a URL (' + urlToFetch + ') but I could not fetch its content directly. You must use your browsing tool to visit this URL or search specifically for this domain to understand what it is. Do NOT assume it refers to a common acronym without verifying the domain first.' : ''}
 
     ${contextData}
 
@@ -64,9 +91,14 @@ Deno.serve(async (req) => {
 
     Output MUST be a valid JSON object matching the schema provided.`;
 
+    // Only use internet if we didn't successfully fetch the content ourselves, OR if we want supplementary info.
+    // However, given the user's complaint about hallucination, if we have the source, we should be careful.
+    // But we still need internet for market size/competitors which might not be on the landing page.
+    // So we keep it true, but the prompt instructions above are now very strict.
+    
     const analysisResponse = await base44.integrations.Core.InvokeLLM({
       prompt: researchPrompt,
-      add_context_from_internet: true,
+      add_context_from_internet: true, // We keep this for market context, but rely on prompt engineering to ground the entity
       response_json_schema: {
         type: "object",
         properties: {
