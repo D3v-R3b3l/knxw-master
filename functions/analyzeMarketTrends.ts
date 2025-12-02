@@ -101,6 +101,15 @@ Deno.serve(async (req) => {
               }
             }
           },
+          market_forecast: {
+             type: "object",
+             description: "Projected market data for visualization",
+             properties: {
+               years: { type: "array", items: { type: "string" }, description: "Future years, e.g. 2025, 2026..." },
+               market_size_values: { type: "array", items: { type: "number" }, description: "Projected values in billions/millions corresponding to years" },
+               growth_trend: { type: "array", items: { type: "number" }, description: "YoY growth percentage" }
+             }
+          },
           sources_used: {
             type: "array",
             items: { type: "string" },

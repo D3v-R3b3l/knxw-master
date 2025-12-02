@@ -18,6 +18,9 @@ import { callWithRetry } from "@/components/system/apiRetry";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedDonut from "@/components/charts/AnimatedDonut";
 
+import AnimatedLine from "@/components/charts/AnimatedLine";
+import { CheckSquare, Square } from "lucide-react";
+
 // --- Components ---
 
 const InsightCard = ({ title, children, icon: Icon, color = "blue", className = "" }) => (
@@ -34,31 +37,42 @@ const InsightCard = ({ title, children, icon: Icon, color = "blue", className = 
   </Card>
 );
 
-const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onDelete }) => (
+const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onCompare, selectedForComparison }) => (
   <div className="w-full lg:w-72 bg-[#0f0f0f] border-r border-[#262626] flex flex-col h-full lg:h-auto lg:min-h-[calc(100vh-4rem)]">
-    <div className="p-4 border-b border-[#262626]">
+    <div className="p-4 border-b border-[#262626] flex justify-between items-center">
       <h3 className="text-sm font-semibold text-[#a3a3a3] uppercase tracking-wider">Recent Research</h3>
     </div>
     <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
-      {analyses.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => onSelect(item)}
-          className={`w-full text-left p-3 rounded-lg transition-all ${
-            selectedId === item.id 
-              ? 'bg-[#00d4ff]/10 border border-[#00d4ff]/30' 
-              : 'hover:bg-[#1a1a1a] border border-transparent'
-          }`}
-        >
-          <div className="font-medium text-white truncate text-sm">{item.title}</div>
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-xs text-[#666]">
-              {formatDistanceToNow(new Date(item.analyzed_at), { addSuffix: true })}
-            </span>
-            {selectedId === item.id && <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />}
+      {analyses.map((item) => {
+        const isSelectedForCompare = selectedForComparison.includes(item.id);
+        return (
+          <div key={item.id} className="flex gap-2 group">
+            <button
+               onClick={() => onCompare(item.id)}
+               className="p-3 hover:bg-[#1a1a1a] rounded-lg flex items-center justify-center"
+               title="Select for comparison"
+            >
+               {isSelectedForCompare ? <CheckSquare className="w-4 h-4 text-[#00d4ff]" /> : <Square className="w-4 h-4 text-[#333] group-hover:text-[#666]" />}
+            </button>
+            <button
+              onClick={() => onSelect(item)}
+              className={`flex-1 text-left p-3 rounded-lg transition-all ${
+                selectedId === item.id 
+                  ? 'bg-[#00d4ff]/10 border border-[#00d4ff]/30' 
+                  : 'hover:bg-[#1a1a1a] border border-transparent'
+              }`}
+            >
+              <div className="font-medium text-white truncate text-sm">{item.title}</div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-xs text-[#666]">
+                  {formatDistanceToNow(new Date(item.analyzed_at), { addSuffix: true })}
+                </span>
+                {selectedId === item.id && <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />}
+              </div>
+            </button>
           </div>
-        </button>
-      ))}
+        );
+      })}
       {analyses.length === 0 && (
         <div className="text-center py-8 text-[#666] text-sm">
           No research history found.
@@ -67,6 +81,71 @@ const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onDelete }) =>
     </div>
   </div>
 );
+
+const ComparisonReport = ({ comparison }) => {
+  if (!comparison || !comparison.comparison_data) return null;
+  const { executive_summary, market_positioning, feature_comparison, psychographic_divergence, winner_prediction } = comparison.comparison_data;
+  
+  return (
+    <div className="space-y-8 animate-in fade-in duration-500">
+       <div className="flex items-center gap-3 border-b border-[#262626] pb-6">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600">
+             <ArrowRight className="w-6 h-6 text-white" />
+          </div>
+          <div>
+             <h1 className="text-3xl font-bold text-white">{comparison.title}</h1>
+             <p className="text-[#a3a3a3]">Comparative Analysis • {new Date(comparison.created_at).toLocaleDateString()}</p>
+          </div>
+       </div>
+
+       <div className="grid lg:grid-cols-2 gap-6">
+          <InsightCard title="Executive Summary" icon={FileText} color="purple">
+             <p className="text-[#e5e5e5] leading-relaxed">{executive_summary}</p>
+          </InsightCard>
+          <InsightCard title="Market Positioning" icon={Target} color="blue">
+             <p className="text-[#e5e5e5] leading-relaxed">{market_positioning}</p>
+          </InsightCard>
+       </div>
+
+       <Card className="bg-[#111] border-[#262626]">
+          <CardHeader><CardTitle className="text-white">Feature & Strategy Comparison</CardTitle></CardHeader>
+          <CardContent>
+             <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-[#a3a3a3]">
+                   <thead className="border-b border-[#262626] text-xs uppercase font-medium">
+                      <tr>
+                         <th className="px-4 py-3">Feature / Factor</th>
+                         <th className="px-4 py-3">Subject 1</th>
+                         <th className="px-4 py-3">Subject 2</th>
+                         <th className="px-4 py-3 text-[#00d4ff]">Winner</th>
+                      </tr>
+                   </thead>
+                   <tbody className="divide-y divide-[#262626]">
+                      {feature_comparison?.map((row, i) => (
+                         <tr key={i} className="hover:bg-[#1a1a1a]">
+                            <td className="px-4 py-3 font-medium text-white">{row.feature}</td>
+                            <td className="px-4 py-3">{row.subject_1_val}</td>
+                            <td className="px-4 py-3">{row.subject_2_val}</td>
+                            <td className="px-4 py-3 text-[#00d4ff] font-bold">{row.winner}</td>
+                         </tr>
+                      ))}
+                   </tbody>
+                </table>
+             </div>
+          </CardContent>
+       </Card>
+
+       <div className="grid lg:grid-cols-2 gap-6">
+          <InsightCard title="Psychographic Divergence" icon={Brain} color="pink">
+             <p className="text-[#e5e5e5] leading-relaxed">{psychographic_divergence}</p>
+          </InsightCard>
+          <InsightCard title="Winner Prediction" icon={Zap} color="yellow">
+             <p className="text-[#e5e5e5] leading-relaxed font-semibold">{winner_prediction}</p>
+          </InsightCard>
+       </div>
+    </div>
+  );
+};
 
 const DeepResearchReport = ({ data }) => {
   if (!data || !data.psychographic_analysis) return null;
@@ -130,9 +209,12 @@ const DeepResearchReport = ({ data }) => {
 
       {/* Analysis Tabs */}
       <Tabs defaultValue="landscape" className="w-full">
-        <TabsList className="bg-[#1a1a1a] border border-[#262626] p-1 mb-6">
+        <TabsList className="bg-[#1a1a1a] border border-[#262626] p-1 mb-6 flex flex-wrap">
           <TabsTrigger value="landscape" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
             Market Landscape
+          </TabsTrigger>
+          <TabsTrigger value="forecast" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
+            Forecast & Trends
           </TabsTrigger>
           <TabsTrigger value="swot" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
             SWOT Analysis
@@ -144,6 +226,44 @@ const DeepResearchReport = ({ data }) => {
             Strategic Actions
           </TabsTrigger>
         </TabsList>
+
+        {/* Forecast Tab */}
+        <TabsContent value="forecast" className="space-y-6">
+            {report.market_forecast ? (
+                <Card className="bg-[#111] border-[#262626]">
+                    <CardHeader>
+                        <CardTitle className="text-white flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5 text-[#00d4ff]" />
+                            Market Size Projection
+                        </CardTitle>
+                        <CardDescription>AI-projected market growth based on current dynamics</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="h-72 w-full">
+                            <AnimatedLine 
+                                data={report.market_forecast.years.map((year, i) => ({
+                                    name: year,
+                                    value: report.market_forecast.market_size_values[i]
+                                }))}
+                                lines={[{ key: "value", color: "#00d4ff", name: "Market Size" }]}
+                            />
+                        </div>
+                        <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                            {report.market_forecast.growth_trend?.slice(0, 3).map((growth, i) => (
+                                <div key={i} className="bg-[#1a1a1a] p-3 rounded-lg">
+                                    <div className="text-xs text-[#666] mb-1">{report.market_forecast.years[i+1]} Growth</div>
+                                    <div className="text-lg font-bold text-[#10b981]">+{growth}%</div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            ) : (
+                <div className="p-8 text-center border border-dashed border-[#333] rounded-xl text-[#666]">
+                    No forecast data available for this report.
+                </div>
+            )}
+        </TabsContent>
 
         {/* Market Landscape Tab */}
         <TabsContent value="landscape" className="space-y-6">
@@ -324,6 +444,8 @@ const DeepResearchReport = ({ data }) => {
 
 // --- Main Page Component ---
 
+import { base44 } from "@/api/base44Client";
+
 export default function MarketIntelligencePage() {
   const [topic, setTopic] = useState("");
   const [industry, setIndustry] = useState("");
@@ -331,6 +453,11 @@ export default function MarketIntelligencePage() {
   const [analyses, setAnalyses] = useState([]);
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  
+  // Comparison State
+  const [selectedForComparison, setSelectedForComparison] = useState([]);
+  const [isComparing, setIsComparing] = useState(false);
+  const [comparisonResult, setComparisonResult] = useState(null);
 
   // Load history
   useEffect(() => {
@@ -340,10 +467,9 @@ export default function MarketIntelligencePage() {
   const loadAnalyses = async () => {
     setIsLoadingHistory(true);
     try {
-      // Using the same entity 'MarketTrend' as before for compatibility
       const data = await base44.entities.MarketTrend.list('-analyzed_at', 50);
       setAnalyses(data);
-      if (data.length > 0 && !selectedAnalysis) {
+      if (data.length > 0 && !selectedAnalysis && !comparisonResult) {
         setSelectedAnalysis(data[0]);
       }
     } catch (err) {
@@ -358,6 +484,7 @@ export default function MarketIntelligencePage() {
     
     setIsAnalyzing(true);
     setSelectedAnalysis(null);
+    setComparisonResult(null);
     
     try {
       const result = await callWithRetry(() => analyzeMarketTrends({ 
@@ -365,12 +492,10 @@ export default function MarketIntelligencePage() {
         industry_category: industry 
       }));
       
-      // The backend now returns the full data in the 'data' field of the response, 
-      // or we can re-fetch. The function returns { success, analysis_id, data }.
-      // Let's reload to be safe and consistent.
       await loadAnalyses();
       
       // Find the new analysis and select it
+      // We use the entity fetch to ensure we have full data structure
       const newAnalysis = await base44.entities.MarketTrend.get(result.analysis_id);
       setSelectedAnalysis(newAnalysis);
       setTopic("");
@@ -378,10 +503,46 @@ export default function MarketIntelligencePage() {
       
     } catch (error) {
       console.error("Analysis failed:", error);
-      // toast error here
+      alert("Analysis failed: " + (error.message || "Unknown error"));
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const toggleComparisonSelection = (id) => {
+      if (selectedForComparison.includes(id)) {
+          setSelectedForComparison(prev => prev.filter(x => x !== id));
+      } else {
+          if (selectedForComparison.length >= 2) {
+              // FIFO if max 2? Or just limit? Let's limit to 2 for now for simplicity of the UI shown in plan
+              // But user might want more. Backend supports array. UI supports 2 columns well.
+              // Let's replace the first one if 2 are selected
+              setSelectedForComparison(prev => [prev[1], id]);
+          } else {
+              setSelectedForComparison(prev => [...prev, id]);
+          }
+      }
+  };
+
+  const runComparison = async () => {
+      if (selectedForComparison.length < 2) return;
+      setIsComparing(true);
+      setComparisonResult(null);
+      setSelectedAnalysis(null);
+
+      try {
+          const { data } = await base44.functions.invoke('compareMarketTrends', { trend_ids: selectedForComparison });
+          if (data.success) {
+              setComparisonResult(data.data);
+          } else {
+              alert('Comparison failed');
+          }
+      } catch (e) {
+          console.error(e);
+          alert('Error running comparison');
+      } finally {
+          setIsComparing(false);
+      }
   };
 
   return (
@@ -389,11 +550,29 @@ export default function MarketIntelligencePage() {
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col lg:flex-row">
         
         {/* Sidebar */}
-        <ResearchHistorySidebar 
-          analyses={analyses} 
-          selectedId={selectedAnalysis?.id} 
-          onSelect={setSelectedAnalysis}
-        />
+        <div className="flex flex-col h-full">
+            <ResearchHistorySidebar 
+            analyses={analyses} 
+            selectedId={selectedAnalysis?.id} 
+            onSelect={(item) => {
+                setSelectedAnalysis(item);
+                setComparisonResult(null);
+            }}
+            onCompare={toggleComparisonSelection}
+            selectedForComparison={selectedForComparison}
+            />
+            {selectedForComparison.length >= 2 && (
+                <div className="p-4 bg-[#111] border-t border-[#262626] lg:w-72">
+                    <Button 
+                        onClick={runComparison} 
+                        disabled={isComparing}
+                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                    >
+                        {isComparing ? <Loader2 className="w-4 h-4 animate-spin" /> : "Compare Selected"}
+                    </Button>
+                </div>
+            )}
+        </div>
 
         {/* Main Content */}
         <div className="flex-1 p-6 lg:p-10 overflow-y-auto h-screen bg-[#000]">
@@ -457,6 +636,21 @@ export default function MarketIntelligencePage() {
                   <p className="text-[#a3a3a3]">Scanning market data, analyzing competitors, and synthesizing insights.</p>
                 </div>
               </div>
+            ) : isComparing ? (
+               <div className="flex flex-col items-center justify-center py-20 space-y-6">
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full border-t-4 border-r-4 border-purple-500 animate-spin" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Zap className="w-10 h-10 text-purple-500 animate-pulse" />
+                  </div>
+                </div>
+                <div className="text-center space-y-2">
+                  <h3 className="text-2xl font-bold text-white">Generating Comparison...</h3>
+                  <p className="text-[#a3a3a3]">Analyzing differentiators, market positioning, and head-to-head metrics.</p>
+                </div>
+              </div> 
+            ) : comparisonResult ? (
+               <ComparisonReport comparison={comparisonResult} />
             ) : selectedAnalysis ? (
               <DeepResearchReport data={selectedAnalysis} />
             ) : (
