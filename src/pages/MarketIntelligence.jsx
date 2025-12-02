@@ -495,17 +495,29 @@ export default function MarketIntelligencePage() {
     setComparisonResult(null);
     
     try {
-      const result = await callWithRetry(() => analyzeMarketTrends({ 
+      const response = await callWithRetry(() => analyzeMarketTrends({ 
         topic, 
         industry_category: industry 
       }));
 
+      // Handle axios response structure - data is nested inside response.data
+      const result = response?.data || response;
+      console.log('[MarketIntelligence] Analysis result:', result);
+
       await loadAnalyses();
 
       // Find the new analysis and select it
-      // We use the entity fetch to ensure we have full data structure
-      const newAnalysis = await base44.entities.MarketTrend.get(result.analysis_id);
-      setSelectedAnalysis(newAnalysis);
+      const analysisId = result?.analysis_id;
+      if (analysisId) {
+        const newAnalysis = await base44.entities.MarketTrend.get(analysisId);
+        setSelectedAnalysis(newAnalysis);
+      } else {
+        // Fallback: select the most recent analysis
+        const latest = await base44.entities.MarketTrend.list('-analyzed_at', 1);
+        if (latest?.length > 0) {
+          setSelectedAnalysis(latest[0]);
+        }
+      }
       setTopic("");
       setIndustry("");
       

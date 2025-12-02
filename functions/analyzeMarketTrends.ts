@@ -70,16 +70,55 @@ Deno.serve(async (req) => {
 
     console.log('[analyzeMarketTrends] Starting DEEP research for:', topic, 'Is URL:', isUrl, 'Fetch Success:', fetchSuccessful);
 
+    // Extract domain name for explicit grounding
+    let domainName = '';
+    if (isUrl) {
+      try {
+        const parsedUrl = new URL(urlToFetch);
+        domainName = parsedUrl.hostname;
+      } catch {}
+    }
+
     // 1. Gather Intelligence (Web Search)
     const researchPrompt = `Perform a comprehensive "Deep Market Research" on the topic: "${topic}"${industry_category ? ` in the ${industry_category} industry` : ''}.
 
-    ${fetchSuccessful ? 'CRITICAL: The user provided a URL (' + urlToFetch + '). I have fetched the content of this page for you. YOU MUST BASE YOUR ANALYSIS PRIMARILY ON THE "WEBSITE CONTENT SOURCE" PROVIDED BELOW. Do NOT use external knowledge if it contradicts this source. This is likely a specific product or company that shares a name with something else. IGNORE unrelated famous acronyms (like "KNX Home Automation") unless the website content explicitly mentions them. Focus ONLY on what is described in the source text.' : ''}
+${fetchSuccessful ? `
+###############################################################################
+# MANDATORY INSTRUCTION - READ CAREFULLY
+###############################################################################
+The user is asking about a SPECIFIC WEBSITE: ${urlToFetch} (domain: ${domainName})
+
+I have fetched the actual content of this website for you below. 
+
+YOU MUST:
+1. Analyze ONLY the company/product described in the WEBSITE CONTENT SOURCE below
+2. The website "${domainName}" is NOT related to "KNX home automation protocol" or "KNX Association" - those are COMPLETELY DIFFERENT things
+3. If the website content mentions "psychographic", "intelligence", "AI", "behavioral analytics" - that is what this company does
+4. Base your ENTIRE analysis on what the website actually says
+
+DO NOT:
+- Confuse this with KNX home automation (that is a building automation protocol, NOT this company)
+- Use any external knowledge that contradicts the website content
+- Hallucinate features or services not mentioned on the website
+###############################################################################
+` : ''}
     
-    ${!fetchSuccessful && isUrl ? 'CRITICAL: The user provided a URL (' + urlToFetch + ') but I could not fetch its content directly. You must use your browsing tool to visit this URL or search specifically for this domain to understand what it is. Do NOT assume it refers to a common acronym without verifying the domain first.' : ''}
+${!fetchSuccessful && isUrl ? `
+###############################################################################
+# CRITICAL - URL PROVIDED BUT CONTENT NOT FETCHED
+###############################################################################
+The user wants analysis of: ${urlToFetch} (domain: ${domainName})
 
-    ${contextData}
+I could NOT fetch the content directly. You MUST:
+1. Search specifically for "${domainName}" to find what this website/company actually is
+2. DO NOT assume it's related to "KNX home automation" - verify the actual domain first
+3. Look for recent information about this specific domain
+###############################################################################
+` : ''}
 
-    You must use your internet access to find REAL, CURRENT data. Do not hallucinate numbers. If exact numbers aren't found, provide realistic estimates based on available data.
+${contextData}
+
+You must use your internet access to find REAL, CURRENT data. Do not hallucinate numbers. If exact numbers aren't found, provide realistic estimates based on available data.
 
     I need a complete strategic market analysis covering:
     1. Executive Summary: High-level state of the market.
