@@ -444,8 +444,6 @@ const DeepResearchReport = ({ data }) => {
 
 // --- Main Page Component ---
 
-import { base44 } from "@/api/base44Client";
-
 export default function MarketIntelligencePage() {
   const [topic, setTopic] = useState("");
   const [industry, setIndustry] = useState("");
