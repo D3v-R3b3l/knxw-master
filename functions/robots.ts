@@ -8,7 +8,7 @@ Allow: /
 Allow: /Landing
 Allow: /Documentation
 Allow: /Developers
-Allow: /ai
+Allow: /api/functions/ai
 Allow: /Pricing
 Allow: /Privacy
 Allow: /Terms

@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     const staticPages = [
       { loc: '/', priority: '1.0', changefreq: 'daily' },
       { loc: '/Landing', priority: '1.0', changefreq: 'daily' },
-      { loc: '/ai', priority: '1.0', changefreq: 'monthly' },
+      { loc: '/api/functions/ai', priority: '1.0', changefreq: 'monthly' },
       { loc: '/Documentation', priority: '0.9', changefreq: 'weekly' },
       { loc: '/Developers', priority: '0.9', changefreq: 'weekly' },
       { loc: '/Pricing', priority: '0.9', changefreq: 'monthly' },
