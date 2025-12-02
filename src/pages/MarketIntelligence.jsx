@@ -199,10 +199,10 @@ const DeepResearchReport = ({ data }) => {
           <Card className="bg-gradient-to-br from-[#111] to-[#1a1a1a] border-[#262626]">
             <CardContent className="p-6">
               <h4 className="text-[#a3a3a3] text-sm font-medium mb-1">Market Size</h4>
-              <div className="text-3xl font-bold text-white mb-4">{market_dynamics?.market_size || "N/A"}</div>
+              <div className="text-lg font-bold text-white mb-4 break-words">{market_dynamics?.market_size || "N/A"}</div>
               
               <h4 className="text-[#a3a3a3] text-sm font-medium mb-1">Growth Rate</h4>
-              <div className="text-3xl font-bold text-[#10b981] mb-4">{market_dynamics?.growth_rate || "N/A"}</div>
+              <div className="text-lg font-bold text-[#10b981] mb-4 break-words">{market_dynamics?.growth_rate || "N/A"}</div>
               
               <h4 className="text-[#a3a3a3] text-sm font-medium mb-1">Outlook</h4>
               <Badge className={`

@@ -79,85 +79,34 @@ Deno.serve(async (req) => {
       } catch {}
     }
 
-    // SPECIAL HANDLING: If knxw.app, we KNOW exactly what it is - override with hardcoded accurate info
-    const isKnxwApp = domainName === 'knxw.app' || topic.toLowerCase().includes('knxw.app');
-    
-    const knxwAppDescription = `
-knXw (pronounced "know") is a PSYCHOGRAPHIC INTELLIGENCE PLATFORM - a B2B SaaS product.
-
-WHAT knXw ACTUALLY IS:
-- "The Universal Intelligence Layer" for psychographic analytics
-- A platform that provides psychological/behavioral profiling of users
-- Helps businesses understand WHY users do what they do (motivations, cognitive styles, personality traits)
-- Offers real-time psychographic profiling, AI-powered insights, and adaptive engagement tools
-
-KEY FEATURES:
-- Psychographic Profiling: Automatically generates psychological profiles revealing motivations and personality traits
-- GameDev Intelligence: Player motivation analysis, adaptive difficulty, churn prediction for games
-- Market Intelligence: Analyze competitors through a psychographic lens
-- Developer Platform: RESTful APIs, SDKs, webhooks
-- Content Engine: Auto-recommend content based on psychological profiles
-- AI Automation: Deploy intelligent agents for personalized engagements
-
-PRICING TIERS:
-- Developer: Free (1,000 monthly credits)
-- Growth: $99/mo (10K-50K credits)  
-- Pro: $499/mo (100K-500K credits)
-- Enterprise: Custom pricing
-
-TARGET MARKET: B2B SaaS - developers, e-commerce, gaming companies, EdTech, healthcare, marketing teams
-
-COMPETITIVE SPACE: Behavioral analytics, customer data platforms, personalization engines (competitors might include Segment, Amplitude, Mixpanel, but knXw focuses specifically on PSYCHOGRAPHIC/psychological profiling rather than just behavioral analytics)
-
-IMPORTANT: knXw has NOTHING to do with "KNX home automation protocol" or building automation. The similar name is coincidental. knXw is a SOFTWARE PLATFORM for PSYCHOGRAPHIC INTELLIGENCE.
-`;
-
     // 1. Gather Intelligence (Web Search)
     const researchPrompt = `Perform a comprehensive "Deep Market Research" on the topic: "${topic}"${industry_category ? ` in the ${industry_category} industry` : ''}.
 
-${isKnxwApp ? `
+${fetchSuccessful ? `
 ###############################################################################
-# CRITICAL: THIS IS ABOUT knXw.app - A PSYCHOGRAPHIC INTELLIGENCE PLATFORM
+# CRITICAL: ANALYZE THE WEBSITE CONTENT BELOW - NOT SOMETHING ELSE
 ###############################################################################
-DO NOT CONFUSE WITH KNX HOME AUTOMATION. THEY ARE COMPLETELY UNRELATED.
+The user provided a URL: ${urlToFetch} (domain: ${domainName})
 
-Here is the VERIFIED information about knXw.app:
-${knxwAppDescription}
+I fetched the actual content. YOU MUST BASE YOUR ANALYSIS ON THIS CONTENT ONLY.
 
-Your analysis MUST be about this psychographic intelligence SaaS platform.
-Analyze the B2B SaaS market for behavioral/psychographic analytics tools.
-###############################################################################
-` : fetchSuccessful ? `
-###############################################################################
-# MANDATORY INSTRUCTION - READ CAREFULLY
-###############################################################################
-The user is asking about a SPECIFIC WEBSITE: ${urlToFetch} (domain: ${domainName})
-
-I have fetched the actual content of this website for you below. 
-
-YOU MUST:
-1. Analyze ONLY the company/product described in the WEBSITE CONTENT SOURCE below
-2. The website "${domainName}" is NOT related to "KNX home automation protocol" or "KNX Association" - those are COMPLETELY DIFFERENT things
-3. If the website content mentions "psychographic", "intelligence", "AI", "behavioral analytics" - that is what this company does
-4. Base your ENTIRE analysis on what the website actually says
-
-DO NOT:
-- Confuse this with KNX home automation (that is a building automation protocol, NOT this company)
-- Use any external knowledge that contradicts the website content
-- Hallucinate features or services not mentioned on the website
+RULES:
+1. Read the WEBSITE CONTENT SOURCE section below carefully
+2. Your analysis must describe what THIS website/company actually does based on that content
+3. Do NOT substitute a different company or product with a similar name
+4. If the content mentions specific features, pricing, or services - use THOSE in your analysis
+5. Keep values concise (e.g., "$50B" not long sentences with markdown links)
 ###############################################################################
 ` : ''}
     
-${!fetchSuccessful && isUrl && !isKnxwApp ? `
+${!fetchSuccessful && isUrl ? `
 ###############################################################################
-# CRITICAL - URL PROVIDED BUT CONTENT NOT FETCHED
+# URL PROVIDED - CONTENT NOT FETCHED
 ###############################################################################
-The user wants analysis of: ${urlToFetch} (domain: ${domainName})
+Analyze: ${urlToFetch} (domain: ${domainName})
 
-I could NOT fetch the content directly. You MUST:
-1. Search specifically for "${domainName}" to find what this website/company actually is
-2. DO NOT assume it's related to "KNX home automation" - verify the actual domain first
-3. Look for recent information about this specific domain
+Use your web search to find information about this specific domain.
+Do NOT assume what it is - verify first.
 ###############################################################################
 ` : ''}
 
@@ -190,8 +139,8 @@ You must use your internet access to find REAL, CURRENT data. Do not hallucinate
           market_dynamics: {
             type: "object",
             properties: {
-              market_size: { type: "string", description: "Current market size with currency (e.g. $50B)" },
-              growth_rate: { type: "string", description: "Projected growth rate (e.g. 12% CAGR)" },
+              market_size: { type: "string", description: "Current market size, SHORT format like '$50B' or '$2.5M' - no URLs or markdown" },
+              growth_rate: { type: "string", description: "Projected growth rate, SHORT format like '12% CAGR' - no URLs or markdown" },
               outlook: { type: "string", enum: ["Positive", "Neutral", "Negative", "Volatile"] },
               key_trends: {
                 type: "array",
