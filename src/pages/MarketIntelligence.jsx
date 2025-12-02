@@ -19,7 +19,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AnimatedDonut from "@/components/charts/AnimatedDonut";
 
 import AnimatedLine from "@/components/charts/AnimatedLine";
-import { CheckSquare, Square } from "lucide-react";
+import { CheckSquare, Square, Trash2 } from "lucide-react";
 
 // --- Components ---
 
@@ -37,7 +37,7 @@ const InsightCard = ({ title, children, icon: Icon, color = "blue", className = 
   </Card>
 );
 
-const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onCompare, selectedForComparison }) => (
+const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onCompare, selectedForComparison, onDelete }) => (
   <div className="w-full lg:w-72 bg-[#0f0f0f] border-r border-[#262626] flex flex-col h-full lg:h-auto lg:min-h-[calc(100vh-4rem)]">
     <div className="p-4 border-b border-[#262626] flex justify-between items-center">
       <h3 className="text-sm font-semibold text-[#a3a3a3] uppercase tracking-wider">Recent Research</h3>
@@ -46,7 +46,7 @@ const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onCompare, sel
       {analyses.map((item) => {
         const isSelectedForCompare = selectedForComparison.includes(item.id);
         return (
-          <div key={item.id} className="flex gap-2 group">
+          <div key={item.id} className="flex gap-2 group relative">
             <button
                onClick={() => onCompare(item.id)}
                className="p-3 hover:bg-[#1a1a1a] rounded-lg flex items-center justify-center"
@@ -56,7 +56,7 @@ const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onCompare, sel
             </button>
             <button
               onClick={() => onSelect(item)}
-              className={`flex-1 text-left p-3 rounded-lg transition-all ${
+              className={`flex-1 text-left p-3 rounded-lg transition-all pr-8 ${
                 selectedId === item.id 
                   ? 'bg-[#00d4ff]/10 border border-[#00d4ff]/30' 
                   : 'hover:bg-[#1a1a1a] border border-transparent'
@@ -69,6 +69,16 @@ const ResearchHistorySidebar = ({ analyses, onSelect, selectedId, onCompare, sel
                 </span>
                 {selectedId === item.id && <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />}
               </div>
+            </button>
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(item.id);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-500 hover:text-red-500 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity bg-[#0f0f0f]/80 backdrop-blur-sm"
+                title="Delete analysis"
+            >
+                <Trash2 className="w-4 h-4" />
             </button>
           </div>
         );
@@ -543,6 +553,23 @@ export default function MarketIntelligencePage() {
       }
   };
 
+  const handleDelete = async (id) => {
+      if (!window.confirm("Are you sure you want to delete this research session?")) return;
+      try {
+          await base44.entities.MarketTrend.delete(id);
+          setAnalyses(prev => prev.filter(a => a.id !== id));
+          if (selectedAnalysis?.id === id) {
+              setSelectedAnalysis(null);
+          }
+          if (selectedForComparison.includes(id)) {
+              toggleComparisonSelection(id);
+          }
+      } catch (error) {
+          console.error("Failed to delete analysis:", error);
+          alert("Failed to delete analysis");
+      }
+  };
+
   return (
     <SubscriptionGate requiredPlan="pro" feature="Deep Market Intelligence">
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col lg:flex-row">
@@ -558,6 +585,7 @@ export default function MarketIntelligencePage() {
             }}
             onCompare={toggleComparisonSelection}
             selectedForComparison={selectedForComparison}
+            onDelete={handleDelete}
             />
             {selectedForComparison.length >= 2 && (
                 <div className="p-4 bg-[#111] border-t border-[#262626] lg:w-72">
