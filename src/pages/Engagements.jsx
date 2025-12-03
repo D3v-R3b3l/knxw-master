@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
-import { EngagementRule, EngagementTemplate, ClientApp, User } from '@/entities/all';
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +28,7 @@ export default function EngagementsPage() {
   useEffect(() => {
     (async () => {
       try {
-        const me = await User.me();
+        const me = await base44.auth.me();
         // Engagements management is admin-only
         setIsAdmin(me?.role === 'admin');
       } catch (e) {
@@ -44,9 +43,7 @@ export default function EngagementsPage() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [appsData] = await Promise.all([
-        ClientApp.list('-created_date')
-      ]);
+      const appsData = await base44.entities.ClientApp.list('-created_date');
       
       setClientApps(appsData);
       
@@ -56,13 +53,13 @@ export default function EngagementsPage() {
       
       if (selectedApp) {
         const [rulesData, templatesData] = await Promise.all([
-          EngagementRule.filter({ client_app_id: selectedApp.id }, '-created_date'),
-          EngagementTemplate.filter({ client_app_id: selectedApp.id }, '-created_date')
+          base44.entities.EngagementRule.filter({ client_app_id: selectedApp.id }, '-created_date'),
+          base44.entities.EngagementTemplate.filter({ client_app_id: selectedApp.id }, '-created_date')
         ]);
         
         setRules(rulesData);
         setTemplates(templatesData);
-      } else if (appsData.length === 0) { // If no apps, ensure rules and templates are empty
+      } else if (appsData.length === 0) {
         setRules([]);
         setTemplates([]);
       }
@@ -70,7 +67,7 @@ export default function EngagementsPage() {
       console.error('Error loading engagement data:', error);
     }
     setIsLoading(false);
-  }, [selectedApp, setClientApps, setSelectedApp, setRules, setTemplates, setIsLoading]); // Include all external dependencies, though setters are stable
+  }, [selectedApp]);
 
   useEffect(() => {
     if (isAdmin && roleChecked) { // Only load data if admin and role check is complete
@@ -81,7 +78,7 @@ export default function EngagementsPage() {
   const handleToggleRuleStatus = async (rule) => {
     const newStatus = rule.status === 'active' ? 'inactive' : 'active';
     try {
-      await EngagementRule.update(rule.id, { status: newStatus });
+      await base44.entities.EngagementRule.update(rule.id, { status: newStatus });
       loadData();
     } catch (error) {
       console.error('Error updating rule status:', error);

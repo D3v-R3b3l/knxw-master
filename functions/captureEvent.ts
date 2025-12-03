@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 // Simple in-memory rate limiter
 const rateLimitMap = new Map();
@@ -56,14 +56,13 @@ Deno.serve(async (req) => {
 
     const base44 = createClientFromRequest(req);
     
-    // Validate API key exists and is active
-    const apiKeyPrefix = apiKey.substring(0, 12);
-    const apiKeyRecords = await base44.asServiceRole.entities.ApiKey.filter({
-      key_prefix: apiKeyPrefix,
+    // Validate API key exists and is active via ClientApp
+    const clientApps = await base44.asServiceRole.entities.ClientApp.filter({
+      api_key: apiKey,
       status: 'active'
     }, null, 1);
 
-    if (!apiKeyRecords || apiKeyRecords.length === 0) {
+    if (!clientApps || clientApps.length === 0) {
       return new Response(JSON.stringify({ error: 'Invalid API key' }), {
         status: 401,
         headers: {
@@ -73,10 +72,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiKeyRecord = apiKeyRecords[0];
+    const clientApp = clientApps[0];
     
-    // Rate limiting by API key
-    if (!checkRateLimit(apiKeyRecord.id)) {
+    // Rate limiting by client app
+    if (!checkRateLimit(clientApp.id)) {
       return new Response(JSON.stringify({ 
         error: 'Rate limit exceeded. Maximum 100 events per minute.' 
       }), {

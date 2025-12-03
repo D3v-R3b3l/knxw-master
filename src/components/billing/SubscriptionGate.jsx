@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { User } from '@/entities/User';
-import { BillingSubscription } from '@/entities/BillingSubscription';
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -135,14 +133,14 @@ export function useSubscription() {
     let mounted = true;
     (async () => {
       try {
-        const currentUser = await User.me();
+        const currentUser = await base44.auth.me();
         if (!mounted) return;
         setIsAdmin(currentUser?.role === 'admin');
 
         // Try to load an active/trialing subscription
         let sub = null;
         try {
-          const subs = await BillingSubscription.filter({ user_id: currentUser.id });
+          const subs = await base44.entities.BillingSubscription.filter({ user_id: currentUser.id });
           sub = Array.isArray(subs)
             ? subs.find((s) => ['active', 'trialing'].includes(s.status)) || null
             : null;
@@ -178,7 +176,7 @@ export function SubscriptionGate({
   useEffect(() => {
     const loadUserAndSubscription = async () => {
       try {
-        const currentUser = await User.me();
+        const currentUser = await base44.auth.me();
         setUser(currentUser);
         
         // CRITICAL: Admin users bypass all restrictions
@@ -189,7 +187,7 @@ export function SubscriptionGate({
 
         // Load actual subscription with error handling
         try {
-          const subscriptions = await BillingSubscription.filter({ user_id: currentUser.id });
+          const subscriptions = await base44.entities.BillingSubscription.filter({ user_id: currentUser.id });
           const activeSub = subscriptions.find(s => ['active', 'trialing'].includes(s.status));
           setSubscription(activeSub || { plan_key: 'developer', status: 'active' });
         } catch (subError) {
