@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Zap, Plus, Play, Pause, BarChart, MessageSquare, Settings, Target, Clock, User as UserIcon, AlertTriangle, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Zap, Plus, Play, Pause, BarChart, MessageSquare, Settings, Target, Clock, User as UserIcon, AlertTriangle, CheckCircle2, ArrowRight, Sparkles, FlaskConical } from 'lucide-react';
 
 import EngagementRuleBuilder from '../components/engagements/EngagementRuleBuilder';
 import EngagementTemplateBuilder from '../components/engagements/EngagementTemplateBuilder';
 import EngagementAnalytics from '../components/engagements/EngagementAnalytics';
+import AIEngagementAssistant from '../components/engagements/AIEngagementAssistant';
+import AIABTestSuggestions from '../components/engagements/AIABTestSuggestions';
 import PageHeader from '../components/ui/PageHeader';
 
 export default function EngagementsPage() {
@@ -24,6 +26,9 @@ export default function EngagementsPage() {
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [roleChecked, setRoleChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showABSuggestions, setShowABSuggestions] = useState(false);
+  const [selectedContentForAB, setSelectedContentForAB] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -173,18 +178,26 @@ export default function EngagementsPage() {
 
         {selectedApp ? (
           <Tabs defaultValue="templates" className="space-y-6">
-            <TabsList className="bg-[#111111] border border-[#262626]">
+            <TabsList className="bg-[#111111] border border-[#262626] flex-wrap">
               <TabsTrigger value="templates" className="data-[state=active]:bg-[#fbbf24] data-[state=active]:text-[#0a0a0a]">
                 <MessageSquare className="w-4 h-4 mr-2" />
-                1. Templates ({templates.length})
+                Templates ({templates.length})
               </TabsTrigger>
               <TabsTrigger value="rules" className="data-[state=active]:bg-[#fbbf24] data-[state=active]:text-[#0a0a0a]">
                 <Target className="w-4 h-4 mr-2" />
-                2. Engagement Rules ({rules.length})
+                Rules ({rules.length})
+              </TabsTrigger>
+              <TabsTrigger value="ai-generator" className="data-[state=active]:bg-[#8b5cf6] data-[state=active]:text-white">
+                <Sparkles className="w-4 h-4 mr-2" />
+                AI Generator
+              </TabsTrigger>
+              <TabsTrigger value="ab-testing" className="data-[state=active]:bg-[#10b981] data-[state=active]:text-white">
+                <FlaskConical className="w-4 h-4 mr-2" />
+                A/B Testing
               </TabsTrigger>
               <TabsTrigger value="analytics" className="data-[state=active]:bg-[#fbbf24] data-[state=active]:text-[#0a0a0a]">
                 <BarChart className="w-4 h-4 mr-2" />
-                3. Analytics
+                Analytics
               </TabsTrigger>
             </TabsList>
 
@@ -508,6 +521,68 @@ export default function EngagementsPage() {
                   })
                 )}
               </div>
+            </TabsContent>
+
+            <TabsContent value="ai-generator" className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-white mb-1">AI Content Generator</h2>
+                <p className="text-sm text-[#a3a3a3]">Generate compelling engagement content with AI assistance</p>
+              </div>
+              <AIEngagementAssistant 
+                onSelectContent={(content) => {
+                  // Pre-fill template builder with AI-generated content
+                  setEditingTemplate({
+                    type: content.channel === 'email' ? 'notification' : content.channel === 'push' ? 'notification' : 'checkin',
+                    content: {
+                      title: content.title,
+                      message: content.message,
+                      buttons: content.cta ? [{ text: content.cta, action: 'dismiss' }] : []
+                    }
+                  });
+                  setShowTemplateBuilder(true);
+                }}
+              />
+            </TabsContent>
+
+            <TabsContent value="ab-testing" className="space-y-6">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-white mb-1">AI A/B Test Suggestions</h2>
+                <p className="text-sm text-[#a3a3a3]">Get AI-powered recommendations for optimizing your engagement copy</p>
+              </div>
+              
+              {templates.length > 0 && (
+                <div className="mb-6">
+                  <label className="text-sm text-[#a3a3a3] mb-2 block">Select a template to analyze</label>
+                  <div className="flex flex-wrap gap-2">
+                    {templates.map(t => (
+                      <Button
+                        key={t.id}
+                        variant={selectedContentForAB?.id === t.id ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedContentForAB(t)}
+                        className={selectedContentForAB?.id === t.id 
+                          ? "bg-[#10b981] text-white" 
+                          : "border-[#262626] text-[#a3a3a3]"
+                        }
+                      >
+                        {t.name}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <AIABTestSuggestions 
+                currentContent={selectedContentForAB 
+                  ? `Title: ${selectedContentForAB.content?.title || ''}\nBody: ${selectedContentForAB.content?.message || ''}`
+                  : null
+                }
+                onCreateTest={(testData) => {
+                  // Could integrate with ABTestingStudio page
+                  console.log('Create A/B test:', testData);
+                  alert(`A/B Test "${testData.name}" created! Navigate to A/B Testing Studio to configure.`);
+                }}
+              />
             </TabsContent>
 
             <TabsContent value="analytics">
