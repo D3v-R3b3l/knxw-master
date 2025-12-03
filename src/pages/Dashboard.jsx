@@ -475,7 +475,7 @@ export default function Dashboard() {// Renamed from DashboardContent
                 </div>
 
                 <div data-tour="benchmarking">
-                  <BenchmarkingPanel industry="SaaS" />
+                  <BenchmarkingPanel industry={selectedApp?.industry || "SaaS"} />
                 </div>
                 
                 <EvidenceViewer />

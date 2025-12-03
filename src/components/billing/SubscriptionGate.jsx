@@ -15,6 +15,13 @@ const PLAN_HIERARCHY = {
   enterprise: 3
 };
 
+// Stripe Price IDs - synced with actual Stripe catalog
+const STRIPE_PRICES = {
+  developer: 'price_1RxOiNPXI4AuHlkXnpgSAkdv', // $0/mo
+  growth: 'price_1RxOkgPXI4AuHlkXhuWHXY42',    // $99/mo
+  pro: 'price_1RxOlFPXI4AuHlkXQQHyZAPp'        // $499/mo
+};
+
 const PLAN_DETAILS = {
   developer: {
     name: "Developer",
@@ -22,15 +29,14 @@ const PLAN_DETAILS = {
     period: "forever",
     icon: Code,
     gradient: "from-[#6b7280] to-[#4b5563]",
+    stripePriceId: STRIPE_PRICES.developer,
     features: [
       "1,000 monthly psychographic credits",
       "Basic psychographic profiling", 
       "Real-time event stream",
       "Standard dashboards",
       "JavaScript SDK",
-      "Documentation & forum support",
-      "Read-only Journey builder access",
-      "In-app engagements only"
+      "Documentation & forum support"
     ],
     limits: {
       monthly_credits: 1000,
@@ -38,8 +44,6 @@ const PLAN_DETAILS = {
       eventbridge_events: 1000,
       ses_emails: 0,
       conversions_per_month: 0,
-      sms_messages: 0,
-      push_notifications: 0,
       active_journeys: 0,
       scheduled_reports: 0,
       agent_actions: 0,
@@ -56,17 +60,13 @@ const PLAN_DETAILS = {
     period: "per month", 
     icon: Zap,
     gradient: "from-[#10b981] to-[#059669]",
+    stripePriceId: STRIPE_PRICES.growth,
     features: [
-      "10,000 monthly psychographic credits",
+      "10,000-50,000 monthly credits",
       "Advanced psychographic profiling",
-      "Full Journey Builder access (5 active journeys)",
-      "Executive Dashboard with 1 scheduled weekly report",
-      "In-app, Email, and SMS engagements",
-      "100 SMS messages + 1,000 push notifications/month",
-      "AI Agents with 500 actions/month",
-      "Standard integrations (HubSpot, Meta CAPI)",
-      "AWS exports (100K events, 1K SES emails)",
-      "Email support (24-hour response)"
+      "Limited Adaptive Engagement (2 segments)",
+      "Standard integrations (HubSpot)",
+      "Email support"
     ],
     limits: {
       monthly_credits: 10000,
@@ -74,8 +74,6 @@ const PLAN_DETAILS = {
       eventbridge_events: 100000,
       ses_emails: 1000,
       conversions_per_month: 5000,
-      sms_messages: 100,
-      push_notifications: 1000,
       active_journeys: 5,
       scheduled_reports: 1,
       agent_actions: 500,
@@ -92,28 +90,24 @@ const PLAN_DETAILS = {
     period: "per month",
     icon: Crown,
     gradient: "from-[#00d4ff] to-[#0ea5e9]",
+    stripePriceId: STRIPE_PRICES.pro,
     features: [
-      "100,000 monthly psychographic credits",
-      "Unlimited active journeys",
-      "Executive Dashboard with 5 scheduled weekly reports",
-      "All engagement channels (In-app, Email, SMS, Push)",
-      "1,000 SMS messages + 10,000 push notifications/month",
-      "Unlimited AI agent actions",
-      "Full Meta + Google + GA4 attribution (50K conversions/month)",
-      "Real-time AWS streaming (1M EventBridge events, 10K SES emails)",
-      "Priority support + monthly strategy calls + account manager"
+      "100,000-500,000 monthly credits",
+      "Unlimited Adaptive Engagement",
+      "Advanced Batch Analytics",
+      "Full API Access",
+      "Priority Support",
+      "Dedicated Account Manager"
     ],
     limits: {
       monthly_credits: 100000,
-      s3_exports: -1, // unlimited
+      s3_exports: -1,
       eventbridge_events: 1000000,
       ses_emails: 10000,
       conversions_per_month: 50000,
-      sms_messages: 1000,
-      push_notifications: 10000,
-      active_journeys: -1, // unlimited
+      active_journeys: -1,
       scheduled_reports: 5,
-      agent_actions: -1, // unlimited
+      agent_actions: -1,
       hubspot_sync: true,
       advanced_analytics: true,
       engagement_rules: true,
