@@ -97,7 +97,7 @@ export default function HighlightsPanel({ events }) {
   }, [events]);
 
   return (
-    <Card className="bg-[#111111] border-[#262626]">
+    <Card className="bg-[#111111] border-[#262626] transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,212,255,0.2)] hover:border-[#00d4ff]/40">
       <CardHeader className="p-6">
         <CardTitle className="text-white">Highlights</CardTitle>
       </CardHeader>
@@ -106,7 +106,7 @@ export default function HighlightsPanel({ events }) {
           <h4 className="text-sm font-semibold text-white mb-2">Top Pages</h4>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {topPages.map((r) => (
-              <div key={r.path} className="p-3 rounded-lg bg-[#1a1a1a] border border-[#262626]">
+              <div key={r.path} className="p-3 rounded-lg bg-[#1a1a1a] border border-[#262626] transition-all duration-300 hover:border-[#00d4ff]/40 hover:shadow-[0_0_15px_rgba(0,212,255,0.1)]">
                 <div className="text-sm text-white truncate" title={r.path}>{r.path}</div>
                 <div className="text-xs text-[#a3a3a3] mt-1">
                   Traffic: {r.total} • Conversions: {r.conv} • Bounce: {r.exits}
@@ -125,7 +125,7 @@ export default function HighlightsPanel({ events }) {
             {insights.length === 0 ? (
               <div className="text-[#a3a3a3] text-sm">No notable changes detected in the last hour.</div>
             ) : insights.map((it, i) => (
-              <div key={i} className="p-3 rounded-lg bg-[#1a1a1a] border border-[#262626]">
+              <div key={i} className="p-3 rounded-lg bg-[#1a1a1a] border border-[#262626] transition-all duration-300 hover:border-[#00d4ff]/40 hover:shadow-[0_0_15px_rgba(0,212,255,0.1)]">
                 <div className="flex items-center gap-2 text-white">
                   <it.icon className={`w-4 h-4 ${it.type === "warning" ? "text-[#f59e0b]" : it.type === "alert" ? "text-[#ef4444]" : "text-[#10b981]"}`} />
                   <div className="text-sm font-medium">{it.title}</div>

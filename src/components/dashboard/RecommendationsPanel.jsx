@@ -224,7 +224,7 @@ export default function RecommendationsPanel({ userId, compact = false }) {
     return (
       <div 
         id={`rec-${recommendation.id}`}
-        className={`bg-[#0a0a0a] border rounded-lg p-4 hover:border-[#00d4ff]/40 transition-all duration-200 cursor-pointer ${
+        className={`bg-[#0a0a0a] border rounded-lg p-4 hover:border-[#00d4ff]/50 hover:shadow-[0_0_20px_rgba(0,212,255,0.15)] transition-all duration-300 cursor-pointer ${
           isViewed ? 'border-[#262626]' : 'border-[#00d4ff]/20'
         } ${isClicked ? 'bg-[#00d4ff]/5' : ''}`}
         onClick={handleClick}
@@ -314,7 +314,7 @@ export default function RecommendationsPanel({ userId, compact = false }) {
   }
 
   return (
-    <Card className="bg-[#111111] border-[#262626]">
+    <Card className="bg-[#111111] border-[#262626] transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,212,255,0.2)] hover:border-[#00d4ff]/40">
       <CardHeader className="p-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-white text-lg flex items-center gap-2">

@@ -291,7 +291,7 @@ export default function ChurnPredictionPanel() {
   const totalUsers = churnAnalysis.highRisk.length + churnAnalysis.mediumRisk.length + churnAnalysis.lowRisk.length;
 
   return (
-    <Card className="bg-[#111111] border-[#262626]">
+    <Card className="bg-[#111111] border-[#262626] transition-all duration-300 hover:shadow-[0_0_40px_rgba(239,68,68,0.2)] hover:border-[#ef4444]/40">
       <CardHeader className="p-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-white text-lg flex items-center gap-2">
@@ -310,7 +310,7 @@ export default function ChurnPredictionPanel() {
       <CardContent className="p-4 pt-0 space-y-4">
         {/* Risk Distribution */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-lg p-3 text-center">
+          <div className="bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-lg p-3 text-center transition-all duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] hover:border-[#ef4444]/40">
             <div className="text-2xl font-bold text-[#ef4444] mb-1">
               {churnAnalysis.highRisk.length}
             </div>
@@ -320,7 +320,7 @@ export default function ChurnPredictionPanel() {
             </div>
           </div>
 
-          <div className="bg-[#fbbf24]/10 border border-[#fbbf24]/20 rounded-lg p-3 text-center">
+          <div className="bg-[#fbbf24]/10 border border-[#fbbf24]/20 rounded-lg p-3 text-center transition-all duration-300 hover:shadow-[0_0_20px_rgba(251,191,36,0.15)] hover:border-[#fbbf24]/40">
             <div className="text-2xl font-bold text-[#fbbf24] mb-1">
               {churnAnalysis.mediumRisk.length}
             </div>
@@ -330,7 +330,7 @@ export default function ChurnPredictionPanel() {
             </div>
           </div>
 
-          <div className="bg-[#10b981]/10 border border-[#10b981]/20 rounded-lg p-3 text-center">
+          <div className="bg-[#10b981]/10 border border-[#10b981]/20 rounded-lg p-3 text-center transition-all duration-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] hover:border-[#10b981]/40">
             <div className="text-2xl font-bold text-[#10b981] mb-1">
               {churnAnalysis.lowRisk.length}
             </div>

@@ -142,7 +142,7 @@ export default function BenchmarkingPanel({ industry = 'Default' }) {
     const TrendIcon = data.variance >= 0 ? TrendingUp : TrendingDown;
     
     return (
-      <div className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4">
+      <div className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 transition-all duration-300 hover:border-[#8b5cf6]/30 hover:shadow-[0_0_15px_rgba(139,92,246,0.1)]">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Icon className="w-4 h-4 text-[#00d4ff]" />
@@ -178,7 +178,7 @@ export default function BenchmarkingPanel({ industry = 'Default' }) {
   };
 
   return (
-    <Card className="bg-[#111111] border-[#262626]">
+    <Card className="bg-[#111111] border-[#262626] transition-all duration-300 hover:shadow-[0_0_40px_rgba(139,92,246,0.2)] hover:border-[#8b5cf6]/40">
       <CardHeader className="p-4">
         <CardTitle className="text-white text-lg flex items-center gap-2">
           <BarChart3 className="w-5 h-5 text-[#8b5cf6]" />
