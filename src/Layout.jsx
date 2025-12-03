@@ -387,10 +387,10 @@ export default function Layout({ children, currentPageName }) {
                         <Link
                           key={item.title}
                           to={href}
-                          className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                          className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
                             isActive
-                              ? 'bg-white/10 border border-white/10 text-white shadow-[0_0_15px_rgba(0,212,255,0.1)] backdrop-blur-md'
-                              : 'text-[#a3a3a3] hover:text-white hover:bg-white/5 hover:backdrop-blur-sm'
+                              ? 'bg-white/10 border border-[#00d4ff]/40 text-white shadow-[0_0_20px_rgba(0,212,255,0.2)] backdrop-blur-md'
+                              : 'text-[#a3a3a3] hover:text-white hover:bg-white/5 hover:backdrop-blur-sm hover:shadow-[0_0_15px_rgba(0,212,255,0.1)] hover:border-[#00d4ff]/20 border border-transparent'
                           } ${isCollapsed ? 'justify-center' : ''}`}
                           title={isCollapsed ? `${item.title} — ${item.description}` : item.description}
                         >
@@ -416,10 +416,10 @@ export default function Layout({ children, currentPageName }) {
                         <Link
                           key={item.title}
                           to={href}
-                          className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                          className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
                             isActive
-                              ? 'bg-white/10 border border-white/10 text-white shadow-[0_0_15px_rgba(0,212,255,0.1)] backdrop-blur-md'
-                              : 'text-[#a3a3a3] hover:text-white hover:bg-white/5 hover:backdrop-blur-sm'
+                              ? 'bg-white/10 border border-[#00d4ff]/40 text-white shadow-[0_0_20px_rgba(0,212,255,0.2)] backdrop-blur-md'
+                              : 'text-[#a3a3a3] hover:text-white hover:bg-white/5 hover:backdrop-blur-sm hover:shadow-[0_0_15px_rgba(0,212,255,0.1)] hover:border-[#00d4ff]/20 border border-transparent'
                           }`}
                         >
                           <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -501,26 +501,26 @@ export default function Layout({ children, currentPageName }) {
           {/* Floating Action Buttons */}
           <div className="fixed bottom-4 right-4 flex flex-col gap-3 z-40">
             <Button
-              onClick={() => setShowAIAssistant(true)}
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] shadow-lg hover:scale-110 transition-transform"
-              title="AI Assistant"
-            >
-              <Bot className="w-6 h-6" />
-            </Button>
-            <Button
-              onClick={() => setShowRoleOnboarding(true)}
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-[#ec4899] to-[#db2777] text-white shadow-lg hover:scale-110 transition-transform"
-              title={`${userRole.charAt(0).toUpperCase() + userRole.slice(1)} Onboarding`}
-            >
-              <GraduationCap className="w-6 h-6" />
-            </Button>
-            <Button
-              onClick={() => setShowWalkthrough(true)}
-              className="w-14 h-14 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white shadow-lg hover:scale-110 transition-transform"
-              title="Interactive Walkthrough"
-            >
-              <HelpCircle className="w-6 h-6" />
-            </Button>
+                onClick={() => setShowAIAssistant(true)}
+                className="w-14 h-14 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.5)]"
+                title="AI Assistant"
+              >
+                <Bot className="w-6 h-6" />
+              </Button>
+              <Button
+                onClick={() => setShowRoleOnboarding(true)}
+                className="w-14 h-14 rounded-full bg-gradient-to-br from-[#ec4899] to-[#db2777] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]"
+                title={`${userRole.charAt(0).toUpperCase() + userRole.slice(1)} Onboarding`}
+              >
+                <GraduationCap className="w-6 h-6" />
+              </Button>
+              <Button
+                onClick={() => setShowWalkthrough(true)}
+                className="w-14 h-14 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+                title="Interactive Walkthrough"
+              >
+                <HelpCircle className="w-6 h-6" />
+              </Button>
             {showBackToTop && (
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
