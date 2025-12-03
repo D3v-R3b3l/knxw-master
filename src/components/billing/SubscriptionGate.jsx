@@ -207,7 +207,9 @@ export function SubscriptionGate({
     try {
       // Invoke backend function via SDK
       const { data } = await base44.functions.invoke('createCheckout', { plan_key: planKey });
-      if (data?.url) {
+      if (data?.checkout_url) {
+        window.location.href = data.checkout_url;
+      } else if (data?.url) {
         window.location.href = data.url;
       } else {
         throw new Error('No checkout URL received');

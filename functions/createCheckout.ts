@@ -27,10 +27,11 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Stripe Price IDs from actual Stripe catalog
     const priceIdMap = {
-      developer: Deno.env.get('STRIPE_PRICE_ID_DEVELOPER'),
-      growth: Deno.env.get('STRIPE_PRICE_ID_GROWTH'),
-      pro: Deno.env.get('STRIPE_PRICE_ID_PRO')
+      developer: Deno.env.get('STRIPE_PRICE_ID_DEVELOPER') || 'price_1RxOiNPXI4AuHlkXnpgSAkdv', // $0/mo
+      growth: Deno.env.get('STRIPE_PRICE_ID_GROWTH') || 'price_1RxOkgPXI4AuHlkXhuWHXY42',       // $99/mo
+      pro: Deno.env.get('STRIPE_PRICE_ID_PRO') || 'price_1RxOlFPXI4AuHlkXQQHyZAPp'              // $499/mo
     };
 
     const priceId = priceIdMap[plan_key];
