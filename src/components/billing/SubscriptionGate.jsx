@@ -4,9 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Crown, Zap, Code, CheckCircle, ArrowRight, Sparkles, Brain } from 'lucide-react';
-// Replace direct backend import with SDK
-// import { createCheckout } from '@/functions/createCheckout';
-import { base44 } from "@/api/base44Client";
 
 const PLAN_HIERARCHY = {
   developer: 0,
