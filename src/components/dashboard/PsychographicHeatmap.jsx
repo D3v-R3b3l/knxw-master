@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +58,7 @@ export default function PsychographicHeatmap() {
   const maxCount = Math.max(...heatmapData.map((s) => s.count), 1);
 
   return (
-    <Card className="bg-[#111111] border-[#262626]">
+    <Card className="bg-[#111111] border-[#262626] transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,212,255,0.2)] hover:border-[#00d4ff]/40">
       <CardHeader className="p-6">
         <CardTitle className="flex items-center gap-2 text-white">
           <Brain className="w-5 h-5 text-[#00d4ff]" />
@@ -84,7 +83,7 @@ export default function PsychographicHeatmap() {
             {heatmapData.map((segment, index) =>
           <div
             key={`${segment.risk_profile}-${segment.cognitive_style}-${index}`}
-            className={`p-4 rounded-lg border transition-all duration-200 hover:scale-105 ${getSegmentColor(segment.count, maxCount)}`}>
+            className={`p-4 rounded-lg border transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,212,255,0.15)] ${getSegmentColor(segment.count, maxCount)}`}>
 
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">

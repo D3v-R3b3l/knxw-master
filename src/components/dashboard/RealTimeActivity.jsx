@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -139,7 +138,7 @@ export default function RealTimeActivity({ events, isLoading }) {
   };
 
   return (
-    <Card className="bg-[#111111] border-[#262626] card-hover h-full">
+    <Card className="bg-[#111111] border-[#262626] h-full transition-all duration-300 hover:shadow-[0_0_40px_rgba(16,185,129,0.2)] hover:border-[#10b981]/40">
       <CardHeader className="p-6">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
@@ -176,7 +175,7 @@ export default function RealTimeActivity({ events, isLoading }) {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-                      className="group flex items-start gap-3 p-4 rounded-xl bg-[#141414] border border-[#262626] hover:border-[#00d4ff]/40 transition-colors"
+                      className="group flex items-start gap-3 p-4 rounded-xl bg-[#141414] border border-[#262626] hover:border-[#00d4ff]/50 hover:shadow-[0_0_20px_rgba(0,212,255,0.15)] transition-all duration-300"
                       id={`rt-${event.id || ''}`}
                     >
                       {/* Icon */}

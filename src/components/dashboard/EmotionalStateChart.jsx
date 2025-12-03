@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -103,7 +102,7 @@ export default function EmotionalStateChart({ profiles }) {
   }, [profiles]); // Re-calculate only when profiles change
 
   return (
-    <Card className="bg-[#111111] border-[#262626]">
+    <Card className="bg-[#111111] border-[#262626] transition-all duration-300 hover:shadow-[0_0_40px_rgba(236,72,153,0.2)] hover:border-[#ec4899]/40">
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
           <Heart className="w-5 h-5 text-[#ec4899]" />
