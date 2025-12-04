@@ -7,6 +7,7 @@ uniform vec2 uResolution;
 uniform vec2 uMouse;
 uniform vec3 uColor1;
 uniform vec3 uColor2;
+uniform vec3 uColor3;
 
 varying vec2 vUv;
 
@@ -39,6 +40,19 @@ float snoise(vec2 v){
   return 130.0 * dot(m, g);
 }
 
+// Fractal brownian motion for more organic look
+float fbm(vec2 p) {
+  float value = 0.0;
+  float amplitude = 0.5;
+  float frequency = 1.0;
+  for (int i = 0; i < 5; i++) {
+    value += amplitude * snoise(p * frequency);
+    amplitude *= 0.5;
+    frequency *= 2.0;
+  }
+  return value;
+}
+
 void main() {
     vec2 uv = vUv;
     
@@ -47,32 +61,62 @@ void main() {
     vec2 p = uv;
     p.x *= aspect;
 
-    // Mouse influence
+    // Mouse influence with smoother falloff
     vec2 mouse = uMouse;
     mouse.x *= aspect;
     
     float dist = distance(p, mouse);
-    float mouseInteraction = smoothstep(0.5, 0.0, dist);
+    float mouseInteraction = smoothstep(0.6, 0.0, dist) * 0.8;
 
-    // Flowing noise
-    float time = uTime * 0.1;
-    float noise1 = snoise(p * 3.0 + time);
-    float noise2 = snoise(p * 6.0 - time * 0.5 + noise1);
+    // Time variables for different speeds
+    float time = uTime * 0.08;
+    float timeFast = uTime * 0.15;
     
-    // Fluid lines
-    float lines = sin(p.x * 10.0 + p.y * 20.0 + noise2 * 5.0 + uTime);
-    lines = smoothstep(0.4, 0.5, lines) - smoothstep(0.5, 0.6, lines);
+    // Multi-layer noise for depth
+    float noise1 = fbm(p * 2.0 + time);
+    float noise2 = snoise(p * 4.0 - time * 0.5 + noise1 * 0.5);
+    float noise3 = snoise(p * 8.0 + timeFast + noise2 * 0.3);
     
-    // Mix colors
-    vec3 color = mix(uColor1, uColor2, noise2 + mouseInteraction * 0.2);
+    // Aurora-like waves
+    float wave1 = sin(p.y * 3.0 + noise1 * 2.0 + uTime * 0.2) * 0.5 + 0.5;
+    float wave2 = sin(p.x * 4.0 + noise2 * 1.5 - uTime * 0.15) * 0.5 + 0.5;
     
-    // Add glowing lines
-    color += vec3(lines) * 0.15 * uColor2;
+    // Flowing energy lines
+    float lines = sin(p.x * 15.0 + p.y * 25.0 + noise2 * 6.0 + uTime * 0.5);
+    lines = smoothstep(0.3, 0.5, lines) - smoothstep(0.5, 0.7, lines);
+    lines *= 0.15;
     
-    // Vignette
-    float vignette = smoothstep(1.5, 0.5, length(uv - 0.5));
+    // Particle-like sparkles
+    float sparkle = snoise(p * 50.0 + uTime * 2.0);
+    sparkle = pow(max(sparkle, 0.0), 8.0) * 0.3;
     
-    gl_FragColor = vec4(color * vignette, 1.0);
+    // Color mixing with three colors
+    vec3 color = uColor1;
+    color = mix(color, uColor2, noise1 * 0.5 + wave1 * 0.3 + mouseInteraction * 0.4);
+    color = mix(color, uColor3, noise2 * 0.3 + wave2 * 0.2);
+    
+    // Add glowing lines with color
+    color += lines * uColor3;
+    
+    // Add sparkles
+    color += sparkle * vec3(0.5, 0.8, 1.0);
+    
+    // Mouse glow effect
+    float mouseGlow = smoothstep(0.4, 0.0, dist);
+    color += mouseGlow * uColor3 * 0.3;
+    
+    // Subtle pulsing
+    float pulse = sin(uTime * 0.5) * 0.05 + 1.0;
+    color *= pulse;
+    
+    // Enhanced vignette with color tint
+    float vignette = smoothstep(1.6, 0.4, length(uv - 0.5));
+    color *= vignette;
+    
+    // Add subtle blue tint to dark areas
+    color += (1.0 - vignette) * vec3(0.02, 0.03, 0.06);
+    
+    gl_FragColor = vec4(color, 1.0);
 }
 `;
 
@@ -107,8 +151,9 @@ export default function HeroShader() {
       uTime: { value: 0 },
       uResolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-      uColor1: { value: new THREE.Color('#050505') },
-      uColor2: { value: new THREE.Color('#0f172a') },
+      uColor1: { value: new THREE.Color('#030308') },
+      uColor2: { value: new THREE.Color('#0c1929') },
+      uColor3: { value: new THREE.Color('#0891b2') },
     };
 
     const material = new THREE.ShaderMaterial({
