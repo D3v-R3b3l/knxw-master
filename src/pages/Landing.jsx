@@ -64,24 +64,45 @@ export default function LandingPage() {
           </section>
           <PhilosophySection />
           
-          {/* Infrastructure Section - Quick Insert */}
-          <section id="features" className="py-20 md:py-24 bg-[#050505] border-b border-white/5 overflow-hidden">
-             <div className="max-w-7xl mx-auto px-6">
-                <div className="mb-16">
-                   <h2 className="text-4xl font-bold mb-8">Built as Universal Infrastructure</h2>
-                   <p className="text-xl text-gray-400">Foundational cognitive layer for human understanding across every digital touchpoint</p>
-                </div>
-                <div className="grid md:grid-cols-4 gap-8">
+          {/* Infrastructure Section - Enhanced */}
+          <section id="features" className="py-24 md:py-32 bg-[#050505] border-b border-white/5 overflow-hidden relative">
+             {/* Background Effects */}
+             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.03),transparent_70%)]" />
+             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100px_100px]" />
+             
+             <div className="max-w-7xl mx-auto px-6 relative z-10">
+                <motion.div 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true }}
+                   className="mb-16 text-center"
+                >
+                   <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
+                      Architecture
+                   </span>
+                   <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Built as Universal Infrastructure</h2>
+                   <p className="text-xl text-gray-400 max-w-2xl mx-auto">Foundational cognitive layer for human understanding across every digital touchpoint</p>
+                </motion.div>
+                <div className="grid md:grid-cols-4 gap-6">
                    {[
-                     { title: "Event Ingestion", desc: "Real-time data capture from any source with sub-100ms latency." },
-                     { title: "AI Intelligence", desc: "Multi-layer inference engine for psychographic profiling." },
-                     { title: "Developer APIs", desc: "RESTful APIs and SDKs for seamless integration." },
-                     { title: "Activation", desc: "Turn insights into adaptive experiences instantly." }
+                     { title: "Event Ingestion", desc: "Real-time data capture from any source with sub-100ms latency.", num: "01" },
+                     { title: "AI Intelligence", desc: "Multi-layer inference engine for psychographic profiling.", num: "02" },
+                     { title: "Developer APIs", desc: "RESTful APIs and SDKs for seamless integration.", num: "03" },
+                     { title: "Activation", desc: "Turn insights into adaptive experiences instantly.", num: "04" }
                    ].map((item, i) => (
-                      <div key={i} className="border-l border-white/20 pl-6">
-                         <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                         <p className="text-gray-400 text-sm">{item.desc}</p>
-                      </div>
+                      <motion.div 
+                         key={i} 
+                         initial={{ opacity: 0, y: 30 }}
+                         whileInView={{ opacity: 1, y: 0 }}
+                         viewport={{ once: true }}
+                         transition={{ delay: i * 0.1 }}
+                         className="group relative p-6 rounded-xl bg-gradient-to-br from-[#0a0a0a] to-[#111] border border-white/5 hover:border-cyan-500/30 transition-all duration-500"
+                      >
+                         <div className="absolute top-4 right-4 text-4xl font-bold text-white/5 group-hover:text-cyan-500/10 transition-colors">{item.num}</div>
+                         <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-transparent rounded-full mb-4" />
+                         <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                         <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                      </motion.div>
                    ))}
                 </div>
              </div>
@@ -89,106 +110,229 @@ export default function LandingPage() {
 
           <PlatformFeatures />
           
-          {/* Enterprise Section */}
-          <section className="py-20 md:py-24 bg-black border-y border-white/10 overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-               <div>
-                  <span className="text-purple-500 font-bold text-sm uppercase tracking-wider mb-2 block">BUSINESS+</span>
-                  <h2 className="text-5xl font-bold mb-6">Enterprise-Grade Infrastructure</h2>
-                  <p className="text-xl text-gray-400 mb-8">Security, reliability, and compliance built for mission-critical deployments</p>
+          {/* Enterprise Section - Enhanced */}
+          <section className="py-24 md:py-32 bg-black border-y border-white/10 overflow-hidden relative">
+            {/* Background */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.05),transparent_60%)]" />
+            
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-10">
+               <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+               >
+                  <span className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6">
+                     Enterprise
+                  </span>
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Enterprise-Grade Infrastructure</h2>
+                  <p className="text-xl text-gray-400 mb-10">Security, reliability, and compliance built for mission-critical deployments</p>
                   
-                  <div className="grid gap-6">
+                  <div className="space-y-6">
                      {[
-                       { title: "Advanced Security", items: ["SOC 2 Ready", "End-to-end encryption", "GDPR Ready"] },
-                       { title: "System Monitoring", items: ["99.9% uptime SLA", "Real-time health checks", "Auto-scaling"] },
-                       { title: "Enterprise Integration", items: ["SAML/OIDC SSO", "Data warehouse sync", "SIEM integration"] }
+                       { title: "Advanced Security", items: ["SOC 2 Ready", "End-to-end encryption", "GDPR Ready"], color: "#8b5cf6" },
+                       { title: "System Monitoring", items: ["99.9% uptime SLA", "Real-time health checks", "Auto-scaling"], color: "#06b6d4" },
+                       { title: "Enterprise Integration", items: ["SAML/OIDC SSO", "Data warehouse sync", "SIEM integration"], color: "#10b981" }
                      ].map((grp, i) => (
-                        <div key={i}>
-                           <h4 className="font-bold text-white mb-2">{grp.title}</h4>
-                           <div className="flex gap-4 flex-wrap">
+                        <motion.div 
+                           key={i}
+                           initial={{ opacity: 0, y: 20 }}
+                           whileInView={{ opacity: 1, y: 0 }}
+                           viewport={{ once: true }}
+                           transition={{ delay: 0.1 + i * 0.1 }}
+                           className="group"
+                        >
+                           <h4 className="font-bold text-white mb-3 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full" style={{ background: grp.color }} />
+                              {grp.title}
+                           </h4>
+                           <div className="flex gap-3 flex-wrap">
                               {grp.items.map((it, j) => (
-                                 <span key={j} className="text-sm text-gray-400 bg-white/5 px-3 py-1 rounded-full border border-white/10">{it}</span>
+                                 <span 
+                                    key={j} 
+                                    className="text-sm text-gray-300 bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:border-white/20 transition-colors cursor-default"
+                                 >
+                                    {it}
+                                 </span>
                               ))}
                            </div>
-                        </div>
+                        </motion.div>
                      ))}
                   </div>
-               </div>
-               <div className="relative">
-                   {/* Abstract visual representation of security/infrastructure */}
-                   <div className="aspect-square rounded-full bg-gradient-to-br from-purple-900/20 to-blue-900/20 border border-white/10 flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000_70%)]" />
-                      <div className="w-2/3 h-2/3 rounded-full border border-purple-500/30 animate-pulse" />
-                      <div className="w-1/3 h-1/3 rounded-full border border-cyan-500/30 animate-ping" style={{ animationDuration: '3s' }} />
+               </motion.div>
+               <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  className="relative hidden md:block"
+               >
+                   {/* Enhanced Abstract visual */}
+                   <div className="aspect-square rounded-full bg-gradient-to-br from-purple-900/30 to-cyan-900/20 border border-white/10 flex items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000_80%)]" />
+                      
+                      {/* Orbiting rings */}
+                      <div className="absolute inset-8 rounded-full border border-purple-500/20 animate-[spin_20s_linear_infinite]">
+                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.8)]" />
+                      </div>
+                      <div className="absolute inset-16 rounded-full border border-cyan-500/20 animate-[spin_15s_linear_infinite_reverse]">
+                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)]" />
+                      </div>
+                      <div className="absolute inset-24 rounded-full border border-emerald-500/20 animate-[spin_25s_linear_infinite]">
+                         <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+                      </div>
+                      
+                      {/* Center core */}
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/50 to-cyan-500/50 flex items-center justify-center relative z-10">
+                         <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm" />
+                      </div>
                    </div>
-               </div>
+               </motion.div>
             </div>
           </section>
 
           <IntegrationsMarquee />
 
-          {/* Interactive Demo Teaser */}
-          <section className="py-20 md:py-24 bg-[#080808] text-center overflow-hidden">
-             <div className="max-w-4xl mx-auto px-6">
-                <h2 className="text-5xl font-bold mb-6">Intuitive Intelligence</h2>
-                <p className="text-xl text-gray-400 mb-12">Complex psychological analytics made beautifully simple</p>
+          {/* Interactive Demo Teaser - Enhanced */}
+          <section className="py-24 md:py-32 bg-[#080808] text-center overflow-hidden relative">
+             {/* Background */}
+             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.05),transparent_50%)]" />
+             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
+             
+             <div className="max-w-5xl mx-auto px-6 relative z-10">
+                <motion.div
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true }}
+                >
+                   <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
+                      Experience
+                   </span>
+                   <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">Intuitive Intelligence</h2>
+                   <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">Complex psychological analytics made beautifully simple</p>
+                </motion.div>
                 
-                <div className="grid md:grid-cols-2 gap-8 mb-12 text-left">
-                   <div className="bg-[#111] p-8 rounded-2xl border border-white/10">
-                      <h3 className="text-xl font-bold text-white mb-2">Real-Time Dashboard</h3>
-                      <p className="text-gray-400">Live psychographic insights with actionable metrics at a glance.</p>
-                   </div>
-                   <div className="bg-[#111] p-8 rounded-2xl border border-white/10">
-                      <h3 className="text-xl font-bold text-white mb-2">Deep User Profiles</h3>
-                      <p className="text-gray-400">Understand individual psychology, motivations, and cognitive patterns.</p>
-                   </div>
+                <div className="grid md:grid-cols-2 gap-6 mb-16 text-left">
+                   {[
+                      { title: "Real-Time Dashboard", desc: "Live psychographic insights with actionable metrics at a glance.", gradient: "from-cyan-500/20 to-blue-500/20" },
+                      { title: "Deep User Profiles", desc: "Understand individual psychology, motivations, and cognitive patterns.", gradient: "from-purple-500/20 to-pink-500/20" }
+                   ].map((item, i) => (
+                      <motion.div 
+                         key={i}
+                         initial={{ opacity: 0, y: 20 }}
+                         whileInView={{ opacity: 1, y: 0 }}
+                         viewport={{ once: true }}
+                         transition={{ delay: 0.1 + i * 0.1 }}
+                         className={`group bg-gradient-to-br ${item.gradient} p-8 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-500 relative overflow-hidden`}
+                      >
+                         <div className="absolute inset-0 bg-[#111] opacity-80 group-hover:opacity-70 transition-opacity" />
+                         <div className="relative z-10">
+                            <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                            <p className="text-gray-400">{item.desc}</p>
+                         </div>
+                      </motion.div>
+                   ))}
                 </div>
 
-                <button 
+                <motion.button 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
                   onClick={() => window.location.href = '/InteractiveDemo'}
-                  className="px-10 py-5 bg-white text-black font-bold text-xl rounded-full hover:scale-105 transition-transform"
+                  className="group px-10 py-5 bg-white text-black font-bold text-xl rounded-full hover:scale-105 transition-all duration-300 shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_-10px_rgba(255,255,255,0.5)]"
                 >
                    Try Interactive Demo
-                </button>
+                   <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                </motion.button>
              </div>
           </section>
 
           <UseCasesGrid />
           <PricingSection />
           
-          {/* Vision Text */}
-          <section className="py-20 md:py-24 bg-black text-center px-6 overflow-hidden">
-             <p className="text-2xl md:text-4xl font-light text-gray-400 max-w-5xl mx-auto leading-normal">
-               "knXw is not just another analytics tool or AI assistant; it is the framework for a more <span className="text-white">connected, intelligent, and human-centered</span> digital world."
-             </p>
+          {/* Vision Text - Enhanced */}
+          <section className="py-24 md:py-32 bg-black text-center px-6 overflow-hidden relative">
+             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.03),transparent_60%)]" />
+             <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="relative z-10"
+             >
+                <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto mb-12" />
+                <p className="text-2xl md:text-4xl lg:text-5xl font-light text-gray-400 max-w-5xl mx-auto leading-relaxed">
+                  "knXw is not just another analytics tool or AI assistant; it is the framework for a more{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-400">
+                     connected, intelligent, and human-centered
+                  </span>{' '}
+                  digital world."
+                </p>
+                <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto mt-12" />
+             </motion.div>
           </section>
 
           <FAQSection />
 
-          {/* Final CTA */}
-          <section className="py-20 md:py-24 bg-gradient-to-b from-black to-[#111] text-center border-t border-white/10 overflow-hidden">
-             <div className="max-w-4xl mx-auto px-6">
-                <h2 className="text-6xl md:text-8xl font-bold text-white mb-8 tracking-tighter">
-                   Start Building Today
-                </h2>
-                <p className="text-xl text-gray-400 mb-12">Join developers deploying psychographic intelligence at scale</p>
+          {/* Final CTA - Enhanced */}
+          <section className="py-28 md:py-40 bg-gradient-to-b from-black via-[#080808] to-[#111] text-center border-t border-white/10 overflow-hidden relative">
+             {/* Background Effects */}
+             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(6,182,212,0.1),transparent_60%)]" />
+             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/10 rounded-full blur-[150px] pointer-events-none" />
+             
+             <div className="max-w-5xl mx-auto px-6 relative z-10">
+                <motion.div
+                   initial={{ opacity: 0, y: 30 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true }}
+                >
+                   <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight">
+                      Start Building{' '}
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Today</span>
+                   </h2>
+                   <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-2xl mx-auto">Join developers deploying psychographic intelligence at scale</p>
+                </motion.div>
                 
-                <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
-                   <button onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} className="px-10 py-5 bg-cyan-500 text-black font-bold text-xl rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_50px_-10px_rgba(6,182,212,0.5)]">
+                <motion.div 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true }}
+                   transition={{ delay: 0.2 }}
+                   className="flex flex-col sm:flex-row gap-5 justify-center mb-14"
+                >
+                   <button 
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} 
+                      className="group px-12 py-6 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-bold text-xl rounded-full hover:shadow-[0_0_60px_-10px_rgba(6,182,212,0.7)] transition-all duration-300 transform hover:scale-105"
+                   >
                       Start Building Free
+                      <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
                    </button>
-                   <button onClick={() => window.location.href = '/Documentation'} className="px-10 py-5 bg-transparent border border-white/20 text-white font-bold text-xl rounded-full hover:bg-white/10 transition-colors">
+                   <button 
+                      onClick={() => window.location.href = '/Documentation'} 
+                      className="px-12 py-6 bg-transparent border-2 border-white/20 text-white font-bold text-xl rounded-full hover:bg-white/10 hover:border-white/40 transition-all duration-300"
+                   >
                       View Docs
                    </button>
-                </div>
+                </motion.div>
                 
-                <div className="flex gap-8 justify-center text-sm text-gray-500 font-mono uppercase tracking-wider">
-                   <span>No credit card required</span>
-                   <span>•</span>
-                   <span>Full API access</span>
-                   <span>•</span>
-                   <span>Free forever plan</span>
-                </div>
+                <motion.div 
+                   initial={{ opacity: 0 }}
+                   whileInView={{ opacity: 1 }}
+                   viewport={{ once: true }}
+                   transition={{ delay: 0.4 }}
+                   className="flex flex-wrap gap-6 md:gap-10 justify-center text-sm text-gray-500 font-mono uppercase tracking-wider"
+                >
+                   <span className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                      No credit card required
+                   </span>
+                   <span className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-cyan-500 rounded-full" />
+                      Full API access
+                   </span>
+                   <span className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full" />
+                      Free forever plan
+                   </span>
+                </motion.div>
              </div>
           </section>
         </main>
