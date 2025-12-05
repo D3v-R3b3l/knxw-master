@@ -83,14 +83,14 @@ const GlareCard = ({ children, className, colors }) => {
       ref={refElement}
       className={`relative isolate [contain:layout_style] [perspective:600px] transition-transform duration-[var(--duration)] ease-[var(--easing)] delay-[var(--delay)] will-change-transform w-full h-full aspect-[17/21] md:aspect-auto ${className}`}
       style={{
-        "--m-x": `${state.glare.x}%`,
-        "--m-y": `${state.glare.y}%`,
-        "--r-x": `${state.rotate.x}deg`,
-        "--r-y": `${state.rotate.y}deg`,
-        "--bg-x": `${state.background.x}%`,
-        "--bg-y": `${state.background.y}%`,
+        "--m-x": "50%",
+        "--m-y": "50%",
+        "--r-x": "0deg",
+        "--r-y": "0deg",
+        "--bg-x": "50%",
+        "--bg-y": "50%",
         "--foil-size": "100%",
-        "--opacity": isPointerInside.current ? 0.6 : 0,
+        "--opacity": "0",
         "--radius": "24px",
         "--easing": "ease",
         "--duration": "300ms",
