@@ -192,20 +192,21 @@ export default function LandingPage() {
         <main ref={mainRef} className="relative z-10">
           {/* Hero Section with Shader - Fixed Background */}
           <section ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505]">
-            {/* Fixed shader background */}
-            <div className="fixed inset-0 z-0 h-screen w-full">
+            {/* Fixed shader background - stays in place while content scrolls */}
+            <div className="fixed inset-0 h-screen w-full" style={{ zIndex: 1 }}>
               <HeroShader />
               {/* Gradient fade at bottom for smooth transition */}
-              <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black to-transparent pointer-events-none" />
             </div>
             
             {/* Hero content container - scrolls with parallax */}
-            <div className="relative z-10 h-full flex items-center justify-center">
+            <div className="relative h-full flex items-center justify-center" style={{ zIndex: 5 }}>
               <HeroContent heroRef={heroSectionRef} />
             </div>
 
             <motion.div 
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 text-white/50"
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50"
+              style={{ zIndex: 6 }}
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -213,8 +214,10 @@ export default function LandingPage() {
             </motion.div>
           </section>
           
+          {/* Content sections container - sits above the fixed shader */}
+          <div className="relative bg-transparent" style={{ zIndex: 10 }}>
           {/* Spacer to allow hero content to scroll out */}
-          <div className="h-[10vh] bg-transparent relative z-20" />
+          <div className="h-[10vh] bg-transparent" />
           
           <div data-scroll-section>
             <PhilosophySection />
@@ -513,6 +516,7 @@ export default function LandingPage() {
                 </motion.div>
              </div>
           </section>
+          </div>
           </div>
         </main>
 
