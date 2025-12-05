@@ -27,12 +27,6 @@ const categoryColors = {
 const GlareCard = ({ children, className, colors }) => {
   const isPointerInside = useRef(false);
   const refElement = useRef(null);
-  const [state, setState] = useState({
-    glare: { x: 50, y: 50 },
-    background: { x: 50, y: 50 },
-    rotate: { x: 0, y: 0 },
-  });
-
   const handlePointerMove = (event) => {
     const rotateFactor = 0.4;
     const rect = refElement.current?.getBoundingClientRect();
@@ -49,17 +43,23 @@ const GlareCard = ({ children, className, colors }) => {
       y: percentage.y - 50,
     };
 
-    const { background, rotate, glare } = state;
-    background.x = 50 + percentage.x / 4 - 12.5;
-    background.y = 50 + percentage.y / 3 - 16.67;
-    rotate.x = -(delta.x / 3.5);
-    rotate.y = delta.y / 2;
-    rotate.x *= rotateFactor;
-    rotate.y *= rotateFactor;
-    glare.x = percentage.x;
-    glare.y = percentage.y;
-
-    setState({ ...state });
+    const background = {
+      x: 50 + percentage.x / 4 - 12.5,
+      y: 50 + percentage.y / 3 - 16.67,
+    };
+    const rotate = {
+      x: -(delta.x / 3.5) * rotateFactor,
+      y: (delta.y / 2) * rotateFactor,
+    };
+    
+    if (refElement.current) {
+      refElement.current.style.setProperty("--m-x", `${percentage.x}%`);
+      refElement.current.style.setProperty("--m-y", `${percentage.y}%`);
+      refElement.current.style.setProperty("--r-x", `${rotate.x}deg`);
+      refElement.current.style.setProperty("--r-y", `${rotate.y}deg`);
+      refElement.current.style.setProperty("--bg-x", `${background.x}%`);
+      refElement.current.style.setProperty("--bg-y", `${background.y}%`);
+    }
   };
 
   const handlePointerEnter = () => {
