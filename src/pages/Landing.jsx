@@ -215,9 +215,13 @@ export default function LandingPage() {
           
           {/* Spacer to allow hero content to scroll out */}
           <div className="h-[10vh] bg-transparent relative z-20" />
-          <PhilosophySection />
+          
+          <div data-scroll-section>
+            <PhilosophySection />
+          </div>
           
           {/* Infrastructure Section - Enhanced */}
+          <div data-scroll-section>
           <section id="features" className="py-24 md:py-32 bg-[#050505] border-b border-white/5 overflow-hidden relative">
              {/* Background Effects */}
              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.03),transparent_70%)]" />
@@ -260,6 +264,7 @@ export default function LandingPage() {
                 </div>
              </div>
           </section>
+          </div>
 
           <div data-scroll-section>
             <PlatformFeatures />
