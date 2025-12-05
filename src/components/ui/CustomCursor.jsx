@@ -6,7 +6,10 @@ export default function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  // Removed spring physics for direct 1:1 movement
+  const springConfig = { damping: 25, stiffness: 700 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
+
   useEffect(() => {
     const moveCursor = (e) => {
       cursorX.set(e.clientX - 16);
@@ -34,8 +37,8 @@ export default function CustomCursor() {
     <motion.div
       className="fixed top-0 left-0 w-8 h-8 border border-cyan-500 rounded-full pointer-events-none z-[9999] mix-blend-difference hidden md:block"
       style={{
-        x: cursorX,
-        y: cursorY,
+        x: cursorXSpring,
+        y: cursorYSpring,
       }}
       animate={{
         scale: isHovering ? 2.5 : 1,
