@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/landing/Navbar';
 import HeroShader from '@/components/landing/HeroShader';
 import { ArrowDown } from 'lucide-react';
@@ -12,24 +12,69 @@ import FAQSection from '@/components/landing/FAQSection';
 import FooterSection from '@/components/landing/FooterSection';
 import CustomCursor from '@/components/ui/CustomCursor';
 import { ConsentProvider } from '@/components/privacy/ConsentManager';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from '@studio-freight/lenis';
 
 function HeroContent() {
-  const { scrollY } = useScroll();
-  
-  // Different parallax speeds for depth effect
-  const titleY = useTransform(scrollY, [0, 600], [0, 150]);
-  const descY = useTransform(scrollY, [0, 600], [0, 250]);
-  const buttonsY = useTransform(scrollY, [0, 600], [0, 350]);
-  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const parallaxRef = useRef(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const triggerElement = parallaxRef.current;
+
+    if (triggerElement) {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: triggerElement,
+          start: "0% 0%",
+          end: "100% 0%",
+          scrub: 0
+        }
+      });
+
+      const layers = [
+        { layer: "1", yPercent: 70 },
+        { layer: "2", yPercent: 55 },
+        { layer: "3", yPercent: 40 },
+        { layer: "4", yPercent: 25 }
+      ];
+
+      layers.forEach((layerObj, idx) => {
+        tl.to(
+          triggerElement.querySelectorAll(`[data-parallax-layer="${layerObj.layer}"]`),
+          {
+            yPercent: layerObj.yPercent,
+            ease: "none"
+          },
+          idx === 0 ? undefined : "<"
+        );
+      });
+    }
+
+    const lenis = new Lenis();
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+      if (triggerElement) {
+        gsap.killTweensOf(triggerElement);
+      }
+      lenis.destroy();
+    };
+  }, []);
 
   return (
-    <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
-      {/* Title - Slowest parallax */}
+    <div ref={parallaxRef} className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
+      {/* Title - Layer 1 (Slowest) */}
       <motion.div
-        style={{ y: titleY, opacity }}
+        data-parallax-layer="1"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
@@ -42,9 +87,9 @@ function HeroContent() {
         </h1>
       </motion.div>
       
-      {/* Description - Medium parallax */}
+      {/* Description - Layer 2 */}
       <motion.div
-        style={{ y: descY, opacity }}
+        data-parallax-layer="2"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
@@ -54,9 +99,9 @@ function HeroContent() {
         </p>
       </motion.div>
 
-      {/* Buttons - Fastest parallax */}
+      {/* Buttons - Layer 3 */}
       <motion.div
-        style={{ y: buttonsY, opacity }}
+        data-parallax-layer="3"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
@@ -68,6 +113,20 @@ function HeroContent() {
         <button onClick={() => window.location.href = '/Documentation'} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
           API Docs
         </button>
+      </motion.div>
+
+      {/* Tags - Layer 4 (Fastest) */}
+      <motion.div
+        data-parallax-layer="4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.9 }}
+        className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest"
+      >
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Web & Mobile</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Game Engines</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>REST API</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Any Platform</span>
       </motion.div>
     </div>
   );
