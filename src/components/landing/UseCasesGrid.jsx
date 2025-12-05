@@ -24,9 +24,10 @@ const categoryColors = {
   "Media": { from: "#a855f7", to: "#9333ea" },
 };
 
-const GlareCard = ({ children, className, colors }) => {
+const FoilCard = ({ children, className, colors }) => {
   const isPointerInside = useRef(false);
   const refElement = useRef(null);
+  
   const handlePointerMove = (event) => {
     const rotateFactor = 0.4;
     const rect = refElement.current?.getBoundingClientRect();
@@ -64,24 +65,33 @@ const GlareCard = ({ children, className, colors }) => {
 
   const handlePointerEnter = () => {
     isPointerInside.current = true;
-    setTimeout(() => {
-      if (isPointerInside.current) {
-        refElement.current?.style.setProperty("--duration", "0s");
-      }
-    }, 300);
+    if (refElement.current) {
+      refElement.current.style.setProperty("--opacity", "0.6");
+      refElement.current.style.setProperty("--duration", "200ms");
+      refElement.current.style.setProperty("--easing", "linear");
+      setTimeout(() => {
+        if (isPointerInside.current) {
+          refElement.current?.style.setProperty("--duration", "0s");
+        }
+      }, 200);
+    }
   };
 
   const handlePointerLeave = () => {
     isPointerInside.current = false;
-    refElement.current?.style.removeProperty("--duration");
-    refElement.current?.style.setProperty("--r-x", `0deg`);
-    refElement.current?.style.setProperty("--r-y", `0deg`);
+    if (refElement.current) {
+      refElement.current.style.setProperty("--opacity", "0");
+      refElement.current.style.setProperty("--duration", "300ms");
+      refElement.current.style.setProperty("--easing", "ease");
+      refElement.current.style.setProperty("--r-x", `0deg`);
+      refElement.current.style.setProperty("--r-y", `0deg`);
+    }
   };
 
   return (
     <div
       ref={refElement}
-      className={`relative isolate [contain:layout_style] [perspective:600px] transition-transform duration-[var(--duration)] ease-[var(--easing)] delay-[var(--delay)] will-change-transform w-full h-full aspect-[17/21] md:aspect-auto ${className}`}
+      className={`relative isolate [contain:layout_style] [perspective:600px] transition-transform duration-[var(--duration)] ease-[var(--easing)] delay-[var(--delay)] will-change-transform w-full h-full ${className}`}
       style={{
         "--m-x": "50%",
         "--m-y": "50%",
@@ -191,7 +201,7 @@ export default function UseCasesGrid() {
                 onClick={() => setSelectedCard(i)}
                 className="cursor-pointer"
               >
-                <GlareCard
+                <FoilCard
                   colors={colors}
                   className="h-full min-h-[300px]"
                 >
@@ -231,7 +241,7 @@ export default function UseCasesGrid() {
                       <span className="text-sm text-gray-500">{item.statLabel}</span>
                     </div>
                   </div>
-                </GlareCard>
+                </FoilCard>
               </motion.div>
             );
           })}
@@ -252,96 +262,100 @@ export default function UseCasesGrid() {
             
             <motion.div
               layoutId={`card-${selectedCard}`}
-              className="w-full max-w-3xl bg-[#111] rounded-3xl overflow-hidden border border-white/10 relative z-10 pointer-events-auto shadow-2xl shadow-black/50 flex flex-col md:flex-row max-h-[80vh]"
+              className="w-full max-w-3xl h-auto pointer-events-auto shadow-2xl shadow-black/50"
             >
-              <button 
-                onClick={() => setSelectedCard(null)}
-                className="absolute top-4 right-4 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-20"
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
+               <FoilCard className="!aspect-auto h-full">
+                 <div className="relative w-full h-full flex flex-col md:flex-row bg-[#0a0a0a] overflow-hidden rounded-[24px]">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setSelectedCard(null); }}
+                    className="absolute top-4 right-4 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
 
-              {(() => {
-                  const item = useCases[selectedCard];
-                  const IconComponent = categoryIcons[item.cat] || Code;
-                  const colors = categoryColors[item.cat] || { from: "#06b6d4", to: "#0891b2" };
+                  {(() => {
+                      const item = useCases[selectedCard];
+                      const IconComponent = categoryIcons[item.cat] || Code;
+                      const colors = categoryColors[item.cat] || { from: "#06b6d4", to: "#0891b2" };
 
-                  return (
-                    <>
-                      <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col relative bg-[#0a0a0a]">
-                         {/* Glow */}
-                         <div 
-                            className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none"
-                            style={{ background: `radial-gradient(circle at 0% 0%, ${colors.from}, transparent 70%)` }}
-                         />
-                         
-                         <div className="relative z-10">
-                           <div className="flex items-center gap-3 mb-8">
+                      return (
+                        <>
+                          <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col relative z-10">
+                             {/* Glow */}
                              <div 
-                               className="w-12 h-12 rounded-xl flex items-center justify-center"
-                               style={{ background: `linear-gradient(135deg, ${colors.from}20, ${colors.to}20)` }}
-                             >
-                               <IconComponent className="w-6 h-6" style={{ color: colors.from }} />
+                                className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none"
+                                style={{ background: `radial-gradient(circle at 0% 0%, ${colors.from}, transparent 70%)` }}
+                             />
+                             
+                             <div className="relative z-10">
+                               <div className="flex items-center gap-3 mb-8">
+                                 <div 
+                                   className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                   style={{ background: `linear-gradient(135deg, ${colors.from}20, ${colors.to}20)` }}
+                                 >
+                                   <IconComponent className="w-6 h-6" style={{ color: colors.from }} />
+                                 </div>
+                                 <span 
+                                   className="text-sm font-mono uppercase tracking-wider"
+                                   style={{ color: colors.from }}
+                                 >
+                                   {item.cat}
+                                 </span>
+                               </div>
+
+                               <h3 className="text-3xl font-bold text-white mb-6 leading-tight">{item.title}</h3>
+                               
+                               <div className="flex items-baseline gap-3 mt-auto">
+                                 <span 
+                                   className="text-5xl font-bold"
+                                   style={{ 
+                                     background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
+                                     WebkitBackgroundClip: 'text',
+                                     WebkitTextFillColor: 'transparent'
+                                   }}
+                                 >
+                                   {item.stat}
+                                 </span>
+                                 <span className="text-lg text-gray-400">{item.statLabel}</span>
+                               </div>
                              </div>
-                             <span 
-                               className="text-sm font-mono uppercase tracking-wider"
-                               style={{ color: colors.from }}
-                             >
-                               {item.cat}
-                             </span>
-                           </div>
+                          </div>
 
-                           <h3 className="text-3xl font-bold text-white mb-6 leading-tight">{item.title}</h3>
-                           
-                           <div className="flex items-baseline gap-3 mt-auto">
-                             <span 
-                               className="text-5xl font-bold"
-                               style={{ 
-                                 background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
-                                 WebkitBackgroundClip: 'text',
-                                 WebkitTextFillColor: 'transparent'
-                               }}
-                             >
-                               {item.stat}
-                             </span>
-                             <span className="text-lg text-gray-400">{item.statLabel}</span>
-                           </div>
-                         </div>
-                      </div>
-
-                      <div className="w-full md:w-1/2 p-8 md:p-10 bg-[#111] border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto">
-                        <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-6">Impact Analysis</h4>
-                        <ul className="space-y-6">
-                          {item.details.map((detail, idx) => (
-                            <motion.li 
-                              initial={{ opacity: 0, x: 10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.2 + idx * 0.1 }}
-                              key={idx} 
-                              className="flex gap-4"
-                            >
-                              <div className="flex-shrink-0 mt-1">
-                                <div 
-                                  className="w-2 h-2 rounded-full"
-                                  style={{ background: colors.from }}
-                                />
-                                <div className="w-px h-full bg-white/10 mx-auto mt-2" />
-                              </div>
-                              <p className="text-gray-300 text-lg leading-relaxed">{detail}</p>
-                            </motion.li>
-                          ))}
-                        </ul>
-                        
-                        <div className="mt-10 pt-8 border-t border-white/5">
-                           <button className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group">
-                             View Case Study
-                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                           </button>
-                        </div>
-                      </div>
-                    </>
-                  );
-              })()}
+                          <div className="w-full md:w-1/2 p-8 md:p-10 bg-[#111] border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto z-10">
+                            <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-6">Impact Analysis</h4>
+                            <ul className="space-y-6">
+                              {item.details.map((detail, idx) => (
+                                <motion.li 
+                                  initial={{ opacity: 0, x: 10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: 0.2 + idx * 0.1 }}
+                                  key={idx} 
+                                  className="flex gap-4"
+                                >
+                                  <div className="flex-shrink-0 mt-1">
+                                    <div 
+                                      className="w-2 h-2 rounded-full"
+                                      style={{ background: colors.from }}
+                                    />
+                                    <div className="w-px h-full bg-white/10 mx-auto mt-2" />
+                                  </div>
+                                  <p className="text-gray-300 text-lg leading-relaxed">{detail}</p>
+                                </motion.li>
+                              ))}
+                            </ul>
+                            
+                            <div className="mt-10 pt-8 border-t border-white/5">
+                               <button className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group">
+                                 View Case Study
+                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                               </button>
+                            </div>
+                          </div>
+                        </>
+                      );
+                  })()}
+                 </div>
+               </FoilCard>
             </motion.div>
           </div>
         )}

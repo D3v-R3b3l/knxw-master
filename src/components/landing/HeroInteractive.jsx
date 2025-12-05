@@ -125,11 +125,12 @@ export default function HeroInteractive() {
     <section className="relative h-screen w-full overflow-hidden bg-[#050505]">
       <canvas ref={canvasRef} className="absolute inset-0 z-0" />
       
-      <motion.div 
-        style={{ opacity, y }}
-        className="relative z-10 h-full flex flex-col items-center justify-center px-6 pointer-events-none"
-      >
+      {/* Parallax Container */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 pointer-events-none">
+        
+        {/* Title - Slowest */}
         <motion.div
+          style={{ opacity, y: useTransform(scrollY, [0, 500], [0, 150]) }}
           initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.2, ease: "easeOut" }}
@@ -141,28 +142,51 @@ export default function HeroInteractive() {
               Intelligence Layer
             </span>
           </h1>
-          
+        </motion.div>
+
+        {/* Description - Medium Speed */}
+        <motion.div
+          style={{ opacity, y: useTransform(scrollY, [0, 500], [0, 250]) }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="text-center"
+        >
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-10">
             Psychographic intelligence that understands <span className="text-white font-medium">why</span> users do what they do—across web, mobile, games, and any digital environment.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto">
-            <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]">
-              Get Started
-            </button>
-            <button onClick={() => window.location.href = '/Documentation'} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm">
-              API Docs
-            </button>
-          </div>
-
-          <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest pointer-events-auto">
-            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Web & Mobile</span>
-            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Game Engines</span>
-            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>REST API</span>
-            <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Any Platform</span>
-          </div>
         </motion.div>
-      </motion.div>
+
+        {/* Buttons - Fastest */}
+        <motion.div
+          style={{ opacity, y: useTransform(scrollY, [0, 500], [0, 350]) }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto text-center"
+        >
+          <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]">
+            Get Started
+          </button>
+          <button onClick={() => window.location.href = '/Documentation'} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm">
+            API Docs
+          </button>
+        </motion.div>
+
+        {/* Tags - Super Fast */}
+        <motion.div
+          style={{ opacity, y: useTransform(scrollY, [0, 500], [0, 450]) }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 1 }}
+          className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest pointer-events-auto text-center"
+        >
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Web & Mobile</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Game Engines</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>REST API</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Any Platform</span>
+        </motion.div>
+      </div>
 
       <motion.div 
         className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 text-white/50"
