@@ -228,14 +228,14 @@ export default function HeroShader() {
       window.removeEventListener('mousemove', onMouseMove);
       cancelAnimationFrame(animationId);
       
-      if (container && renderer.domElement && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      if (renderer) {
+        if (container && renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+        }
+        geometry.dispose();
+        material.dispose();
+        renderer.dispose();
       }
-      
-      geometry.dispose();
-      material.dispose();
-      renderer.dispose();
-      rendererRef.current = null;
     };
   }, []);
 
