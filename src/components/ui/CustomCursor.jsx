@@ -6,10 +6,7 @@ export default function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 25, stiffness: 700 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
-
+  // Removed spring physics for direct 1:1 movement
   useEffect(() => {
     const moveCursor = (e) => {
       cursorX.set(e.clientX - 16);
