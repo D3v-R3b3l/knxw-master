@@ -215,7 +215,7 @@ export default function LandingPage() {
           </section>
           
           {/* Content sections container - sits above the fixed shader */}
-          <div className="relative bg-transparent" style={{ zIndex: 10 }}>
+          <div className="relative bg-black" style={{ zIndex: 10 }}>
           {/* Spacer to allow hero content to scroll out */}
           <div className="h-[10vh] bg-transparent" />
           
