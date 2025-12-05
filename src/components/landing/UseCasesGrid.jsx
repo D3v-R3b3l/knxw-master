@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, X, ShoppingCart, Code, Gamepad2, GraduationCap, Heart, Megaphone, Headphones, Tv } from 'lucide-react';
 
@@ -24,51 +24,109 @@ const categoryColors = {
   "Media": { from: "#a855f7", to: "#9333ea" },
 };
 
-// Glare Card Component
-function GlareCard({ children, className, colors }) {
-  const cardRef = useRef(null);
-  const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
-  const [isHovered, setIsHovered] = useState(false);
+const GlareCard = ({ children, className, colors }) => {
+  const isPointerInside = useRef(false);
+  const refElement = useRef(null);
+  const [state, setState] = useState({
+    glare: { x: 50, y: 50 },
+    background: { x: 50, y: 50 },
+    rotate: { x: 0, y: 0 },
+  });
 
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setGlarePosition({ x, y });
+  const handlePointerMove = (event) => {
+    const rotateFactor = 0.4;
+    const rect = refElement.current?.getBoundingClientRect();
+    const position = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+    const percentage = {
+      x: (100 / rect.width) * position.x,
+      y: (100 / rect.height) * position.y,
+    };
+    const delta = {
+      x: percentage.x - 50,
+      y: percentage.y - 50,
+    };
+
+    const { background, rotate, glare } = state;
+    background.x = 50 + percentage.x / 4 - 12.5;
+    background.y = 50 + percentage.y / 3 - 16.67;
+    rotate.x = -(delta.x / 3.5);
+    rotate.y = delta.y / 2;
+    rotate.x *= rotateFactor;
+    rotate.y *= rotateFactor;
+    glare.x = percentage.x;
+    glare.y = percentage.y;
+
+    setState({ ...state });
+  };
+
+  const handlePointerEnter = () => {
+    isPointerInside.current = true;
+    setTimeout(() => {
+      if (isPointerInside.current) {
+        refElement.current?.style.setProperty("--duration", "0s");
+      }
+    }, 300);
+  };
+
+  const handlePointerLeave = () => {
+    isPointerInside.current = false;
+    refElement.current?.style.removeProperty("--duration");
+    refElement.current?.style.setProperty("--r-x", `0deg`);
+    refElement.current?.style.setProperty("--r-y", `0deg`);
   };
 
   return (
     <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden ${className}`}
-      style={{ transformStyle: 'preserve-3d' }}
+      ref={refElement}
+      className={`relative isolate [contain:layout_style] [perspective:600px] transition-transform duration-[var(--duration)] ease-[var(--easing)] delay-[var(--delay)] will-change-transform w-full h-full aspect-[17/21] md:aspect-auto ${className}`}
+      style={{
+        "--m-x": `${state.glare.x}%`,
+        "--m-y": `${state.glare.y}%`,
+        "--r-x": `${state.rotate.x}deg`,
+        "--r-y": `${state.rotate.y}deg`,
+        "--bg-x": `${state.background.x}%`,
+        "--bg-y": `${state.background.y}%`,
+        "--foil-size": "100%",
+        "--opacity": isPointerInside.current ? 0.6 : 0,
+        "--radius": "24px",
+        "--easing": "ease",
+        "--duration": "300ms",
+        "--transition": "var(--duration) var(--easing)",
+      }}
+      onPointerMove={handlePointerMove}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
     >
-      {/* Glare overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
-        style={{
-          opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(255,255,255,0.15) 0%, transparent 50%)`,
-        }}
-      />
-      
-      {/* Border glow */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 rounded-2xl transition-opacity duration-300"
-        style={{
-          opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, ${colors?.from || '#06b6d4'}30 0%, transparent 50%)`,
-        }}
-      />
-      
-      {children}
+      <div className="h-full grid will-change-transform origin-center transition-transform duration-[var(--duration)] ease-[var(--easing)] delay-[var(--delay)] [transform:rotateY(var(--r-x))_rotateX(var(--r-y))] rounded-[var(--radius)] border border-white/10 overflow-hidden bg-black">
+        <div className="w-full h-full grid [grid-area:1/1] mix-blend-soft-light [clip-path:inset(0_0_0_0_round_var(--radius))]">
+          <div className="h-full w-full bg-[#0a0a0a] relative">
+             {children}
+          </div>
+        </div>
+        
+        {/* Glare Layer */}
+        <div className="w-full h-full grid [grid-area:1/1] mix-blend-soft-light [clip-path:inset(0_0_1px_0_round_var(--radius))] opacity-[var(--opacity)] transition-opacity transition-background duration-[var(--duration)] ease-[var(--easing)] delay-[var(--delay)] will-change-background [background:radial-gradient(farthest-corner_circle_at_var(--m-x)_var(--m-y),_rgba(255,255,255,0.8)_10%,_rgba(255,255,255,0.65)_20%,_rgba(255,255,255,0)_90%)]" />
+        
+        {/* Foil/Holographic Layer */}
+        <div 
+          className="w-full h-full grid [grid-area:1/1] mix-blend-color-dodge opacity-[var(--opacity)] will-change-background transition-opacity [clip-path:inset(0_0_1px_0_round_var(--radius))] [background-blend-mode:hue_hue_hue_overlay] [background:var(--pattern),_var(--rainbow),_var(--diagonal),_var(--shade)] relative after:content-[''] after:grid-area-[inherit] after:bg-repeat-[inherit] after:bg-attachment-[inherit] after:bg-origin-[inherit] after:bg-clip-[inherit] after:bg-[inherit] after:mix-blend-exclusion after:[background-size:var(--foil-size),_200%_400%,_800%,_200%] after:[background-position:center,_0%_var(--bg-y),_calc(var(--bg-x)*_-1)_calc(var(--bg-y)*_-1),_var(--bg-x)_var(--bg-y)] after:[background-blend-mode:soft-light,_hue,_hard-light]"
+          style={{
+            "--step": "5%",
+            "--foil-svg": `url("data:image/svg+xml,%3Csvg width='26' height='26' viewBox='0 0 26 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.99994 3.419C2.99994 3.419 21.6142 7.43646 22.7921 12.153C23.97 16.8695 3.41838 23.0306 3.41838 23.0306' stroke='white' stroke-width='5' stroke-miterlimit='3.86874' stroke-linecap='round' style='mix-blend-mode:darken'/%3E%3C/svg%3E")`,
+            "--pattern": "var(--foil-svg) center/100% no-repeat",
+            "--rainbow": "repeating-linear-gradient( 0deg,rgb(255,119,115) calc(var(--step) * 1),rgba(255,237,95,1) calc(var(--step) * 2),rgba(168,255,95,1) calc(var(--step) * 3),rgba(131,255,247,1) calc(var(--step) * 4),rgba(120,148,255,1) calc(var(--step) * 5),rgb(216,117,255) calc(var(--step) * 6),rgb(255,119,115) calc(var(--step) * 7) ) 0% var(--bg-y)/200% 700% no-repeat",
+            "--diagonal": "repeating-linear-gradient( 128deg,#0e152e 0%,hsl(180,10%,60%) 3.8%,hsl(180,10%,60%) 4.5%,hsl(180,10%,60%) 5.2%,#0e152e 10%,#0e152e 12% ) var(--bg-x) var(--bg-y)/300% no-repeat",
+            "--shade": "radial-gradient( farthest-corner circle at var(--m-x) var(--m-y),rgba(255,255,255,0.1) 12%,rgba(255,255,255,0.15) 20%,rgba(255,255,255,0.25) 120% ) var(--bg-x) var(--bg-y)/300% no-repeat",
+            backgroundBlendMode: "hue, hue, hue, overlay"
+          }}
+        />
+      </div>
     </div>
   );
-}
+};
 
 export default function UseCasesGrid() {
   const useCases = [
@@ -90,10 +148,6 @@ export default function UseCasesGrid() {
       {/* Background Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
-      {/* Floating Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="mb-20 text-center">
           <motion.div
@@ -118,19 +172,10 @@ export default function UseCasesGrid() {
               Industries
             </span>
           </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-gray-400 max-w-2xl mx-auto"
-          >
-            From e-commerce to gaming, knXw drives measurable results through psychological intelligence
-          </motion.p>
         </div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {useCases.map((item, i) => {
             const IconComponent = categoryIcons[item.cat] || Code;
             const colors = categoryColors[item.cat] || { from: "#06b6d4", to: "#0891b2" };
@@ -138,18 +183,21 @@ export default function UseCasesGrid() {
             return (
               <motion.div
                 key={i}
+                layoutId={`card-${i}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: i * 0.05, duration: 0.5 }}
+                onClick={() => setSelectedCard(i)}
+                className="cursor-pointer"
               >
                 <GlareCard
                   colors={colors}
-                  className="group p-6 rounded-2xl bg-gradient-to-br from-[#0a0a0a] to-[#111] border border-white/5 hover:border-white/20 transition-all duration-300 cursor-pointer h-full"
+                  className="h-full min-h-[300px]"
                 >
-                  <div onClick={() => setSelectedCard(i)} className="h-full">
+                  <div className="p-8 h-full flex flex-col">
                     {/* Category Badge */}
-                    <div className="flex justify-between items-start mb-6 relative z-20">
+                    <div className="flex justify-between items-start mb-6">
                       <div className="flex items-center gap-2">
                         <div 
                           className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -164,106 +212,14 @@ export default function UseCasesGrid() {
                           {item.cat}
                         </span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 group-hover:translate-x-1 transition-all duration-300" />
+                      <ArrowRight className="w-4 h-4 text-white/40" />
                     </div>
                     
-                    {/* Content */}
-                    <div className="relative z-20">
-                      <h3 className="text-lg font-semibold text-white mb-4 group-hover:text-white transition-colors leading-tight">
-                        {item.title}
-                      </h3>
-                      
-                      <div className="flex items-baseline gap-2">
-                        <span 
-                          className="text-4xl font-bold"
-                          style={{ 
-                            background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent'
-                          }}
-                        >
-                          {item.stat}
-                        </span>
-                        <span className="text-sm text-gray-500">{item.statLabel}</span>
-                      </div>
-                    </div>
+                    <h3 className="text-xl font-bold text-white mb-auto pr-4">{item.title}</h3>
                     
-                    {/* Bottom Accent Line */}
-                    <div 
-                      className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: `linear-gradient(90deg, transparent, ${colors.from}, transparent)` }}
-                    />
-                  </div>
-                </GlareCard>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Modal - Fixed centered positioning */}
-      <AnimatePresence>
-        {selectedCard !== null && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              onClick={() => setSelectedCard(null)}
-            />
-            
-            {/* Modal Content */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-lg mx-auto"
-            >
-              {(() => {
-                const item = useCases[selectedCard];
-                const IconComponent = categoryIcons[item.cat] || Code;
-                const colors = categoryColors[item.cat] || { from: "#06b6d4", to: "#0891b2" };
-                
-                return (
-                  <div className="bg-gradient-to-br from-[#0a0a0a] to-[#111] border border-white/10 rounded-3xl p-6 md:p-8 relative overflow-hidden max-h-[80vh] overflow-y-auto">
-                    {/* Glow */}
-                    <div 
-                      className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-32 opacity-30 blur-3xl pointer-events-none"
-                      style={{ background: `linear-gradient(180deg, ${colors.from}, transparent)` }}
-                    />
-                    
-                    {/* Close Button */}
-                    <button 
-                      onClick={() => setSelectedCard(null)}
-                      className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors z-10"
-                    >
-                      <X className="w-5 h-5 text-white/60" />
-                    </button>
-                    
-                    {/* Category */}
-                    <div className="flex items-center gap-3 mb-6 relative z-10">
-                      <div 
-                        className="w-12 h-12 rounded-xl flex items-center justify-center"
-                        style={{ background: `linear-gradient(135deg, ${colors.from}30, ${colors.to}30)` }}
-                      >
-                        <IconComponent className="w-6 h-6" style={{ color: colors.from }} />
-                      </div>
+                    <div className="flex items-baseline gap-2 mt-8">
                       <span 
-                        className="text-sm font-mono uppercase tracking-wider"
-                        style={{ color: colors.from }}
-                      >
-                        {item.cat}
-                      </span>
-                    </div>
-                    
-                    {/* Title & Stat */}
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-4 relative z-10 pr-8">{item.title}</h3>
-                    <div className="flex items-baseline gap-3 mb-8 relative z-10">
-                      <span 
-                        className="text-4xl md:text-5xl font-bold"
+                        className="text-4xl font-bold"
                         style={{ 
                           background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
                           WebkitBackgroundClip: 'text',
@@ -272,26 +228,119 @@ export default function UseCasesGrid() {
                       >
                         {item.stat}
                       </span>
-                      <span className="text-base md:text-lg text-gray-400">{item.statLabel}</span>
-                    </div>
-                    
-                    {/* Details */}
-                    <div className="border-t border-white/10 pt-6 relative z-10">
-                      <p className="text-xs text-gray-500 mb-4 uppercase tracking-wider font-mono">How we achieved this:</p>
-                      <ul className="space-y-3">
-                        {item.details.map((detail, idx) => (
-                          <li key={idx} className="flex items-start gap-3">
-                            <div 
-                              className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
-                              style={{ background: colors.from }}
-                            />
-                            <span className="text-gray-300 text-sm md:text-base">{detail}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <span className="text-sm text-gray-500">{item.statLabel}</span>
                     </div>
                   </div>
-                );
+                </GlareCard>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Expanded Card Modal */}
+      <AnimatePresence>
+        {selectedCard !== null && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10 pointer-events-none">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedCard(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto"
+            />
+            
+            <motion.div
+              layoutId={`card-${selectedCard}`}
+              className="w-full max-w-3xl bg-[#111] rounded-3xl overflow-hidden border border-white/10 relative z-10 pointer-events-auto shadow-2xl shadow-black/50 flex flex-col md:flex-row max-h-[80vh]"
+            >
+              <button 
+                onClick={() => setSelectedCard(null)}
+                className="absolute top-4 right-4 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-20"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+
+              {(() => {
+                  const item = useCases[selectedCard];
+                  const IconComponent = categoryIcons[item.cat] || Code;
+                  const colors = categoryColors[item.cat] || { from: "#06b6d4", to: "#0891b2" };
+
+                  return (
+                    <>
+                      <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col relative bg-[#0a0a0a]">
+                         {/* Glow */}
+                         <div 
+                            className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none"
+                            style={{ background: `radial-gradient(circle at 0% 0%, ${colors.from}, transparent 70%)` }}
+                         />
+                         
+                         <div className="relative z-10">
+                           <div className="flex items-center gap-3 mb-8">
+                             <div 
+                               className="w-12 h-12 rounded-xl flex items-center justify-center"
+                               style={{ background: `linear-gradient(135deg, ${colors.from}20, ${colors.to}20)` }}
+                             >
+                               <IconComponent className="w-6 h-6" style={{ color: colors.from }} />
+                             </div>
+                             <span 
+                               className="text-sm font-mono uppercase tracking-wider"
+                               style={{ color: colors.from }}
+                             >
+                               {item.cat}
+                             </span>
+                           </div>
+
+                           <h3 className="text-3xl font-bold text-white mb-6 leading-tight">{item.title}</h3>
+                           
+                           <div className="flex items-baseline gap-3 mt-auto">
+                             <span 
+                               className="text-5xl font-bold"
+                               style={{ 
+                                 background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
+                                 WebkitBackgroundClip: 'text',
+                                 WebkitTextFillColor: 'transparent'
+                               }}
+                             >
+                               {item.stat}
+                             </span>
+                             <span className="text-lg text-gray-400">{item.statLabel}</span>
+                           </div>
+                         </div>
+                      </div>
+
+                      <div className="w-full md:w-1/2 p-8 md:p-10 bg-[#111] border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto">
+                        <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-6">Impact Analysis</h4>
+                        <ul className="space-y-6">
+                          {item.details.map((detail, idx) => (
+                            <motion.li 
+                              initial={{ opacity: 0, x: 10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.2 + idx * 0.1 }}
+                              key={idx} 
+                              className="flex gap-4"
+                            >
+                              <div className="flex-shrink-0 mt-1">
+                                <div 
+                                  className="w-2 h-2 rounded-full"
+                                  style={{ background: colors.from }}
+                                />
+                                <div className="w-px h-full bg-white/10 mx-auto mt-2" />
+                              </div>
+                              <p className="text-gray-300 text-lg leading-relaxed">{detail}</p>
+                            </motion.li>
+                          ))}
+                        </ul>
+                        
+                        <div className="mt-10 pt-8 border-t border-white/5">
+                           <button className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group">
+                             View Case Study
+                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                           </button>
+                        </div>
+                      </div>
+                    </>
+                  );
               })()}
             </motion.div>
           </div>
