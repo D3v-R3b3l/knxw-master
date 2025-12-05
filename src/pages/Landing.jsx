@@ -520,7 +520,9 @@ export default function LandingPage() {
           </div>
         </main>
 
-        <FooterSection />
+        <div className="relative" style={{ zIndex: 20 }}>
+          <FooterSection />
+        </div>
       </div>
     </ConsentProvider>
   );

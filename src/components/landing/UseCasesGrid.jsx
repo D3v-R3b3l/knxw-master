@@ -262,16 +262,18 @@ export default function UseCasesGrid() {
             
             <motion.div
               layoutId={`card-${selectedCard}`}
-              className="w-full max-w-3xl h-auto pointer-events-auto shadow-2xl shadow-black/50"
+              className="w-full max-w-3xl h-auto pointer-events-auto shadow-2xl shadow-black/50 relative"
             >
+               {/* Close button outside FoilCard to ensure clickability */}
+               <button 
+                 onClick={() => setSelectedCard(null)}
+                 className="absolute top-4 right-4 w-10 h-10 bg-black/80 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-[200] border border-white/20"
+               >
+                 <X className="w-5 h-5 text-white" />
+               </button>
+
                <FoilCard className="!aspect-auto h-full">
                  <div className="relative w-full h-full flex flex-col md:flex-row bg-[#0a0a0a] overflow-hidden rounded-[24px]">
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); setSelectedCard(null); }}
-                    className="absolute top-4 right-4 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50"
-                  >
-                    <X className="w-4 h-4 text-white" />
-                  </button>
 
                   {(() => {
                       const item = useCases[selectedCard];
@@ -280,7 +282,7 @@ export default function UseCasesGrid() {
 
                       return (
                         <>
-                          <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col relative z-10">
+                          <div className="w-full md:w-1/2 p-8 md:p-10 pt-14 md:pt-10 flex flex-col relative z-10">
                              {/* Glow */}
                              <div 
                                 className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none"
