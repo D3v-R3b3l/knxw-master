@@ -6,14 +6,72 @@ import PhilosophySection from '@/components/landing/PhilosophySection';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
 import IntegrationsMarquee from '@/components/landing/IntegrationsMarquee';
 import UseCasesGrid from '@/components/landing/UseCasesGrid';
+import AnimatedStats from '@/components/landing/AnimatedStats';
 import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import FooterSection from '@/components/landing/FooterSection';
 import CustomCursor from '@/components/ui/CustomCursor';
 import { ConsentProvider } from '@/components/privacy/ConsentManager';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
+
+function HeroContent() {
+  const { scrollY } = useScroll();
+  
+  // Different parallax speeds for depth effect
+  const titleY = useTransform(scrollY, [0, 600], [0, 150]);
+  const descY = useTransform(scrollY, [0, 600], [0, 250]);
+  const buttonsY = useTransform(scrollY, [0, 600], [0, 350]);
+  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+
+  return (
+    <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
+      {/* Title - Slowest parallax */}
+      <motion.div
+        style={{ y: titleY, opacity }}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+      >
+        <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
+          The Universal <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
+            Intelligence Layer
+          </span>
+        </h1>
+      </motion.div>
+      
+      {/* Description - Medium parallax */}
+      <motion.div
+        style={{ y: descY, opacity }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+      >
+        <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-12">
+          Psychographic intelligence that understands <span className="text-white font-medium">why</span> users do what they do—across web, mobile, games, and any digital environment.
+        </p>
+      </motion.div>
+
+      {/* Buttons - Fastest parallax */}
+      <motion.div
+        style={{ y: buttonsY, opacity }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+        className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+      >
+        <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto">
+          Get Started
+        </button>
+        <button onClick={() => window.location.href = '/Documentation'} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
+          API Docs
+        </button>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function LandingPage() {
   return (
@@ -27,32 +85,7 @@ export default function LandingPage() {
           <section className="relative min-h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center py-20 md:py-0">
             <HeroShader />
             
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full"
-            >
-              <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
-                The Universal <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
-                  Intelligence Layer
-                </span>
-              </h1>
-              
-              <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-12">
-                Psychographic intelligence that understands <span className="text-white font-medium">why</span> users do what they do—across web, mobile, games, and any digital environment.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto">
-                  Get Started
-                </button>
-                <button onClick={() => window.location.href = '/Documentation'} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
-                  API Docs
-                </button>
-              </div>
-            </motion.div>
+            <HeroContent />
 
             <motion.div 
               className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 text-white/50"
@@ -129,7 +162,7 @@ export default function LandingPage() {
                   
                   <div className="space-y-6">
                      {[
-                       { title: "Advanced Security", items: ["SOC 2 Ready", "End-to-end encryption", "GDPR Ready"], color: "#8b5cf6" },
+                       { title: "Data Protection", items: ["Encryption at rest & transit", "GDPR Ready", "Data ownership"], color: "#8b5cf6" },
                        { title: "System Monitoring", items: ["99.9% uptime SLA", "Real-time health checks", "Auto-scaling"], color: "#06b6d4" },
                        { title: "Enterprise Integration", items: ["SAML/OIDC SSO", "Data warehouse sync", "SIEM integration"], color: "#10b981" }
                      ].map((grp, i) => (
@@ -247,6 +280,7 @@ export default function LandingPage() {
           </section>
 
           <UseCasesGrid />
+          <AnimatedStats />
           <PricingSection />
           
           {/* Vision Text - Enhanced */}

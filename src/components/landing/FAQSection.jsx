@@ -13,7 +13,7 @@ export default function FAQSection() {
     },
     {
       question: "Is data private?",
-      answer: "SOC 2 certified, end-to-end encrypted, GDPR compliant. We prioritize user privacy and data sovereignty."
+      answer: "We take data privacy seriously. All data is encrypted in transit and at rest. We are GDPR-ready and do not sell or share your data with third parties. You maintain full control and ownership of your data, with the ability to export or delete it at any time."
     },
     {
       question: "When do I see ROI?",
