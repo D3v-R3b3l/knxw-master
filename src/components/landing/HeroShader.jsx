@@ -145,20 +145,40 @@ void main() {
 
 export default function HeroShader() {
   const containerRef = useRef(null);
+  const rendererRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
+    
+    // Prevent multiple WebGL contexts
+    if (rendererRef.current) return;
 
     const container = containerRef.current;
+    
+    // Check WebGL support
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) {
+      console.warn('WebGL not supported, showing fallback');
+      container.style.background = 'radial-gradient(ellipse at center, #0a1628 0%, #050510 50%, #000 100%)';
+      return;
+    }
     
     // Setup
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const renderer = new THREE.WebGLRenderer({ alpha: false, antialias: false });
     
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+    try {
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      container.appendChild(renderer.domElement);
+      rendererRef.current = renderer;
+    } catch (e) {
+      console.warn('WebGL initialization failed:', e);
+      container.style.background = 'radial-gradient(ellipse at center, #0a1628 0%, #050510 50%, #000 100%)';
+      return;
+    }
 
     // Geometry & Material
     const geometry = new THREE.PlaneGeometry(2, 2);
@@ -221,13 +241,14 @@ export default function HeroShader() {
       window.removeEventListener('mousemove', onMouseMove);
       cancelAnimationFrame(animationId);
       
-      if (container && renderer.domElement) {
+      if (container && renderer.domElement && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
       
       geometry.dispose();
       material.dispose();
       renderer.dispose();
+      rendererRef.current = null;
     };
   }, []);
 
