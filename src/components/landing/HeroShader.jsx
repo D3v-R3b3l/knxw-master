@@ -8,6 +8,8 @@ uniform vec2 uMouse;
 uniform vec3 uColor1;
 uniform vec3 uColor2;
 uniform vec3 uColor3;
+uniform vec3 uColor4;
+uniform vec3 uColor5;
 
 varying vec2 vUv;
 
@@ -90,20 +92,33 @@ void main() {
     float sparkle = snoise(p * 50.0 + uTime * 2.0);
     sparkle = pow(max(sparkle, 0.0), 8.0) * 0.3;
     
-    // Color mixing with three colors
+    // Color mixing with five colors for richer gradients
     vec3 color = uColor1;
-    color = mix(color, uColor2, noise1 * 0.5 + wave1 * 0.3 + mouseInteraction * 0.4);
-    color = mix(color, uColor3, noise2 * 0.3 + wave2 * 0.2);
+    color = mix(color, uColor2, noise1 * 0.5 + wave1 * 0.3);
     
-    // Add glowing lines with color
-    color += lines * uColor3;
+    // Add cyan glow
+    color = mix(color, uColor3, noise2 * 0.25 + wave2 * 0.15 + mouseInteraction * 0.3);
     
-    // Add sparkles
-    color += sparkle * vec3(0.5, 0.8, 1.0);
+    // Add purple accent in different regions
+    float purpleZone = sin(p.x * 2.0 + p.y * 3.0 + time * 0.5) * 0.5 + 0.5;
+    color = mix(color, uColor4, purpleZone * noise1 * 0.2);
     
-    // Mouse glow effect
+    // Add pink highlights
+    float pinkZone = sin(p.x * 3.0 - p.y * 2.0 - time * 0.3) * 0.5 + 0.5;
+    color = mix(color, uColor5, pinkZone * noise3 * 0.15);
+    
+    // Add glowing lines with color blend
+    vec3 lineColor = mix(uColor3, uColor4, wave1);
+    color += lines * lineColor;
+    
+    // Add sparkles with color variation
+    vec3 sparkleColor = mix(vec3(0.5, 0.8, 1.0), vec3(0.8, 0.5, 1.0), noise2);
+    color += sparkle * sparkleColor;
+    
+    // Mouse glow effect with gradient
     float mouseGlow = smoothstep(0.4, 0.0, dist);
-    color += mouseGlow * uColor3 * 0.3;
+    vec3 mouseColor = mix(uColor3, uColor4, sin(uTime * 0.5) * 0.5 + 0.5);
+    color += mouseGlow * mouseColor * 0.4;
     
     // Subtle pulsing
     float pulse = sin(uTime * 0.5) * 0.05 + 1.0;
@@ -151,9 +166,11 @@ export default function HeroShader() {
       uTime: { value: 0 },
       uResolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-      uColor1: { value: new THREE.Color('#030308') },
-      uColor2: { value: new THREE.Color('#0c1929') },
-      uColor3: { value: new THREE.Color('#0891b2') },
+      uColor1: { value: new THREE.Color('#050510') },
+      uColor2: { value: new THREE.Color('#0a1628') },
+      uColor3: { value: new THREE.Color('#06b6d4') },
+      uColor4: { value: new THREE.Color('#8b5cf6') },
+      uColor5: { value: new THREE.Color('#ec4899') },
     };
 
     const material = new THREE.ShaderMaterial({

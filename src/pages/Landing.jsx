@@ -19,59 +19,66 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
 
-function HeroContent() {
-  const parallaxRef = useRef(null);
+function HeroContent({ heroRef }) {
+  const contentRef = useRef(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    const triggerElement = parallaxRef.current;
+    const heroSection = heroRef?.current;
+    const content = contentRef.current;
 
-    if (triggerElement) {
+    if (heroSection && content) {
+      // Hero content parallax with scale and opacity
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: triggerElement,
-          start: "0% 0%",
-          end: "100% 0%",
-          scrub: 0
+          trigger: heroSection,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.5
         }
       });
 
-      const layers = [
-        { layer: "1", yPercent: 70 },
-        { layer: "2", yPercent: 55 },
-        { layer: "3", yPercent: 40 },
-        { layer: "4", yPercent: 25 }
-      ];
+      // Layer 1 - Title (slowest, scales down)
+      tl.to(content.querySelectorAll('[data-parallax-layer="1"]'), {
+        yPercent: 50,
+        scale: 0.9,
+        opacity: 0,
+        ease: "none"
+      }, 0);
 
-      layers.forEach((layerObj, idx) => {
-        tl.to(
-          triggerElement.querySelectorAll(`[data-parallax-layer="${layerObj.layer}"]`),
-          {
-            yPercent: layerObj.yPercent,
-            ease: "none"
-          },
-          idx === 0 ? undefined : "<"
-        );
-      });
+      // Layer 2 - Description
+      tl.to(content.querySelectorAll('[data-parallax-layer="2"]'), {
+        yPercent: 70,
+        scale: 0.85,
+        opacity: 0,
+        ease: "none"
+      }, 0);
+
+      // Layer 3 - Buttons
+      tl.to(content.querySelectorAll('[data-parallax-layer="3"]'), {
+        yPercent: 90,
+        scale: 0.8,
+        opacity: 0,
+        ease: "none"
+      }, 0);
+
+      // Layer 4 - Tags (fastest)
+      tl.to(content.querySelectorAll('[data-parallax-layer="4"]'), {
+        yPercent: 120,
+        scale: 0.75,
+        opacity: 0,
+        ease: "none"
+      }, 0);
     }
-
-    const lenis = new Lenis();
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-    gsap.ticker.lagSmoothing(0);
 
     return () => {
       ScrollTrigger.getAll().forEach(st => st.kill());
-      if (triggerElement) {
-        gsap.killTweensOf(triggerElement);
-      }
-      lenis.destroy();
     };
-  }, []);
+  }, [heroRef]);
 
   return (
-    <div ref={parallaxRef} className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
+    <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
       {/* Title - Layer 1 (Slowest) */}
       <motion.div
         data-parallax-layer="1"
@@ -133,18 +140,69 @@ function HeroContent() {
 }
 
 export default function LandingPage() {
+  const heroSectionRef = useRef(null);
+  const mainRef = useRef(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initialize Lenis for smooth scrolling
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+
+    // Page-wide scroll animations for sections
+    const sections = mainRef.current?.querySelectorAll('[data-scroll-section]');
+    sections?.forEach((section) => {
+      gsap.fromTo(section, 
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%",
+            end: "top 50%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <ConsentProvider>
       <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
         <CustomCursor />
         <Navbar />
         
-        <main className="relative z-10">
-          {/* Hero Section with Shader */}
-          <section className="relative min-h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center py-20 md:py-0">
-            <HeroShader />
+        <main ref={mainRef} className="relative z-10">
+          {/* Hero Section with Shader - Fixed Background */}
+          <section ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505]">
+            {/* Fixed shader background */}
+            <div className="fixed inset-0 z-0 h-screen w-full">
+              <HeroShader />
+              {/* Gradient fade at bottom for smooth transition */}
+              <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
+            </div>
             
-            <HeroContent />
+            {/* Hero content container - scrolls with parallax */}
+            <div className="relative z-10 h-full flex items-center justify-center">
+              <HeroContent heroRef={heroSectionRef} />
+            </div>
 
             <motion.div 
               className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 text-white/50"
@@ -154,6 +212,9 @@ export default function LandingPage() {
               <ArrowDown className="w-6 h-6" />
             </motion.div>
           </section>
+          
+          {/* Spacer to allow hero content to scroll out */}
+          <div className="h-[10vh] bg-transparent relative z-20" />
           <PhilosophySection />
           
           {/* Infrastructure Section - Enhanced */}
@@ -200,9 +261,12 @@ export default function LandingPage() {
              </div>
           </section>
 
-          <PlatformFeatures />
+          <div data-scroll-section>
+            <PlatformFeatures />
+          </div>
           
           {/* Enterprise Section - Enhanced */}
+          <div data-scroll-section>
           <section className="py-24 md:py-32 bg-black border-y border-white/10 overflow-hidden relative">
             {/* Background */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.05),transparent_60%)]" />
@@ -280,10 +344,14 @@ export default function LandingPage() {
                </motion.div>
             </div>
           </section>
+          </div>
 
-          <IntegrationsMarquee />
+          <div data-scroll-section>
+            <IntegrationsMarquee />
+          </div>
 
           {/* Interactive Demo Teaser - Enhanced */}
+          <div data-scroll-section>
           <section className="py-24 md:py-32 bg-[#080808] text-center overflow-hidden relative">
              {/* Background */}
              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.05),transparent_50%)]" />
@@ -337,12 +405,20 @@ export default function LandingPage() {
                 </motion.button>
              </div>
           </section>
+          </div>
 
-          <UseCasesGrid />
-          <AnimatedStats />
-          <PricingSection />
+          <div data-scroll-section>
+            <UseCasesGrid />
+          </div>
+          <div data-scroll-section>
+            <AnimatedStats />
+          </div>
+          <div data-scroll-section>
+            <PricingSection />
+          </div>
           
           {/* Vision Text - Enhanced */}
+          <div data-scroll-section>
           <section className="py-24 md:py-32 bg-black text-center px-6 overflow-hidden relative">
              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.03),transparent_60%)]" />
              <motion.div
@@ -362,10 +438,14 @@ export default function LandingPage() {
                 <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto mt-12" />
              </motion.div>
           </section>
+          </div>
 
-          <FAQSection />
+          <div data-scroll-section>
+            <FAQSection />
+          </div>
 
           {/* Final CTA - Enhanced */}
+          <div data-scroll-section>
           <section className="py-28 md:py-40 bg-gradient-to-b from-black via-[#080808] to-[#111] text-center border-t border-white/10 overflow-hidden relative">
              {/* Background Effects */}
              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(6,182,212,0.1),transparent_60%)]" />
@@ -428,6 +508,7 @@ export default function LandingPage() {
                 </motion.div>
              </div>
           </section>
+          </div>
         </main>
 
         <FooterSection />
