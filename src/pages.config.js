@@ -68,6 +68,7 @@ import PredictivePsychographics from './pages/PredictivePsychographics';
 import DataQuality from './pages/DataQuality';
 import UserSettings from './pages/UserSettings';
 import Collaborate from './pages/Collaborate';
+import CaseStudy from './pages/CaseStudy';
 import __Layout from './Layout.jsx';
 
 
@@ -142,6 +143,7 @@ export const PAGES = {
     "DataQuality": DataQuality,
     "UserSettings": UserSettings,
     "Collaborate": Collaborate,
+    "CaseStudy": CaseStudy,
 }
 
 export const pagesConfig = {

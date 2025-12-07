@@ -199,7 +199,8 @@ export default function UseCasesGrid() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: i * 0.05, duration: 0.5 }}
                 onClick={() => setSelectedCard(i)}
-                className="cursor-pointer"
+                className="cursor-pointer use-case-card"
+                data-tour-id={i === 0 ? "use-cases" : undefined}
               >
                 <FoilCard
                   colors={colors}
@@ -347,7 +348,10 @@ export default function UseCasesGrid() {
                             </ul>
                             
                             <div className="mt-10 pt-8 border-t border-white/5">
-                               <button className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group">
+                               <button 
+                                 onClick={() => window.location.href = createPageUrl('CaseStudy') + `?slug=${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                                 className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group"
+                               >
                                  View Case Study
                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                </button>
