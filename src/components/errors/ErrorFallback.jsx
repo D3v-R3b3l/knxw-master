@@ -2,7 +2,7 @@ import React from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
-import { logError } from '@/config/sentry';
+import { logError } from '@/components/config/sentry';
 
 export default function ErrorFallback({ error, resetErrorBoundary }) {
   React.useEffect(() => {

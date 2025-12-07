@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useSanitize } from '@/components/utils/useSanitize';
 import { createPageUrl } from '@/utils';
 import SEOHead from '@/components/system/SEOHead';
-import { logError } from '@/config/sentry';
+import { logError } from '@/components/config/sentry';
 
 const categoryColors = {
   "E-commerce": { from: "#06b6d4", to: "#0891b2" },

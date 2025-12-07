@@ -17,9 +17,9 @@ import ComprehensiveWalkthrough from "./components/onboarding/ComprehensiveWalkt
 import GlobalAIAssistant from "./components/ai/GlobalAIAssistant";
 import RoleBasedOnboarding, { detectUserRole } from "./components/onboarding/RoleBasedOnboarding";
 import AdaptiveOnboardingEngine from "./components/onboarding/AdaptiveOnboardingEngine";
-import { navigationSections, adminNavigationItems } from "@/src/constants/navigation";
-import { ASSETS } from "@/src/constants/assets";
-import { logError } from "@/config/sentry";
+import { navigationSections, adminNavigationItems } from "./components/constants/navigation";
+import { ASSETS } from "./components/constants/assets";
+import { logError } from "./components/config/sentry";
 import SEOHead from "./components/system/SEOHead";
 
 const ProfileMenu = () => {
