@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/landing/Navbar';
 import HeroShader from '@/components/landing/HeroShader';
-import { ArrowDown, HelpCircle } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import PhilosophySection from '@/components/landing/PhilosophySection';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
 import IntegrationsMarquee from '@/components/landing/IntegrationsMarquee';
@@ -11,7 +11,6 @@ import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import FooterSection from '@/components/landing/FooterSection';
 import CustomCursor from '@/components/ui/CustomCursor';
-import OnboardingTour from '@/components/landing/OnboardingTour';
 import { ConsentProvider } from '@/components/privacy/ConsentManager';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
@@ -143,18 +142,6 @@ function HeroContent({ heroRef }) {
 export default function LandingPage() {
   const heroSectionRef = useRef(null);
   const mainRef = useRef(null);
-  const [showTour, setShowTour] = useState(false);
-  
-  useEffect(() => {
-    // Check if user has seen the tour
-    const tourCompleted = localStorage.getItem('landing_tour_completed');
-    const tourDismissed = localStorage.getItem('landing_tour_dismissed');
-    
-    if (!tourCompleted && !tourDismissed) {
-      // Show tour after 2 seconds
-      setTimeout(() => setShowTour(true), 2000);
-    }
-  }, []);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -201,26 +188,6 @@ export default function LandingPage() {
       <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
         <CustomCursor />
         <Navbar />
-
-        {/* Tour Help Button */}
-        <button
-          onClick={() => setShowTour(true)}
-          className="fixed bottom-6 left-6 z-50 w-12 h-12 bg-cyan-500 hover:bg-cyan-600 text-black rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-          title="Show Tour"
-        >
-          <HelpCircle className="w-6 h-6" />
-        </button>
-
-        <OnboardingTour
-          isOpen={showTour}
-          onClose={() => {
-            setShowTour(false);
-            localStorage.setItem('landing_tour_dismissed', 'true');
-          }}
-          onComplete={() => {
-            localStorage.setItem('landing_tour_completed', 'true');
-          }}
-        />
         
         <main ref={mainRef} className="relative z-10">
           {/* Hero Section with Shader - Fixed Background */}
