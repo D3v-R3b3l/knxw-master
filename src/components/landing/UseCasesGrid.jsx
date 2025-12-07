@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, X, ShoppingCart, Code, Gamepad2, GraduationCap, Heart, Megaphone, Headphones, Tv } from 'lucide-react';
+import { createPageUrl } from '@/utils';
 
 const categoryIcons = {
   "E-commerce": ShoppingCart,
