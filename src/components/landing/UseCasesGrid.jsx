@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, X, ShoppingCart, Code, Gamepad2, GraduationCap, Heart, Megaphone, Headphones, Tv } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
 
 const categoryIcons = {
   "E-commerce": ShoppingCart,
@@ -140,19 +141,43 @@ const FoilCard = ({ children, className, colors }) => {
 };
 
 export default function UseCasesGrid() {
-  const useCases = [
-    { title: "E-commerce Product Recommendations", cat: "E-commerce", stat: "+45%", statLabel: "in AOV", details: ["AI-driven product sorting by buyer intent", "Real-time cart optimization", "Personalized upsell timing"] },
-    { title: "SaaS Adaptive Onboarding", cat: "SaaS", stat: "+84%", statLabel: "feature adoption", details: ["Cognitive style-matched tutorials", "Progressive disclosure based on confidence", "Contextual help triggers"] },
-    { title: "Gaming Adaptive Difficulty", cat: "Gaming", stat: "+156%", statLabel: "session length", details: ["Frustration detection & difficulty adjustment", "Flow state optimization", "Reward timing personalization"] },
-    { title: "Personalized Learning Paths", cat: "EdTech", stat: "+62%", statLabel: "completion rate", details: ["Learning style detection", "Adaptive content pacing", "Motivation-based nudges"] },
-    { title: "Healthcare Adherence Nudges", cat: "Healthcare", stat: "+38%", statLabel: "adherence", details: ["Literacy-matched instructions", "Empathetic reminder timing", "Anxiety-aware messaging"] },
-    { title: "Marketing Campaign Targeting", cat: "Marketing", stat: "+127%", statLabel: "ROAS", details: ["Psychographic audience segments", "Motivation-aligned creatives", "Optimal send time prediction"] },
-    { title: "Customer Support Prioritization", cat: "Customer Service", stat: "-52%", statLabel: "escalations", details: ["Frustration level detection", "Proactive intervention triggers", "Agent matching by personality"] },
-    { title: "Subscription Churn Prevention", cat: "SaaS", stat: "-73%", statLabel: "churn", details: ["Early warning signals", "Personalized retention offers", "Re-engagement timing optimization"] },
-    { title: "Content Recommendation Engines", cat: "Media", stat: "+91%", statLabel: "engagement", details: ["Mood-based content matching", "Attention span optimization", "Discovery vs comfort balance"] },
-  ];
-
+  const [useCases, setUseCases] = React.useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  // Fetch case studies from database
+  React.useEffect(() => {
+    base44.entities.CaseStudy.filter({ published: true })
+      .then(studies => {
+        if (studies.length > 0) {
+          // Map database case studies to display format
+          const mappedCases = studies.map(study => ({
+            title: study.title,
+            cat: study.category,
+            stat: study.hero_stat,
+            statLabel: study.hero_stat_label,
+            details: study.implementation || [],
+            slug: study.slug,
+          }));
+          setUseCases(mappedCases);
+        } else {
+          // Fallback to hardcoded examples if no case studies in DB
+          setUseCases([
+            { title: "E-commerce Product Recommendations", cat: "E-commerce", stat: "+45%", statLabel: "in AOV", details: ["AI-driven product sorting by buyer intent", "Real-time cart optimization", "Personalized upsell timing"], slug: "e-commerce-product-recommendations" },
+            { title: "SaaS Adaptive Onboarding", cat: "SaaS", stat: "+84%", statLabel: "feature adoption", details: ["Cognitive style-matched tutorials", "Progressive disclosure based on confidence", "Contextual help triggers"], slug: "saas-adaptive-onboarding" },
+            { title: "Gaming Adaptive Difficulty", cat: "Gaming", stat: "+156%", statLabel: "session length", details: ["Frustration detection & difficulty adjustment", "Flow state optimization", "Reward timing personalization"], slug: "gaming-adaptive-difficulty" },
+          ]);
+        }
+      })
+      .catch(err => {
+        console.error('Error loading case studies:', err);
+        // Use fallback data on error
+        setUseCases([
+          { title: "E-commerce Product Recommendations", cat: "E-commerce", stat: "+45%", statLabel: "in AOV", details: ["AI-driven product sorting"], slug: "e-commerce-product-recommendations" },
+        ]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section id="use-cases" className="py-32 bg-black relative overflow-hidden">
@@ -186,7 +211,12 @@ export default function UseCasesGrid() {
         </div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {useCases.map((item, i) => {
             const IconComponent = categoryIcons[item.cat] || Code;
             const colors = categoryColors[item.cat] || { from: "#06b6d4", to: "#0891b2" };
@@ -248,6 +278,7 @@ export default function UseCasesGrid() {
             );
           })}
         </div>
+        )}
       </div>
 
       {/* Expanded Card Modal */}
@@ -350,7 +381,7 @@ export default function UseCasesGrid() {
                             
                             <div className="mt-10 pt-8 border-t border-white/5">
                                <button 
-                                 onClick={() => window.location.href = createPageUrl('CaseStudy') + `?slug=${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                                 onClick={() => window.location.href = createPageUrl('CaseStudy') + `?slug=${item.slug || item.title.toLowerCase().replace(/\s+/g, '-')}`}
                                  className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group"
                                >
                                  View Case Study

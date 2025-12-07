@@ -6,6 +6,8 @@ import { ArrowLeft, CheckCircle2, TrendingUp, Users, Target } from 'lucide-react
 import { Button } from '@/components/ui/button';
 import { useSanitize } from '@/components/utils/useSanitize';
 import { createPageUrl } from '@/utils';
+import SEOHead from '@/components/system/SEOHead';
+import { logError } from '@/config/sentry';
 
 const categoryColors = {
   "E-commerce": { from: "#06b6d4", to: "#0891b2" },
@@ -39,7 +41,7 @@ export default function CaseStudyPage() {
         setLoading(false);
       })
       .catch(err => {
-        console.error('Error loading case study:', err);
+        logError(err, { context: 'Loading case study', slug });
         setLoading(false);
       });
   }, [slug]);
@@ -75,6 +77,11 @@ export default function CaseStudyPage() {
   
   return (
     <div className="min-h-screen bg-black text-white">
+      <SEOHead
+        title={caseStudy ? `${caseStudy.title} - Case Study` : 'Case Study'}
+        description={caseStudy?.challenge || 'Real-world case study showcasing the impact of psychographic intelligence'}
+        keywords={`case study, ${caseStudy?.category || 'business intelligence'}, psychographic analysis, ${caseStudy?.company_name || 'customer success'}`}
+      />
       {/* Hero Section */}
       <section className="relative py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.1),transparent_60%)]" />

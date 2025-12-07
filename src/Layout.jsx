@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
-  BarChart3, Users, Activity, Settings, Brain, Zap, Shield, GitBranch as AttributionIcon,
-  Menu, X, TrendingUp, BookOpen, User, LogOut, Sparkles, ArrowUp, ChevronLeft, ChevronRight, Bot,
-  HeartPulse, FlaskConical, Database as DatabaseIcon, Megaphone, BarChart3 as GoogleDataIcon,
-  Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, HelpCircle, GraduationCap
+  Menu, X, User, LogOut, ArrowUp, ChevronLeft, ChevronRight, Bot,
+  HelpCircle, GraduationCap, Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
@@ -19,6 +17,10 @@ import ComprehensiveWalkthrough from "./components/onboarding/ComprehensiveWalkt
 import GlobalAIAssistant from "./components/ai/GlobalAIAssistant";
 import RoleBasedOnboarding, { detectUserRole } from "./components/onboarding/RoleBasedOnboarding";
 import AdaptiveOnboardingEngine from "./components/onboarding/AdaptiveOnboardingEngine";
+import { navigationSections, adminNavigationItems } from "@/src/constants/navigation";
+import { ASSETS } from "@/src/constants/assets";
+import { logError } from "@/config/sentry";
+import SEOHead from "./components/system/SEOHead";
 
 const ProfileMenu = () => {
   const [user, setUser] = useState(null);
@@ -83,6 +85,7 @@ const ProfileMenu = () => {
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -94,66 +97,9 @@ export default function Layout({ children, currentPageName }) {
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [showRoleOnboarding, setShowRoleOnboarding] = useState(false);
   const [userRole, setUserRole] = useState('marketer');
+  const [authError, setAuthError] = useState(null);
 
-  const navigationSections = [
-    {
-      title: "Core Intelligence",
-      items: [
-        { title: "Dashboard", page: "Dashboard", icon: BarChart3, description: "Analytics Overview" },
-        { title: "AI Insights", page: "Insights", icon: Brain, description: "Psychographic Intelligence" },
-        { title: "User Profiles", page: "Profiles", icon: Users, description: "Behavioral Analysis" },
-        { title: "Event Stream", page: "Events", icon: Activity, description: "Real-time Tracking" },
-      ]
-    },
-    {
-      title: "Data & Integration",
-      items: [
-        { title: "My Apps", page: "MyApps", icon: Server, description: "Application Management" },
-        { title: "Unified Data", page: "UnifiedDataIntegration", icon: LinkIcon, description: "CRM & Finance Integration" },
-        { title: "Integrations", page: "IntegrationsManagement", icon: Shield, description: "External Connections" },
-        { title: "Meta Data", page: "MetaData", icon: Megaphone, description: "Facebook Insights" },
-        { title: "Google Data", page: "GoogleData", icon: GoogleDataIcon, description: "GA4 Analytics" },
-      ]
-    },
-    {
-      title: "Advanced Analytics",
-      items: [
-        { title: "Audience Builder", page: "AudienceBuilder", icon: Target, description: "Segment Creation" },
-        { title: "Predictive AI", page: "PredictivePsychographics", icon: Brain, description: "Behavior Forecasting" }, // Added item
-        { title: "Journey Builder", page: "Journeys", icon: AttributionIcon, description: "User Paths" },
-        { title: "Batch Analytics", page: "BatchAnalytics", icon: BarChart3, description: "Deep Analysis" },
-        { title: "Market Intelligence", page: "MarketIntelligence", icon: TrendingUp, description: "Trends & Insights" },
-        { title: "Executive Dashboard", page: "ExecutiveDashboard", icon: Briefcase, description: "Board-Level KPIs" },
-      ]
-    },
-    {
-      title: "Automation & AI",
-      items: [
-        { title: "AI Agents", page: "Agents", icon: Bot, description: "Intelligent Automation" },
-        { title: "Engagements", page: "Engagements", icon: Zap, description: "Adaptive Experience" },
-        { title: "A/B Testing", page: "ABTestingStudio", icon: FlaskConical, description: "Experiments" },
-        { title: "Robotics", page: "Robotics", icon: Rocket, description: "Process Orchestration" },
-      ]
-    },
-    {
-      title: "System & Tools",
-      items: [
-        { title: "Attribution", page: "AttributionSettings", icon: AttributionIcon, description: "ROI Tracking" },
-        { title: "Data Import", page: "DataImport", icon: DatabaseIcon, description: "Bulk Processing" },
-        { title: "System Health", page: "SystemHealth", icon: HeartPulse, description: "Performance" },
-        { title: "Dashboards", page: "Dashboards", icon: BarChart3, description: "Custom Reports" },
-      ]
-    },
-    {
-      title: "Resources",
-      items: [
-        { title: "Documentation", page: "Documentation", icon: BookOpen, description: "API & Guides" },
-        { title: "Blog", page: "Blog", icon: BookOpen, description: "Insights & Updates" },
-        { title: "Interactive Demo", page: "InteractiveDemo", icon: MousePointerClick, description: "Live Experience" },
-        { title: "Settings", page: "Settings", icon: Settings, description: "Configuration" },
-      ]
-    }
-  ];
+
 
   const isLandingPage = currentPageName === 'Landing' || location.pathname === createPageUrl('Landing') || location.pathname === '/';
   const isOnboardingPage = currentPageName === 'Onboarding';
@@ -175,9 +121,7 @@ export default function Layout({ children, currentPageName }) {
         const detectedRole = detectUserRole(user);
         setUserRole(detectedRole);
         
-        // Only show role-based onboarding if:
-        // 1. Not completed
-        // 2. Not manually dismissed
+        // Check backend for onboarding state
         const onboardingKey = `${detectedRole}_completed`;
         const dismissedKey = `${detectedRole}_dismissed`;
         
@@ -186,30 +130,24 @@ export default function Layout({ children, currentPageName }) {
             setShowRoleOnboarding(true);
           }, 2000);
         }
+        
+        // Check for tour state in backend
+        if (user.onboarding_state?.tour_requested && !user.onboarding_state?.tour_completed) {
+          setShowTour(true);
+        }
       })
-      .catch(() => {
-        window.location.href = createPageUrl('Landing');
+      .catch((error) => {
+        logError(error, { context: 'Layout authentication' });
+        setAuthError(error);
+        // Graceful error - show message instead of immediate redirect
+        setTimeout(() => {
+          navigate(createPageUrl('Landing'));
+        }, 2000);
       })
       .finally(() => setIsLoadingUser(false));
   }, [isLandingPage, isOnboardingPage, isPricingFAQPage, isDocsPublicPage, isBlogPage, isLegalPage, isInteractiveDemoPage]);
 
-  useEffect(() => {
-    if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
-      return;
-    }
 
-    // Only check tour status if authenticated
-    base44.auth.isAuthenticated()
-      .then(async (isAuth) => {
-        if (isAuth) {
-          const user = await base44.auth.me();
-          if (user?.onboarding_state?.tour_requested && !user?.onboarding_state?.tour_completed) {
-            setShowTour(true);
-          }
-        }
-      })
-      .catch(() => {});
-  }, [isLandingPage, isOnboardingPage, isPricingFAQPage, isDocsPublicPage, isBlogPage, isLegalPage, isInteractiveDemoPage]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -223,10 +161,7 @@ export default function Layout({ children, currentPageName }) {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const adminItems = currentUser?.role === 'admin' ? [
-    { title: "Org Admin", page: "OrgAdmin", icon: Shield, description: "Organization Settings" },
-    { title: "Demo Data", page: "DemoData", icon: Sparkles, description: "Seed Test Data" }
-  ] : [];
+  const adminItems = currentUser?.role === 'admin' ? adminNavigationItems : [];
 
   const allNavItems = [
     ...navigationSections.flatMap(section => section.items),
@@ -243,10 +178,25 @@ export default function Layout({ children, currentPageName }) {
   if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
     return (
       <GlobalErrorBoundary>
+        <SEOHead />
         <div className="min-h-screen bg-[#0a0a0a] text-gray-100">
           {isLandingPage && <GoogleSiteVerificationMeta />}
           {children}
           <Toaster />
+        </div>
+      </GlobalErrorBoundary>
+    );
+  }
+  
+  if (authError) {
+    return (
+      <GlobalErrorBoundary>
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
+            <p className="text-gray-400 mb-6">Redirecting to login...</p>
+            <div className="w-8 h-8 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin mx-auto" />
+          </div>
         </div>
       </GlobalErrorBoundary>
     );
@@ -341,8 +291,8 @@ export default function Layout({ children, currentPageName }) {
                 <Link to={createPageUrl('Landing')} className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                     <img 
-                      src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688aa91c44a8979a009301be/e67a8a337_txpknxwlogo.png" 
-                      alt="knXw" 
+                      src={ASSETS.logo} 
+                      alt={ASSETS.brandName} 
                       className="w-full h-full object-contain"
                     />
                   </div>
@@ -443,8 +393,8 @@ export default function Layout({ children, currentPageName }) {
             </button>
             <Link to={createPageUrl('Landing')} className="flex items-center gap-2">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688aa91c44a8979a009301be/e67a8a337_txpknxwlogo.png" 
-                alt="knXw" 
+                src={ASSETS.logo} 
+                alt={ASSETS.brandName} 
                 className="w-8 h-8 object-contain"
               />
             </Link>
@@ -455,7 +405,7 @@ export default function Layout({ children, currentPageName }) {
             <div className="md:hidden fixed inset-0 z-50 bg-black/50" onClick={() => setIsMobileMenuOpen(false)}>
               <div className="w-80 h-full bg-[#0f0f0f] border-r border-[#262626] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                   <div className="p-4 border-b border-[#262626] flex items-center justify-between">
-                    <span className="text-lg font-bold">knXw</span>
+                    <span className="text-lg font-bold">{ASSETS.brandName}</span>
                     <button onClick={() => setIsMobileMenuOpen(false)}>
                       <X className="w-5 h-5" />
                     </button>

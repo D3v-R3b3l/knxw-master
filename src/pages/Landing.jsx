@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/landing/Navbar';
 import HeroShader from '@/components/landing/HeroShader';
+import SEOHead from '@/components/system/SEOHead';
 import { ArrowDown } from 'lucide-react';
 import PhilosophySection from '@/components/landing/PhilosophySection';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
@@ -185,6 +186,11 @@ export default function LandingPage() {
 
   return (
     <ConsentProvider>
+      <SEOHead 
+        title="knXw - Universal Intelligence Layer for Digital Environments"
+        description="Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment. Real-time behavioral analysis powered by AI."
+        keywords="psychographic intelligence, user analytics, behavioral analysis, AI insights, customer intelligence, user profiling, adaptive experiences"
+      />
       <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
         <CustomCursor />
         <Navbar />
