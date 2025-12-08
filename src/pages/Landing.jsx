@@ -145,48 +145,59 @@ export default function LandingPage() {
   const mainRef = useRef(null);
 
   useEffect(() => {
-    if (!gsap || !ScrollTrigger) return;
-    
-    gsap.registerPlugin(ScrollTrigger);
+    try {
+      if (!gsap || !ScrollTrigger) return;
+      
+      gsap.registerPlugin(ScrollTrigger);
 
-    // Initialize Lenis for smooth scrolling
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-    
-    lenis.on('scroll', ScrollTrigger.update);
-    
-    if (gsap.ticker) {
-      gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-      gsap.ticker.lagSmoothing(0);
-    }
+      // Initialize Lenis for smooth scrolling
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+      
+      lenis.on('scroll', ScrollTrigger.update);
+      
+      // Use requestAnimationFrame as fallback if gsap.ticker is not available
+      if (gsap.ticker && typeof gsap.ticker.add === 'function') {
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      } else {
+        const raf = (time) => {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        };
+        requestAnimationFrame(raf);
+      }
 
-    // Page-wide scroll animations for sections
-    const sections = mainRef.current?.querySelectorAll('[data-scroll-section]');
-    sections?.forEach((section) => {
-      gsap.fromTo(section, 
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 85%",
-            end: "top 50%",
-            toggleActions: "play none none reverse"
+      // Page-wide scroll animations for sections
+      const sections = mainRef.current?.querySelectorAll('[data-scroll-section]');
+      sections?.forEach((section) => {
+        gsap.fromTo(section, 
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 85%",
+              end: "top 50%",
+              toggleActions: "play none none reverse"
+            }
           }
-        }
-      );
-    });
+        );
+      });
 
-    return () => {
-      ScrollTrigger.getAll().forEach(st => st.kill());
-      lenis.destroy();
-    };
+      return () => {
+        ScrollTrigger.getAll().forEach(st => st.kill());
+        lenis.destroy();
+      };
+    } catch (error) {
+      console.error('Error initializing scroll animations:', error);
+    }
   }, []);
 
   return (
