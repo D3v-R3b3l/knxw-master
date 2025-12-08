@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { base44 } from '@/api/base44Client';
 import {
   Database,
@@ -21,6 +22,7 @@ import { useToast } from "@/components/ui/use-toast";
 export default function DemoDataPage() {
   const [isSeeding, setIsSeeding] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
   const [lastResult, setLastResult] = useState(null);
   const { toast } = useToast();
 
@@ -90,10 +92,7 @@ export default function DemoDataPage() {
   };
 
   const handleClearData = async () => {
-    if (!confirm('Are you sure you want to clear ALL demo data? This cannot be undone.')) {
-      return;
-    }
-
+    setShowClearDialog(false);
     setIsClearing(true);
 
     try {
@@ -155,20 +154,22 @@ export default function DemoDataPage() {
             </div>
           </div>
           <Button
-            onClick={handleClearData}
+            onClick={() => setShowClearDialog(true)}
             disabled={isClearing}
             variant="outline"
-            className="border-[#ef4444]/30 text-[#ef4444] hover:bg-[#ef4444]/10">
+            className="border-[#ef4444]/30 text-[#ef4444] hover:bg-[#ef4444]/10 whitespace-nowrap">
 
             {isClearing ?
             <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Clearing...
+                <span className="hidden sm:inline">Clearing...</span>
+                <span className="sm:hidden">Clearing</span>
               </> :
 
             <>
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear All Demo Data
+                <Trash2 className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Clear All Demo Data</span>
+                <span className="sm:hidden">Clear Data</span>
               </>
             }
           </Button>
@@ -206,17 +207,17 @@ export default function DemoDataPage() {
                     <Button
                       onClick={() => handleSeedData(scenario)}
                       disabled={isSeeding}
-                      className="w-full bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] mt-4">
+                      className="w-full bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] mt-4 whitespace-nowrap overflow-hidden">
 
                       {isSeeding ?
                       <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Seeding...
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin flex-shrink-0" />
+                          <span className="truncate">Seeding...</span>
                         </> :
 
                       <>
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Seed {scenario.name}
+                          <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
+                          <span className="truncate">Seed {scenario.name}</span>
                         </>
                       }
                     </Button>
@@ -306,6 +307,37 @@ export default function DemoDataPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Custom Clear Confirmation Dialog */}
+      <Dialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <DialogContent className="bg-[#111111] border-[#262626] text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <AlertTriangle className="w-6 h-6 text-[#ef4444]" />
+              Clear Demo Data
+            </DialogTitle>
+            <DialogDescription className="text-[#a3a3a3] text-base">
+              Are you sure you want to clear <strong className="text-white">all demo data</strong>? This action cannot be undone and will remove all profiles, events, and insights marked as demo data.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShowClearDialog(false)}
+              className="border-[#262626] hover:bg-[#1a1a1a]"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleClearData}
+              className="bg-[#ef4444] hover:bg-[#dc2626] text-white"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear All Data
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>);
 
 }
