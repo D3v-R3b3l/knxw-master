@@ -159,17 +159,12 @@ export default function LandingPage() {
       
       lenis.on('scroll', ScrollTrigger.update);
       
-      // Use requestAnimationFrame as fallback if gsap.ticker is not available
-      if (gsap.ticker && typeof gsap.ticker.add === 'function') {
-        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-        gsap.ticker.lagSmoothing(0);
-      } else {
-        const raf = (time) => {
-          lenis.raf(time);
-          requestAnimationFrame(raf);
-        };
+      // Use requestAnimationFrame for Lenis updates (more reliable)
+      const raf = (time) => {
+        lenis.raf(time);
         requestAnimationFrame(raf);
-      }
+      };
+      requestAnimationFrame(raf);
 
       // Page-wide scroll animations for sections
       const sections = mainRef.current?.querySelectorAll('[data-scroll-section]');
