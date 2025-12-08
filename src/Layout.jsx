@@ -206,34 +206,35 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <GlobalErrorBoundary>
-      <style>{`
-        /* Sidebar scrollbar styling - thin, dark, minimalistic */
-        .sidebar-scroll::-webkit-scrollbar {
-          width: 6px;
-        }
-        .sidebar-scroll::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .sidebar-scroll::-webkit-scrollbar-thumb {
-          background: #00d4ff40;
-          border-radius: 3px;
-        }
-        .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-          background: #00d4ff80;
-        }
-        .sidebar-scroll {
-          scrollbar-width: thin;
-          scrollbar-color: #00d4ff40 transparent;
-        }
+    <HelmetProvider>
+      <GlobalErrorBoundary>
+        <style>{`
+          /* Sidebar scrollbar styling - thin, dark, minimalistic */
+          .sidebar-scroll::-webkit-scrollbar {
+            width: 6px;
+          }
+          .sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #00d4ff40;
+            border-radius: 3px;
+          }
+          .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background: #00d4ff80;
+          }
+          .sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #00d4ff40 transparent;
+          }
+          
+          /* Prevent horizontal scroll in collapsed state */
+          .sidebar-scroll {
+            overflow-x: hidden;
+          }
+        `}</style>
         
-        /* Prevent horizontal scroll in collapsed state */
-        .sidebar-scroll {
-          overflow-x: hidden;
-        }
-      `}</style>
-      
-      <AdaptiveOnboardingEngine>
+        <AdaptiveOnboardingEngine>
         <div className="h-screen bg-[#0a0a0a] text-gray-100 overflow-hidden">
           {showTour && (
             <InteractiveTour
@@ -485,9 +486,9 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           <Toaster />
-          </div>
-          </AdaptiveOnboardingEngine>
-          </GlobalErrorBoundary>
-          </HelmetProvider>
-          );
-          }
+        </div>
+      </AdaptiveOnboardingEngine>
+    </GlobalErrorBoundary>
+    </HelmetProvider>
+  );
+}
