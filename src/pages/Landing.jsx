@@ -145,6 +145,8 @@ export default function LandingPage() {
   const mainRef = useRef(null);
 
   useEffect(() => {
+    if (!gsap || !ScrollTrigger) return;
+    
     gsap.registerPlugin(ScrollTrigger);
 
     // Initialize Lenis for smooth scrolling
@@ -155,8 +157,11 @@ export default function LandingPage() {
     });
     
     lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-    gsap.ticker.lagSmoothing(0);
+    
+    if (gsap.ticker) {
+      gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+      gsap.ticker.lagSmoothing(0);
+    }
 
     // Page-wide scroll animations for sections
     const sections = mainRef.current?.querySelectorAll('[data-scroll-section]');
