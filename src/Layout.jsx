@@ -11,6 +11,7 @@ import GlobalErrorBoundary from "./components/system/GlobalErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import GoogleSiteVerificationMeta from "./components/system/GoogleSiteVerificationMeta";
 import { DashboardProvider } from "./components/dashboard/DashboardStore";
+import { HelmetProvider } from 'react-helmet-async';
 import { createPageUrl } from "@/utils";
 import InteractiveTour from "./components/onboarding/InteractiveTour";
 import ComprehensiveWalkthrough from "./components/onboarding/ComprehensiveWalkthrough";
@@ -177,14 +178,16 @@ export default function Layout({ children, currentPageName }) {
 
   if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
     return (
-      <GlobalErrorBoundary>
-        <SEOHead />
-        <div className="min-h-screen bg-[#0a0a0a] text-gray-100">
-          {isLandingPage && <GoogleSiteVerificationMeta />}
-          {children}
-          <Toaster />
-        </div>
-      </GlobalErrorBoundary>
+      <HelmetProvider>
+        <GlobalErrorBoundary>
+          <SEOHead />
+          <div className="min-h-screen bg-[#0a0a0a] text-gray-100">
+            {isLandingPage && <GoogleSiteVerificationMeta />}
+            {children}
+            <Toaster />
+          </div>
+        </GlobalErrorBoundary>
+      </HelmetProvider>
     );
   }
   
@@ -482,8 +485,9 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           <Toaster />
-        </div>
-      </AdaptiveOnboardingEngine>
-    </GlobalErrorBoundary>
-  );
-}
+          </div>
+          </AdaptiveOnboardingEngine>
+          </GlobalErrorBoundary>
+          </HelmetProvider>
+          );
+          }
