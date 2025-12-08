@@ -210,7 +210,7 @@ export default function LandingPage() {
         
         <main ref={mainRef} className="relative z-10">
           {/* Hero Section with Shader - Fixed Background */}
-          <section ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505]">
+          <section ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
             {/* Fixed shader background - stays in place while content scrolls */}
             <div className="fixed inset-0 h-screen w-full" style={{ zIndex: 1 }}>
               <HeroShader />
@@ -219,7 +219,7 @@ export default function LandingPage() {
             </div>
             
             {/* Hero content container - scrolls with parallax */}
-            <div className="relative h-full flex items-center justify-center" style={{ zIndex: 5 }}>
+            <div className="relative h-full flex items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
               <HeroContent heroRef={heroSectionRef} />
             </div>
 
