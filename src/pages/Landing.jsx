@@ -19,6 +19,7 @@ import { base44 } from "@/api/base44Client";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
+import { HelmetProvider } from 'react-helmet-async';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -196,8 +197,9 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <ConsentProvider>
-      <SEOHead 
+    <HelmetProvider>
+      <ConsentProvider>
+        <SEOHead 
         title="knXw - Universal Intelligence Layer for Digital Environments"
         description="Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment. Real-time behavioral analysis powered by AI."
         keywords="psychographic intelligence, user analytics, behavioral analysis, AI insights, customer intelligence, user profiling, adaptive experiences"
@@ -541,6 +543,7 @@ export default function LandingPage() {
           <FooterSection />
         </div>
       </div>
-    </ConsentProvider>
+      </ConsentProvider>
+    </HelmetProvider>
   );
 }
