@@ -70,27 +70,69 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute inset-0 h-screen bg-black flex flex-col items-center justify-center gap-8 md:hidden"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 bg-gradient-to-br from-[#0a0a0a] via-black to-[#0a0a0a] md:hidden z-40 overflow-y-auto"
           >
-            {links.map(link => (
-              <a 
-                key={link.name} 
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="text-2xl font-bold text-white"
+            {/* Gradient overlay effects */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1),transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.08),transparent_50%)]" />
+            
+            <div className="relative h-full flex flex-col px-6 py-20">
+              {/* Navigation Links */}
+              <nav className="flex-1 flex flex-col justify-center gap-2">
+                {links.map((link, index) => (
+                  <motion.a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group relative py-4 px-6 rounded-xl border border-white/5 bg-white/5 backdrop-blur-sm hover:border-cyan-500/30 hover:bg-white/10 transition-all"
+                  >
+                    <span className="text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                      {link.name}
+                    </span>
+                    <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
+                  </motion.a>
+                ))}
+              </nav>
+              
+              {/* CTA Buttons */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="space-y-3 pt-6 border-t border-white/10"
               >
-                {link.name}
-              </a>
-            ))}
-            <div className="flex flex-col gap-4 mt-8">
-               <button onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} className="text-lg font-bold text-white">
-                Sign In
-              </button>
-              <button onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} className="px-8 py-4 bg-white text-black font-bold rounded-full">
-                Get Started
-              </button>
+                {user ? (
+                  <Link 
+                    to={createPageUrl('Dashboard')} 
+                    className="flex items-center justify-center gap-2 w-full py-4 px-6 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-bold text-lg rounded-full shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] transition-all"
+                  >
+                    Dashboard
+                    <ChevronRight className="w-5 h-5" />
+                  </Link>
+                ) : (
+                  <>
+                    <button 
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} 
+                      className="w-full py-4 px-6 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-bold text-lg rounded-full shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] transition-all"
+                    >
+                      Get Started
+                    </button>
+                    <button 
+                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} 
+                      className="w-full py-4 px-6 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold text-lg rounded-full hover:bg-white/20 hover:border-white/40 transition-all"
+                    >
+                      Sign In
+                    </button>
+                  </>
+                )}
+              </motion.div>
             </div>
           </motion.div>
         )}
