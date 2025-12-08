@@ -8,34 +8,54 @@ import { toast } from '@/components/ui/use-toast';
 export default function PricingSection() {
   const plans = [
     {
-      name: "Developer",
+      name: "Builder",
       price: "Free",
-      description: "Perfect for getting started",
-      features: ["1,000 monthly credits", "Real-time profiling", "Basic dashboards", "JavaScript SDK"],
-      cta: "Start Free",
+      description: "Launch psychographic intelligence into your app",
+      outcomes: [
+        "Real-time user profiling",
+        "Behavioral event tracking",
+        "Basic cognitive insights",
+        "JavaScript SDK"
+      ],
+      limits: "1,000 credits/month • No content engine • Limited horizons",
+      cta: "Start Building",
       key: "developer",
       mode: "subscription", 
       highlight: false
     },
     {
-      name: "Growth",
+      name: "Scale",
       price: "$99",
       period: "/mo",
-      description: "For growing businesses",
-      features: ["10K-50K monthly credits", "Content engine", "AI feedback analysis", "Advanced segmentation", "Full integrations"],
-      cta: "Start Growth",
+      description: "Where behavior starts to affect money",
+      outcomes: [
+        "Increase conversion rates",
+        "Reduce churn with insights",
+        "Personalize user experiences",
+        "Optimize customer journeys",
+        "AI-powered content engine"
+      ],
+      limits: "50,000 credits/month included • $0.015 per 1,000 after",
+      cta: "Scale Now",
       key: "growth",
       mode: "subscription",
       highlight: true,
       badge: "MOST POPULAR"
     },
     {
-      name: "Pro",
+      name: "Infrastructure",
       price: "$499",
       period: "/mo",
-      description: "For serious scale",
-      features: ["100K-500K monthly credits", "Market intelligence", "Unlimited segments", "Batch analytics", "Priority support"],
-      cta: "Start Pro",
+      description: "knXw becomes a system dependency",
+      outcomes: [
+        "Predict user churn before it happens",
+        "Market intelligence & trends",
+        "Unlimited behavioral segments",
+        "Batch analytics at scale",
+        "Priority support & SLA"
+      ],
+      limits: "250,000 credits/month included • $0.012 per 1,000 after",
+      cta: "Deploy Infrastructure",
       key: "pro",
       mode: "subscription",
       highlight: false
@@ -83,9 +103,11 @@ export default function PricingSection() {
             viewport={{ once: true }}
             className="text-4xl md:text-6xl font-bold text-white mb-6"
           >
-            Simple Pricing
+            Pricing by Economic Posture
           </motion.h2>
-          <p className="text-lg md:text-xl text-gray-400">Choose the plan that fits your scale</p>
+          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+            Choose based on how behavior intelligence affects your business outcomes
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -113,13 +135,18 @@ export default function PricingSection() {
                 <p className="text-gray-400 mt-4 text-sm">{plan.description}</p>
               </div>
 
-              <div className="flex-1 space-y-4 mb-8">
-                {plan.features.map((feature, f) => (
-                  <div key={f} className="flex items-start gap-3 text-sm text-gray-300">
-                    <Check className="w-5 h-5 text-cyan-400 shrink-0" />
-                    <span className="flex-1">{feature}</span>
-                  </div>
-                ))}
+              <div className="flex-1 mb-8">
+                <div className="space-y-3 mb-6">
+                  {plan.outcomes.map((outcome, f) => (
+                    <div key={f} className="flex items-start gap-3 text-sm text-gray-300">
+                      <Check className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                      <span className="flex-1">{outcome}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="pt-6 border-t border-white/10">
+                  <p className="text-xs text-gray-500 leading-relaxed">{plan.limits}</p>
+                </div>
               </div>
 
               <button
@@ -139,7 +166,10 @@ export default function PricingSection() {
         <div className="mt-16 p-8 rounded-3xl bg-gradient-to-r from-purple-900/20 to-blue-900/20 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
           <div>
             <h3 className="text-2xl font-bold text-white mb-2">Enterprise & Custom</h3>
-            <p className="text-gray-400">Tailored solutions for large-scale deployments with custom requirements</p>
+            <p className="text-gray-400 mb-3">knXw becomes organizational intelligence</p>
+            <p className="text-sm text-gray-500">
+              Custom credits • Dedicated infrastructure • Multi-tenant • White-label • SLA guarantees
+            </p>
           </div>
           <button className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold hover:bg-white/10 transition-colors whitespace-nowrap w-full md:w-auto">
             Contact Sales
