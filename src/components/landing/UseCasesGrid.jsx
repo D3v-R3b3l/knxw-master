@@ -145,11 +145,11 @@ export default function UseCasesGrid() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [loading, setLoading] = React.useState(true);
 
-  // Fetch case studies from database
+  // Fetch ALL case studies from database
   React.useEffect(() => {
     base44.entities.CaseStudy.filter({ published: true })
       .then(studies => {
-        if (studies.length > 0) {
+        if (studies && studies.length > 0) {
           // Map database case studies to display format
           const mappedCases = studies.map(study => ({
             title: study.title,
@@ -161,20 +161,12 @@ export default function UseCasesGrid() {
           }));
           setUseCases(mappedCases);
         } else {
-          // Fallback to hardcoded examples if no case studies in DB
-          setUseCases([
-            { title: "E-commerce Product Recommendations", cat: "E-commerce", stat: "+45%", statLabel: "in AOV", details: ["AI-driven product sorting by buyer intent", "Real-time cart optimization", "Personalized upsell timing"], slug: "e-commerce-product-recommendations" },
-            { title: "SaaS Adaptive Onboarding", cat: "SaaS", stat: "+84%", statLabel: "feature adoption", details: ["Cognitive style-matched tutorials", "Progressive disclosure based on confidence", "Contextual help triggers"], slug: "saas-adaptive-onboarding" },
-            { title: "Gaming Adaptive Difficulty", cat: "Gaming", stat: "+156%", statLabel: "session length", details: ["Frustration detection & difficulty adjustment", "Flow state optimization", "Reward timing personalization"], slug: "gaming-adaptive-difficulty" },
-          ]);
+          setUseCases([]);
         }
       })
       .catch(err => {
         console.error('Error loading case studies:', err);
-        // Use fallback data on error
-        setUseCases([
-          { title: "E-commerce Product Recommendations", cat: "E-commerce", stat: "+45%", statLabel: "in AOV", details: ["AI-driven product sorting"], slug: "e-commerce-product-recommendations" },
-        ]);
+        setUseCases([]);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -215,8 +207,12 @@ export default function UseCasesGrid() {
           <div className="flex justify-center py-20">
             <div className="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
           </div>
+        ) : useCases.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-lg">Case studies loading soon...</p>
+          </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {useCases.map((item, i) => {
             const IconComponent = categoryIcons[item.cat] || Code;
             const colors = categoryColors[item.cat] || { from: "#06b6d4", to: "#0891b2" };
@@ -235,11 +231,11 @@ export default function UseCasesGrid() {
               >
                 <FoilCard
                   colors={colors}
-                  className="h-full min-h-[300px]"
+                  className="h-full min-h-[320px]"
                 >
-                  <div className="p-8 h-full flex flex-col">
+                  <div className="p-6 h-full flex flex-col">
                     {/* Category Badge */}
-                    <div className="flex justify-between items-start mb-6">
+                    <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-2">
                         <div 
                           className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -257,11 +253,11 @@ export default function UseCasesGrid() {
                       <ArrowRight className="w-4 h-4 text-white/40" />
                     </div>
                     
-                    <h3 className="text-xl font-bold text-white mb-auto pr-4">{item.title}</h3>
+                    <h3 className="text-lg font-bold text-white mb-auto pr-4 line-clamp-3 leading-snug">{item.title}</h3>
                     
-                    <div className="flex items-baseline gap-2 mt-8">
+                    <div className="flex items-baseline gap-2 mt-6">
                       <span 
-                        className="text-4xl font-bold"
+                        className="text-3xl font-bold"
                         style={{ 
                           background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
                           WebkitBackgroundClip: 'text',
@@ -270,7 +266,7 @@ export default function UseCasesGrid() {
                       >
                         {item.stat}
                       </span>
-                      <span className="text-sm text-gray-500">{item.statLabel}</span>
+                      <span className="text-xs text-gray-500 leading-tight">{item.statLabel}</span>
                     </div>
                   </div>
                 </FoilCard>
