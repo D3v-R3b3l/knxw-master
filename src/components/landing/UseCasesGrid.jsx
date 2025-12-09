@@ -375,13 +375,21 @@ export default function UseCasesGrid() {
                               ))}
                             </ul>
 
-                            <div className="mt-10 pt-8 border-t border-white/5">
+                            <div className="mt-10 pt-8 border-t border-white/5 relative z-[300]">
                                <a
                                  href={`/CaseStudy?slug=${item.slug}`}
-                                 className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group cursor-pointer"
+                                 onClick={(e) => {
+                                   e.preventDefault();
+                                   e.stopPropagation();
+                                   window.location.href = `/CaseStudy?slug=${item.slug}`;
+                                 }}
+                                 className="block w-full py-3 px-6 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 hover:border-cyan-500/50 text-white font-semibold transition-all duration-300 text-center hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02] cursor-pointer"
+                                 style={{ pointerEvents: 'auto' }}
                                >
-                                 View Case Study
-                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                 <span className="flex items-center justify-center gap-2">
+                                   View Case Study
+                                   <ArrowRight className="w-4 h-4" />
+                                 </span>
                                </a>
                             </div>
                           </div>
