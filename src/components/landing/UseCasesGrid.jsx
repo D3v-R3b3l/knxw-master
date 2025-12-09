@@ -352,7 +352,7 @@ export default function UseCasesGrid() {
                              </div>
                           </div>
 
-                          <div className="w-full md:w-1/2 p-8 md:p-10 bg-[#111] border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto z-10">
+                          <div className="w-full md:w-1/2 p-8 md:p-10 bg-[#111] border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto z-10 pointer-events-auto">
                             <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-6">Impact Analysis</h4>
                             <ul className="space-y-6">
                               {item.details.map((detail, idx) => (
@@ -374,18 +374,15 @@ export default function UseCasesGrid() {
                                 </motion.li>
                               ))}
                             </ul>
-                            
+
                             <div className="mt-10 pt-8 border-t border-white/5">
-                               <button 
-                                 onClick={(e) => {
-                                   e.stopPropagation();
-                                   window.location.href = `/CaseStudy?slug=${item.slug}`;
-                                 }}
-                                 className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group"
+                               <a
+                                 href={`/CaseStudy?slug=${item.slug}`}
+                                 className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group cursor-pointer"
                                >
                                  View Case Study
                                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                               </button>
+                               </a>
                             </div>
                           </div>
                         </>
