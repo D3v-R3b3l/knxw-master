@@ -377,7 +377,10 @@ export default function UseCasesGrid() {
                             
                             <div className="mt-10 pt-8 border-t border-white/5">
                                <button 
-                                 onClick={() => window.location.href = createPageUrl('CaseStudy') + `?slug=${item.slug || item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   window.location.href = `/CaseStudy?slug=${item.slug}`;
+                                 }}
                                  className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center gap-2 group"
                                >
                                  View Case Study
