@@ -356,8 +356,8 @@ export default function LandingPage() {
                       <div className="absolute inset-8 rounded-full border border-purple-500/20 animate-[spin_20s_linear_infinite]">
                          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.8)]" />
                       </div>
-                      <div className="absolute inset-16 rounded-full border border-cyan-500/20 animate-[spin_15s_linear_infinite_reverse]">
-                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)]" />
+                      <div className="absolute inset-16 rounded-full border border-cyan-500/20 animate-[spin_15s_linear_infinite_reverse] transition-all duration-500 hover:border-cyan-400/50 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] group/ring cursor-pointer">
+                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)] group-hover/ring:w-3 group-hover/ring:h-3 group-hover/ring:shadow-[0_0_25px_rgba(6,182,212,1)] transition-all duration-300" />
                       </div>
                       <div className="absolute inset-24 rounded-full border border-emerald-500/20 animate-[spin_25s_linear_infinite]">
                          <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
