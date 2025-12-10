@@ -46,7 +46,6 @@ export default function Dashboard() {// Renamed from DashboardContent
   const [user, setUser] = useState(null);
   const [isInitialSetupLoading, setIsInitialSetupLoading] = useState(true);
   const [hasClientApp, setHasClientApp] = useState(false);
-  const [setupRetryCount, setSetupRetryCount] = useState(0);
   const [checkInData, setCheckInData] = useState(null);
 
   const originalData = useRef(null);
@@ -125,25 +124,19 @@ export default function Dashboard() {// Renamed from DashboardContent
         }
       } else {
         setHasClientApp(false);
-        if (setupRetryCount < 5) {
-          setTimeout(() => setSetupRetryCount((prev) => prev + 1), 2000);
-        }
       }
     }
     catch (error) {
       logger.error('Error loading initial dashboard data (user/apps):', error);
       handleApiError(error, "Failed to load initial dashboard setup data.");
-    } finally
-    {
-      if (apps && apps.length > 0 || setupRetryCount >= 5) {
-        setIsInitialSetupLoading(false);
-      }
+    } finally {
+      setIsInitialSetupLoading(false);
     }
-  }, [apps, selectedAppId, setSelectedAppId, setupRetryCount]);
+  }, [apps, selectedAppId, setSelectedAppId]);
 
   useEffect(() => {
     loadUserAndCheckForApps();
-  }, [loadUserAndCheckForApps, setupRetryCount]);
+  }, [loadUserAndCheckForApps]);
 
   const handleRefresh = useCallback(() => {
     refreshData(true);
@@ -204,9 +197,7 @@ export default function Dashboard() {// Renamed from DashboardContent
   }, [profiles]);
 
   useEffect(() => {
-    if (setupRetryCount === 0) {
-      loadUserAndCheckForApps();
-    }
+    loadUserAndCheckForApps();
 
     const timer = setTimeout(() => {
 
@@ -246,7 +237,7 @@ export default function Dashboard() {// Renamed from DashboardContent
       window.removeEventListener('seedWalkthroughExample', handleSeedData);
       window.removeEventListener('knxw-demo-data-cleared', onDemoCleared);
     };
-  }, [setupRetryCount, loadUserAndCheckForApps, refreshData]);
+  }, [loadUserAndCheckForApps, refreshData]);
 
   if (isInitialSetupLoading && !hasClientApp) {
     return (
@@ -325,14 +316,7 @@ export default function Dashboard() {// Renamed from DashboardContent
               Start Building Now
             </Button>
           </div>
-
-          {setupRetryCount > 0 && setupRetryCount < 5 &&
-          <div className="text-center mt-8">
-              <div className="w-6 h-6 border-2 border-white/10 border-t-[#00d4ff] rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-xs text-[#666]">Syncing account...</p>
-            </div>
-          }
-        </div>
+          </div>
       </div>);
 
   }
