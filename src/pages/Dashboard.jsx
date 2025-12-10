@@ -124,6 +124,10 @@ export default function Dashboard() {// Renamed from DashboardContent
         }
       } else {
         setHasClientApp(false);
+        // Trigger onboarding when no apps exist
+        setTimeout(() => {
+          setShowRoleOnboarding(true);
+        }, 500);
       }
     }
     catch (error) {
