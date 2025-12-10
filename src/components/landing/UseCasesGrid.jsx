@@ -280,18 +280,19 @@ export default function UseCasesGrid() {
       {/* Expanded Card Modal */}
       <AnimatePresence>
         {selectedCard !== null && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10 pointer-events-none">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedCard(null)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto"
+              className="absolute inset-0 bg-black/60 backdrop-blur-md"
             />
             
             <motion.div
               layoutId={`card-${selectedCard}`}
-              className="w-full max-w-3xl h-auto pointer-events-auto shadow-2xl shadow-black/50 relative"
+              className="w-full max-w-3xl h-auto shadow-2xl shadow-black/50 relative"
+              onClick={(e) => e.stopPropagation()}
             >
                {/* Close button outside FoilCard to ensure clickability */}
                <button 
@@ -352,7 +353,7 @@ export default function UseCasesGrid() {
                              </div>
                           </div>
 
-                          <div className="w-full md:w-1/2 p-8 md:p-10 bg-[#111] border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto z-10 pointer-events-auto">
+                          <div className="w-full md:w-1/2 p-8 md:p-10 bg-[#111] border-t md:border-t-0 md:border-l border-white/10 overflow-y-auto z-10">
                             <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-6">Impact Analysis</h4>
                             <ul className="space-y-6">
                               {item.details.map((detail, idx) => (
@@ -375,16 +376,10 @@ export default function UseCasesGrid() {
                               ))}
                             </ul>
 
-                            <div className="mt-10 pt-8 border-t border-white/5 relative z-[300]">
+                            <div className="mt-10 pt-8 border-t border-white/5">
                                <a
                                  href={`/CaseStudy?slug=${item.slug}`}
-                                 onClick={(e) => {
-                                   e.preventDefault();
-                                   e.stopPropagation();
-                                   window.location.href = `/CaseStudy?slug=${item.slug}`;
-                                 }}
                                  className="block w-full py-3 px-6 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 hover:border-cyan-500/50 text-white font-semibold transition-all duration-300 text-center hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02] cursor-pointer"
-                                 style={{ pointerEvents: 'auto' }}
                                >
                                  <span className="flex items-center justify-center gap-2">
                                    View Case Study
