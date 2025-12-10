@@ -532,6 +532,7 @@ export default function Dashboard() {// Renamed from DashboardContent
             </div>
           </> :
 
+        apps.length === 0 ? null :
         <div className="bg-[#111111] border border-[#262626] rounded-xl p-8 text-center mt-8">
             <div className="w-16 h-16 bg-[#262626] rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-8 h-8 text-[#a3a3a3]" />
