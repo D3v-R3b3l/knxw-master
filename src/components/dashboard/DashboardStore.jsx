@@ -125,43 +125,12 @@ export function DashboardProvider({ children }) {
     return () => window.removeEventListener('knxw-app-deleted', handleAppDeleted);
   }, [selectedAppId, selectApp]);
 
-  // Ensure a ClientApp is selected or auto-created
+  // Ensure a ClientApp is selected (no auto-creation)
   useEffect(() => {
-    let isMounted = true;
-
-    async function ensureSelectedApp() {
-      if (selectedAppId) return;
-      if (Array.isArray(apps) && apps.length > 0) {
-        selectApp(apps[0]?.id);
-        return;
-      }
-
-      try {
-        const { data } = await base44.functions.invoke('createDefaultClientApp', {});
-        const created = data?.app || data;
-        if (isMounted && created?.id) {
-          const freshApps = await base44.entities.ClientApp.list("-created_date", 50);
-          if (isMounted) {
-            setApps(freshApps);
-            selectApp(created.id);
-          }
-        }
-      } catch (e) {
-        logger.warn("Auto-create default ClientApp failed:", e);
-        try {
-          const freshApps = await base44.entities.ClientApp.list("-created_date", 50);
-          if (isMounted && Array.isArray(freshApps) && freshApps.length > 0) {
-            setApps(freshApps);
-            selectApp(freshApps[0].id);
-          }
-        } catch (innerError) {
-          logger.error("Fallback load ClientApp list failed:", innerError);
-        }
-      }
+    if (selectedAppId) return;
+    if (Array.isArray(apps) && apps.length > 0) {
+      selectApp(apps[0]?.id);
     }
-
-    ensureSelectedApp();
-    return () => { isMounted = false; };
   }, [apps, selectedAppId, selectApp]);
 
   // Compute metrics - stable function
