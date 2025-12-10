@@ -378,15 +378,19 @@ export default function UseCasesGrid() {
                             </ul>
 
                             <div className="mt-10 pt-8 border-t border-white/5">
-                               <Link
-                                 to={`${createPageUrl('CaseStudy')}?slug=${item.slug}`}
-                                 className="block w-full py-3 px-6 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 hover:border-cyan-500/50 text-white font-semibold transition-all duration-300 text-center hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02]"
+                               <button
+                                 onClick={(e) => {
+                                   e.preventDefault();
+                                   e.stopPropagation();
+                                   window.location.href = `${createPageUrl('CaseStudy')}?slug=${item.slug}`;
+                                 }}
+                                 className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 hover:border-cyan-500/50 text-white font-semibold transition-all duration-300 text-center hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02] cursor-pointer"
                                >
                                  <span className="flex items-center justify-center gap-2">
                                    View Case Study
                                    <ArrowRight className="w-4 h-4" />
                                  </span>
-                               </Link>
+                               </button>
                             </div>
                           </div>
                         </>
