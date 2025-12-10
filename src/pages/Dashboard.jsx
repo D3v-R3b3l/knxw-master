@@ -124,6 +124,11 @@ export default function Dashboard() {// Renamed from DashboardContent
         }
       } else {
         setHasClientApp(false);
+        // Trigger role-based onboarding when no apps exist
+        setTimeout(() => {
+          const event = new CustomEvent('knxw-trigger-onboarding');
+          window.dispatchEvent(event);
+        }, 500);
       }
     }
     catch (error) {

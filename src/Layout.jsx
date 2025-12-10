@@ -136,6 +136,16 @@ export default function Layout({ children, currentPageName }) {
         if (user.onboarding_state?.tour_requested && !user.onboarding_state?.tour_completed) {
           setShowTour(true);
         }
+
+        // Listen for onboarding trigger from dashboard
+        const handleOnboardingTrigger = () => {
+          setShowRoleOnboarding(true);
+        };
+        window.addEventListener('knxw-trigger-onboarding', handleOnboardingTrigger);
+        
+        return () => {
+          window.removeEventListener('knxw-trigger-onboarding', handleOnboardingTrigger);
+        };
       })
       .catch((error) => {
         logError(error, { context: 'Layout authentication' });
