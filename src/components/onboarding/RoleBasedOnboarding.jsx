@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -407,8 +406,8 @@ export default function RoleBasedOnboarding({ isOpen, onClose, userRole = 'marke
                           await saveOnboardingState();
                           onClose?.();
                         }}
-                        variant="ghost"
-                        className="text-[#a3a3a3] hover:text-white"
+                        variant="outline"
+                        className="border-[#262626] bg-[#1a1a1a] text-white hover:bg-[#262626] hover:text-white"
                       >
                         Close for Now
                       </Button>
