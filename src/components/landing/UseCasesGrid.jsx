@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ArrowRight, X, ShoppingCart, Code, Gamepad2, GraduationCap, Heart, Megaphone, Headphones, Tv } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -377,15 +378,15 @@ export default function UseCasesGrid() {
                             </ul>
 
                             <div className="mt-10 pt-8 border-t border-white/5">
-                               <a
-                                 href={`/CaseStudy?slug=${item.slug}`}
-                                 className="block w-full py-3 px-6 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 hover:border-cyan-500/50 text-white font-semibold transition-all duration-300 text-center hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02] cursor-pointer"
+                               <Link
+                                 to={`${createPageUrl('CaseStudy')}?slug=${item.slug}`}
+                                 className="block w-full py-3 px-6 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 hover:border-cyan-500/50 text-white font-semibold transition-all duration-300 text-center hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02]"
                                >
                                  <span className="flex items-center justify-center gap-2">
                                    View Case Study
                                    <ArrowRight className="w-4 h-4" />
                                  </span>
-                               </a>
+                               </Link>
                             </div>
                           </div>
                         </>
