@@ -55,10 +55,10 @@ export default function PhilosophySection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1] mb-8"
+              className="text-4xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-[1.2] mb-8 pb-2"
             >
               From Data to{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 inline-block">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 inline-block pb-1">
                 Understanding
               </span>
             </motion.h2>
