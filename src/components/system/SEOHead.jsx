@@ -21,8 +21,10 @@ export default function SEOHead({
   ogImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/688aa91c44a8979a009301be/e67a8a337_txpknxwlogo.png",
   ogType = "website",
   canonicalUrl,
+  structuredData
 }) {
   const fullTitle = title.includes('knXw') ? title : `${title} | knXw`;
+  const jsonLd = structuredData || DEFAULT_STRUCTURED_DATA;
   
   return (
     <Helmet>
@@ -35,6 +37,7 @@ export default function SEOHead({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:site_name" content="knXw" />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -44,6 +47,16 @@ export default function SEOHead({
       
       {/* Canonical URL */}
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      
+      {/* SEO Enhancements */}
+      <meta name="robots" content="index, follow" />
+      <meta name="author" content="knXw" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      
+      {/* Structured Data for Search Engines */}
+      <script type="application/ld+json">
+        {JSON.stringify(jsonLd)}
+      </script>
     </Helmet>
   );
 }
