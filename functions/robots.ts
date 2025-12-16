@@ -1,51 +1,25 @@
-/**
- * Serves robots.txt for crawler directives
- */
+// Serve robots.txt for search engine crawlers
 Deno.serve((req) => {
-  const robotsTxt = `# knXw Robots.txt
+  const robotsTxt = `# knXw - Universal Intelligence Layer
 User-agent: *
 Allow: /
-Allow: /Landing
 Allow: /Documentation
-Allow: /Developers
-Allow: /api/functions/ai
-Allow: /Pricing
-Allow: /Privacy
-Allow: /Terms
 Allow: /Blog
-Allow: /BlogPost
-Allow: /Agents
-Allow: /lowdown
-Allow: /Support
-
-# Rate limiting for aggressive crawlers
-Crawl-delay: 1
+Allow: /Pricing
+Allow: /InteractiveDemo
+Disallow: /Dashboard
+Disallow: /Settings
+Disallow: /api/
 
 # Sitemap
 Sitemap: ${new URL('/sitemap', req.url).href}
 
-# Disallow admin and internal pages
-Disallow: /Dashboard
-Disallow: /Settings
-Disallow: /Profiles
-Disallow: /Events
-Disallow: /Insights
-Disallow: /Engagements
-Disallow: /BatchAnalytics
-Disallow: /Integrations
-Disallow: /DemoData
-Disallow: /Onboarding
-Disallow: /OrgAdmin
-Disallow: /SystemHealth
-Disallow: /MyApps
-Disallow: /assistant
-
-# Security
-Disallow: /api/
-Disallow: /functions/
+# Crawl-delay for polite bots
+Crawl-delay: 1
 `;
 
   return new Response(robotsTxt, {
+    status: 200,
     headers: {
       'Content-Type': 'text/plain',
       'Cache-Control': 'public, max-age=86400'
