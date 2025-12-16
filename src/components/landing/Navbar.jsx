@@ -21,7 +21,8 @@ export default function Navbar() {
     { name: "Platform", href: "#platform" },
     { name: "Features", href: "#features" },
     { name: "Use Cases", href: "#use-cases" },
-    { name: "Docs", href: "/Documentation" }, // Direct route
+    { name: "Docs", href: "/Documentation" },
+    { name: "Blog", href: "/Blog" },
     { name: "Pricing", href: "#pricing" },
   ];
 
