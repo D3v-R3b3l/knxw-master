@@ -347,26 +347,63 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   className="relative hidden md:block"
-               >
-                   {/* Enhanced Abstract visual */}
-                   <div className="aspect-square rounded-full bg-gradient-to-br from-purple-900/30 to-cyan-900/20 border border-white/10 flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000_80%)]" />
-                      
-                      {/* Orbiting rings */}
-                      <div className="absolute inset-8 rounded-full border border-purple-500/20 animate-[spin_20s_linear_infinite]">
-                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.8)]" />
+                >
+                   {/* Enterprise Infrastructure Grid */}
+                   <div className="aspect-square relative">
+                      <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-4">
+                         {Array.from({ length: 16 }).map((_, i) => (
+                            <motion.div
+                               key={i}
+                               initial={{ opacity: 0, scale: 0 }}
+                               whileInView={{ opacity: 1, scale: 1 }}
+                               viewport={{ once: true }}
+                               transition={{ delay: i * 0.05 }}
+                               className="bg-gradient-to-br from-purple-900/20 to-cyan-900/20 rounded-lg border border-white/10 relative overflow-hidden group"
+                            >
+                               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-cyan-500/0 group-hover:from-purple-500/20 group-hover:to-cyan-500/20 transition-all duration-500" />
+
+                               {/* Animated pulse */}
+                               <motion.div
+                                  className="absolute inset-0 bg-cyan-500/20 rounded-lg"
+                                  animate={{
+                                     opacity: [0, 0.3, 0],
+                                     scale: [0.8, 1, 0.8],
+                                  }}
+                                  transition={{
+                                     duration: 3,
+                                     delay: i * 0.2,
+                                     repeat: Infinity,
+                                     ease: "easeInOut"
+                                  }}
+                               />
+
+                               {/* Status indicator */}
+                               <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                            </motion.div>
+                         ))}
                       </div>
-                      <div className="absolute inset-16 rounded-full border border-cyan-500/20 animate-[spin_15s_linear_infinite_reverse] transition-all duration-500 hover:border-cyan-400/50 hover:scale-110 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] group/ring cursor-pointer">
-                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)] group-hover/ring:w-3 group-hover/ring:h-3 group-hover/ring:shadow-[0_0_25px_rgba(6,182,212,1)] transition-all duration-300" />
-                      </div>
-                      <div className="absolute inset-24 rounded-full border border-emerald-500/20 animate-[spin_25s_linear_infinite]">
-                         <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
-                      </div>
-                      
-                      {/* Center core */}
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/50 to-cyan-500/50 flex items-center justify-center relative z-10">
-                         <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm" />
-                      </div>
+
+                      {/* Connecting lines animation */}
+                      <svg className="absolute inset-0 pointer-events-none">
+                         <motion.line
+                            x1="25%" y1="25%" x2="75%" y2="75%"
+                            stroke="rgba(6,182,212,0.3)"
+                            strokeWidth="1"
+                            initial={{ pathLength: 0 }}
+                            whileInView={{ pathLength: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1.5, delay: 0.5 }}
+                         />
+                         <motion.line
+                            x1="75%" y1="25%" x2="25%" y2="75%"
+                            stroke="rgba(139,92,246,0.3)"
+                            strokeWidth="1"
+                            initial={{ pathLength: 0 }}
+                            whileInView={{ pathLength: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1.5, delay: 0.7 }}
+                         />
+                      </svg>
                    </div>
                </motion.div>
             </div>
