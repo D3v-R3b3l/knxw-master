@@ -204,6 +204,66 @@ export default function LandingPage() {
         description="Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment. Real-time behavioral analysis powered by AI."
         keywords="psychographic intelligence, user analytics, behavioral analysis, AI insights, customer intelligence, user profiling, adaptive experiences"
       />
+      
+      {/* Noscript fallback for search engines and no-JS browsers */}
+      <noscript>
+        <div style={{ backgroundColor: '#000', color: '#fff', padding: '40px 20px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+          <header style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '20px' }}>knXw - The Universal Intelligence Layer</h1>
+            <p style={{ fontSize: '20px', color: '#9ca3af', maxWidth: '800px', margin: '0 auto 40px' }}>
+              Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment.
+            </p>
+            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a href="/Dashboard" style={{ padding: '16px 32px', backgroundColor: '#fff', color: '#000', borderRadius: '9999px', fontWeight: 'bold', textDecoration: 'none' }}>Get Started</a>
+              <a href="/Documentation" style={{ padding: '16px 32px', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: '9999px', fontWeight: 'bold', textDecoration: 'none' }}>API Docs</a>
+            </div>
+          </header>
+          
+          <section style={{ maxWidth: '1200px', margin: '0 auto 80px' }}>
+            <h2 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>From Data to Understanding</h2>
+            <p style={{ fontSize: '18px', color: '#9ca3af', marginBottom: '20px' }}>
+              Redefine engagement across every domain: marketing becomes intuitive, education adapts to every learner, communication grows more empathetic, and decision-making becomes informed by understanding rather than assumption.
+            </p>
+          </section>
+          
+          <section style={{ maxWidth: '1200px', margin: '0 auto 80px' }}>
+            <h2 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>Built as Universal Infrastructure</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+              <div style={{ padding: '24px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px' }}>Event Ingestion</h3>
+                <p style={{ color: '#9ca3af' }}>Real-time data capture from any source with sub-100ms latency.</p>
+              </div>
+              <div style={{ padding: '24px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px' }}>AI Intelligence</h3>
+                <p style={{ color: '#9ca3af' }}>Multi-layer inference engine for psychographic profiling.</p>
+              </div>
+              <div style={{ padding: '24px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px' }}>Developer APIs</h3>
+                <p style={{ color: '#9ca3af' }}>RESTful APIs and SDKs for seamless integration.</p>
+              </div>
+              <div style={{ padding: '24px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px' }}>Activation</h3>
+                <p style={{ color: '#9ca3af' }}>Turn insights into adaptive experiences instantly.</p>
+              </div>
+            </div>
+          </section>
+          
+          <section style={{ maxWidth: '1200px', margin: '0 auto 80px' }}>
+            <h2 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>Enterprise-Grade Infrastructure</h2>
+            <ul style={{ fontSize: '18px', color: '#9ca3af', lineHeight: '2' }}>
+              <li>Encryption at rest & transit, GDPR Ready, Data ownership</li>
+              <li>99.9% uptime SLA, Real-time health checks, Auto-scaling</li>
+              <li>SAML/OIDC SSO, Data warehouse sync, SIEM integration</li>
+            </ul>
+          </section>
+          
+          <footer style={{ textAlign: 'center', padding: '40px 20px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+            <p style={{ color: '#9ca3af', marginBottom: '20px' }}>Join developers deploying psychographic intelligence at scale</p>
+            <a href="/Dashboard" style={{ padding: '16px 32px', backgroundColor: '#06b6d4', color: '#000', borderRadius: '9999px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block' }}>Start Building Free</a>
+          </footer>
+        </div>
+      </noscript>
+      
       <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
         <CustomCursor />
         <Navbar />

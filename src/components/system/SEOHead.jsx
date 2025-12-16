@@ -1,6 +1,19 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
+const DEFAULT_STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "knXw",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "description": "Psychographic intelligence platform for understanding user behavior"
+};
+
 export default function SEOHead({
   title = "knXw - Universal Intelligence Layer",
   description = "Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment.",
