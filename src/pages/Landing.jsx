@@ -295,16 +295,14 @@ export default function LandingPage() {
           
           {/* Content sections container - sits above the fixed shader */}
           <div className="relative bg-black" style={{ zIndex: 10 }}>
-          {/* Spacer to allow hero content to scroll out */}
-          <div className="h-[10vh] bg-transparent" />
-          
+
           <div data-scroll-section>
             <PhilosophySection />
           </div>
-          
+
           {/* Infrastructure Section - Enhanced */}
           <div data-scroll-section>
-          <section id="features" className="py-24 md:py-32 bg-[#050505] border-b border-white/5 overflow-hidden relative">
+          <section id="features" className="py-16 md:py-20 bg-[#050505] border-b border-white/5 overflow-hidden relative">
              {/* Background Effects */}
              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.03),transparent_70%)]" />
              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100px_100px]" />
