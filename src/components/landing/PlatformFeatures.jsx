@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot } from 'lucide-react';
+import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, AlertTriangle, Sliders } from 'lucide-react';
 
 export default function PlatformFeatures() {
   return (
@@ -139,6 +139,64 @@ export default function PlatformFeatures() {
               <div>
                 <h3 className="text-xl font-bold mb-2">AI Automation</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">Deploy intelligent agents for personalized engagements.</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* New Advanced Features */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.35 }}
+            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-yellow-500/30 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0 border border-yellow-500/20">
+                <TrendingUp className="w-5 h-5 text-yellow-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Cognitive Bias Detection</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Identify anchoring, confirmation, and loss aversion biases.</p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-rose-500/30 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-rose-500/10 flex items-center justify-center flex-shrink-0 border border-rose-500/20">
+                <TrendingUp className="w-5 h-5 text-rose-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Emotional Shift Tracking</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Monitor subtle emotional changes with volatility analysis.</p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.45 }}
+            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-indigo-500/30 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0 border border-indigo-500/20">
+                <Brain className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Custom Dimensions</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Define industry-specific psychographic traits and metrics.</p>
               </div>
             </div>
           </motion.div>
