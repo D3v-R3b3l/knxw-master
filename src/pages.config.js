@@ -72,6 +72,7 @@ import lowdown from './pages/lowdown';
 import settings from './pages/settings';
 import EngagementMarketplace from './pages/EngagementMarketplace';
 import CustomDimensions from './pages/CustomDimensions';
+import MarketingIntegrations from './pages/MarketingIntegrations';
 import __Layout from './Layout.jsx';
 
 
@@ -150,6 +151,7 @@ export const PAGES = {
     "settings": settings,
     "EngagementMarketplace": EngagementMarketplace,
     "CustomDimensions": CustomDimensions,
+    "MarketingIntegrations": MarketingIntegrations,
 }
 
 export const pagesConfig = {
