@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +11,9 @@ import { motion } from "framer-motion";
 import MotivationDisplay from "../components/dashboard/MotivationDisplay";
 import { safeFormatDate } from "../components/utils/datetime";
 import PageHeader from '../components/ui/PageHeader';
+import PsychographicTrendChart from '../components/psychographic/PsychographicTrendChart';
+import CognitiveBiasDetector from '../components/psychographic/CognitiveBiasDetector';
+import EmotionalShiftTimeline from '../components/psychographic/EmotionalShiftTimeline';
 
 export default function ProfilesPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -302,6 +304,13 @@ export default function ProfilesPage() {
                   {selectedProfile.valid_to && (
                     <p className="mt-1">Valid until: {safeFormatDate(selectedProfile.valid_to)}</p>
                   )}
+                </div>
+
+                {/* Advanced Analytics */}
+                <div className="pt-6 space-y-6">
+                  <PsychographicTrendChart userId={selectedProfile.user_id} />
+                  <CognitiveBiasDetector userId={selectedProfile.user_id} />
+                  <EmotionalShiftTimeline userId={selectedProfile.user_id} />
                 </div>
               </div>
             </motion.div>
