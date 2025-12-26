@@ -106,15 +106,46 @@ Deno.serve(async (req) => {
             <p>Specialized SDKs for game developers with player psychology analysis, motivation tracking, and adaptive difficulty features.</p>
         </div>
 
-        <h2>Integrations</h2>
+        <h2>Advanced Psychographics</h2>
         <div class="doc-section">
-            <h3>Available Integrations</h3>
+            <h3>Next-Generation Intelligence</h3>
             <ul>
+                <li><strong>Cognitive Bias Detection</strong>: Identify anchoring, confirmation, recency, and loss aversion biases</li>
+                <li><strong>Emotional Shift Analysis</strong>: Track subtle mood changes with volatility scoring</li>
+                <li><strong>Custom Dimensions</strong>: Define industry-specific psychographic traits</li>
+                <li><strong>Psychographic Trends</strong>: Visualize how user psychology evolves over time</li>
+                <li><strong>Data Provenance</strong>: Full transparency on inference sources and confidence scores</li>
+            </ul>
+        </div>
+
+        <h2>Marketing Platform Integrations</h2>
+        <div class="doc-section">
+            <h3>Connect Your Marketing Stack</h3>
+            <ul>
+                <li><strong>Marketo</strong>: Sync psychographic profiles to lead records</li>
+                <li><strong>Pardot</strong>: Update prospect custom fields with psychological traits</li>
+                <li><strong>Segment CDP</strong>: Stream psychographic traits as user properties</li>
+                <li><strong>Salesforce Marketing Cloud</strong>: Enrich subscriber attributes</li>
+                <li><strong>Adobe Analytics</strong>: Send psychographics as custom eVars</li>
                 <li><strong>HubSpot</strong>: Sync psychographic data to CRM contacts</li>
                 <li><strong>Meta (Facebook) Ads</strong>: Enhanced conversion tracking with psychological insights</li>
                 <li><strong>Google Analytics 4</strong>: Enrich GA4 events with psychographic dimensions</li>
                 <li><strong>Stripe</strong>: Payment behavior analysis and churn prediction</li>
-                <li><strong>Webhooks</strong>: Real-time event notifications to your endpoints</li>
+                <li><strong>Webhooks</strong>: Real-time event notifications to any endpoint</li>
+            </ul>
+        </div>
+
+        <h2>Engagement Marketplace</h2>
+        <div class="doc-section">
+            <h3>Pre-Built Templates</h3>
+            <p>Access 100+ proven engagement templates tailored for specific industries:</p>
+            <ul>
+                <li><strong>E-commerce</strong>: Cart abandonment, product recommendations, loyalty programs</li>
+                <li><strong>SaaS</strong>: Feature discovery, onboarding flows, upgrade prompts</li>
+                <li><strong>Healthcare</strong>: Patient check-ins, appointment reminders, wellness programs</li>
+                <li><strong>Finance</strong>: Risk-appropriate product recommendations, investment guidance</li>
+                <li><strong>Gaming</strong>: Player retention, reward optimization, difficulty adaptation</li>
+                <li><strong>Education</strong>: Adaptive learning paths, progress motivation, course recommendations</li>
             </ul>
         </div>
 

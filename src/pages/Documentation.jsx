@@ -8,7 +8,7 @@ import {
   ExternalLink, ChevronRight, Database, Layers, Gamepad2, Webhook,
   Lock, TrendingUp, Globe, FileText, HelpCircle, Sparkles, Activity,
   MousePointer, Target, Server, Link as LinkIcon, FlaskConical, HeartPulse,
-  Megaphone, Briefcase, Menu, X, ShieldCheck, User, Rocket, Map
+  Megaphone, Briefcase, Menu, X, ShieldCheck, User, Rocket, Map, Sliders, Store, Plug
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -20,6 +20,9 @@ import TrainingValidationDoc from '@/components/documentation/TrainingValidation
 import DataStructureDoc from '@/components/documentation/DataStructureDoc';
 import SDKDoc from '@/components/documentation/SDKDoc';
 import IntegrationsDoc from '@/components/documentation/IntegrationsDoc';
+import AdvancedPsychographicsDoc from '@/components/documentation/AdvancedPsychographicsDoc';
+import MarketingIntegrationsDoc from '@/components/documentation/MarketingIntegrationsDoc';
+import EngagementMarketplaceDoc from '@/components/documentation/EngagementMarketplaceDoc';
 import CoreIntegrationsDoc from '@/components/documentation/integrations/CoreIntegrationsDoc';
 import AwsS3IntegrationDoc from '@/components/documentation/integrations/AwsS3IntegrationDoc';
 import AzureBlobIntegrationDoc from '@/components/documentation/integrations/AzureBlobIntegrationDoc';
@@ -303,6 +306,7 @@ const documentationSections = [
   { id: 'platform-feature-map', title: 'Platform Feature Map', icon: Map, component: PlatformFeatureMapDoc },
   { id: 'introduction', title: 'Introduction', icon: Sparkles, component: IntroductionDoc },
   { id: 'ai-inference', title: 'AI Inference & Explainability', icon: Brain, component: InferenceOverviewDoc },
+  { id: 'advanced-psychographics', title: 'Advanced Psychographics', icon: Brain, component: AdvancedPsychographicsDoc },
   { id: 'training-validation', title: 'Training & Validation', icon: Target, component: TrainingValidationDoc },
   { id: 'demo-data-studio', title: 'Demo Data Studio', icon: Database, component: DemoDataStudioDoc },
   { id: 'javascript-sdk', title: 'JavaScript SDK', icon: Code, component: SDKDoc },
@@ -315,6 +319,7 @@ const documentationSections = [
   { id: 'predictive-psychographics', title: 'Predictive Psychographics', icon: Brain, component: PredictivePsychographicsDoc },
   { id: 'market-intelligence', title: 'Market Intelligence', icon: TrendingUp, component: MarketIntelligenceDoc },
   { id: 'custom-dashboards', title: 'Custom Dashboards', icon: BarChart3, component: CustomDashboardsDoc },
+  { id: 'engagement-marketplace', title: 'Engagement Marketplace', icon: Store, component: EngagementMarketplaceDoc },
   { id: 'robotics', title: 'Robotics Control', icon: Rocket, component: RoboticsDoc },
   { id: 'data-quality', title: 'Data Quality', icon: ShieldCheck, component: DataQualityDoc },
   { id: 'collaboration', title: 'Team Collaboration', icon: Users, component: CollaborationDoc },
@@ -322,6 +327,7 @@ const documentationSections = [
   { id: 'ab-testing', title: 'A/B Testing', icon: FlaskConical, component: ABTestingDoc },
   { id: 'executive-dashboard', title: 'Executive Dashboard', icon: Briefcase, component: ExecutiveDashboardDoc },
   { id: 'integrations-overview', title: 'Integrations Overview', icon: Zap, component: IntegrationsDoc },
+  { id: 'marketing-integrations', title: 'Marketing Platforms', icon: Plug, component: MarketingIntegrationsDoc },
   { id: 'integration-playbooks', title: 'Integration Playbooks', icon: BookOpen, component: IntegrationPlaybooks },
   { id: 'core-integrations', title: 'Core Integrations', icon: Layers, component: CoreIntegrationsDoc },
   { id: 'aws-s3', title: 'AWS S3', icon: Database, component: AwsS3IntegrationDoc },

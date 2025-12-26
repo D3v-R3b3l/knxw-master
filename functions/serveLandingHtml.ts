@@ -87,17 +87,20 @@ Deno.serve(async (req) => {
         <h2>Core Capabilities</h2>
         <ul>
             <li><strong>Behavioral Telemetry Ingestion</strong>: Real-time event capture from any source with sub-100ms latency.</li>
-            <li><strong>AI Intelligence</strong>: Multi-layer inference engine for psychographic profiling, understanding motivations, emotions, and cognitive styles.</li>
+            <li><strong>Advanced AI Intelligence</strong>: Multi-layer inference engine for psychographic profiling, cognitive bias detection, emotional shift analysis, and custom industry-specific dimensions.</li>
             <li><strong>Developer APIs & SDKs</strong>: RESTful APIs and SDKs (Web, Mobile, Game Engines) for seamless integration into your applications.</li>
             <li><strong>Adaptive Activation</strong>: Turn insights into personalized, adaptive experiences instantly across all digital touchpoints.</li>
+            <li><strong>Marketing Platform Integrations</strong>: Sync psychographic data to Marketo, Pardot, Segment, Salesforce Marketing Cloud, Adobe Analytics, and more.</li>
+            <li><strong>Engagement Marketplace</strong>: Pre-built templates for industry-specific engagement strategies with proven conversion rates.</li>
         </ul>
 
-        <h2>Built as Universal Infrastructure</h2>
+        <h2>Advanced Psychographic Features</h2>
         <ul>
-            <li><strong>Event Ingestion</strong>: Real-time data capture from any source with sub-100ms latency.</li>
-            <li><strong>AI Intelligence</strong>: Multi-layer inference engine for psychographic profiling.</li>
-            <li><strong>Developer APIs</strong>: RESTful APIs and SDKs for seamless integration.</li>
-            <li><strong>Activation</strong>: Turn insights into adaptive experiences instantly.</li>
+            <li><strong>Cognitive Bias Detection</strong>: Automatically identify anchoring, confirmation, recency, and loss aversion biases.</li>
+            <li><strong>Emotional Shift Analysis</strong>: Track subtle emotional changes with magnitude and volatility scoring.</li>
+            <li><strong>Custom Dimensions</strong>: Define industry-specific psychographic traits (brand affinity, price sensitivity, etc.).</li>
+            <li><strong>Psychographic Trends</strong>: Visualize how user psychology evolves over time with automated snapshots.</li>
+            <li><strong>Data Provenance</strong>: Full transparency on inference sources and confidence scores.</li>
         </ul>
         
         <h2>Enterprise-Grade Infrastructure</h2>
@@ -105,6 +108,15 @@ Deno.serve(async (req) => {
             <li><strong>Data Protection</strong>: Encryption at rest & transit, GDPR Ready, Data ownership.</li>
             <li><strong>System Monitoring</strong>: 99.9% uptime SLA, Real-time health checks, Auto-scaling.</li>
             <li><strong>Enterprise Integration</strong>: SAML/OIDC SSO, Data warehouse sync, SIEM integration.</li>
+        </ul>
+
+        <h2>Platform Integrations</h2>
+        <ul>
+            <li><strong>Marketing Automation</strong>: Sync to Marketo, Pardot, Salesforce Marketing Cloud with automated field mapping.</li>
+            <li><strong>Customer Data Platforms</strong>: Stream psychographic traits to Segment, Adobe Analytics, Google Tag Manager.</li>
+            <li><strong>Webhook System</strong>: Real-time data export with HMAC-SHA256 signing for BI tools and custom systems.</li>
+            <li><strong>Engagement Marketplace</strong>: 100+ pre-built templates for onboarding, retention, conversion, and support.</li>
+            <li><strong>CRM Enrichment</strong>: Enhance HubSpot, Salesforce, and other CRMs with deep psychographic intelligence.</li>
         </ul>
 
         <h2>Use Cases</h2>
