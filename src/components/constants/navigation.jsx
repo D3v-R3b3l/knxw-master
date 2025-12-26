@@ -2,7 +2,8 @@ import {
   BarChart3, Users, Activity, Settings, Brain, Zap, Shield, 
   GitBranch as AttributionIcon, TrendingUp, BookOpen, Bot, HeartPulse, 
   FlaskConical, Database as DatabaseIcon, Megaphone, BarChart3 as GoogleDataIcon, 
-  Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, Sparkles 
+  Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, Sparkles,
+  Sliders, Store, Plug
 } from "lucide-react";
 
 export const navigationSections = [
@@ -41,8 +42,16 @@ export const navigationSections = [
     items: [
       { title: "AI Agents", page: "Agents", icon: Bot, description: "Intelligent Automation" },
       { title: "Engagements", page: "Engagements", icon: Zap, description: "Adaptive Experience" },
+      { title: "Marketplace", page: "EngagementMarketplace", icon: Store, description: "Template Library" },
       { title: "A/B Testing", page: "ABTestingStudio", icon: FlaskConical, description: "Experiments" },
       { title: "Robotics", page: "Robotics", icon: Rocket, description: "Process Orchestration" },
+    ]
+  },
+  {
+    title: "Advanced Intelligence",
+    items: [
+      { title: "Custom Dimensions", page: "CustomDimensions", icon: Sliders, description: "Industry-Specific Traits" },
+      { title: "Marketing Platforms", page: "MarketingIntegrations", icon: Plug, description: "CDP & Automation" },
     ]
   },
   {
