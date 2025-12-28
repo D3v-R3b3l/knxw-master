@@ -199,40 +199,41 @@ const fragmentShader = `
 
 function RaymarchPlane() {
   const meshRef = useRef();
-  const materialRef = useRef();
   const { size, viewport } = useThree();
   const mouse = useRef({ x: 0.5, y: 0.5 });
   
-  const uniforms = useRef({
-    uTime: { value: 0 },
-    uResolution: { value: new THREE.Vector2(800, 600) },
-    uMouse: { value: new THREE.Vector2(0.5, 0.5) }
-  });
+  const shaderArgs = useMemo(() => ({
+    uniforms: {
+      uTime: { value: 0 },
+      uResolution: { value: new THREE.Vector2(800, 600) },
+      uMouse: { value: new THREE.Vector2(0.5, 0.5) }
+    },
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader
+  }), []);
   
   useFrame((state) => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-      materialRef.current.uniforms.uResolution.value.set(size.width || 800, size.height || 600);
-      
-      // Smooth mouse interpolation
-      const targetX = (state.pointer.x + 1) / 2;
-      const targetY = (state.pointer.y + 1) / 2;
-      mouse.current.x += (targetX - mouse.current.x) * 0.05;
-      mouse.current.y += (targetY - mouse.current.y) * 0.05;
-      
-      materialRef.current.uniforms.uMouse.value.set(mouse.current.x, mouse.current.y);
+    if (meshRef.current && meshRef.current.material) {
+      const material = meshRef.current.material;
+      if (material.uniforms) {
+        material.uniforms.uTime.value = state.clock.elapsedTime;
+        material.uniforms.uResolution.value.set(size.width || 800, size.height || 600);
+        
+        // Smooth mouse interpolation
+        const targetX = (state.pointer.x + 1) / 2;
+        const targetY = (state.pointer.y + 1) / 2;
+        mouse.current.x += (targetX - mouse.current.x) * 0.05;
+        mouse.current.y += (targetY - mouse.current.y) * 0.05;
+        
+        material.uniforms.uMouse.value.set(mouse.current.x, mouse.current.y);
+      }
     }
   });
   
   return (
     <mesh ref={meshRef}>
       <planeGeometry args={[viewport.width || 10, viewport.height || 10]} />
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms.current}
-      />
+      <shaderMaterial attach="material" args={[shaderArgs]} />
     </mesh>
   );
 }
