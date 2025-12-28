@@ -204,14 +204,14 @@ function RaymarchPlane() {
   
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
-    uResolution: { value: new THREE.Vector2(size.width, size.height) },
+    uResolution: { value: new THREE.Vector2(size.width || 800, size.height || 600) },
     uMouse: { value: new THREE.Vector2(0.5, 0.5) }
   }), []);
   
   useFrame((state) => {
-    if (meshRef.current) {
+    if (meshRef.current && meshRef.current.material && meshRef.current.material.uniforms) {
       meshRef.current.material.uniforms.uTime.value = state.clock.elapsedTime;
-      meshRef.current.material.uniforms.uResolution.value.set(size.width, size.height);
+      meshRef.current.material.uniforms.uResolution.value.set(size.width || 800, size.height || 600);
       
       // Smooth mouse interpolation
       const targetX = (state.pointer.x + 1) / 2;
@@ -223,14 +223,19 @@ function RaymarchPlane() {
     }
   });
   
+  const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      uTime: { value: 0 },
+      uResolution: { value: new THREE.Vector2(size.width || 800, size.height || 600) },
+      uMouse: { value: new THREE.Vector2(0.5, 0.5) }
+    }
+  }), []);
+  
   return (
-    <mesh ref={meshRef}>
-      <planeGeometry args={[viewport.width, viewport.height]} />
-      <shaderMaterial
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-      />
+    <mesh ref={meshRef} material={shaderMaterial}>
+      <planeGeometry args={[viewport.width || 10, viewport.height || 10]} />
     </mesh>
   );
 }
