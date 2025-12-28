@@ -13,6 +13,7 @@ import CRMRecords from './pages/CRMRecords';
 import CaseStudy from './pages/CaseStudy';
 import Collaborate from './pages/Collaborate';
 import ComplianceDashboard from './pages/ComplianceDashboard';
+import CustomDimensions from './pages/CustomDimensions';
 import Dashboard from './pages/Dashboard';
 import DashboardBuilder from './pages/DashboardBuilder';
 import Dashboards from './pages/Dashboards';
@@ -26,6 +27,7 @@ import DeveloperUsage from './pages/DeveloperUsage';
 import Developers from './pages/Developers';
 import Documentation from './pages/Documentation';
 import EmployeeRecords from './pages/EmployeeRecords';
+import EngagementMarketplace from './pages/EngagementMarketplace';
 import Engagements from './pages/Engagements';
 import EnterpriseSecurityDashboard from './pages/EnterpriseSecurityDashboard';
 import Events from './pages/Events';
@@ -43,6 +45,7 @@ import Journeys from './pages/Journeys';
 import Landing from './pages/Landing';
 import LlmEvaluation from './pages/LlmEvaluation';
 import MarketIntelligence from './pages/MarketIntelligence';
+import MarketingIntegrations from './pages/MarketingIntegrations';
 import MetaData from './pages/MetaData';
 import MyApps from './pages/MyApps';
 import Onboarding from './pages/Onboarding';
@@ -70,9 +73,6 @@ import documentation from './pages/documentation';
 import landing from './pages/landing';
 import lowdown from './pages/lowdown';
 import settings from './pages/settings';
-import EngagementMarketplace from './pages/EngagementMarketplace';
-import CustomDimensions from './pages/CustomDimensions';
-import MarketingIntegrations from './pages/MarketingIntegrations';
 import __Layout from './Layout.jsx';
 
 
@@ -92,6 +92,7 @@ export const PAGES = {
     "CaseStudy": CaseStudy,
     "Collaborate": Collaborate,
     "ComplianceDashboard": ComplianceDashboard,
+    "CustomDimensions": CustomDimensions,
     "Dashboard": Dashboard,
     "DashboardBuilder": DashboardBuilder,
     "Dashboards": Dashboards,
@@ -105,6 +106,7 @@ export const PAGES = {
     "Developers": Developers,
     "Documentation": Documentation,
     "EmployeeRecords": EmployeeRecords,
+    "EngagementMarketplace": EngagementMarketplace,
     "Engagements": Engagements,
     "EnterpriseSecurityDashboard": EnterpriseSecurityDashboard,
     "Events": Events,
@@ -122,6 +124,7 @@ export const PAGES = {
     "Landing": Landing,
     "LlmEvaluation": LlmEvaluation,
     "MarketIntelligence": MarketIntelligence,
+    "MarketingIntegrations": MarketingIntegrations,
     "MetaData": MetaData,
     "MyApps": MyApps,
     "Onboarding": Onboarding,
@@ -149,9 +152,6 @@ export const PAGES = {
     "landing": landing,
     "lowdown": lowdown,
     "settings": settings,
-    "EngagementMarketplace": EngagementMarketplace,
-    "CustomDimensions": CustomDimensions,
-    "MarketingIntegrations": MarketingIntegrations,
 }
 
 export const pagesConfig = {

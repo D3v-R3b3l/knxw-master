@@ -13,6 +13,7 @@ import FAQSection from '@/components/landing/FAQSection';
 import FooterSection from '@/components/landing/FooterSection';
 import CustomCursor from '@/components/ui/CustomCursor';
 import { ConsentProvider } from '@/components/privacy/ConsentManager';
+import NeonSphereRaymarcher from '@/components/landing/NeonSphereRaymarcher';
 import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
