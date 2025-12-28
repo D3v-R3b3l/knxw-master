@@ -235,6 +235,15 @@ function RaymarchPlane() {
   );
 }
 
+function FallbackPlane() {
+  return (
+    <mesh>
+      <planeGeometry args={[10, 10]} />
+      <meshBasicMaterial color="#0a0a0a" />
+    </mesh>
+  );
+}
+
 export default function NeonSphereRaymarcher({ className = "" }) {
   return (
     <div className={`w-full h-full ${className}`}>
@@ -242,8 +251,13 @@ export default function NeonSphereRaymarcher({ className = "" }) {
         camera={{ position: [0, 0, 1], fov: 75 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
+        onCreated={({ gl }) => {
+          gl.setClearColor('#0a0a0a', 1);
+        }}
       >
-        <RaymarchPlane />
+        <Suspense fallback={<FallbackPlane />}>
+          <RaymarchPlane />
+        </Suspense>
       </Canvas>
     </div>
   );
