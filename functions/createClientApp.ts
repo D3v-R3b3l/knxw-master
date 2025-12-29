@@ -1,7 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
-const base44 = createClient({ appId: Deno.env.get('BASE44_APP_ID') });
-
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -28,11 +26,11 @@ function randToken(len = 48) {
   return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function uniqueKey(field) {
+async function uniqueKey(base44, field) {
   // very low probability of collision; loop to ensure uniqueness
   for (let i = 0; i < 5; i++) {
     const candidate = field === 'api_key' ? `knxw_${randToken(24)}` : `sk_knxw_${randToken(32)}`;
-    const existing = await base44.entities.ClientApp.filter({ [field]: candidate }, null, 1);
+    const existing = await base44.asServiceRole.entities.ClientApp.filter({ [field]: candidate }, null, 1);
     if (!existing || existing.length === 0) return candidate;
   }
   throw new Error(`Failed to generate unique ${field}`);
@@ -40,10 +38,7 @@ async function uniqueKey(field) {
 
 Deno.serve(async (req) => {
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return jsonResponse({ error: 'Unauthorized' }, 401);
-    const token = authHeader.split(' ')[1];
-    base44.auth.setToken(token);
+    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
 
