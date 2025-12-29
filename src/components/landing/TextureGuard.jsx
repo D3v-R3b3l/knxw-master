@@ -8,22 +8,50 @@ const TEX_KEYS = [
 ];
 
 export default function TextureGuard() {
-  const { scene } = useThree();
+  const { scene, gl } = useThree();
   
   useEffect(() => {
-    scene.traverse(obj => {
-      const m = obj.material;
-      if (!m) return;
-      
-      TEX_KEYS.forEach(k => {
-        const v = m[k];
-        if (v !== undefined && !v?.isTexture) {
-          console.warn('[TextureGuard] Invalid', k, 'on', obj.name || obj.uuid, '→', v);
-          m[k] = undefined; // sanitize to prevent .source crash
-          m.needsUpdate = true;
-        }
+    // Run immediately
+    const sanitize = () => {
+      scene.traverse(obj => {
+        const m = obj.material;
+        if (!m) return;
+        
+        // Handle both single material and array of materials
+        const materials = Array.isArray(m) ? m : [m];
+        
+        materials.forEach(mat => {
+          if (!mat) return;
+          
+          TEX_KEYS.forEach(k => {
+            const v = mat[k];
+            if (v !== undefined && !v?.isTexture) {
+              console.warn('[TextureGuard] Invalid', k, 'on', obj.name || obj.uuid, '→', v);
+              mat[k] = undefined; // sanitize to prevent .source crash
+              mat.needsUpdate = true;
+            }
+          });
+        });
       });
-    });
+    };
+    
+    // Run immediately
+    sanitize();
+    
+    // Also run on every frame for the first second to catch late additions
+    let frameCount = 0;
+    const maxFrames = 60;
+    const intervalId = setInterval(() => {
+      sanitize();
+      frameCount++;
+      if (frameCount >= maxFrames) {
+        clearInterval(intervalId);
+      }
+    }, 16);
+    
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [scene]);
   
   return null;
