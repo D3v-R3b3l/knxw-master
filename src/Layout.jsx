@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   Menu, X, User, LogOut, ArrowUp, ChevronLeft, ChevronRight, Bot,
-  HelpCircle, GraduationCap, Search
+  GraduationCap, Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
