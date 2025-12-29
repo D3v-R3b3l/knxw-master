@@ -1,455 +1,386 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Check, ChevronRight, Sparkles, Code, TrendingUp, Shield } from 'lucide-react';
+import { Check, ChevronRight, ChevronLeft, X, Sparkles, Code, TrendingUp, Shield, ExternalLink, RotateCcw, Minimize2, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-const ROLE_ONBOARDING_FLOWS = {
+const ROLE_FLOWS = {
   admin: {
-    title: 'Admin Onboarding',
+    title: 'Admin Setup',
     icon: Shield,
     color: '#8b5cf6',
-    description: 'Set up your organization and manage team access',
     steps: [
-      {
-        id: 'create-app',
-        title: 'Create Your First Application',
-        description: 'Generate API keys and configure authorized domains',
-        page: 'MyApps',
-        action: 'Create an application to get started',
-        completionCriteria: 'app_created'
-      },
-      {
-        id: 'invite-team',
-        title: 'Invite Your Team',
-        description: 'Add team members and assign roles',
-        page: 'OrgAdmin',
-        action: 'Set up team access control',
-        completionCriteria: 'team_invited'
-      },
-      {
-        id: 'configure-integrations',
-        title: 'Connect Integrations',
-        description: 'Link HubSpot, GA4, or other platforms',
-        page: 'IntegrationsManagement',
-        action: 'Connect your first integration',
-        completionCriteria: 'integration_connected'
-      },
-      {
-        id: 'setup-billing',
-        title: 'Configure Billing',
-        description: 'Choose your plan and set up payment',
-        page: 'Settings',
-        action: 'Review subscription plans',
-        completionCriteria: 'billing_configured'
-      },
-      {
-        id: 'review-security',
-        title: 'Security & Compliance',
-        description: 'Configure SSO, audit logs, and compliance rules',
-        page: 'EnterpriseSecurityDashboard',
-        action: 'Review security settings',
-        completionCriteria: 'security_reviewed'
-      }
+      { id: 'create-app', title: 'Create Application', desc: 'Get your API keys', page: 'MyApps', highlight: '[data-tour="create-app"], .create-app-btn, button:has-text("Create")' },
+      { id: 'invite-team', title: 'Invite Team', desc: 'Add team members', page: 'OrgAdmin', highlight: '[data-tour="invite-user"]' },
+      { id: 'integrations', title: 'Connect Tools', desc: 'Link HubSpot, GA4, etc.', page: 'IntegrationsManagement', highlight: '[data-tour="add-integration"]' },
+      { id: 'billing', title: 'Setup Billing', desc: 'Choose your plan', page: 'Settings', highlight: '[data-tour="billing"]' },
+      { id: 'security', title: 'Review Security', desc: 'Configure compliance', page: 'EnterpriseSecurityDashboard', highlight: null }
     ]
   },
-  
   marketer: {
-    title: 'Marketer Onboarding',
+    title: 'Marketer Guide',
     icon: TrendingUp,
     color: '#ec4899',
-    description: 'Learn to create psychographic segments and campaigns',
     steps: [
-      {
-        id: 'view-dashboard',
-        title: 'Explore Analytics Dashboard',
-        description: 'Understand your key metrics and user insights',
-        page: 'Dashboard',
-        action: 'Review your dashboard',
-        completionCriteria: 'dashboard_viewed'
-      },
-      {
-        id: 'understand-profiles',
-        title: 'Understand User Psychology',
-        description: 'Learn how psychographic profiles work',
-        page: 'Profiles',
-        action: 'Explore user profiles',
-        completionCriteria: 'profiles_explored'
-      },
-      {
-        id: 'create-segment',
-        title: 'Create Your First Segment',
-        description: 'Build audience segments based on psychology',
-        page: 'AudienceBuilder',
-        action: 'Use AI to suggest segments',
-        completionCriteria: 'segment_created'
-      },
-      {
-        id: 'setup-ab-test',
-        title: 'Launch an A/B Test',
-        description: 'Test different messaging for different personalities',
-        page: 'ABTestingStudio',
-        action: 'Create your first test',
-        completionCriteria: 'test_created'
-      },
-      {
-        id: 'create-engagement',
-        title: 'Design Adaptive Engagements',
-        description: 'Personalize user experiences based on psychology',
-        page: 'Engagements',
-        action: 'Create engagement rule',
-        completionCriteria: 'engagement_created'
-      }
+      { id: 'dashboard', title: 'Your Dashboard', desc: 'Key metrics at a glance', page: 'Dashboard', highlight: '[data-tour="metrics"]' },
+      { id: 'profiles', title: 'User Profiles', desc: 'Understand psychology', page: 'Profiles', highlight: '[data-tour="profile-card"]' },
+      { id: 'segments', title: 'Build Segments', desc: 'Target by psychology', page: 'AudienceBuilder', highlight: '[data-tour="create-segment"]' },
+      { id: 'ab-test', title: 'A/B Testing', desc: 'Test personalization', page: 'ABTestingStudio', highlight: '[data-tour="create-test"]' },
+      { id: 'engagements', title: 'Engagements', desc: 'Adaptive experiences', page: 'Engagements', highlight: '[data-tour="create-engagement"]' }
     ]
   },
-  
   developer: {
-    title: 'Developer Onboarding',
+    title: 'Developer Guide',
     icon: Code,
     color: '#00d4ff',
-    description: 'Integrate the knXw SDK and start tracking',
     steps: [
-      {
-        id: 'get-api-key',
-        title: 'Get Your API Key',
-        description: 'Create an app and copy your API credentials',
-        page: 'MyApps',
-        action: 'Create application and get API key',
-        completionCriteria: 'api_key_obtained'
-      },
-      {
-        id: 'install-sdk',
-        title: 'Install the SDK',
-        description: 'Add the tracking script to your application',
-        page: 'Documentation',
-        action: 'View SDK installation guide',
-        completionCriteria: 'sdk_docs_viewed'
-      },
-      {
-        id: 'test-events',
-        title: 'Test Event Tracking',
-        description: 'Verify events are being captured correctly',
-        page: 'Events',
-        action: 'View event stream',
-        completionCriteria: 'events_verified'
-      },
-      {
-        id: 'explore-api',
-        title: 'Explore the REST API',
-        description: 'Learn about profiles, insights, and recommendation endpoints',
-        page: 'Developers',
-        action: 'Test API endpoints',
-        completionCriteria: 'api_tested'
-      },
-      {
-        id: 'setup-webhooks',
-        title: 'Configure Webhooks',
-        description: 'Receive real-time notifications of psychographic changes',
-        page: 'Documentation',
-        action: 'Learn about webhooks',
-        completionCriteria: 'webhooks_configured'
-      }
+      { id: 'api-key', title: 'Get API Key', desc: 'Create your app', page: 'MyApps', highlight: '[data-tour="api-key"]' },
+      { id: 'docs', title: 'SDK Docs', desc: 'Installation guide', page: 'Documentation', highlight: '[data-tour="sdk-section"]' },
+      { id: 'events', title: 'Test Events', desc: 'Verify tracking', page: 'Events', highlight: '[data-tour="event-stream"]' },
+      { id: 'api', title: 'REST API', desc: 'Explore endpoints', page: 'Developers', highlight: '[data-tour="api-playground"]' },
+      { id: 'webhooks', title: 'Webhooks', desc: 'Real-time updates', page: 'Documentation', highlight: '[data-tour="webhooks"]' }
     ]
   }
 };
 
+export function detectUserRole(user) {
+  if (!user) return 'marketer';
+  if (user.role === 'admin') return 'admin';
+  if (user.onboarding_state?.preferred_role) return user.onboarding_state.preferred_role;
+  const email = user.email?.toLowerCase() || '';
+  if (email.includes('dev') || email.includes('engineer')) return 'developer';
+  if (email.includes('admin') || email.includes('owner')) return 'admin';
+  return 'marketer';
+}
+
 export default function RoleBasedOnboarding({ isOpen, onClose, userRole = 'marketer' }) {
   const navigate = useNavigate();
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [completedSteps, setCompletedSteps] = useState(new Set());
-  const [onboardingState, setOnboardingState] = useState(null);
+  const location = useLocation();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completed, setCompleted] = useState(new Set());
+  const [minimized, setMinimized] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  const flow = ROLE_ONBOARDING_FLOWS[userRole] || ROLE_ONBOARDING_FLOWS.marketer;
-  const currentStep = flow.steps[currentStepIndex];
-  const progress = (completedSteps.size / flow.steps.length) * 100;
+  const flow = ROLE_FLOWS[userRole] || ROLE_FLOWS.marketer;
+  const step = flow.steps[currentStep];
   const Icon = flow.icon;
+  const progress = (completed.size / flow.steps.length) * 100;
+  const allDone = completed.size === flow.steps.length;
 
+  // Load state on mount
   useEffect(() => {
-    if (isOpen) {
-      loadOnboardingState();
-    }
+    if (!isOpen) return;
+    loadState();
   }, [isOpen]);
 
-  const loadOnboardingState = async () => {
-    try {
-      const isAuthenticated = await base44.auth.isAuthenticated();
-      if (!isAuthenticated) {
-        return; // Silently return if not authenticated
-      }
+  // Auto-detect when user navigates to correct page
+  useEffect(() => {
+    if (!isOpen || !step) return;
+    
+    const currentPath = location.pathname;
+    const expectedPath = createPageUrl(step.page);
+    
+    if (currentPath === expectedPath) {
+      // User is on the right page - mark as visited after a short delay
+      const timer = setTimeout(() => {
+        markStepComplete(step.id);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, step, isOpen]);
 
+  // Highlight elements on current page
+  useEffect(() => {
+    if (!isOpen || minimized || !step?.highlight) return;
+    
+    const highlights = step.highlight.split(',').map(s => s.trim());
+    const cleanup = [];
+    
+    highlights.forEach(selector => {
+      try {
+        const el = document.querySelector(selector);
+        if (el) {
+          el.style.boxShadow = `0 0 0 3px ${flow.color}, 0 0 20px ${flow.color}40`;
+          el.style.borderRadius = '8px';
+          el.style.transition = 'box-shadow 0.3s ease';
+          el.style.position = 'relative';
+          el.style.zIndex = '100';
+          cleanup.push(() => {
+            el.style.boxShadow = '';
+            el.style.borderRadius = '';
+            el.style.position = '';
+            el.style.zIndex = '';
+          });
+        }
+      } catch (e) {}
+    });
+    
+    return () => cleanup.forEach(fn => fn());
+  }, [step, isOpen, minimized, flow.color]);
+
+  const loadState = async () => {
+    try {
       const user = await base44.auth.me();
-      const state = user?.onboarding_state?.[`${userRole}_flow`] || {};
-      setOnboardingState(state);
-      
-      if (state.completedSteps) {
-        setCompletedSteps(new Set(state.completedSteps));
+      const state = user?.onboarding_state?.[`${userRole}_progress`];
+      if (state?.completed) {
+        setCompleted(new Set(state.completed));
       }
-      
-      if (state.currentStep !== undefined) {
-        setCurrentStepIndex(state.currentStep);
+      if (state?.currentStep !== undefined) {
+        setCurrentStep(state.currentStep);
       }
-    } catch (error) {
-      // Fail silently if user not authenticated
-      console.info('Onboarding state not loaded - user not authenticated');
+      setLoaded(true);
+    } catch (e) {
+      setLoaded(true);
     }
   };
 
-  const saveOnboardingState = async () => {
+  const saveState = async (newCompleted, newStep) => {
     try {
-      const isAuthenticated = await base44.auth.isAuthenticated();
-      if (!isAuthenticated) {
-        return; // Can't save if not authenticated
-      }
-
       const user = await base44.auth.me();
       await base44.auth.updateMe({
         onboarding_state: {
           ...user.onboarding_state,
-          [`${userRole}_flow`]: {
-            completedSteps: Array.from(completedSteps),
-            currentStep: currentStepIndex,
-            lastUpdated: new Date().toISOString()
+          [`${userRole}_progress`]: {
+            completed: Array.from(newCompleted),
+            currentStep: newStep,
+            updated: new Date().toISOString()
           }
         }
       });
-    } catch (error) {
-      console.error('Failed to save onboarding state:', error);
-    }
+    } catch (e) {}
   };
 
-  const markStepComplete = () => {
-    const stepId = currentStep.id;
-    setCompletedSteps(prev => {
-      const newSet = new Set(prev);
-      newSet.add(stepId);
-      return newSet;
+  const markStepComplete = (stepId) => {
+    setCompleted(prev => {
+      const next = new Set(prev);
+      next.add(stepId);
+      saveState(next, currentStep);
+      return next;
     });
   };
 
-  const goToNextStep = async () => {
-    markStepComplete();
-    
-    if (currentStepIndex < flow.steps.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1);
-      await saveOnboardingState();
-    } else {
-      await saveOnboardingState();
-      
-      // Mark onboarding as complete
-      try {
-        const isAuthenticated = await base44.auth.isAuthenticated();
-        if (isAuthenticated) {
-          const user = await base44.auth.me();
-          await base44.auth.updateMe({
-            onboarding_state: {
-              ...user.onboarding_state,
-              [`${userRole}_completed`]: true,
-              completed_at: new Date().toISOString()
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Failed to mark onboarding complete:', error);
-      }
-      
-      onClose?.();
-    }
-  };
-
   const goToStep = (index) => {
-    setCurrentStepIndex(index);
-  };
-
-  const navigateToCurrentPage = () => {
-    if (currentStep.page) {
-      navigate(createPageUrl(currentStep.page));
-      // Don't close the modal - keep it open so user can continue
+    setCurrentStep(index);
+    const targetStep = flow.steps[index];
+    if (targetStep.page) {
+      navigate(createPageUrl(targetStep.page));
     }
   };
 
-  if (!isOpen) return null;
+  const nextStep = () => {
+    markStepComplete(step.id);
+    if (currentStep < flow.steps.length - 1) {
+      goToStep(currentStep + 1);
+    }
+  };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+  const prevStep = () => {
+    if (currentStep > 0) {
+      goToStep(currentStep - 1);
+    }
+  };
+
+  const resetProgress = async () => {
+    setCompleted(new Set());
+    setCurrentStep(0);
+    try {
+      const user = await base44.auth.me();
+      await base44.auth.updateMe({
+        onboarding_state: {
+          ...user.onboarding_state,
+          [`${userRole}_progress`]: null,
+          [`${userRole}_completed`]: false,
+          [`${userRole}_dismissed`]: false
+        }
+      });
+    } catch (e) {}
+  };
+
+  const finishOnboarding = async () => {
+    try {
+      const user = await base44.auth.me();
+      await base44.auth.updateMe({
+        onboarding_state: {
+          ...user.onboarding_state,
+          [`${userRole}_completed`]: true,
+          completed_at: new Date().toISOString()
+        }
+      });
+    } catch (e) {}
+    onClose?.();
+  };
+
+  if (!isOpen || !loaded) return null;
+
+  // Minimized floating pill
+  if (minimized) {
+    return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="fixed bottom-20 right-4 z-40"
       >
-        <Card className="bg-[#111111] border-[#00d4ff]/30">
-          {/* Header */}
-          <CardHeader className="p-6 border-b border-[#262626]">
-            <div className="flex items-center gap-3 mb-4">
-              <div 
-                className="p-3 rounded-xl"
-                style={{ backgroundColor: `${flow.color}20` }}
-              >
-                <Icon className="w-6 h-6" style={{ color: flow.color }} />
-              </div>
-              <div>
-                <CardTitle className="text-2xl text-white">{flow.title}</CardTitle>
-                <p className="text-[#a3a3a3] mt-1">{flow.description}</p>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-[#a3a3a3]">Progress</span>
-                <span className="text-white font-semibold">
-                  {completedSteps.size} / {flow.steps.length} completed
-                </span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
-          </CardHeader>
-
-          <CardContent className="p-6">
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Step List */}
-              <div className="space-y-2">
-                {flow.steps.map((step, index) => {
-                  const isCompleted = completedSteps.has(step.id);
-                  const isActive = index === currentStepIndex;
-                  
-                  return (
-                    <button
-                      key={step.id}
-                      onClick={() => goToStep(index)}
-                      className={`w-full text-left p-3 rounded-lg transition-all ${
-                        isActive
-                          ? 'bg-[#00d4ff]/10 border border-[#00d4ff]/30'
-                          : isCompleted
-                          ? 'bg-[#10b981]/10 border border-[#10b981]/30'
-                          : 'bg-[#1a1a1a] border border-[#262626] hover:border-[#00d4ff]/20'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            isCompleted
-                              ? 'bg-[#10b981] text-white'
-                              : isActive
-                              ? 'bg-[#00d4ff] text-[#0a0a0a]'
-                              : 'bg-[#262626] text-[#a3a3a3]'
-                          }`}
-                        >
-                          {isCompleted ? (
-                            <Check className="w-4 h-4" />
-                          ) : (
-                            <span className="text-xs font-bold">{index + 1}</span>
-                          )}
-                        </div>
-                        <span className="text-sm font-medium text-white truncate">{step.title}</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Current Step Detail */}
-              <div className="md:col-span-2">
-                <div className="bg-[#0a0a0a] rounded-xl p-6 border border-[#262626]">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div 
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-[#0a0a0a] font-bold flex-shrink-0"
-                      style={{ backgroundColor: flow.color }}
-                    >
-                      {currentStepIndex + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-bold text-white mb-2">
-                        {currentStep.title}
-                      </h3>
-                      <p className="text-[#e5e5e5] leading-relaxed">
-                        {currentStep.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Action Button */}
-                  <div className="bg-[#00d4ff]/10 border border-[#00d4ff]/20 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-[#00d4ff] font-medium mb-3">
-                      👉 {currentStep.action}
-                    </p>
-                    {currentStep.page && (
-                      <Button
-                        onClick={navigateToCurrentPage}
-                        className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] w-full"
-                      >
-                        Go to {currentStep.page.replace(/([A-Z])/g, ' $1').trim()}
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    )}
-                    <p className="text-xs text-[#6b7280] mt-2">
-                      Tip: This modal will stay open while you complete this step
-                    </p>
-                  </div>
-
-                  {/* Navigation */}
-                  <div className="flex items-center justify-between pt-4 border-t border-[#262626]">
-                    <Button
-                      onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
-                      disabled={currentStepIndex === 0}
-                      variant="outline"
-                      className="border-[#262626] text-white hover:bg-[#262626]"
-                    >
-                      Previous
-                    </Button>
-
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={async () => {
-                          await saveOnboardingState();
-                          onClose?.();
-                        }}
-                        variant="outline"
-                        className="border-[#262626] bg-[#1a1a1a] text-white hover:bg-[#262626] hover:text-white"
-                      >
-                        Close for Now
-                      </Button>
-
-                      <Button
-                        onClick={goToNextStep}
-                        className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] font-semibold"
-                      >
-                        {currentStepIndex === flow.steps.length - 1
-                          ? 'Complete Onboarding'
-                          : 'Next Step'}
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <button
+          onClick={() => setMinimized(false)}
+          className="flex items-center gap-2 px-4 py-2 rounded-full shadow-xl border"
+          style={{ 
+            background: `linear-gradient(135deg, ${flow.color}20, #111)`,
+            borderColor: `${flow.color}40`
+          }}
+        >
+          <Icon className="w-4 h-4" style={{ color: flow.color }} />
+          <span className="text-sm font-medium text-white">{flow.title}</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white">
+            {completed.size}/{flow.steps.length}
+          </span>
+          <Maximize2 className="w-3 h-3 text-white/60" />
+        </button>
       </motion.div>
-    </div>
-  );
-}
-
-export function detectUserRole(user) {
-  if (!user) return 'marketer';
-  
-  // Check explicit role
-  if (user.role === 'admin') return 'admin';
-  
-  // Check onboarding preferences
-  if (user.onboarding_state?.preferred_role) {
-    return user.onboarding_state.preferred_role;
+    );
   }
-  
-  // Infer from email patterns
-  const email = user.email?.toLowerCase() || '';
-  if (email.includes('dev') || email.includes('engineer')) return 'developer';
-  if (email.includes('admin') || email.includes('owner')) return 'admin';
-  if (email.includes('market') || email.includes('growth')) return 'marketer';
-  
-  // Default to marketer as it's the most common use case
-  return 'marketer';
+
+  // Full floating panel
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+      className="fixed bottom-4 right-4 z-40 w-80 max-h-[80vh] overflow-hidden"
+    >
+      <div 
+        className="rounded-2xl shadow-2xl border overflow-hidden"
+        style={{ 
+          background: 'linear-gradient(180deg, #151515 0%, #0a0a0a 100%)',
+          borderColor: `${flow.color}30`
+        }}
+      >
+        {/* Header */}
+        <div className="p-4 border-b border-white/10" style={{ background: `${flow.color}10` }}>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg" style={{ background: `${flow.color}20` }}>
+                <Icon className="w-4 h-4" style={{ color: flow.color }} />
+              </div>
+              <span className="font-semibold text-white text-sm">{flow.title}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button onClick={() => setMinimized(true)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white">
+                <Minimize2 className="w-4 h-4" />
+              </button>
+              <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Progress value={progress} className="h-1.5 flex-1" />
+            <span className="text-xs text-white/60">{completed.size}/{flow.steps.length}</span>
+          </div>
+        </div>
+
+        {/* Steps */}
+        <div className="p-3 max-h-64 overflow-y-auto space-y-1">
+          {flow.steps.map((s, i) => {
+            const isComplete = completed.has(s.id);
+            const isCurrent = i === currentStep;
+            
+            return (
+              <button
+                key={s.id}
+                onClick={() => goToStep(i)}
+                className={`w-full text-left p-3 rounded-xl transition-all flex items-center gap-3 ${
+                  isCurrent 
+                    ? 'bg-white/10 border border-white/20' 
+                    : 'hover:bg-white/5 border border-transparent'
+                }`}
+              >
+                <div 
+                  className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
+                    isComplete 
+                      ? 'bg-emerald-500 text-white' 
+                      : isCurrent 
+                      ? 'text-black' 
+                      : 'bg-white/10 text-white/60'
+                  }`}
+                  style={isCurrent && !isComplete ? { background: flow.color } : {}}
+                >
+                  {isComplete ? <Check className="w-4 h-4" /> : i + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className={`text-sm font-medium truncate ${isComplete ? 'text-emerald-400' : 'text-white'}`}>
+                    {s.title}
+                  </div>
+                  <div className="text-xs text-white/50 truncate">{s.desc}</div>
+                </div>
+                {isCurrent && (
+                  <ChevronRight className="w-4 h-4 text-white/40 flex-shrink-0" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Current Step Action */}
+        <div className="p-4 border-t border-white/10 bg-white/5">
+          {allDone ? (
+            <div className="text-center">
+              <div className="text-emerald-400 font-semibold mb-2 flex items-center justify-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                All steps complete!
+              </div>
+              <Button onClick={finishOnboarding} className="w-full" style={{ background: flow.color }}>
+                Finish Setup
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xs text-white/50">Step {currentStep + 1}:</span>
+                <span className="text-sm text-white font-medium">{step.title}</span>
+              </div>
+              
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={prevStep}
+                  disabled={currentStep === 0}
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                
+                <Button 
+                  size="sm"
+                  onClick={nextStep}
+                  className="flex-1 text-black font-semibold"
+                  style={{ background: flow.color }}
+                >
+                  {location.pathname === createPageUrl(step.page) ? (
+                    <>Mark Complete<Check className="w-4 h-4 ml-1" /></>
+                  ) : (
+                    <>Go to Page<ExternalLink className="w-4 h-4 ml-1" /></>
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Reset */}
+        <div className="px-4 pb-3">
+          <button 
+            onClick={resetProgress}
+            className="text-xs text-white/40 hover:text-white/60 flex items-center gap-1 mx-auto"
+          >
+            <RotateCcw className="w-3 h-3" /> Reset progress
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
 }
