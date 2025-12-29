@@ -1,3 +1,18 @@
+import React, { useRef, useMemo } from 'react';
+import * as THREE from 'three';
+
+// Simpler gradient background - no Canvas needed
+export default function NeonSphereRaymarcher({ className = "" }) {
+  return (
+    <div className={`w-full h-full ${className} bg-gradient-to-br from-[#0a0a0a] via-[#1a1a2e] to-[#0a0a0a] relative overflow-hidden`}>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,212,255,0.15),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,92,246,0.1),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(14,165,233,0.1),transparent_50%)]" />
+    </div>
+  );
+}
+
+/* BACKUP: Original shader code preserved for reference
 import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -197,65 +212,13 @@ const fragmentShader = `
   }
 `;
 
-function RaymarchPlane() {
-  const meshRef = useRef();
-  const { size, viewport } = useThree();
-  const mouse = useRef({ x: 0.5, y: 0.5 });
-  
-  const material = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        uTime: { value: 0 },
-        uResolution: { value: new THREE.Vector2(800, 600) },
-        uMouse: { value: new THREE.Vector2(0.5, 0.5) }
-      }
-    });
-  }, []);
-  
-  useFrame((state) => {
-    if (material && material.uniforms) {
-      material.uniforms.uTime.value = state.clock.elapsedTime;
-      material.uniforms.uResolution.value.set(size.width || 800, size.height || 600);
-      
-      // Smooth mouse interpolation
-      const targetX = (state.pointer.x + 1) / 2;
-      const targetY = (state.pointer.y + 1) / 2;
-      mouse.current.x += (targetX - mouse.current.x) * 0.05;
-      mouse.current.y += (targetY - mouse.current.y) * 0.05;
-      
-      material.uniforms.uMouse.value.set(mouse.current.x, mouse.current.y);
-    }
-  });
-  
-  return (
-    <mesh ref={meshRef} material={material}>
-      <planeGeometry args={[viewport.width || 10, viewport.height || 10]} />
-    </mesh>
-  );
-}
-
-function FallbackPlane() {
-  return (
-    <mesh>
-      <planeGeometry args={[10, 10]} />
-      <meshBasicMaterial color="#0a0a0a" />
-    </mesh>
-  );
-}
+function RaymarchPlane() { ... }
+function FallbackPlane() { ... }
 
 export default function NeonSphereRaymarcher({ className = "" }) {
   return (
     <div className={`w-full h-full ${className}`}>
-      <Canvas
-        camera={{ position: [0, 0, 1], fov: 75 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
-        onCreated={({ gl }) => {
-          gl.setClearColor('#0a0a0a', 1);
-        }}
-      >
+      <Canvas ... >
         <Suspense fallback={<FallbackPlane />}>
           <RaymarchPlane />
         </Suspense>
@@ -263,3 +226,4 @@ export default function NeonSphereRaymarcher({ className = "" }) {
     </div>
   );
 }
+*/
