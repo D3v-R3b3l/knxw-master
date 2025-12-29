@@ -14,7 +14,6 @@ import { DashboardProvider } from "./components/dashboard/DashboardStore";
 import { HelmetProvider } from 'react-helmet-async';
 import { createPageUrl } from "@/utils";
 import InteractiveTour from "./components/onboarding/InteractiveTour";
-import ComprehensiveWalkthrough from "./components/onboarding/ComprehensiveWalkthrough";
 import GlobalAIAssistant from "./components/ai/GlobalAIAssistant";
 import RoleBasedOnboarding, { detectUserRole } from "./components/onboarding/RoleBasedOnboarding";
 import AdaptiveOnboardingEngine from "./components/onboarding/AdaptiveOnboardingEngine";
@@ -94,11 +93,10 @@ export default function Layout({ children, currentPageName }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showTour, setShowTour] = useState(false);
-  const [showWalkthrough, setShowWalkthrough] = useState(false);
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const [showRoleOnboarding, setShowRoleOnboarding] = useState(false);
-  const [userRole, setUserRole] = useState('marketer');
-  const [authError, setAuthError] = useState(null);
+      const [showAIAssistant, setShowAIAssistant] = useState(false);
+      const [showRoleOnboarding, setShowRoleOnboarding] = useState(false);
+      const [userRole, setUserRole] = useState('marketer');
+      const [authError, setAuthError] = useState(null);
 
 
 
@@ -252,25 +250,6 @@ export default function Layout({ children, currentPageName }) {
               onSkip={() => setShowTour(false)}
             />
           )}
-
-          <ComprehensiveWalkthrough
-            isOpen={showWalkthrough}
-            onClose={() => setShowWalkthrough(false)}
-            onComplete={async () => {
-              setShowWalkthrough(false);
-              try {
-                const user = await base44.auth.me();
-                await base44.auth.updateMe({
-                  onboarding_state: {
-                    ...user.onboarding_state,
-                    walkthrough_completed: true
-                  }
-                });
-              } catch (error) {
-                console.error('Failed to save walkthrough completion:', error);
-              }
-            }}
-          />
 
           <RoleBasedOnboarding
             isOpen={showRoleOnboarding}
@@ -472,19 +451,12 @@ export default function Layout({ children, currentPageName }) {
                 <Bot className="w-6 h-6" />
               </Button>
               <Button
-                onClick={() => setShowRoleOnboarding(true)}
-                className="w-14 h-14 rounded-full bg-gradient-to-br from-[#ec4899] to-[#db2777] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]"
-                title={`${userRole.charAt(0).toUpperCase() + userRole.slice(1)} Onboarding`}
-              >
-                <GraduationCap className="w-6 h-6" />
-              </Button>
-              <Button
-                onClick={() => setShowWalkthrough(true)}
-                className="w-14 h-14 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
-                title="Interactive Walkthrough"
-              >
-                <HelpCircle className="w-6 h-6" />
-              </Button>
+                    onClick={() => setShowRoleOnboarding(true)}
+                    className="w-14 h-14 rounded-full bg-gradient-to-br from-[#ec4899] to-[#db2777] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]"
+                    title={`${userRole.charAt(0).toUpperCase() + userRole.slice(1)} Guide`}
+                  >
+                    <GraduationCap className="w-6 h-6" />
+                  </Button>
             {showBackToTop && (
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
