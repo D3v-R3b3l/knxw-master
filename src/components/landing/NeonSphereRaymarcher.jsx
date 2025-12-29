@@ -1,19 +1,4 @@
 import React, { useRef, useMemo } from 'react';
-import * as THREE from 'three';
-
-// Simpler gradient background - no Canvas needed
-export default function NeonSphereRaymarcher({ className = "" }) {
-  return (
-    <div className={`w-full h-full ${className} bg-gradient-to-br from-[#0a0a0a] via-[#1a1a2e] to-[#0a0a0a] relative overflow-hidden`}>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,212,255,0.15),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,92,246,0.1),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(14,165,233,0.1),transparent_50%)]" />
-    </div>
-  );
-}
-
-/* BACKUP: Original shader code preserved for reference
-import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -32,198 +17,176 @@ const fragmentShader = `
   uniform vec2 uResolution;
   uniform vec2 uMouse;
   
-  #define MAX_STEPS 100
-  #define MAX_DIST 100.0
-  #define SURF_DIST 0.001
+  varying vec2 vUv;
   
-  // Smooth min for blending shapes
-  float smin(float a, float b, float k) {
-    float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
-    return mix(b, a, h) - k * h * (1.0 - h);
-  }
-  
-  // Sphere SDF
   float sdSphere(vec3 p, float r) {
     return length(p) - r;
   }
   
-  // Scene SDF - multiple floating spheres
-  float GetDist(vec3 p, vec2 mouse) {
-    float t = uTime * 0.3;
+  float sdBox(vec3 p, vec3 b) {
+    vec3 q = abs(p) - b;
+    return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
+  }
+  
+  float opSmoothUnion(float d1, float d2, float k) {
+    float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
+    return mix(d2, d1, h) - k * h * (1.0 - h);
+  }
+  
+  float scene(vec3 p) {
+    vec3 p1 = p;
+    p1.x += sin(uTime * 0.5) * 0.3;
+    p1.y += cos(uTime * 0.7) * 0.3;
+    float sphere1 = sdSphere(p1, 1.2);
     
-    // Central large sphere
-    float sphere1 = sdSphere(p - vec3(0.0, 0.0, 0.0), 1.2);
+    vec3 p2 = p;
+    p2.x -= sin(uTime * 0.6 + 1.0) * 0.3;
+    p2.z += cos(uTime * 0.4) * 0.3;
+    float sphere2 = sdSphere(p2, 1.0);
     
-    // Orbiting spheres with mouse influence
-    float mouseInfluence = length(mouse) * 0.5;
+    vec3 p3 = p;
+    p3.y -= sin(uTime * 0.8 + 2.0) * 0.3;
+    float sphere3 = sdSphere(p3, 0.8);
     
-    vec3 pos2 = vec3(
-      sin(t * 0.7 + mouse.x * 2.0) * 2.5,
-      cos(t * 0.5 + mouse.y * 2.0) * 1.5,
-      sin(t * 0.3) * 2.0
-    );
-    float sphere2 = sdSphere(p - pos2, 0.6 + mouseInfluence * 0.2);
-    
-    vec3 pos3 = vec3(
-      cos(t * 0.6 - mouse.x) * 2.2,
-      sin(t * 0.8 - mouse.y) * 2.0,
-      cos(t * 0.4) * 1.8
-    );
-    float sphere3 = sdSphere(p - pos3, 0.5 + mouseInfluence * 0.15);
-    
-    vec3 pos4 = vec3(
-      sin(t * 0.9 + mouse.y) * 1.8,
-      cos(t * 0.4 + mouse.x) * 2.5,
-      sin(t * 0.7) * 1.5
-    );
-    float sphere4 = sdSphere(p - pos4, 0.45);
-    
-    vec3 pos5 = vec3(
-      cos(t * 0.5) * 3.0,
-      sin(t * 0.6) * 1.2,
-      cos(t * 0.8 + mouse.x * 1.5) * 2.2
-    );
-    float sphere5 = sdSphere(p - pos5, 0.35);
-    
-    // Blend all spheres together smoothly
-    float d = smin(sphere1, sphere2, 0.8);
-    d = smin(d, sphere3, 0.6);
-    d = smin(d, sphere4, 0.5);
-    d = smin(d, sphere5, 0.4);
+    float d = opSmoothUnion(sphere1, sphere2, 0.5);
+    d = opSmoothUnion(d, sphere3, 0.5);
     
     return d;
   }
   
-  // Raymarching
-  float RayMarch(vec3 ro, vec3 rd, vec2 mouse) {
-    float dO = 0.0;
-    for(int i = 0; i < MAX_STEPS; i++) {
-      vec3 p = ro + rd * dO;
-      float dS = GetDist(p, mouse);
-      dO += dS;
-      if(dO > MAX_DIST || abs(dS) < SURF_DIST) break;
-    }
-    return dO;
-  }
-  
-  // Calculate normal
-  vec3 GetNormal(vec3 p, vec2 mouse) {
-    float d = GetDist(p, mouse);
+  vec3 getNormal(vec3 p) {
+    float d = scene(p);
     vec2 e = vec2(0.001, 0.0);
     vec3 n = d - vec3(
-      GetDist(p - e.xyy, mouse),
-      GetDist(p - e.yxy, mouse),
-      GetDist(p - e.yyx, mouse)
+      scene(p - e.xyy),
+      scene(p - e.yxy),
+      scene(p - e.yyx)
     );
     return normalize(n);
   }
   
   void main() {
-    vec2 uv = (gl_FragCoord.xy - 0.5 * uResolution.xy) / uResolution.y;
+    vec2 uv = (vUv - 0.5) * 2.0;
+    uv.x *= uResolution.x / uResolution.y;
+    
+    vec3 ro = vec3(0.0, 0.0, 3.5);
+    vec3 rd = normalize(vec3(uv, -1.5));
+    
     vec2 mouse = uMouse * 2.0 - 1.0;
-    
-    // Camera setup with mouse influence on rotation
-    vec3 ro = vec3(0.0, 0.0, 6.0);
-    ro.x += mouse.x * 1.5;
-    ro.y += mouse.y * 1.0;
-    
-    vec3 lookAt = vec3(0.0, 0.0, 0.0);
-    vec3 forward = normalize(lookAt - ro);
-    vec3 right = normalize(cross(vec3(0.0, 1.0, 0.0), forward));
-    vec3 up = cross(forward, right);
-    
-    vec3 rd = normalize(forward + uv.x * right + uv.y * up);
-    
-    float d = RayMarch(ro, rd, mouse);
-    
-    // Background gradient - dark with subtle color
-    vec3 col = mix(
-      vec3(0.02, 0.02, 0.03),
-      vec3(0.05, 0.02, 0.08),
-      uv.y * 0.5 + 0.5
+    float angleX = mouse.y * 0.5;
+    float angleY = mouse.x * 0.5;
+    mat3 rotX = mat3(
+      1.0, 0.0, 0.0,
+      0.0, cos(angleX), -sin(angleX),
+      0.0, sin(angleX), cos(angleX)
     );
+    mat3 rotY = mat3(
+      cos(angleY), 0.0, sin(angleY),
+      0.0, 1.0, 0.0,
+      -sin(angleY), 0.0, cos(angleY)
+    );
+    rd = rotX * rotY * rd;
     
-    if(d < MAX_DIST) {
-      vec3 p = ro + rd * d;
-      vec3 n = GetNormal(p, mouse);
+    float t = 0.0;
+    vec3 col = vec3(0.0);
+    
+    for(int i = 0; i < 80; i++) {
+      vec3 p = ro + rd * t;
+      float d = scene(p);
       
-      // Multiple light sources
-      vec3 lightPos1 = vec3(5.0, 5.0, 5.0);
-      vec3 lightPos2 = vec3(-5.0, -2.0, 3.0);
-      vec3 lightPos3 = vec3(0.0, -5.0, -3.0);
+      if(d < 0.001) {
+        vec3 n = getNormal(p);
+        vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+        float diff = max(dot(n, lightDir), 0.0);
+        
+        vec3 cyan = vec3(0.0, 0.8, 1.0);
+        vec3 purple = vec3(0.5, 0.2, 1.0);
+        vec3 baseCol = mix(cyan, purple, p.y * 0.5 + 0.5);
+        
+        float fresnel = pow(1.0 - max(dot(-rd, n), 0.0), 3.0);
+        vec3 rimLight = vec3(0.0, 0.9, 1.0) * fresnel;
+        
+        col = baseCol * (diff * 0.5 + 0.3) + rimLight * 0.8;
+        
+        float glow = 0.3 / (1.0 + t * t * 0.05);
+        col += vec3(0.0, 0.6, 1.0) * glow;
+        break;
+      }
       
-      vec3 l1 = normalize(lightPos1 - p);
-      vec3 l2 = normalize(lightPos2 - p);
-      vec3 l3 = normalize(lightPos3 - p);
+      if(t > 20.0) {
+        float glow = 0.15 / (1.0 + t * t * 0.1);
+        col += vec3(0.0, 0.4, 0.8) * glow;
+        break;
+      }
       
-      float diff1 = max(dot(n, l1), 0.0);
-      float diff2 = max(dot(n, l2), 0.0);
-      float diff3 = max(dot(n, l3), 0.0);
-      
-      // Fresnel effect for edge glow
-      float fresnel = pow(1.0 - max(dot(-rd, n), 0.0), 3.0);
-      
-      // Color palette - cyan, purple, blue (matching knXw theme)
-      vec3 cyanColor = vec3(0.0, 0.83, 1.0);    // #00d4ff
-      vec3 purpleColor = vec3(0.545, 0.361, 0.965); // #8b5cf6
-      vec3 blueColor = vec3(0.055, 0.647, 0.914);   // #0ea5e9
-      
-      // Mix colors based on position and time
-      float colorMix = sin(p.x * 0.5 + p.y * 0.3 + uTime * 0.2) * 0.5 + 0.5;
-      float colorMix2 = cos(p.z * 0.4 + uTime * 0.15) * 0.5 + 0.5;
-      
-      vec3 baseColor = mix(cyanColor, purpleColor, colorMix);
-      baseColor = mix(baseColor, blueColor, colorMix2 * 0.3);
-      
-      // Combine lighting
-      vec3 diffuse = baseColor * (diff1 * 0.6 + diff2 * 0.3 + diff3 * 0.2);
-      
-      // Add fresnel glow
-      vec3 fresnelColor = mix(cyanColor, purpleColor, fresnel);
-      
-      // Specular highlights
-      vec3 viewDir = -rd;
-      vec3 reflectDir = reflect(-l1, n);
-      float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
-      
-      // Final color composition
-      col = diffuse * 0.7;
-      col += fresnelColor * fresnel * 0.8;
-      col += vec3(1.0) * spec * 0.3;
-      
-      // Ambient occlusion approximation
-      float ao = 1.0 - smoothstep(0.0, 2.0, d * 0.1);
-      col *= 0.8 + ao * 0.2;
-      
-      // Inner glow effect
-      float innerGlow = exp(-d * 0.15);
-      col += cyanColor * innerGlow * 0.15;
+      t += d * 0.5;
     }
     
-    // Vignette
-    float vignette = 1.0 - length(uv) * 0.4;
-    col *= vignette;
-    
-    // Tone mapping and gamma
-    col = col / (col + vec3(1.0));
-    col = pow(col, vec3(0.9));
-    
+    col = pow(col, vec3(0.4545));
     gl_FragColor = vec4(col, 1.0);
   }
 `;
 
-function RaymarchPlane() { ... }
-function FallbackPlane() { ... }
+function RaymarchPlane() {
+  const meshRef = useRef();
+  const { size, viewport } = useThree();
+  const mouse = useRef({ x: 0.5, y: 0.5 });
+  
+  const material = useMemo(() => {
+    const mat = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uTime: { value: 0.0 },
+        uResolution: { value: new THREE.Vector2(1920, 1080) },
+        uMouse: { value: new THREE.Vector2(0.5, 0.5) }
+      },
+      side: THREE.DoubleSide
+    });
+    return mat;
+  }, []);
+  
+  useFrame((state) => {
+    if (!material || !material.uniforms) return;
+    
+    material.uniforms.uTime.value = state.clock.elapsedTime;
+    material.uniforms.uResolution.value.set(
+      size.width || 1920,
+      size.height || 1080
+    );
+    
+    const targetX = (state.pointer.x + 1) / 2;
+    const targetY = (state.pointer.y + 1) / 2;
+    mouse.current.x += (targetX - mouse.current.x) * 0.05;
+    mouse.current.y += (targetY - mouse.current.y) * 0.05;
+    
+    material.uniforms.uMouse.value.set(mouse.current.x, mouse.current.y);
+  });
+  
+  return (
+    <mesh ref={meshRef} material={material}>
+      <planeGeometry args={[viewport.width || 10, viewport.height || 10]} />
+    </mesh>
+  );
+}
 
 export default function NeonSphereRaymarcher({ className = "" }) {
   return (
     <div className={`w-full h-full ${className}`}>
-      <Canvas ... >
-        <Suspense fallback={<FallbackPlane />}>
-          <RaymarchPlane />
-        </Suspense>
+      <Canvas
+        camera={{ position: [0, 0, 1], fov: 75 }}
+        dpr={[1, 2]}
+        gl={{ 
+          antialias: true, 
+          alpha: true,
+          powerPreference: "high-performance"
+        }}
+        onCreated={({ gl }) => {
+          gl.setClearColor('#0a0a0a', 1);
+        }}
+      >
+        <RaymarchPlane />
       </Canvas>
     </div>
   );
 }
-*/
