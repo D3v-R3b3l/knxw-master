@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/landing/Navbar';
 import HeroShader from '@/components/landing/HeroShader';
-import EnterpriseShader from '@/components/landing/EnterpriseShader';
 import SEOHead from '@/components/system/SEOHead';
 import { ArrowDown } from 'lucide-react';
 import PhilosophySection from '@/components/landing/PhilosophySection';
@@ -402,15 +401,67 @@ export default function LandingPage() {
                   </div>
                </motion.div>
                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8 }}
                   className="relative hidden md:block"
                 >
-                   {/* Interactive Neural Network Shader */}
-                   <div className="aspect-square relative rounded-2xl overflow-hidden border border-purple-500/20 shadow-[0_0_50px_-12px_rgba(139,92,246,0.3)]">
-                      <EnterpriseShader />
+                   {/* Enterprise Infrastructure Grid */}
+                   <div className="aspect-square relative">
+                      <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-4">
+                         {Array.from({ length: 16 }).map((_, i) => (
+                            <motion.div
+                               key={i}
+                               initial={{ opacity: 0, scale: 0 }}
+                               whileInView={{ opacity: 1, scale: 1 }}
+                               viewport={{ once: true }}
+                               transition={{ delay: i * 0.05 }}
+                               className="bg-gradient-to-br from-purple-900/20 to-cyan-900/20 rounded-lg border border-white/10 relative overflow-hidden group"
+                            >
+                               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-cyan-500/0 group-hover:from-purple-500/20 group-hover:to-cyan-500/20 transition-all duration-500" />
+
+                               {/* Animated pulse */}
+                               <motion.div
+                                  className="absolute inset-0 bg-cyan-500/20 rounded-lg"
+                                  animate={{
+                                     opacity: [0, 0.3, 0],
+                                     scale: [0.8, 1, 0.8],
+                                  }}
+                                  transition={{
+                                     duration: 3,
+                                     delay: i * 0.2,
+                                     repeat: Infinity,
+                                     ease: "easeInOut"
+                                  }}
+                               />
+
+                               {/* Status indicator */}
+                               <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                            </motion.div>
+                         ))}
+                      </div>
+
+                      {/* Connecting lines animation */}
+                      <svg className="absolute inset-0 pointer-events-none">
+                         <motion.line
+                            x1="25%" y1="25%" x2="75%" y2="75%"
+                            stroke="rgba(6,182,212,0.3)"
+                            strokeWidth="1"
+                            initial={{ pathLength: 0 }}
+                            whileInView={{ pathLength: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1.5, delay: 0.5 }}
+                         />
+                         <motion.line
+                            x1="75%" y1="25%" x2="25%" y2="75%"
+                            stroke="rgba(139,92,246,0.3)"
+                            strokeWidth="1"
+                            initial={{ pathLength: 0 }}
+                            whileInView={{ pathLength: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1.5, delay: 0.7 }}
+                         />
+                      </svg>
                    </div>
                </motion.div>
             </div>
