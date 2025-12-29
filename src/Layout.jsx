@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
-  Menu, X, User, LogOut, ArrowUp, ChevronLeft, ChevronRight, Bot,
+  Menu, X, User, ArrowUp, ChevronLeft, ChevronRight, Bot,
   GraduationCap, Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
