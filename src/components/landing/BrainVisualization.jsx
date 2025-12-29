@@ -1,186 +1,143 @@
-import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
-import TextureGuard from './TextureGuard';
+import React, { useRef, useMemo, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
-function NeuralNetwork() {
-  const groupRef = useRef();
-  const particlesRef = useRef();
-  const linesRef = useRef();
+// Pure CSS/Canvas neural network - no Three.js to avoid texture issues
+export default function BrainVisualization({ className = "" }) {
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
   
-  const particleCount = 80;
-  
-  const { positions, connections } = useMemo(() => {
-    const pos = [];
-    const conn = [];
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     
-    // Create brain-shaped particle distribution
-    for (let i = 0; i < particleCount; i++) {
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+    ctx.scale(2, 2);
+    
+    const width = rect.width;
+    const height = rect.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    
+    // Generate neural nodes in brain shape
+    const nodes = [];
+    const nodeCount = 60;
+    
+    for (let i = 0; i < nodeCount; i++) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-      const r = 2 + Math.random() * 0.5;
-      
-      // Brain-like shape modulation
+      const r = 120 + Math.random() * 40;
       const brainFactor = 1 + 0.3 * Math.sin(phi * 3) * Math.cos(theta * 2);
       
-      const x = r * brainFactor * Math.sin(phi) * Math.cos(theta);
-      const y = r * brainFactor * Math.sin(phi) * Math.sin(theta);
-      const z = r * brainFactor * Math.cos(phi);
-      
-      pos.push({ x, y, z, baseX: x, baseY: y, baseZ: z });
+      nodes.push({
+        x: centerX + r * brainFactor * Math.cos(theta),
+        y: centerY + r * brainFactor * Math.sin(theta) * 0.8,
+        baseX: centerX + r * brainFactor * Math.cos(theta),
+        baseY: centerY + r * brainFactor * Math.sin(theta) * 0.8,
+        size: 2 + Math.random() * 3,
+        pulse: Math.random() * Math.PI * 2
+      });
     }
     
-    // Create connections between nearby particles
-    for (let i = 0; i < pos.length; i++) {
-      for (let j = i + 1; j < pos.length; j++) {
-        const dx = pos[i].x - pos[j].x;
-        const dy = pos[i].y - pos[j].y;
-        const dz = pos[i].z - pos[j].z;
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        
-        if (dist < 1.2) {
-          conn.push({ start: i, end: j });
+    // Generate connections
+    const connections = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].baseX - nodes[j].baseX;
+        const dy = nodes[i].baseY - nodes[j].baseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 80) {
+          connections.push({ start: i, end: j, dist });
         }
       }
     }
     
-    return { positions: pos, connections: conn };
+    let time = 0;
+    
+    const animate = () => {
+      time += 0.016;
+      ctx.clearRect(0, 0, width, height);
+      
+      // Rotate effect
+      const rotation = time * 0.3;
+      
+      // Update node positions with rotation and pulse
+      nodes.forEach((node, i) => {
+        const dx = node.baseX - centerX;
+        const dy = node.baseY - centerY;
+        const cos = Math.cos(rotation);
+        const sin = Math.sin(rotation);
+        
+        const pulse = Math.sin(time * 2 + node.pulse) * 3;
+        node.x = centerX + dx * cos + pulse;
+        node.y = centerY + dy + Math.sin(time + i * 0.1) * 2;
+      });
+      
+      // Draw connections
+      connections.forEach(conn => {
+        const start = nodes[conn.start];
+        const end = nodes[conn.end];
+        const alpha = 0.15 + Math.sin(time * 2 + conn.start * 0.1) * 0.1;
+        
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+      
+      // Draw nodes
+      nodes.forEach((node, i) => {
+        const pulse = 0.8 + Math.sin(time * 3 + node.pulse) * 0.2;
+        const size = node.size * pulse;
+        
+        // Glow
+        const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 4);
+        gradient.addColorStop(0, 'rgba(0, 212, 255, 0.8)');
+        gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.2)');
+        gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+        
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Core
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = '#00d4ff';
+        ctx.fill();
+      });
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    setIsVisible(true);
+    animate();
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
   }, []);
   
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-    
-    if (groupRef.current) {
-      groupRef.current.rotation.y = time * 0.15;
-      groupRef.current.rotation.x = Math.sin(time * 0.1) * 0.1;
-    }
-    
-    // Animate particles
-    if (particlesRef.current) {
-      const posArray = particlesRef.current.geometry.attributes.position.array;
-      
-      for (let i = 0; i < positions.length; i++) {
-        const idx = i * 3;
-        const pulse = Math.sin(time * 2 + i * 0.5) * 0.05;
-        posArray[idx] = positions[i].baseX + pulse;
-        posArray[idx + 1] = positions[i].baseY + pulse;
-        posArray[idx + 2] = positions[i].baseZ + pulse;
-      }
-      
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
-    }
-    
-    // Animate connection lines
-    if (linesRef.current) {
-      const posArray = linesRef.current.geometry.attributes.position.array;
-      
-      for (let i = 0; i < connections.length; i++) {
-        const conn = connections[i];
-        const startIdx = conn.start * 3;
-        const endIdx = conn.end * 3;
-        const lineIdx = i * 6;
-        
-        const pulse1 = Math.sin(state.clock.elapsedTime * 2 + conn.start * 0.5) * 0.05;
-        const pulse2 = Math.sin(state.clock.elapsedTime * 2 + conn.end * 0.5) * 0.05;
-        
-        posArray[lineIdx] = positions[conn.start].baseX + pulse1;
-        posArray[lineIdx + 1] = positions[conn.start].baseY + pulse1;
-        posArray[lineIdx + 2] = positions[conn.start].baseZ + pulse1;
-        
-        posArray[lineIdx + 3] = positions[conn.end].baseX + pulse2;
-        posArray[lineIdx + 4] = positions[conn.end].baseY + pulse2;
-        posArray[lineIdx + 5] = positions[conn.end].baseZ + pulse2;
-      }
-      
-      linesRef.current.geometry.attributes.position.needsUpdate = true;
-    }
-  });
-  
-  const particlePositions = useMemo(() => {
-    const arr = new Float32Array(positions.length * 3);
-    positions.forEach((p, i) => {
-      arr[i * 3] = p.x;
-      arr[i * 3 + 1] = p.y;
-      arr[i * 3 + 2] = p.z;
-    });
-    return arr;
-  }, [positions]);
-  
-  const linePositions = useMemo(() => {
-    const arr = new Float32Array(connections.length * 6);
-    connections.forEach((conn, i) => {
-      const idx = i * 6;
-      arr[idx] = positions[conn.start].x;
-      arr[idx + 1] = positions[conn.start].y;
-      arr[idx + 2] = positions[conn.start].z;
-      arr[idx + 3] = positions[conn.end].x;
-      arr[idx + 4] = positions[conn.end].y;
-      arr[idx + 5] = positions[conn.end].z;
-    });
-    return arr;
-  }, [connections, positions]);
-  
   return (
-    <group ref={groupRef}>
-      {/* Neural nodes */}
-      <points ref={particlesRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={positions.length}
-            array={particlePositions}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          size={0.08}
-          color="#00d4ff"
-          transparent
-          opacity={0.9}
-          sizeAttenuation
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
-      
-      {/* Neural connections */}
-      <lineSegments ref={linesRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={connections.length * 2}
-            array={linePositions}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial
-          color="#8b5cf6"
-          transparent
-          opacity={0.3}
-          blending={THREE.AdditiveBlending}
-        />
-      </lineSegments>
-    </group>
-  );
-}
-
-export default function BrainVisualization({ className = "" }) {
-  return (
-    <div className={`w-full h-full ${className}`}>
-      <Canvas
-        camera={{ position: [0, 0, 8], fov: 50 }}
-        dpr={[1, 2]}
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: "high-performance"
-        }}
-      >
-        <TextureGuard />
-        <ambientLight intensity={0.2} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} color="#00d4ff" />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#8b5cf6" />
-        <NeuralNetwork />
-      </Canvas>
-    </div>
+    <motion.div 
+      className={`w-full h-full relative ${className}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isVisible ? 1 : 0 }}
+      transition={{ duration: 1 }}
+    >
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ background: 'transparent' }}
+      />
+    </motion.div>
   );
 }
