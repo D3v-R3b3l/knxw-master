@@ -50,24 +50,26 @@ Deno.serve(async (req) => {
     if (!Array.isArray(authorized_domains)) return jsonResponse({ error: 'authorized_domains must be array or comma-separated string' }, 400);
 
     // Generate unique keys
-    const api_key = await uniqueKey('api_key');
-    const secret_key = await uniqueKey('secret_key');
+    const api_key = await uniqueKey(base44, 'api_key');
+    const secret_key = await uniqueKey(base44, 'secret_key');
+    const client_event_signing_secret = randToken(32);
 
     const payload = {
       name,
       api_key,
       secret_key,
+      client_event_signing_secret,
       authorized_domains,
       owner_id: user.id,
       status: 'active'
     };
 
-    // Create with RLS based on owner_id
-    const created = await base44.entities.ClientApp.create(payload);
+    // Create with service role to ensure all fields are set
+    const created = await base44.asServiceRole.entities.ClientApp.create(payload);
 
     // Audit log
     try {
-      await base44.entities.AuditLog.create({
+      await base44.asServiceRole.entities.AuditLog.create({
         action: 'app.create',
         actor_id: user.id,
         actor_email: user.email,
