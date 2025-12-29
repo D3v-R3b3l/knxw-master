@@ -147,10 +147,13 @@ function RaymarchPlane() {
   }, []);
   
   useFrame((state) => {
-    if (!material || !material.uniforms) return;
+    if (!meshRef.current || !meshRef.current.material) return;
     
-    material.uniforms.uTime.value = state.clock.elapsedTime;
-    material.uniforms.uResolution.value.set(
+    const mat = meshRef.current.material;
+    if (!mat.uniforms) return;
+    
+    mat.uniforms.uTime.value = state.clock.elapsedTime;
+    mat.uniforms.uResolution.value.set(
       size.width || 1920,
       size.height || 1080
     );
@@ -160,12 +163,13 @@ function RaymarchPlane() {
     mouse.current.x += (targetX - mouse.current.x) * 0.05;
     mouse.current.y += (targetY - mouse.current.y) * 0.05;
     
-    material.uniforms.uMouse.value.set(mouse.current.x, mouse.current.y);
+    mat.uniforms.uMouse.value.set(mouse.current.x, mouse.current.y);
   });
   
   return (
-    <mesh ref={meshRef} material={material}>
+    <mesh ref={meshRef}>
       <planeGeometry args={[viewport.width || 10, viewport.height || 10]} />
+      <primitive object={material} attach="material" />
     </mesh>
   );
 }
