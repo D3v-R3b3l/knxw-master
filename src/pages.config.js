@@ -73,6 +73,9 @@ import documentation from './pages/documentation';
 import landing from './pages/landing';
 import lowdown from './pages/lowdown';
 import settings from './pages/settings';
+import InferenceStudio from './pages/InferenceStudio';
+import AIJourneyOrchestrator from './pages/AIJourneyOrchestrator';
+import UserDataPortal from './pages/UserDataPortal';
 import __Layout from './Layout.jsx';
 
 
@@ -152,6 +155,9 @@ export const PAGES = {
     "landing": landing,
     "lowdown": lowdown,
     "settings": settings,
+    "InferenceStudio": InferenceStudio,
+    "AIJourneyOrchestrator": AIJourneyOrchestrator,
+    "UserDataPortal": UserDataPortal,
 }
 
 export const pagesConfig = {
