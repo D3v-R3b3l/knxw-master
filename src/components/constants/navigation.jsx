@@ -3,7 +3,7 @@ import {
   GitBranch as AttributionIcon, TrendingUp, BookOpen, Bot, HeartPulse, 
   FlaskConical, Database as DatabaseIcon, Megaphone, BarChart3 as GoogleDataIcon, 
   Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, Sparkles,
-  Sliders, Store, Plug
+  Sliders, Store, Plug, Route, Cpu, UserCheck
 } from "lucide-react";
 
 export const navigationSections = [
