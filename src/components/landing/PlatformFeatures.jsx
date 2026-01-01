@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, AlertTriangle, Sliders } from 'lucide-react';
+import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, AlertTriangle, Sliders, Cpu, Route, UserCheck, RefreshCcw } from 'lucide-react';
 
 export default function PlatformFeatures() {
   return (
@@ -198,6 +198,91 @@ export default function PlatformFeatures() {
                 <h3 className="text-xl font-bold mb-2">Custom Dimensions</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">Define industry-specific psychographic traits and metrics.</p>
               </div>
+            </div>
+          </motion.div>
+
+          {/* New Advanced AI Features Row */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-violet-500/30 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center flex-shrink-0 border border-violet-500/20">
+                <Cpu className="w-5 h-5 text-violet-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">AI Inference Studio</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Fine-tune psychographic models with custom weights and confidence thresholds.</p>
+                <span className="inline-block mt-3 text-xs font-mono text-violet-400 bg-violet-500/10 px-3 py-1 rounded-full border border-violet-500/20">GROWTH+</span>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.55 }}
+            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-fuchsia-500/30 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-fuchsia-500/10 flex items-center justify-center flex-shrink-0 border border-fuchsia-500/20">
+                <Route className="w-5 h-5 text-fuchsia-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">AI Journey Orchestrator</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">Proactive AI suggestions for journey optimization based on behavioral patterns.</p>
+                <span className="inline-block mt-3 text-xs font-mono text-fuchsia-400 bg-fuchsia-500/10 px-3 py-1 rounded-full border border-fuchsia-500/20">PRO</span>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.6 }}
+            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-teal-500/30 transition-all duration-500 group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center flex-shrink-0 border border-teal-500/20">
+                <UserCheck className="w-5 h-5 text-teal-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">User Data Portal</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">End-user transparency and control over their psychographic data.</p>
+                <span className="inline-block mt-3 text-xs font-mono text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">ALL PLANS</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Self-Learning AI Feature - Full Width */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.65 }}
+            className="md:col-span-12 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-amber-500/30 transition-all duration-500 relative overflow-hidden group"
+          >
+            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-[150px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-600/30 to-amber-600/10 flex items-center justify-center flex-shrink-0 border border-amber-500/20">
+                <RefreshCcw className="w-8 h-8 text-amber-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-2xl md:text-3xl font-bold mb-3">Self-Learning AI Feedback Loop</h3>
+                <p className="text-gray-400 text-lg max-w-3xl leading-relaxed">
+                  Engagement outcomes continuously train and improve psychographic predictions. Every user interaction makes the AI smarter—automatically adjusting confidence thresholds and refining inference models based on real-world performance.
+                </p>
+              </div>
+              <span className="inline-block text-xs font-mono bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-6 py-3 rounded-full text-amber-300 border border-amber-500/30 whitespace-nowrap">🧠 AUTONOMOUS OPTIMIZATION</span>
             </div>
           </motion.div>
         </div>
