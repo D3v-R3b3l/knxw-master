@@ -8,7 +8,8 @@ import {
   ExternalLink, ChevronRight, Database, Layers, Gamepad2, Webhook,
   Lock, TrendingUp, Globe, FileText, HelpCircle, Sparkles, Activity,
   MousePointer, Target, Server, Link as LinkIcon, FlaskConical, HeartPulse,
-  Megaphone, Briefcase, Menu, X, ShieldCheck, User, Rocket, Map, Sliders, Store, Plug
+  Megaphone, Briefcase, Menu, X, ShieldCheck, User, Rocket, Map, Sliders, Store, Plug,
+  Cpu, Route, UserCheck, RefreshCcw
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -49,6 +50,10 @@ import RoboticsDoc from '@/components/documentation/RoboticsDoc';
 import MarketIntelligenceDoc from '@/components/documentation/MarketIntelligenceDoc';
 import CustomDashboardsDoc from '@/components/documentation/CustomDashboardsDoc';
 import PlatformFeatureMapDoc from '@/components/documentation/PlatformFeatureMapDoc';
+import InferenceStudioDoc from '@/components/documentation/InferenceStudioDoc';
+import AIJourneyOrchestratorDoc from '@/components/documentation/AIJourneyOrchestratorDoc';
+import UserDataPortalDoc from '@/components/documentation/UserDataPortalDoc';
+import FeedbackLoopDoc from '@/components/documentation/FeedbackLoopDoc';
 
 // API documentation sections
 const RESTAPIDoc = () => (
@@ -306,6 +311,10 @@ const documentationSections = [
   { id: 'platform-feature-map', title: 'Platform Feature Map', icon: Map, component: PlatformFeatureMapDoc },
   { id: 'introduction', title: 'Introduction', icon: Sparkles, component: IntroductionDoc },
   { id: 'ai-inference', title: 'AI Inference & Explainability', icon: Brain, component: InferenceOverviewDoc },
+  { id: 'inference-studio', title: 'AI Inference Studio', icon: Cpu, component: InferenceStudioDoc },
+  { id: 'journey-orchestrator', title: 'AI Journey Orchestrator', icon: Route, component: AIJourneyOrchestratorDoc },
+  { id: 'feedback-loop', title: 'Self-Learning Feedback Loop', icon: RefreshCcw, component: FeedbackLoopDoc },
+  { id: 'user-data-portal', title: 'User Data Transparency', icon: UserCheck, component: UserDataPortalDoc },
   { id: 'advanced-psychographics', title: 'Advanced Psychographics', icon: Brain, component: AdvancedPsychographicsDoc },
   { id: 'training-validation', title: 'Training & Validation', icon: Target, component: TrainingValidationDoc },
   { id: 'demo-data-studio', title: 'Demo Data Studio', icon: Database, component: DemoDataStudioDoc },
