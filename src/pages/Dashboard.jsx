@@ -26,6 +26,7 @@ import AppSelector from "../components/dashboard/AppSelector";
 import HighlightsPanel from "../components/dashboard/HighlightsPanel";
 import EvidenceViewer from "../components/dashboard/EvidenceViewer";
 import RecommendationsPanel from "../components/dashboard/RecommendationsPanel";
+import FeedbackLoopPanel from "../components/dashboard/FeedbackLoopPanel";
 import logger from "../components/system/logger";
 
 const initialMetrics = {
