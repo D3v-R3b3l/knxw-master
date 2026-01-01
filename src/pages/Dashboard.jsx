@@ -468,6 +468,10 @@ export default function Dashboard() {// Renamed from DashboardContent
                   <BenchmarkingPanel industry={selectedApp?.industry || "SaaS"} />
                 </div>
                 
+                <div data-tour="feedback-loop">
+                  <FeedbackLoopPanel clientAppId={selectedAppId} />
+                </div>
+                
                 <EvidenceViewer />
               </div>
             </div>
