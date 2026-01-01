@@ -50,8 +50,11 @@ export const navigationSections = [
   {
     title: "Advanced Intelligence",
     items: [
+      { title: "Inference Studio", page: "InferenceStudio", icon: Cpu, description: "AI Model Tuning" },
+      { title: "Journey Orchestrator", page: "AIJourneyOrchestrator", icon: Route, description: "AI-Powered Journeys" },
       { title: "Custom Dimensions", page: "CustomDimensions", icon: Sliders, description: "Industry-Specific Traits" },
       { title: "Marketing Platforms", page: "MarketingIntegrations", icon: Plug, description: "CDP & Automation" },
+      { title: "User Data Portal", page: "UserDataPortal", icon: UserCheck, description: "Transparency & Control" },
     ]
   },
   {
