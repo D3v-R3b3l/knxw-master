@@ -11,11 +11,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { 
   Shield, Eye, Download, Trash2, Edit, Check, X, Clock,
   Heart, Brain, Target, Sparkles, Lock, Unlock, Bell, BellOff,
-  FileText, CheckCircle, AlertCircle, HelpCircle
+  FileText, CheckCircle, AlertCircle, HelpCircle, History, Activity
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import PageHeader from '@/components/ui/PageHeader';
+import AIExplainabilityPanel from '@/components/transparency/AIExplainabilityPanel';
+import ProfileCorrectionForm from '@/components/transparency/ProfileCorrectionForm';
+import TrustScoreCard from '@/components/transparency/TrustScoreCard';
+import DataUsageTimeline from '@/components/transparency/DataUsageTimeline';
 
 export default function UserDataPortal() {
   const queryClient = useQueryClient();
@@ -70,6 +74,21 @@ export default function UserDataPortal() {
     enabled: !!user
   });
 
+  // Fetch psychographic profile for explainability
+  const { data: psychographicProfile } = useQuery({
+    queryKey: ['psychographic-profile', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const profiles = await base44.entities.UserPsychographicProfile.filter(
+        { user_id: user.id },
+        '-last_analyzed',
+        1
+      );
+      return profiles[0] || null;
+    },
+    enabled: !!user
+  });
+
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.UserDataProfile.update(dataProfile.id, data),
     onSuccess: () => {
@@ -99,6 +118,12 @@ export default function UserDataPortal() {
     });
     
     toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} request submitted`);
+  };
+
+  const handleProfileCorrection = async (correction) => {
+    await updateMutation.mutateAsync({
+      user_corrections: [...(dataProfile.user_corrections || []), correction]
+    });
   };
 
   if (isLoading) {
@@ -146,14 +171,22 @@ export default function UserDataPortal() {
         </Card>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-[#111] border border-[#262626]">
+          <TabsList className="bg-[#111] border border-[#262626] flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="overview" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
               <Eye className="w-4 h-4 mr-2" />
               What We Know
             </TabsTrigger>
+            <TabsTrigger value="explainability" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
+              <Brain className="w-4 h-4 mr-2" />
+              AI Explainability
+            </TabsTrigger>
             <TabsTrigger value="consent" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
               <Lock className="w-4 h-4 mr-2" />
               Privacy Controls
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
+              <History className="w-4 h-4 mr-2" />
+              Usage Timeline
             </TabsTrigger>
             <TabsTrigger value="preferences" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-black">
               <Bell className="w-4 h-4 mr-2" />
@@ -166,6 +199,9 @@ export default function UserDataPortal() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
+            {/* Trust Score Card */}
+            <TrustScoreCard dataProfile={dataProfile} psychographicProfile={psychographicProfile} />
+
             {/* Your Profile Summary */}
             <Card className="bg-[#111] border-[#262626]">
               <CardHeader>
@@ -209,7 +245,7 @@ export default function UserDataPortal() {
                 <div className="pt-4 border-t border-[#262626]">
                   <p className="text-sm text-[#6b7280] flex items-center gap-2">
                     <HelpCircle className="w-4 h-4" />
-                    Think something's wrong? You can submit corrections below.
+                    Think something's wrong? Go to "AI Explainability" tab to understand and correct.
                   </p>
                 </div>
               </CardContent>
@@ -237,6 +273,22 @@ export default function UserDataPortal() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="explainability" className="space-y-6">
+            <AIExplainabilityPanel 
+              profile={psychographicProfile} 
+              insights={[]}
+            />
+            <ProfileCorrectionForm 
+              dataProfile={dataProfile}
+              psychographicProfile={psychographicProfile}
+              onSubmitCorrection={handleProfileCorrection}
+            />
+          </TabsContent>
+
+          <TabsContent value="timeline" className="space-y-6">
+            <DataUsageTimeline userId={user?.id} events={[]} />
           </TabsContent>
 
           <TabsContent value="consent" className="space-y-6">
