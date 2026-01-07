@@ -1,5 +1,6 @@
 import ABTesting from './pages/ABTesting';
 import ABTestingStudio from './pages/ABTestingStudio';
+import AIJourneyOrchestrator from './pages/AIJourneyOrchestrator';
 import AdminRoles from './pages/AdminRoles';
 import Agents from './pages/Agents';
 import AlertsSettings from './pages/AlertsSettings';
@@ -37,6 +38,7 @@ import Glossary from './pages/Glossary';
 import GoogleData from './pages/GoogleData';
 import Home from './pages/Home';
 import ImportedTextRecords from './pages/ImportedTextRecords';
+import InferenceStudio from './pages/InferenceStudio';
 import Insights from './pages/Insights';
 import Integrations from './pages/Integrations';
 import IntegrationsManagement from './pages/IntegrationsManagement';
@@ -66,6 +68,7 @@ import SystemValidation from './pages/SystemValidation';
 import Terms from './pages/Terms';
 import Tests from './pages/Tests';
 import UnifiedDataIntegration from './pages/UnifiedDataIntegration';
+import UserDataPortal from './pages/UserDataPortal';
 import UserSettings from './pages/UserSettings';
 import blog from './pages/blog';
 import dashboard from './pages/dashboard';
@@ -73,15 +76,13 @@ import documentation from './pages/documentation';
 import landing from './pages/landing';
 import lowdown from './pages/lowdown';
 import settings from './pages/settings';
-import InferenceStudio from './pages/InferenceStudio';
-import AIJourneyOrchestrator from './pages/AIJourneyOrchestrator';
-import UserDataPortal from './pages/UserDataPortal';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "ABTesting": ABTesting,
     "ABTestingStudio": ABTestingStudio,
+    "AIJourneyOrchestrator": AIJourneyOrchestrator,
     "AdminRoles": AdminRoles,
     "Agents": Agents,
     "AlertsSettings": AlertsSettings,
@@ -119,6 +120,7 @@ export const PAGES = {
     "GoogleData": GoogleData,
     "Home": Home,
     "ImportedTextRecords": ImportedTextRecords,
+    "InferenceStudio": InferenceStudio,
     "Insights": Insights,
     "Integrations": Integrations,
     "IntegrationsManagement": IntegrationsManagement,
@@ -148,6 +150,7 @@ export const PAGES = {
     "Terms": Terms,
     "Tests": Tests,
     "UnifiedDataIntegration": UnifiedDataIntegration,
+    "UserDataPortal": UserDataPortal,
     "UserSettings": UserSettings,
     "blog": blog,
     "dashboard": dashboard,
@@ -155,9 +158,6 @@ export const PAGES = {
     "landing": landing,
     "lowdown": lowdown,
     "settings": settings,
-    "InferenceStudio": InferenceStudio,
-    "AIJourneyOrchestrator": AIJourneyOrchestrator,
-    "UserDataPortal": UserDataPortal,
 }
 
 export const pagesConfig = {

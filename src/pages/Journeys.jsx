@@ -7,10 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Save, Play, CheckCircle2, Clock, Menu, X, Zap, Settings, Target, Timer, ChevronLeft, ChevronRight, List, Sliders, FileText, Download, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { Plus, Save, Play, CheckCircle2, Clock, Menu, X, Zap, Settings, Target, Timer, ChevronLeft, ChevronRight, List, Sliders, FileText, Download, ZoomIn, ZoomOut, RotateCcw, Brain, Activity, Sparkles } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { runJourneys } from "@/functions/runJourneys";
 import JourneyTestDialog from "@/components/journeys/JourneyTestDialog";
+import AIJourneyAssistant from "@/components/journeys/AIJourneyAssistant";
+import DynamicJourneyOptimizer from "@/components/journeys/DynamicJourneyOptimizer";
+import RealtimeJourneyInsights from "@/components/journeys/RealtimeJourneyInsights";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 // Journey Templates
 const JOURNEY_TEMPLATES = {
@@ -275,6 +280,14 @@ export default function JourneysPage() {
   const [showProperties, setShowProperties] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showTestDialog, setShowTestDialog] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showOptimizer, setShowOptimizer] = useState(false);
+  const [optimizationSettings, setOptimizationSettings] = useState({
+    enabled: false,
+    rules: {},
+    sensitivity: 0.5,
+    minConfidence: 0.7
+  });
 
   // Canvas state
   const [zoom, setZoom] = useState(1);
@@ -283,6 +296,63 @@ export default function JourneysPage() {
   const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 });
 
   const canvasRef = useRef(null);
+
+  // Fetch client apps for AI assistant
+  const { data: clientApps = [] } = useQuery({
+    queryKey: ['client-apps-journey'],
+    queryFn: () => base44.entities.ClientApp.filter({ is_demo: false }, '-created_date', 10)
+  });
+
+  const selectedClientAppId = clientApps[0]?.id;
+
+  // Fetch profiles for insights
+  const { data: profiles = [] } = useQuery({
+    queryKey: ['profiles-for-journey-insights'],
+    queryFn: () => base44.entities.UserPsychographicProfile.filter({ is_demo: false }, '-last_analyzed', 100)
+  });
+
+  // Fetch feedback data for insights
+  const { data: feedbackData = [] } = useQuery({
+    queryKey: ['feedback-for-journey', selectedClientAppId],
+    queryFn: async () => {
+      if (!selectedClientAppId) return [];
+      return base44.entities.EngagementFeedbackLoop.filter(
+        { client_app_id: selectedClientAppId },
+        '-created_date',
+        50
+      );
+    },
+    enabled: !!selectedClientAppId
+  });
+
+  // Handle AI suggestion application
+  const handleApplyAISuggestion = useCallback((suggestedNodes, suggestedEdges) => {
+    if (suggestedNodes?.length > 0) {
+      // Offset new nodes to avoid overlap
+      const offsetNodes = suggestedNodes.map((node, idx) => ({
+        ...node,
+        id: node.id || `ai_${node.type}_${Date.now()}_${idx}`,
+        x: (node.x || 100) + 50,
+        y: (node.y || 100) + 50
+      }));
+      
+      setNodes(prev => [...prev, ...offsetNodes]);
+      
+      if (suggestedEdges?.length > 0) {
+        const newEdges = suggestedEdges.map((edge, idx) => ({
+          ...edge,
+          id: edge.id || `ai_edge_${Date.now()}_${idx}`
+        }));
+        setEdges(prev => [...prev, ...newEdges]);
+      }
+      
+      toast({ 
+        title: "AI Suggestion Applied", 
+        description: `Added ${offsetNodes.length} nodes to your journey.` 
+      });
+    }
+    setShowAIAssistant(false);
+  }, [toast]);
 
   useEffect(() => {
     const loadJourneys = async () => {
@@ -553,6 +623,14 @@ export default function JourneysPage() {
           </div>
           
           <div className="flex items-center gap-2 flex-wrap">
+            <Button 
+              size="sm" 
+              onClick={() => setShowAIAssistant(true)} 
+              className="bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white hover:opacity-90"
+            >
+              <Brain className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">AI Assistant</span>
+            </Button>
             <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)} className="bg-transparent border-[#555] text-white hover:bg-[#333]">
               <FileText className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Templates</span>
@@ -583,6 +661,15 @@ export default function JourneysPage() {
         <div className="flex gap-2 flex-wrap">
           <Button size="sm" variant="ghost" onClick={() => setShowSidebar(!showSidebar)} className="lg:hidden text-white hover:bg-[#333]">
             <List className="w-4 h-4" />
+          </Button>
+          <Button 
+            size="sm" 
+            variant={showOptimizer ? "default" : "ghost"} 
+            onClick={() => setShowOptimizer(!showOptimizer)} 
+            className={showOptimizer ? "bg-[#00d4ff] text-black" : "text-white hover:bg-[#333]"}
+            title="Dynamic Optimization"
+          >
+            <Activity className="w-4 h-4" />
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setShowProperties(!showProperties)} className="text-white hover:bg-[#333]">
             <Sliders className="w-4 h-4" />
@@ -687,6 +774,14 @@ export default function JourneysPage() {
                 Click on a node to connect
               </div>
             )}
+
+            {/* Realtime Insights Panel */}
+            <RealtimeJourneyInsights 
+              nodes={nodes}
+              edges={edges}
+              profiles={profiles}
+              feedbackData={feedbackData}
+            />
           </div>
 
           {/* Floating Zoom Controls */}
@@ -1008,6 +1103,24 @@ export default function JourneysPage() {
           isOpen={showTestDialog}
           onClose={() => setShowTestDialog(false)}
           onRun={handleTestRun}
+        />
+
+        {/* AI Journey Assistant */}
+        <AIJourneyAssistant
+          isOpen={showAIAssistant}
+          onClose={() => setShowAIAssistant(false)}
+          onApplySuggestion={handleApplyAISuggestion}
+          currentNodes={nodes}
+          currentEdges={edges}
+          clientAppId={selectedClientAppId}
+        />
+
+        {/* Dynamic Optimizer Panel */}
+        <DynamicJourneyOptimizer
+          isOpen={showOptimizer}
+          onClose={() => setShowOptimizer(false)}
+          optimizationSettings={optimizationSettings}
+          onUpdateSettings={setOptimizationSettings}
         />
 
         {/* Templates Modal */}
