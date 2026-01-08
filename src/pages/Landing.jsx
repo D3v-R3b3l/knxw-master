@@ -21,6 +21,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
 import { HelmetProvider } from 'react-helmet-async';
+import KineticText from '@/components/landing/KineticText';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -83,19 +84,23 @@ function HeroContent({ heroRef }) {
   return (
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
       {/* Title - Layer 1 (Slowest) */}
-      <motion.div
-        data-parallax-layer="1"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-      >
+      <div data-parallax-layer="1">
         <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
-          The Universal <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
+          <KineticText trigger="load" staggerDelay={0.05} duration={0.8} y={120}>
+            The Universal
+          </KineticText>
+          <br />
+          <KineticText 
+            trigger="load" 
+            staggerDelay={0.06} 
+            duration={0.8} 
+            y={120}
+            className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x"
+          >
             Intelligence Layer
-          </span>
+          </KineticText>
         </h1>
-      </motion.div>
+      </div>
       
       {/* Description - Layer 2 */}
       <motion.div
@@ -318,7 +323,11 @@ export default function LandingPage() {
                    <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
                       Architecture
                    </span>
-                   <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Built as Universal Infrastructure</h2>
+                   <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                     <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+                       Built as Universal Infrastructure
+                     </KineticText>
+                   </h2>
                    <p className="text-xl text-gray-400 max-w-2xl mx-auto">Foundational cognitive layer for human understanding across every digital touchpoint</p>
                 </motion.div>
                 <div className="grid md:grid-cols-4 gap-6">
@@ -366,7 +375,11 @@ export default function LandingPage() {
                   <span className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6">
                      Enterprise
                   </span>
-                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Enterprise-Grade Infrastructure</h2>
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                    <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+                      Enterprise-Grade Infrastructure
+                    </KineticText>
+                  </h2>
                   <p className="text-xl text-gray-400 mb-10">Security, reliability, and compliance built for mission-critical deployments</p>
                   
                   <div className="space-y-6">
@@ -433,7 +446,11 @@ export default function LandingPage() {
                    <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
                       Experience
                    </span>
-                   <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">Intuitive Intelligence</h2>
+                   <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
+                     <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+                       Intuitive Intelligence
+                     </KineticText>
+                   </h2>
                    <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">Complex psychological analytics made beautifully simple</p>
                 </motion.div>
                 
@@ -525,8 +542,18 @@ export default function LandingPage() {
                    viewport={{ once: true }}
                 >
                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight">
-                      Start Building{' '}
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Today</span>
+                     <KineticText trigger="inView" staggerDelay={0.05} duration={0.8} y={100}>
+                       Start Building{' '}
+                     </KineticText>
+                     <KineticText 
+                       trigger="inView" 
+                       staggerDelay={0.06} 
+                       duration={0.8} 
+                       y={100}
+                       className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500"
+                     >
+                       Today
+                     </KineticText>
                    </h2>
                    <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-2xl mx-auto">Join developers deploying psychographic intelligence at scale</p>
                 </motion.div>
