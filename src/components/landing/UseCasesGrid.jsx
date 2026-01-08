@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, X, ShoppingCart, Code, Gamepad2, GraduationCap, Heart, Megaphone, Headphones, Tv } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import KineticText from '@/components/landing/KineticText';
 
 const categoryIcons = {
   "E-commerce": ShoppingCart,
@@ -189,18 +190,20 @@ export default function UseCasesGrid() {
               Use Cases
             </span>
           </motion.div>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-6"
-          >
-            Proven Impact Across{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+              Proven Impact Across{' '}
+            </KineticText>
+            <KineticText 
+              trigger="inView" 
+              staggerDelay={0.05} 
+              duration={0.7} 
+              y={80}
+              className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"
+            >
               Industries
-            </span>
-          </motion.h2>
+            </KineticText>
+          </h2>
         </div>
 
         {/* Grid */}

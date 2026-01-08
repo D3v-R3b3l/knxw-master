@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import KineticText from '@/components/landing/KineticText';
 
 export default function PhilosophySection() {
   const container = React.useRef(null);
@@ -50,18 +51,20 @@ export default function PhilosophySection() {
             </motion.div>
             
             {/* Fixed Heading - No longer breaks awkwardly */}
-            <motion.h2 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-[1.3] mb-8 pb-4"
-            >
-              From Data to{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 inline-block pb-2">
+            <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-[1.3] mb-8 pb-4">
+              <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+                From Data to{' '}
+              </KineticText>
+              <KineticText 
+                trigger="inView" 
+                staggerDelay={0.05} 
+                duration={0.7} 
+                y={80}
+                className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 inline-block pb-2"
+              >
                 Understanding
-              </span>
-            </motion.h2>
+              </KineticText>
+            </h2>
             
             <motion.div 
               initial={{ opacity: 0, y: 20 }}

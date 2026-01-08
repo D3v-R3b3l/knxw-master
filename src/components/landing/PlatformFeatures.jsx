@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, AlertTriangle, Sliders, Cpu, Route, UserCheck, RefreshCcw } from 'lucide-react';
+import KineticText from '@/components/landing/KineticText';
 
 export default function PlatformFeatures() {
   return (
@@ -19,7 +20,11 @@ export default function PlatformFeatures() {
            <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
               Platform
            </span>
-           <h2 className="text-4xl md:text-6xl font-bold mb-6">Complete Intelligence Platform</h2>
+           <h2 className="text-4xl md:text-6xl font-bold mb-6">
+             <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+               Complete Intelligence Platform
+             </KineticText>
+           </h2>
            <p className="text-xl text-gray-400 max-w-2xl mx-auto">From tracking to activation, everything you need for psychographic intelligence</p>
         </motion.div>
 
