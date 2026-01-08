@@ -4,7 +4,6 @@ import { Check } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
 import { toast } from '@/components/ui/use-toast';
-import KineticText from '@/components/landing/KineticText';
 
 export default function PricingSection() {
   const plans = [
@@ -98,20 +97,17 @@ export default function PricingSection() {
     <section id="pricing" className="py-20 md:py-24 bg-[#050505] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-16 md:mb-24">
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
-              Pricing by Economic Posture
-            </KineticText>
-          </h2>
-          <motion.p 
+          <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"
+            className="text-4xl md:text-6xl font-bold text-white mb-6"
           >
+            Pricing by Economic Posture
+          </motion.h2>
+          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
             Choose based on how behavior intelligence affects your business outcomes
-          </motion.p>
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
