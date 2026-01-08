@@ -84,7 +84,11 @@ function HeroContent({ heroRef }) {
   return (
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
       {/* Title - Layer 1 (Slowest) */}
-      <div data-parallax-layer="1">
+      <motion.div
+        data-parallax-layer="1"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+      >
         <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
           <KineticText trigger="load" staggerDelay={0.05} duration={0.8} y={120}>
             The Universal
@@ -100,7 +104,7 @@ function HeroContent({ heroRef }) {
             Intelligence Layer
           </KineticText>
         </h1>
-      </div>
+      </motion.div>
       
       {/* Description - Layer 2 */}
       <motion.div
@@ -314,22 +318,30 @@ export default function LandingPage() {
              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100px_100px]" />
              
              <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <motion.div 
-                   initial={{ opacity: 0, y: 20 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   viewport={{ once: true }}
-                   className="mb-16 text-center"
-                >
-                   <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
+                <div className="mb-16 text-center">
+                   <motion.span 
+                     initial={{ opacity: 0, y: 20 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6"
+                   >
                       Architecture
-                   </span>
+                   </motion.span>
                    <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
                      <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
                        Built as Universal Infrastructure
                      </KineticText>
                    </h2>
-                   <p className="text-xl text-gray-400 max-w-2xl mx-auto">Foundational cognitive layer for human understanding across every digital touchpoint</p>
-                </motion.div>
+                   <motion.p 
+                     initial={{ opacity: 0, y: 20 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     transition={{ delay: 0.3 }}
+                     className="text-xl text-gray-400 max-w-2xl mx-auto"
+                   >
+                     Foundational cognitive layer for human understanding across every digital touchpoint
+                   </motion.p>
+                </div>
                 <div className="grid md:grid-cols-4 gap-6">
                    {[
                      { title: "Event Ingestion", desc: "Real-time data capture from any source with sub-100ms latency.", num: "01" },
@@ -367,20 +379,29 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.05),transparent_60%)]" />
             
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-10">
-               <motion.div
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-               >
-                  <span className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6">
+               <div>
+                  <motion.span
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6"
+                  >
                      Enterprise
-                  </span>
-                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-                    <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
-                      Enterprise-Grade Infrastructure
-                    </KineticText>
-                  </h2>
-                  <p className="text-xl text-gray-400 mb-10">Security, reliability, and compliance built for mission-critical deployments</p>
+                  </motion.span>
+                   <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                     <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+                       Enterprise-Grade Infrastructure
+                     </KineticText>
+                   </h2>
+                  <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    className="text-xl text-gray-400 mb-10"
+                  >
+                    Security, reliability, and compliance built for mission-critical deployments
+                  </motion.p>
                   
                   <div className="space-y-6">
                      {[
@@ -413,7 +434,7 @@ export default function LandingPage() {
                         </motion.div>
                      ))}
                   </div>
-               </motion.div>
+               </div>
                <motion.div 
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -438,21 +459,30 @@ export default function LandingPage() {
              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
              
              <div className="max-w-5xl mx-auto px-6 relative z-10">
-                <motion.div
-                   initial={{ opacity: 0, y: 20 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   viewport={{ once: true }}
-                >
-                   <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
+                <div>
+                   <motion.span
+                     initial={{ opacity: 0, y: 20 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6"
+                   >
                       Experience
-                   </span>
+                   </motion.span>
                    <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
                      <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
                        Intuitive Intelligence
                      </KineticText>
                    </h2>
-                   <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">Complex psychological analytics made beautifully simple</p>
-                </motion.div>
+                   <motion.p 
+                     initial={{ opacity: 0, y: 20 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     transition={{ delay: 0.3 }}
+                     className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto"
+                   >
+                     Complex psychological analytics made beautifully simple
+                   </motion.p>
+                </div>
                 
                 <div className="grid md:grid-cols-2 gap-6 mb-16 text-left">
                    {[
@@ -536,11 +566,7 @@ export default function LandingPage() {
              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/10 rounded-full blur-[150px] pointer-events-none" />
              
              <div className="max-w-5xl mx-auto px-6 relative z-10">
-                <motion.div
-                   initial={{ opacity: 0, y: 30 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   viewport={{ once: true }}
-                >
+                <div>
                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight">
                      <KineticText trigger="inView" staggerDelay={0.05} duration={0.8} y={100}>
                        Start Building{' '}
@@ -555,8 +581,16 @@ export default function LandingPage() {
                        Today
                      </KineticText>
                    </h2>
-                   <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-2xl mx-auto">Join developers deploying psychographic intelligence at scale</p>
-                </motion.div>
+                   <motion.p 
+                     initial={{ opacity: 0, y: 20 }}
+                     whileInView={{ opacity: 1, y: 0 }}
+                     viewport={{ once: true }}
+                     transition={{ delay: 0.4 }}
+                     className="text-xl md:text-2xl text-gray-400 mb-14 max-w-2xl mx-auto"
+                   >
+                     Join developers deploying psychographic intelligence at scale
+                   </motion.p>
+                </div>
                 
                 <motion.div 
                    initial={{ opacity: 0, y: 20 }}

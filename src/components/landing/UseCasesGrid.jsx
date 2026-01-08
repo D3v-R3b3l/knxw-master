@@ -190,20 +190,22 @@ export default function UseCasesGrid() {
               Use Cases
             </span>
           </motion.div>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
-              Proven Impact Across{' '}
-            </KineticText>
-            <KineticText 
-              trigger="inView" 
-              staggerDelay={0.05} 
-              duration={0.7} 
-              y={80}
-              className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"
-            >
-              Industries
-            </KineticText>
-          </h2>
+          <div>
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+                Proven Impact Across{' '}
+              </KineticText>
+              <KineticText 
+                trigger="inView" 
+                staggerDelay={0.05} 
+                duration={0.7} 
+                y={80}
+                className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"
+              >
+                Industries
+              </KineticText>
+            </h2>
+          </div>
         </div>
 
         {/* Grid */}

@@ -103,9 +103,15 @@ export default function PricingSection() {
               Pricing by Economic Posture
             </KineticText>
           </h2>
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto"
+          >
             Choose based on how behavior intelligence affects your business outcomes
-          </p>
+          </motion.p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">

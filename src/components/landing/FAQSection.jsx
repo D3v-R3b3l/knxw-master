@@ -25,11 +25,13 @@ export default function FAQSection() {
   return (
     <section className="py-20 md:py-24 bg-black relative overflow-hidden">
       <div className="max-w-4xl mx-auto px-6 relative z-10">
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 text-center">
-          <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
-            Frequently Asked Questions
-          </KineticText>
-        </h2>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white">
+            <KineticText trigger="inView" staggerDelay={0.04} duration={0.7} y={80}>
+              Frequently Asked Questions
+            </KineticText>
+          </h2>
+        </div>
 
         <div className="space-y-4">
           {faqs.map((faq, i) => (
