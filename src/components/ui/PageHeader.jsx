@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { HelpCircle, ChevronRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,8 @@ export default function PageHeader({
   docSection,
   actions 
 }) {
+  const location = useLocation();
+  
   return (
     <div className="mb-8 pb-6 border-b border-white/5">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -26,7 +28,10 @@ export default function PageHeader({
                 {title}
               </h1>
               {docSection && (
-                <Link to={`${createPageUrl('Documentation')}#${docSection}`}>
+                <Link 
+                  to={`${createPageUrl('Documentation')}#${docSection}`}
+                  state={{ returnTo: location.pathname }}
+                >
                   <Button
                     variant="ghost"
                     size="icon"

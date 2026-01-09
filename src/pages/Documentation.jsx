@@ -9,9 +9,9 @@ import {
   Lock, TrendingUp, Globe, FileText, HelpCircle, Sparkles, Activity,
   MousePointer, Target, Server, Link as LinkIcon, FlaskConical, HeartPulse,
   Megaphone, Briefcase, Menu, X, ShieldCheck, User, Rocket, Map, Sliders, Store, Plug,
-  Cpu, Route, UserCheck, RefreshCcw
+  Cpu, Route, UserCheck, RefreshCcw, ArrowLeft
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 // Import all documentation components
@@ -354,10 +354,15 @@ const documentationSections = [
 ];
 
 export default function DocumentationPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('platform-feature-map');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredSections, setFilteredSections] = useState(documentationSections);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Get the return URL from navigation state
+  const returnTo = location.state?.returnTo;
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
@@ -449,11 +454,23 @@ export default function DocumentationPage() {
           </button>
 
           <div className="hidden lg:flex items-center gap-4 flex-shrink-0 ml-4">
-            <Link to={createPageUrl("Landing")}>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                ← Back to Home
+            {returnTo ? (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-400 hover:text-white"
+                onClick={() => navigate(returnTo)}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Page
               </Button>
-            </Link>
+            ) : (
+              <Link to={createPageUrl("Landing")}>
+                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                  ← Back to Home
+                </Button>
+              </Link>
+            )}
             <Link to={createPageUrl("Developers")}>
               <Button size="sm" className="bg-[#00d4ff] hover:bg-[#00b4d8] text-black">
                 Get Started
@@ -512,11 +529,26 @@ export default function DocumentationPage() {
             </div>
 
             <div className="flex-shrink-0 p-4 border-t border-[#1a1a1a] space-y-2">
-              <Link to={createPageUrl("Landing")} className="block" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white w-full">
-                  ← Back to Home
+              {returnTo ? (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-400 hover:text-white w-full"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate(returnTo);
+                  }}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Page
                 </Button>
-              </Link>
+              ) : (
+                <Link to={createPageUrl("Landing")} className="block" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white w-full">
+                    ← Back to Home
+                  </Button>
+                </Link>
+              )}
               <Link to={createPageUrl("Developers")} className="block" onClick={() => setMobileMenuOpen(false)}>
                 <Button size="sm" className="bg-[#00d4ff] hover:bg-[#00b4d8] text-black w-full">
                   Get Started
