@@ -12,6 +12,12 @@ Deno.serve((req) => {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>${baseUrl}/Landing</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
     <loc>${baseUrl}/Documentation</loc>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
@@ -30,10 +36,22 @@ Deno.serve((req) => {
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>${baseUrl}/PricingFAQ</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>${baseUrl}/InteractiveDemo</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/Support</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>${baseUrl}/Privacy</loc>
@@ -53,7 +71,8 @@ Deno.serve((req) => {
     status: 200,
     headers: {
       'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=86400'
+      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+      'X-Robots-Tag': 'noindex'
     }
   });
 });
