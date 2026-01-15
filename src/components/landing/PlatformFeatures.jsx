@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, AlertTriangle, Sliders, Cpu, Route, UserCheck, RefreshCcw } from 'lucide-react';
+import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, AlertTriangle, Sliders, Cpu, Route, UserCheck, RefreshCcw, BarChart3, Store, Users } from 'lucide-react';
 
 export default function PlatformFeatures() {
   return (
@@ -283,6 +283,54 @@ export default function PlatformFeatures() {
                 </p>
               </div>
               <span className="inline-block text-xs font-mono bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-6 py-3 rounded-full text-amber-300 border border-amber-500/30 whitespace-nowrap">🧠 AUTONOMOUS OPTIMIZATION</span>
+            </div>
+          </motion.div>
+
+          {/* Integrations Ecosystem - New Full Width */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.7 }}
+            className="md:col-span-12 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden group"
+          >
+            <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[150px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            <div className="relative z-10">
+              <div className="flex flex-col md:flex-row md:items-start gap-6 mb-8">
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-600/30 to-cyan-600/10 flex items-center justify-center flex-shrink-0 border border-cyan-500/20">
+                  <Code className="w-8 h-8 text-cyan-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-3">Enterprise Integration Ecosystem</h3>
+                  <p className="text-gray-400 text-lg max-w-3xl leading-relaxed">
+                    Connect psychographic intelligence to your entire tech stack. Native SDKs for JavaScript, Python, Go, Ruby, and PHP with seamless integrations across CRM, e-commerce, BI, and communication platforms.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <Users className="w-6 h-6 text-red-400 mb-2" />
+                  <h4 className="font-semibold text-white text-sm mb-1">CRM Platforms</h4>
+                  <p className="text-xs text-gray-500">HubSpot, Salesforce, Zoho, Pipedrive</p>
+                </div>
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <Store className="w-6 h-6 text-green-400 mb-2" />
+                  <h4 className="font-semibold text-white text-sm mb-1">E-commerce</h4>
+                  <p className="text-xs text-gray-500">Shopify, Magento, WooCommerce</p>
+                </div>
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <BarChart3 className="w-6 h-6 text-purple-400 mb-2" />
+                  <h4 className="font-semibold text-white text-sm mb-1">BI Tools</h4>
+                  <p className="text-xs text-gray-500">Tableau, Power BI, Looker</p>
+                </div>
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <Bot className="w-6 h-6 text-blue-400 mb-2" />
+                  <h4 className="font-semibold text-white text-sm mb-1">Communication</h4>
+                  <p className="text-xs text-gray-500">Twilio, Slack, Email</p>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
