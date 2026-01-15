@@ -600,7 +600,23 @@ Deno.serve(async (req) => {
                 </article>
                 <article class="card">
                     <h3>CRM Enrichment</h3>
-                    <p>Enhance HubSpot, Salesforce, and other CRMs with deep psychographic intelligence.</p>
+                    <p>Enhance HubSpot, Salesforce, Zoho CRM, and Pipedrive with deep psychographic intelligence.</p>
+                </article>
+                <article class="card">
+                    <h3>E-commerce Platforms</h3>
+                    <p>Personalize Shopify and Magento stores with psychographic customer insights and recommendations.</p>
+                </article>
+                <article class="card">
+                    <h3>BI Tools Export</h3>
+                    <p>Native exports for Tableau, Power BI, and Looker with formatted psychographic datasets.</p>
+                </article>
+                <article class="card">
+                    <h3>Communication</h3>
+                    <p>Twilio SMS integration for personalized messaging based on psychographic profiles.</p>
+                </article>
+                <article class="card">
+                    <h3>Multi-Language SDKs</h3>
+                    <p>Official SDKs for JavaScript, Python, Go, Ruby, and PHP with full API coverage.</p>
                 </article>
                 <article class="card">
                     <h3>Engagement Marketplace</h3>
