@@ -54,6 +54,10 @@ import InferenceStudioDoc from '@/components/documentation/InferenceStudioDoc';
 import AIJourneyOrchestratorDoc from '@/components/documentation/AIJourneyOrchestratorDoc';
 import UserDataPortalDoc from '@/components/documentation/UserDataPortalDoc';
 import FeedbackLoopDoc from '@/components/documentation/FeedbackLoopDoc';
+import ZohoCRMIntegrationDoc from '@/components/documentation/integrations/ZohoCRMIntegrationDoc';
+import PipedriveIntegrationDoc from '@/components/documentation/integrations/PipedriveIntegrationDoc';
+import MagentoIntegrationDoc from '@/components/documentation/integrations/MagentoIntegrationDoc';
+import BIExportDoc from '@/components/documentation/integrations/BIExportDoc';
 
 // API documentation sections
 const RESTAPIDoc = () => (
@@ -343,6 +347,10 @@ const documentationSections = [
   { id: 'azure-blob', title: 'Azure Blob Storage', icon: Database, component: AzureBlobIntegrationDoc },
   { id: 'eventbridge', title: 'AWS EventBridge', icon: Zap, component: EventBridgeIntegrationDoc },
   { id: 'hubspot', title: 'HubSpot', icon: Users, component: HubSpotIntegrationDoc },
+  { id: 'zoho-crm', title: 'Zoho CRM', icon: Users, component: ZohoCRMIntegrationDoc },
+  { id: 'pipedrive', title: 'Pipedrive', icon: Users, component: PipedriveIntegrationDoc },
+  { id: 'magento', title: 'Magento', icon: Store, component: MagentoIntegrationDoc },
+  { id: 'bi-export', title: 'BI Data Export', icon: BarChart3, component: BIExportDoc },
   { id: 'ad-platforms', title: 'Ad Platforms', icon: TrendingUp, component: AdPlatformsIntegrationDoc },
   { id: 'stripe', title: 'Stripe', icon: BarChart3, component: StripeIntegrationDoc },
   { id: 'meta-pages', title: 'Meta Pages', icon: Megaphone, component: MetaPagesIntegrationDoc },
