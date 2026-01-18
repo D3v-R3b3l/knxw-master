@@ -308,75 +308,6 @@ export default function PlatformFeatures() {
                   </p>
                 </div>
               </div>
-
-              {/* Animated Logo Marquee */}
-              <div className="relative mb-8 overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10" />
-                <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10" />
-                
-                <div className="flex gap-8 animate-logo-marquee">
-                  {[...Array(2)].map((_, setIndex) => (
-                    <div key={setIndex} className="flex gap-8 items-center">
-                      {/* CRM */}
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/hubspot/hubspot-icon.svg" alt="HubSpot" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">HubSpot</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/salesforce/salesforce-icon.svg" alt="Salesforce" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Salesforce</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/zoho/zoho-icon.svg" alt="Zoho" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Zoho</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/pipedrive/pipedrive-icon.svg" alt="Pipedrive" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Pipedrive</span>
-                      </div>
-                      {/* E-commerce */}
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/shopify/shopify-icon.svg" alt="Shopify" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Shopify</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/magaboraboraro/magaboraboraro-icon.svg" alt="Magento" className="w-6 h-6" onError={(e) => { e.target.style.display = 'none'; }} />
-                        <span className="text-sm text-gray-400">Magento</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/woocommerce/woocommerce-icon.svg" alt="WooCommerce" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">WooCommerce</span>
-                      </div>
-                      {/* BI Tools */}
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/tableau/tableau-icon.svg" alt="Tableau" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Tableau</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/microsoft_powerbi/microsoft_powerbi-icon.svg" alt="Power BI" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Power BI</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/looaborativelooker/looaborativelooker-icon.svg" alt="Looker" className="w-6 h-6" onError={(e) => { e.target.style.display = 'none'; }} />
-                        <span className="text-sm text-gray-400">Looker</span>
-                      </div>
-                      {/* Communication */}
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/twilio/twilio-icon.svg" alt="Twilio" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Twilio</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <img src="https://www.vectorlogo.zone/logos/slack/slack-icon.svg" alt="Slack" className="w-6 h-6" />
-                        <span className="text-sm text-gray-400">Slack</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10 whitespace-nowrap">
-                        <svg className="w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                        <span className="text-sm text-gray-400">Email</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/5 rounded-xl p-4 border border-white/10">
@@ -401,19 +332,6 @@ export default function PlatformFeatures() {
                 </div>
               </div>
             </div>
-
-            <style>{`
-              @keyframes logo-marquee {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-              }
-              .animate-logo-marquee {
-                animation: logo-marquee 30s linear infinite;
-              }
-              .animate-logo-marquee:hover {
-                animation-play-state: paused;
-              }
-            `}</style>
           </motion.div>
         </div>
       </div>
