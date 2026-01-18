@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ClientApp, HubSpotSync, HubSpotIntegrationConfig } from '@/entities/all';
 import { syncHubSpot } from '@/functions/syncHubSpot';
@@ -8,6 +7,10 @@ import { azureEventHubsBridge } from "@/functions/azureEventHubsBridge";
 import { awsS3Export } from "@/functions/awsS3Export";
 import { awsEventBridge } from "@/functions/awsEventBridge";
 import { awsSESNotification } from "@/functions/awsSESNotification";
+import ZohoCRMIntegration from "@/components/integrations/ZohoCRMIntegration";
+import PipedriveIntegration from "@/components/integrations/PipedriveIntegration";
+import MagentoIntegration from "@/components/integrations/MagentoIntegration";
+import BIExportPanel from "@/components/integrations/BIExportPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +34,10 @@ import {
   Send,
   Package,
   Database,
-  Bell
+  Bell,
+  ShoppingCart,
+  BarChart3,
+  Building2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { SubscriptionGate, useSubscription } from '../components/billing/SubscriptionGate';
@@ -379,8 +385,17 @@ export default function IntegrationsPage() {
                 <Server className="w-4 h-4 mr-2" />
                 Amazon AWS
               </TabsTrigger>
-              <TabsTrigger value="coming-soon" className="data-[state=active]:bg-[#ec4899] data-[state=active]:text-white" disabled>
-                More Coming Soon
+              <TabsTrigger value="crm" className="data-[state=active]:bg-[#10b981] data-[state=active]:text-white">
+                <Building2 className="w-4 h-4 mr-2" />
+                CRM
+              </TabsTrigger>
+              <TabsTrigger value="ecommerce" className="data-[state=active]:bg-[#f59e0b] data-[state=active]:text-white">
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                E-commerce
+              </TabsTrigger>
+              <TabsTrigger value="bi" className="data-[state=active]:bg-[#8b5cf6] data-[state=active]:text-white">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                BI Export
               </TabsTrigger>
             </TabsList>
 
@@ -865,18 +880,37 @@ export default function IntegrationsPage() {
               </SubscriptionGate>
             </TabsContent>
 
-            <TabsContent value="coming-soon">
-              <Card className="bg-[#111111] border-[#262626]">
-                <CardContent className="p-12 text-center">
-                  <TrendingUp className="w-16 h-16 text-[#a3a3a3] mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    More Integrations Coming Soon
-                  </h3>
-                  <p className="text-[#a3a3a3] max-w-md mx-auto">
-                    We're working on integrations with Salesforce, Intercom, Segment, and more popular platforms.
-                  </p>
-                </CardContent>
-              </Card>
+            <TabsContent value="crm" className="space-y-6">
+              <SubscriptionGate 
+                feature="crm_integrations" 
+                currentPlan={planKey} 
+                requiredPlan="growth"
+              >
+                <div className="space-y-6">
+                  <ZohoCRMIntegration appId={selectedApp?.id} />
+                  <PipedriveIntegration appId={selectedApp?.id} />
+                </div>
+              </SubscriptionGate>
+            </TabsContent>
+
+            <TabsContent value="ecommerce" className="space-y-6">
+              <SubscriptionGate 
+                feature="ecommerce_integrations" 
+                currentPlan={planKey} 
+                requiredPlan="growth"
+              >
+                <MagentoIntegration appId={selectedApp?.id} />
+              </SubscriptionGate>
+            </TabsContent>
+
+            <TabsContent value="bi" className="space-y-6">
+              <SubscriptionGate 
+                feature="bi_export" 
+                currentPlan={planKey} 
+                requiredPlan="growth"
+              >
+                <BIExportPanel appId={selectedApp?.id} />
+              </SubscriptionGate>
             </TabsContent>
           </Tabs>
         ) : (
