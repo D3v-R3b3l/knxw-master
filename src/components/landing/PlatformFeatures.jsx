@@ -328,7 +328,7 @@ export default function PlatformFeatures() {
                 <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                   <Bot className="w-6 h-6 text-blue-400 mb-2" />
                   <h4 className="font-semibold text-white text-sm mb-1">Communication</h4>
-                  <p className="text-xs text-gray-500">Twilio, Slack, Email</p>
+                  <p className="text-xs text-gray-500">Slack, Email</p>
                 </div>
               </div>
             </div>
