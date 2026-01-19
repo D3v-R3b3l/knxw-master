@@ -82,10 +82,10 @@ export default function EnterpriseSecurityDoc() {
           </div>
         </div>
 
-        <Callout type="security" title="Enterprise Compliance">
+        <Callout type="info" title="Security Best Practices">
           <p>
-            knXw meets SOC 2 Type II, ISO 27001, and GDPR compliance requirements with built-in controls,
-            audit logging, and data protection measures.
+            knXw implements security best practices including encryption at rest and in transit,
+            audit logging, role-based access control, and data protection measures.
           </p>
         </Callout>
       </Section>

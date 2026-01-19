@@ -44,13 +44,14 @@ const CountUpNumber = ({ end, suffix = '', prefix = '', duration = 2 }) => {
 };
 
 export default function AnimatedStats() {
+  // These represent potential outcomes based on psychographic personalization industry research
   const stats = [
-    { value: 45, suffix: '%', prefix: '+', label: 'Average Order Value', category: 'E-commerce', color: '#06b6d4' },
-    { value: 156, suffix: '%', prefix: '+', label: 'Session Length', category: 'Gaming', color: '#f59e0b' },
-    { value: 84, suffix: '%', prefix: '+', label: 'Feature Adoption', category: 'SaaS', color: '#8b5cf6' },
-    { value: 73, suffix: '%', prefix: '-', label: 'Churn Rate', category: 'Subscriptions', color: '#10b981' },
-    { value: 127, suffix: '%', prefix: '+', label: 'Return on Ad Spend', category: 'Marketing', color: '#3b82f6' },
-    { value: 52, suffix: '%', prefix: '-', label: 'Support Escalations', category: 'Customer Service', color: '#ec4899' },
+    { value: 15, suffix: '%+', prefix: '', label: 'Personalization Uplift', category: 'E-commerce', color: '#06b6d4' },
+    { value: 2, suffix: 'x', prefix: '', label: 'Engagement Potential', category: 'Gaming', color: '#f59e0b' },
+    { value: 30, suffix: '%+', prefix: '', label: 'Feature Discovery', category: 'SaaS', color: '#8b5cf6' },
+    { value: 20, suffix: '%+', prefix: '', label: 'Retention Improvement', category: 'Subscriptions', color: '#10b981' },
+    { value: 25, suffix: '%+', prefix: '', label: 'Targeting Efficiency', category: 'Marketing', color: '#3b82f6' },
+    { value: 15, suffix: '%+', prefix: '', label: 'Customer Insights', category: 'Customer Service', color: '#ec4899' },
   ];
 
   return (
@@ -74,13 +75,13 @@ export default function AnimatedStats() {
             Proven Results
           </span>
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Real Impact,{' '}
+            Unlock{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-              Measured
+              Potential
             </span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Average improvements across our customer base
+            What psychographic intelligence can help you achieve
           </p>
         </motion.div>
 
@@ -163,7 +164,7 @@ export default function AnimatedStats() {
           className="mt-16 text-center"
         >
           <p className="text-gray-500 text-sm">
-            Based on aggregated data from active implementations across industries
+            Potential outcomes based on personalization industry research. Individual results may vary.
           </p>
         </motion.div>
       </div>

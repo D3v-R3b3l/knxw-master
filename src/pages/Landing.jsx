@@ -252,9 +252,9 @@ export default function LandingPage() {
           <section style={{ maxWidth: '1200px', margin: '0 auto 80px' }}>
             <h2 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>Enterprise-Grade Infrastructure</h2>
             <ul style={{ fontSize: '18px', color: '#9ca3af', lineHeight: '2' }}>
-              <li>Encryption at rest & transit, GDPR Ready, Data ownership</li>
-              <li>99.9% uptime SLA, Real-time health checks, Auto-scaling</li>
-              <li>SAML/OIDC SSO, Data warehouse sync, SIEM integration</li>
+              <li>Encryption at rest & transit, Privacy focused, Data ownership</li>
+              <li>Real-time health checks, Auto-scaling</li>
+              <li>SSO support, Data warehouse sync, SIEM integration</li>
             </ul>
           </section>
           
@@ -370,11 +370,11 @@ export default function LandingPage() {
                   <p className="text-xl text-gray-400 mb-10">Security, reliability, and compliance built for mission-critical deployments</p>
                   
                   <div className="space-y-6">
-                     {[
-                       { title: "Data Protection", items: ["Encryption at rest & transit", "GDPR Ready", "Data ownership"], color: "#8b5cf6" },
-                       { title: "System Monitoring", items: ["99.9% uptime SLA", "Real-time health checks", "Auto-scaling"], color: "#06b6d4" },
-                       { title: "Enterprise Integration", items: ["SAML/OIDC SSO", "Data warehouse sync", "SIEM integration"], color: "#10b981" }
-                     ].map((grp, i) => (
+                    {[
+                      { title: "Data Protection", items: ["Encryption at rest & transit", "Privacy focused", "Data ownership"], color: "#8b5cf6" },
+                      { title: "System Monitoring", items: ["Real-time health checks", "Auto-scaling", "Performance monitoring"], color: "#06b6d4" },
+                      { title: "Enterprise Integration", items: ["SSO support", "Data warehouse sync", "API access"], color: "#10b981" }
+                    ].map((grp, i) => (
                         <motion.div 
                            key={i}
                            initial={{ opacity: 0, y: 20 }}

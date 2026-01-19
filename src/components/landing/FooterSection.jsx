@@ -21,11 +21,11 @@ export default function FooterSection() {
             <div className="flex gap-4">
                <div className="flex items-center gap-2 text-xs font-bold bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
                   <Shield className="w-3 h-3 text-green-500" />
-                  SOC 2 Type II
+                  Data Encrypted
                </div>
                <div className="flex items-center gap-2 text-xs font-bold bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
                   <Shield className="w-3 h-3 text-blue-500" />
-                  GDPR Ready
+                  Privacy Focused
                </div>
             </div>
           </div>
