@@ -1,36 +1,29 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, AlertTriangle, Sliders, Cpu, Route, UserCheck, RefreshCcw, BarChart3, Store, Users } from 'lucide-react';
+import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, Cpu, Route, UserCheck, RefreshCcw, BarChart3, Store, Users } from 'lucide-react';
 
 export default function PlatformFeatures() {
   return (
     <section id="platform" className="py-24 md:py-32 bg-[#050505] text-white overflow-hidden relative">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.04),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.04),transparent_50%)]" />
+      {/* Parallax Background */}
+      <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.06),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.06),transparent_50%)]" />
+        <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-cyan-500/4 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/3 left-1/3 w-96 h-96 bg-purple-500/4 rounded-full blur-[150px]" />
+      </div>
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-20 text-center"
-        >
+        <div className="mb-20 text-center">
            <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
               Platform
            </span>
            <h2 className="text-4xl md:text-6xl font-bold mb-6">Complete Intelligence Platform</h2>
            <p className="text-xl text-gray-400 max-w-2xl mx-auto">From tracking to activation, everything you need for psychographic intelligence</p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 auto-rows-auto">
           {/* Large Card - Psychographic Profiling */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="md:col-span-8 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden group"
-          >
+          <div className="md:col-span-8 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden group">
             {/* Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
@@ -42,16 +35,10 @@ export default function PlatformFeatures() {
               <p className="text-gray-400 text-lg max-w-lg leading-relaxed">Automatically generate psychological profiles revealing motivations, cognitive styles, and personality traits.</p>
               <span className="inline-block mt-6 text-xs font-mono bg-white/5 px-4 py-2 rounded-full text-gray-400 border border-white/10">ALL PLANS</span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Medium Card - GameDev */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-purple-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-purple-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             <div className="relative z-10">
@@ -62,16 +49,10 @@ export default function PlatformFeatures() {
               <p className="text-sm text-gray-400 mb-5 leading-relaxed">Player motivation, adaptive difficulty, and churn prediction for games.</p>
               <span className="text-xs font-mono text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">GROWTH+</span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Medium Card - Market Intelligence */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.15 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-emerald-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-emerald-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             <div className="relative z-10">
@@ -82,16 +63,10 @@ export default function PlatformFeatures() {
               <p className="text-sm text-gray-400 mb-5 leading-relaxed">Analyze competitors and trends through a psychographic lens.</p>
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">PRO</span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Large Card - Developer Platform */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="md:col-span-8 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-orange-500/30 transition-all duration-500 relative overflow-hidden group"
-          >
+          <div className="md:col-span-8 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-orange-500/30 transition-all duration-500 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             <div className="relative z-10">
@@ -102,16 +77,10 @@ export default function PlatformFeatures() {
               <p className="text-gray-400 text-lg max-w-lg leading-relaxed">RESTful APIs, SDKs, webhooks, and playground for rapid integration.</p>
               <span className="inline-block mt-6 text-xs font-mono bg-white/5 px-4 py-2 rounded-full text-gray-400 border border-white/10">FREE TIER</span>
             </div>
-          </motion.div>
+          </div>
           
           {/* Other features - Enhanced */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.25 }}
-            className="md:col-span-6 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-cyan-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-6 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-cyan-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0 border border-cyan-500/20">
@@ -122,15 +91,9 @@ export default function PlatformFeatures() {
                 <p className="text-gray-400 text-sm leading-relaxed">Auto-recommend content based on unique psychological profiles.</p>
               </div>
             </div>
-          </motion.div>
+          </div>
           
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="md:col-span-6 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-pink-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-6 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-pink-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center flex-shrink-0 border border-pink-500/20">
@@ -141,16 +104,10 @@ export default function PlatformFeatures() {
                 <p className="text-gray-400 text-sm leading-relaxed">Deploy intelligent agents for personalized engagements.</p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* New Advanced Features */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.35 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-yellow-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-yellow-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0 border border-yellow-500/20">
@@ -161,15 +118,9 @@ export default function PlatformFeatures() {
                 <p className="text-gray-400 text-sm leading-relaxed">Identify anchoring, confirmation, and loss aversion biases.</p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-rose-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-rose-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-rose-500/10 flex items-center justify-center flex-shrink-0 border border-rose-500/20">
@@ -180,15 +131,9 @@ export default function PlatformFeatures() {
                 <p className="text-gray-400 text-sm leading-relaxed">Monitor subtle emotional changes with volatility analysis.</p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.45 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-indigo-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-indigo-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center flex-shrink-0 border border-indigo-500/20">
@@ -199,16 +144,10 @@ export default function PlatformFeatures() {
                 <p className="text-gray-400 text-sm leading-relaxed">Define industry-specific psychographic traits and metrics.</p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* New Advanced AI Features Row */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-violet-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-violet-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center flex-shrink-0 border border-violet-500/20">
@@ -220,15 +159,9 @@ export default function PlatformFeatures() {
                 <span className="inline-block mt-3 text-xs font-mono text-violet-400 bg-violet-500/10 px-3 py-1 rounded-full border border-violet-500/20">GROWTH+</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.55 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-fuchsia-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-fuchsia-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-fuchsia-500/10 flex items-center justify-center flex-shrink-0 border border-fuchsia-500/20">
@@ -240,15 +173,9 @@ export default function PlatformFeatures() {
                 <span className="inline-block mt-3 text-xs font-mono text-fuchsia-400 bg-fuchsia-500/10 px-3 py-1 rounded-full border border-fuchsia-500/20">PRO</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.6 }}
-            className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-teal-500/30 transition-all duration-500 group relative overflow-hidden"
-          >
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-teal-500/30 transition-all duration-500 group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative z-10 flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center flex-shrink-0 border border-teal-500/20">
@@ -260,16 +187,10 @@ export default function PlatformFeatures() {
                 <span className="inline-block mt-3 text-xs font-mono text-teal-400 bg-teal-500/10 px-3 py-1 rounded-full border border-teal-500/20">ALL PLANS</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Self-Learning AI Feature - Full Width */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.65 }}
-            className="md:col-span-12 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-amber-500/30 transition-all duration-500 relative overflow-hidden group"
-          >
+          <div className="md:col-span-12 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-amber-500/30 transition-all duration-500 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-[150px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
@@ -284,16 +205,10 @@ export default function PlatformFeatures() {
               </div>
               <span className="inline-block text-xs font-mono bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-6 py-3 rounded-full text-amber-300 border border-amber-500/30 whitespace-nowrap">🧠 AUTONOMOUS OPTIMIZATION</span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Integrations Ecosystem - New Full Width */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.7 }}
-            className="md:col-span-12 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden group"
-          >
+          <div className="md:col-span-12 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[150px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             <div className="relative z-10">
@@ -332,7 +247,7 @@ export default function PlatformFeatures() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
