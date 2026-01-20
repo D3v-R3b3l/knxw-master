@@ -1,5 +1,4 @@
-import React, { useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React from 'react';
 import { Check } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
@@ -95,16 +94,18 @@ export default function PricingSection() {
 
   return (
     <section id="pricing" className="py-20 md:py-24 bg-[#050505] relative overflow-hidden">
+      {/* Parallax Background */}
+      <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,92,246,0.06),transparent_50%)]" />
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-purple-500/4 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/3 right-1/3 w-72 h-72 bg-cyan-500/4 rounded-full blur-[120px]" />
+      </div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-16 md:mb-24">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-bold text-white mb-6"
-          >
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
             Pricing by Economic Posture
-          </motion.h2>
+          </h2>
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
             Choose based on how behavior intelligence affects your business outcomes
           </p>
@@ -112,12 +113,8 @@ export default function PricingSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {plans.map((plan, i) => (
-            <motion.div
+            <div
               key={plan.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
               className={`relative p-6 md:p-8 rounded-3xl border ${plan.highlight ? 'bg-white/10 border-cyan-500/50' : 'bg-white/5 border-white/10'} flex flex-col`}
             >
               {plan.badge && (
@@ -159,7 +156,7 @@ export default function PricingSection() {
               >
                 {plan.cta}
               </button>
-            </motion.div>
+            </div>
           ))}
         </div>
 
