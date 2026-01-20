@@ -1,7 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Check, ChevronDown, Minus, Plus } from 'lucide-react';
-import { createPageUrl } from '@/utils';
+import { Minus, Plus } from 'lucide-react';
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = React.useState(null);
@@ -24,23 +22,14 @@ export default function FAQSection() {
   return (
     <section className="py-20 md:py-24 bg-black relative overflow-hidden">
       <div className="max-w-4xl mx-auto px-6 relative z-10">
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold text-white mb-16 text-center"
-        >
+        <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 text-center">
           Frequently Asked Questions
-        </motion.h2>
+        </h2>
 
         <div className="space-y-4">
           {faqs.map((faq, i) => (
-            <motion.div 
+            <div 
               key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
               className="border border-white/10 rounded-2xl bg-white/5 overflow-hidden hover:bg-white/10 transition-colors"
             >
               <button
@@ -54,17 +43,14 @@ export default function FAQSection() {
                   <Plus className="w-5 h-5 text-gray-400" />
                 )}
               </button>
-              <motion.div
-                initial={false}
-                animate={{ height: openIndex === i ? 'auto' : 0, opacity: openIndex === i ? 1 : 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
+              <div
+                className={`overflow-hidden transition-all duration-300 ${openIndex === i ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
               >
                 <p className="p-6 pt-0 text-gray-400 leading-relaxed">
                   {faq.answer}
                 </p>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           ))}
         </div>
       </div>

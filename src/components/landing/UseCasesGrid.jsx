@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { ArrowRight, X, ShoppingCart, Code, Gamepad2, GraduationCap, Heart, Megaphone, Headphones, Tv } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -174,33 +173,28 @@ export default function UseCasesGrid() {
 
   return (
     <section id="use-cases" className="py-32 bg-black relative overflow-hidden">
+      {/* Parallax Background */}
+      <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.04),transparent_60%)]" />
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-cyan-500/3 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/3 rounded-full blur-[120px]" />
+      </div>
       {/* Background Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="mb-20 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-block mb-4"
-          >
+          <div className="inline-block mb-4">
             <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20">
               Use Cases
             </span>
-          </motion.div>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-6"
-          >
+          </div>
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
             Proven Impact Across{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
               Industries
             </span>
-          </motion.h2>
+          </h2>
         </div>
 
         {/* Grid */}
@@ -222,10 +216,6 @@ export default function UseCasesGrid() {
               <motion.div
                 key={i}
                 layoutId={`card-${i}`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: i * 0.05, duration: 0.5 }}
                 onClick={() => setSelectedCard(i)}
                 className="cursor-pointer use-case-card"
                 data-tour-id={i === 0 ? "use-cases" : undefined}
