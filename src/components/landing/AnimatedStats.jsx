@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useInView } from 'framer-motion';
 
 const CountUpNumber = ({ end, suffix = '', prefix = '', duration = 2 }) => {
   const [count, setCount] = useState(0);
@@ -16,8 +16,6 @@ const CountUpNumber = ({ end, suffix = '', prefix = '', duration = 2 }) => {
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / (duration * 1000), 1);
-        
-        // Easing function for smooth animation
         const easeOut = 1 - Math.pow(1 - progress, 3);
         const current = endValue * easeOut;
         
@@ -56,21 +54,16 @@ export default function AnimatedStats() {
 
   return (
     <section className="py-24 md:py-32 bg-[#050505] relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.05),transparent_50%)]" />
+      {/* Parallax Background */}
+      <div data-parallax-bg className="absolute inset-0 h-[140%] -top-[20%]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.06),transparent_50%)]" />
+        <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-cyan-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-purple-500/5 rounded-full blur-[100px]" />
+      </div>
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
-      
-      {/* Floating Orbs */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-cyan-500/5 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-64 h-64 bg-purple-500/5 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
-        >
+        <div className="text-center mb-20">
           <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
             Proven Results
           </span>
@@ -83,18 +76,11 @@ export default function AnimatedStats() {
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             What psychographic intelligence can help you achieve
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              className="group relative"
-            >
+            <div key={i} className="group relative">
               <div className="relative p-6 md:p-8 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 hover:border-white/20 transition-all duration-500 overflow-hidden">
                 {/* Glow Effect */}
                 <div 
@@ -151,22 +137,16 @@ export default function AnimatedStats() {
                   }}
                 />
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="mt-16 text-center"
-        >
+        <div className="mt-16 text-center">
           <p className="text-gray-500 text-sm">
             Potential outcomes based on personalization industry research. Individual results may vary.
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
