@@ -154,38 +154,80 @@ export default function LandingPage() {
 
       // Initialize Lenis for smooth scrolling
       const lenis = new Lenis({
-        duration: 1.2,
+        duration: 1.4,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
       });
       
       lenis.on('scroll', ScrollTrigger.update);
       
-      // Use requestAnimationFrame for Lenis updates (more reliable)
       const raf = (time) => {
         lenis.raf(time);
         requestAnimationFrame(raf);
       };
       requestAnimationFrame(raf);
 
-      // Page-wide scroll animations for sections
+      // Smooth fade-in for sections (scrub-based, no flash)
       const sections = mainRef.current?.querySelectorAll('[data-scroll-section]');
       sections?.forEach((section) => {
-        gsap.fromTo(section, 
-          { opacity: 0, y: 60 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 85%",
-              end: "top 50%",
-              toggleActions: "play none none reverse"
-            }
+        gsap.set(section, { opacity: 0, y: 80 });
+        
+        gsap.to(section, {
+          opacity: 1,
+          y: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 90%",
+            end: "top 60%",
+            scrub: 0.8,
           }
-        );
+        });
+      });
+
+      // Parallax backgrounds for sections with data-parallax-bg
+      const parallaxBgs = mainRef.current?.querySelectorAll('[data-parallax-bg]');
+      parallaxBgs?.forEach((bg) => {
+        gsap.to(bg, {
+          yPercent: -30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: bg.parentElement,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          }
+        });
+      });
+
+      // Inner content parallax (slower items)
+      const parallaxSlow = mainRef.current?.querySelectorAll('[data-parallax="slow"]');
+      parallaxSlow?.forEach((el) => {
+        gsap.to(el, {
+          yPercent: -15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          }
+        });
+      });
+
+      // Faster parallax items
+      const parallaxFast = mainRef.current?.querySelectorAll('[data-parallax="fast"]');
+      parallaxFast?.forEach((el) => {
+        gsap.to(el, {
+          yPercent: -40,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          }
+        });
       });
 
       return () => {
