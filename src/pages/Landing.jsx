@@ -12,6 +12,7 @@ import AnimatedStats from '@/components/landing/AnimatedStats';
 import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import FooterSection from '@/components/landing/FooterSection';
+import SectionNavDots from '@/components/landing/SectionNavDots';
 import CustomCursor from '@/components/ui/CustomCursor';
 import { ConsentProvider } from '@/components/privacy/ConsentManager';
 import { motion } from 'framer-motion';
@@ -342,10 +343,11 @@ export default function LandingPage() {
       <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
         <CustomCursor />
         <Navbar />
+        <SectionNavDots />
         
         <main ref={mainRef} className="relative z-10" id="landing-main">
           {/* Hero Section with Shader - Fixed Background */}
-          <section ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
+          <section id="hero" ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
             {/* Fixed shader background - stays in place while content scrolls */}
             <div className="fixed inset-0 h-screen w-full" style={{ zIndex: 1 }}>
               <HeroShader />
@@ -371,7 +373,7 @@ export default function LandingPage() {
           {/* Content sections container - sits above the fixed shader */}
           <div className="relative bg-black" style={{ zIndex: 10 }}>
 
-          <div data-scroll-section>
+          <div id="philosophy" data-scroll-section>
             <PhilosophySection />
           </div>
 
@@ -421,7 +423,7 @@ export default function LandingPage() {
           </div>
           
           {/* Enterprise Section - Enhanced */}
-          <div data-scroll-section>
+          <div id="enterprise" data-scroll-section>
           <section className="py-24 md:py-32 bg-black border-y border-white/10 overflow-hidden relative">
             {/* Parallax Background */}
             <div data-parallax-bg className="absolute inset-0 h-[140%] -top-[20%]">
@@ -470,7 +472,7 @@ export default function LandingPage() {
           </section>
           </div>
 
-          <div data-scroll-section>
+          <div id="integrations" data-scroll-section>
             <IntegrationsMarquee />
           </div>
 
@@ -526,10 +528,10 @@ export default function LandingPage() {
           </section>
           </div>
 
-          <div data-scroll-section>
+          <div id="use-cases" data-scroll-section>
             <UseCasesGrid />
           </div>
-          <div data-scroll-section>
+          <div id="stats" data-scroll-section>
             <AnimatedStats />
           </div>
           <div data-scroll-section>
@@ -557,12 +559,12 @@ export default function LandingPage() {
           </section>
           </div>
 
-          <div data-scroll-section>
+          <div id="faq" data-scroll-section>
             <FAQSection />
           </div>
 
           {/* Final CTA - Enhanced */}
-          <div data-scroll-section>
+          <div id="cta" data-scroll-section>
           <section className="py-28 md:py-40 bg-gradient-to-b from-black via-[#080808] to-[#111] text-center border-t border-white/10 overflow-hidden relative">
              {/* Parallax Background */}
              <div data-parallax-bg className="absolute inset-0 h-[150%] -top-[25%]">
