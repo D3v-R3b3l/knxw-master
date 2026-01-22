@@ -335,7 +335,7 @@ export default function LandingPage() {
         <CustomCursor />
         <Navbar />
         
-        <main ref={mainRef} className="relative z-10">
+        <main ref={mainRef} className="relative z-10" id="landing-main">
           {/* Hero Section with Shader - Fixed Background */}
           <section ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
             {/* Fixed shader background - stays in place while content scrolls */}
