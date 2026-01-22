@@ -147,95 +147,119 @@ export default function LandingPage() {
   const mainRef = useRef(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     gsap.registerPlugin(ScrollTrigger);
 
     // Initialize Lenis for smooth scrolling
-    const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-    
-    lenis.on('scroll', ScrollTrigger.update);
-    
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
+    let lenis;
+    try {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+      
+      lenis.on('scroll', ScrollTrigger.update);
+      
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+    } catch (e) {
+      console.warn('Lenis init failed:', e);
+    }
 
-    // Delay to ensure all child components have mounted
+    // Wait for DOM and all components to mount
     const initTimeout = setTimeout(() => {
-      // Smooth fade-in for sections (scrub-based, no flash)
-      const sections = document.querySelectorAll('[data-scroll-section]');
-      sections.forEach((section) => {
-        // Set initial state
-        gsap.set(section, { opacity: 0, y: 60 });
+      const main = mainRef.current;
+      if (!main) return;
+
+      // Section fade-in animations
+      const sections = main.querySelectorAll('[data-scroll-section]');
+      console.log('Initializing scroll animations for', sections.length, 'sections');
+      
+      sections.forEach((section, index) => {
+        // Set initial hidden state
+        gsap.set(section, { 
+          opacity: 0, 
+          y: 80,
+          willChange: 'opacity, transform'
+        });
         
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top 90%",
-          end: "top 50%",
-          scrub: 1,
-          onUpdate: (self) => {
-            gsap.to(section, {
-              opacity: self.progress,
-              y: 60 * (1 - self.progress),
-              duration: 0,
-              overwrite: true
-            });
+        // Create scroll-triggered animation
+        gsap.to(section, {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%",
+            end: "top 40%",
+            scrub: 0.8,
+            // markers: true, // Uncomment to debug
           }
         });
       });
 
-      // Parallax backgrounds for sections with data-parallax-bg
-      const parallaxBgs = document.querySelectorAll('[data-parallax-bg]');
+      // Parallax backgrounds
+      const parallaxBgs = main.querySelectorAll('[data-parallax-bg]');
+      console.log('Found', parallaxBgs.length, 'parallax backgrounds');
+      
       parallaxBgs.forEach((bg) => {
-        ScrollTrigger.create({
-          trigger: bg.closest('section') || bg.parentElement,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true,
-          onUpdate: (self) => {
-            gsap.set(bg, { yPercent: -25 * self.progress });
+        const parentSection = bg.closest('section') || bg.parentElement;
+        gsap.to(bg, {
+          yPercent: -20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: parentSection,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
           }
         });
       });
 
-      // Inner content parallax (slower items)
-      const parallaxSlow = document.querySelectorAll('[data-parallax="slow"]');
+      // Slow parallax elements
+      const parallaxSlow = main.querySelectorAll('[data-parallax="slow"]');
       parallaxSlow.forEach((el) => {
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true,
-          onUpdate: (self) => {
-            gsap.set(el, { yPercent: -15 * self.progress });
+        gsap.to(el, {
+          yPercent: -12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
           }
         });
       });
 
-      // Faster parallax items
-      const parallaxFast = document.querySelectorAll('[data-parallax="fast"]');
+      // Fast parallax elements
+      const parallaxFast = main.querySelectorAll('[data-parallax="fast"]');
       parallaxFast.forEach((el) => {
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true,
-          onUpdate: (self) => {
-            gsap.set(el, { yPercent: -35 * self.progress });
+        gsap.to(el, {
+          yPercent: -30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
           }
         });
       });
 
-      ScrollTrigger.refresh();
-    }, 200);
+      // Force refresh after setup
+      ScrollTrigger.refresh(true);
+    }, 300);
 
     return () => {
       clearTimeout(initTimeout);
       ScrollTrigger.getAll().forEach(st => st.kill());
-      lenis.destroy();
+      gsap.ticker.remove(lenis?.raf);
+      lenis?.destroy();
     };
   }, []);
 
