@@ -168,34 +168,35 @@ export default function LandingPage() {
       // Smooth fade-in for sections (scrub-based, no flash)
       const sections = document.querySelectorAll('[data-scroll-section]');
       sections.forEach((section) => {
-        gsap.fromTo(section, 
-          { opacity: 0, y: 60 },
-          {
-            opacity: 1,
-            y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 85%",
-              end: "top 50%",
-              scrub: 1,
-            }
+        // Set initial state
+        gsap.set(section, { opacity: 0, y: 60 });
+        
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 90%",
+          end: "top 50%",
+          scrub: 1,
+          onUpdate: (self) => {
+            gsap.to(section, {
+              opacity: self.progress,
+              y: 60 * (1 - self.progress),
+              duration: 0,
+              overwrite: true
+            });
           }
-        );
+        });
       });
 
       // Parallax backgrounds for sections with data-parallax-bg
       const parallaxBgs = document.querySelectorAll('[data-parallax-bg]');
-      console.log('Found parallax backgrounds:', parallaxBgs.length);
       parallaxBgs.forEach((bg) => {
-        gsap.to(bg, {
-          yPercent: -20,
-          ease: "none",
-          scrollTrigger: {
-            trigger: bg.parentElement,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
+        ScrollTrigger.create({
+          trigger: bg.closest('section') || bg.parentElement,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          onUpdate: (self) => {
+            gsap.set(bg, { yPercent: -25 * self.progress });
           }
         });
       });
@@ -203,14 +204,13 @@ export default function LandingPage() {
       // Inner content parallax (slower items)
       const parallaxSlow = document.querySelectorAll('[data-parallax="slow"]');
       parallaxSlow.forEach((el) => {
-        gsap.to(el, {
-          yPercent: -10,
-          ease: "none",
-          scrollTrigger: {
-            trigger: el,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          onUpdate: (self) => {
+            gsap.set(el, { yPercent: -15 * self.progress });
           }
         });
       });
@@ -218,20 +218,19 @@ export default function LandingPage() {
       // Faster parallax items
       const parallaxFast = document.querySelectorAll('[data-parallax="fast"]');
       parallaxFast.forEach((el) => {
-        gsap.to(el, {
-          yPercent: -30,
-          ease: "none",
-          scrollTrigger: {
-            trigger: el,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          onUpdate: (self) => {
+            gsap.set(el, { yPercent: -35 * self.progress });
           }
         });
       });
 
       ScrollTrigger.refresh();
-    }, 100);
+    }, 200);
 
     return () => {
       clearTimeout(initTimeout);
