@@ -22,8 +22,12 @@ export default function IntegrationsMarquee() {
 
   return (
     <section className="py-24 bg-[#080808] overflow-hidden relative border-y border-white/5">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.03),transparent_60%)]" />
+      {/* Parallax Background */}
+      <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.05),transparent_60%)]" />
+        <div className="absolute top-1/4 right-1/3 w-72 h-72 bg-cyan-500/4 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-blue-500/4 rounded-full blur-[80px]" />
+      </div>
       
       <div className="max-w-7xl mx-auto px-6 mb-14 text-center relative z-10">
         <div>
