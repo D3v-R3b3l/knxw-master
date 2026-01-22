@@ -147,49 +147,48 @@ export default function LandingPage() {
   const mainRef = useRef(null);
 
   useEffect(() => {
-    try {
-      if (!gsap || !ScrollTrigger) return;
-      
-      gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger);
 
-      // Initialize Lenis for smooth scrolling
-      const lenis = new Lenis({
-        duration: 1.4,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-      });
-      
-      lenis.on('scroll', ScrollTrigger.update);
-      
-      const raf = (time) => {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-      };
-      requestAnimationFrame(raf);
+    // Initialize Lenis for smooth scrolling
+    const lenis = new Lenis({
+      duration: 1.4,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    
+    lenis.on('scroll', ScrollTrigger.update);
+    
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
 
+    // Wait for DOM to be ready
+    const ctx = gsap.context(() => {
       // Smooth fade-in for sections (scrub-based, no flash)
-      const sections = mainRef.current?.querySelectorAll('[data-scroll-section]');
-      sections?.forEach((section) => {
-        gsap.set(section, { opacity: 0, y: 80 });
-        
-        gsap.to(section, {
-          opacity: 1,
-          y: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 90%",
-            end: "top 60%",
-            scrub: 0.8,
+      const sections = document.querySelectorAll('[data-scroll-section]');
+      sections.forEach((section) => {
+        gsap.fromTo(section, 
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 85%",
+              end: "top 50%",
+              scrub: 1,
+            }
           }
-        });
+        );
       });
 
       // Parallax backgrounds for sections with data-parallax-bg
-      const parallaxBgs = mainRef.current?.querySelectorAll('[data-parallax-bg]');
-      parallaxBgs?.forEach((bg) => {
+      const parallaxBgs = document.querySelectorAll('[data-parallax-bg]');
+      parallaxBgs.forEach((bg) => {
         gsap.to(bg, {
-          yPercent: -30,
+          yPercent: -20,
           ease: "none",
           scrollTrigger: {
             trigger: bg.parentElement,
@@ -201,10 +200,10 @@ export default function LandingPage() {
       });
 
       // Inner content parallax (slower items)
-      const parallaxSlow = mainRef.current?.querySelectorAll('[data-parallax="slow"]');
-      parallaxSlow?.forEach((el) => {
+      const parallaxSlow = document.querySelectorAll('[data-parallax="slow"]');
+      parallaxSlow.forEach((el) => {
         gsap.to(el, {
-          yPercent: -15,
+          yPercent: -10,
           ease: "none",
           scrollTrigger: {
             trigger: el,
@@ -216,10 +215,10 @@ export default function LandingPage() {
       });
 
       // Faster parallax items
-      const parallaxFast = mainRef.current?.querySelectorAll('[data-parallax="fast"]');
-      parallaxFast?.forEach((el) => {
+      const parallaxFast = document.querySelectorAll('[data-parallax="fast"]');
+      parallaxFast.forEach((el) => {
         gsap.to(el, {
-          yPercent: -40,
+          yPercent: -30,
           ease: "none",
           scrollTrigger: {
             trigger: el,
@@ -229,14 +228,12 @@ export default function LandingPage() {
           }
         });
       });
+    }, mainRef);
 
-      return () => {
-        ScrollTrigger.getAll().forEach(st => st.kill());
-        lenis.destroy();
-      };
-    } catch (error) {
-      console.error('Error initializing scroll animations:', error);
-    }
+    return () => {
+      ctx.revert();
+      lenis.destroy();
+    };
   }, []);
 
   return (
