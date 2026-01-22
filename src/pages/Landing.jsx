@@ -163,8 +163,8 @@ export default function LandingPage() {
     });
     gsap.ticker.lagSmoothing(0);
 
-    // Wait for DOM to be ready
-    const ctx = gsap.context(() => {
+    // Delay to ensure all child components have mounted
+    const initTimeout = setTimeout(() => {
       // Smooth fade-in for sections (scrub-based, no flash)
       const sections = document.querySelectorAll('[data-scroll-section]');
       sections.forEach((section) => {
@@ -186,6 +186,7 @@ export default function LandingPage() {
 
       // Parallax backgrounds for sections with data-parallax-bg
       const parallaxBgs = document.querySelectorAll('[data-parallax-bg]');
+      console.log('Found parallax backgrounds:', parallaxBgs.length);
       parallaxBgs.forEach((bg) => {
         gsap.to(bg, {
           yPercent: -20,
@@ -228,10 +229,13 @@ export default function LandingPage() {
           }
         });
       });
-    }, mainRef);
+
+      ScrollTrigger.refresh();
+    }, 100);
 
     return () => {
-      ctx.revert();
+      clearTimeout(initTimeout);
+      ScrollTrigger.getAll().forEach(st => st.kill());
       lenis.destroy();
     };
   }, []);

@@ -21,6 +21,12 @@ export default function FAQSection() {
 
   return (
     <section className="py-20 md:py-24 bg-black relative overflow-hidden">
+      {/* Parallax Background */}
+      <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(6,182,212,0.05),transparent_50%)]" />
+        <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-cyan-500/4 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/3 w-56 h-56 bg-purple-500/4 rounded-full blur-[80px]" />
+      </div>
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 text-center">
           Frequently Asked Questions
