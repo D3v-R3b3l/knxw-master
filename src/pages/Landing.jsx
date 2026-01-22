@@ -172,51 +172,56 @@ export default function LandingPage() {
 
     // Wait for DOM and all components to mount
     const initTimeout = setTimeout(() => {
-      const main = mainRef.current;
-      if (!main) return;
+      // Use document.getElementById as fallback
+      const main = mainRef.current || document.getElementById('landing-main');
+      if (!main) {
+        console.warn('Main ref not found');
+        return;
+      }
 
       // Section fade-in animations
       const sections = main.querySelectorAll('[data-scroll-section]');
-      console.log('Initializing scroll animations for', sections.length, 'sections');
+      console.log('GSAP: Initializing scroll animations for', sections.length, 'sections');
       
       sections.forEach((section, index) => {
         // Set initial hidden state
         gsap.set(section, { 
           opacity: 0, 
           y: 80,
-          willChange: 'opacity, transform'
+          visibility: 'visible'
         });
         
         // Create scroll-triggered animation
         gsap.to(section, {
           opacity: 1,
           y: 0,
-          duration: 1,
-          ease: "power3.out",
+          duration: 1.2,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: section,
-            start: "top 85%",
-            end: "top 40%",
-            scrub: 0.8,
-            // markers: true, // Uncomment to debug
+            start: "top 88%",
+            end: "top 45%",
+            scrub: 1,
+            invalidateOnRefresh: true,
           }
         });
       });
 
       // Parallax backgrounds
       const parallaxBgs = main.querySelectorAll('[data-parallax-bg]');
-      console.log('Found', parallaxBgs.length, 'parallax backgrounds');
+      console.log('GSAP: Found', parallaxBgs.length, 'parallax backgrounds');
       
       parallaxBgs.forEach((bg) => {
         const parentSection = bg.closest('section') || bg.parentElement;
         gsap.to(bg, {
-          yPercent: -20,
+          yPercent: -25,
           ease: "none",
           scrollTrigger: {
             trigger: parentSection,
             start: "top bottom",
             end: "bottom top",
             scrub: true,
+            invalidateOnRefresh: true,
           }
         });
       });
@@ -225,7 +230,7 @@ export default function LandingPage() {
       const parallaxSlow = main.querySelectorAll('[data-parallax="slow"]');
       parallaxSlow.forEach((el) => {
         gsap.to(el, {
-          yPercent: -12,
+          yPercent: -15,
           ease: "none",
           scrollTrigger: {
             trigger: el,
@@ -240,7 +245,7 @@ export default function LandingPage() {
       const parallaxFast = main.querySelectorAll('[data-parallax="fast"]');
       parallaxFast.forEach((el) => {
         gsap.to(el, {
-          yPercent: -30,
+          yPercent: -35,
           ease: "none",
           scrollTrigger: {
             trigger: el,
@@ -252,8 +257,11 @@ export default function LandingPage() {
       });
 
       // Force refresh after setup
-      ScrollTrigger.refresh(true);
-    }, 300);
+      setTimeout(() => {
+        ScrollTrigger.refresh(true);
+        console.log('GSAP: ScrollTrigger refreshed');
+      }, 100);
+    }, 400);
 
     return () => {
       clearTimeout(initTimeout);
