@@ -1,7 +1,7 @@
-import React, { useRef, useMemo, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-// Pure CSS/Canvas neural network - no Three.js to avoid texture issues
+// Advanced neural network visualization with orbiting rings and data streams
 export default function BrainVisualization({ className = "" }) {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -13,46 +13,53 @@ export default function BrainVisualization({ className = "" }) {
     
     const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * 2;
-    canvas.height = rect.height * 2;
-    ctx.scale(2, 2);
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
     
     const width = rect.width;
     const height = rect.height;
     const centerX = width / 2;
     const centerY = height / 2;
     
-    // Generate neural nodes in brain shape
-    const nodes = [];
-    const nodeCount = 60;
+    // Core orb parameters
+    const coreRadius = 80;
     
-    for (let i = 0; i < nodeCount; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = 120 + Math.random() * 40;
-      const brainFactor = 1 + 0.3 * Math.sin(phi * 3) * Math.cos(theta * 2);
-      
-      nodes.push({
-        x: centerX + r * brainFactor * Math.cos(theta),
-        y: centerY + r * brainFactor * Math.sin(theta) * 0.8,
-        baseX: centerX + r * brainFactor * Math.cos(theta),
-        baseY: centerY + r * brainFactor * Math.sin(theta) * 0.8,
-        size: 2 + Math.random() * 3,
-        pulse: Math.random() * Math.PI * 2
+    // Orbiting rings
+    const rings = [
+      { radius: 120, speed: 0.3, nodes: 8, color: '#8b5cf6' },
+      { radius: 160, speed: -0.2, nodes: 12, color: '#06b6d4' },
+      { radius: 200, speed: 0.15, nodes: 16, color: '#10b981' },
+    ];
+    
+    // Data particles flowing along paths
+    const particles = [];
+    for (let i = 0; i < 50; i++) {
+      particles.push({
+        ringIndex: Math.floor(Math.random() * rings.length),
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.5 + Math.random() * 1.5,
+        size: 1 + Math.random() * 2,
+        alpha: 0.3 + Math.random() * 0.7,
+        trail: []
       });
     }
     
-    // Generate connections
-    const connections = [];
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const dx = nodes[i].baseX - nodes[j].baseX;
-        const dy = nodes[i].baseY - nodes[j].baseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 80) {
-          connections.push({ start: i, end: j, dist });
-        }
-      }
+    // Floating ambient nodes
+    const ambientNodes = [];
+    for (let i = 0; i < 30; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 100 + Math.random() * 150;
+      ambientNodes.push({
+        x: centerX + Math.cos(angle) * dist,
+        y: centerY + Math.sin(angle) * dist,
+        baseX: centerX + Math.cos(angle) * dist,
+        baseY: centerY + Math.sin(angle) * dist,
+        size: 1 + Math.random() * 2,
+        pulse: Math.random() * Math.PI * 2,
+        driftSpeed: 0.2 + Math.random() * 0.3
+      });
     }
     
     let time = 0;
@@ -61,57 +68,178 @@ export default function BrainVisualization({ className = "" }) {
       time += 0.016;
       ctx.clearRect(0, 0, width, height);
       
-      // Rotate effect
-      const rotation = time * 0.3;
+      // Draw outer glow
+      const outerGlow = ctx.createRadialGradient(centerX, centerY, coreRadius, centerX, centerY, 220);
+      outerGlow.addColorStop(0, 'rgba(139, 92, 246, 0.15)');
+      outerGlow.addColorStop(0.5, 'rgba(6, 182, 212, 0.08)');
+      outerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 220, 0, Math.PI * 2);
+      ctx.fillStyle = outerGlow;
+      ctx.fill();
       
-      // Update node positions with rotation and pulse
-      nodes.forEach((node, i) => {
-        const dx = node.baseX - centerX;
-        const dy = node.baseY - centerY;
-        const cos = Math.cos(rotation);
-        const sin = Math.sin(rotation);
-        
-        const pulse = Math.sin(time * 2 + node.pulse) * 3;
-        node.x = centerX + dx * cos + pulse;
-        node.y = centerY + dy + Math.sin(time + i * 0.1) * 2;
-      });
-      
-      // Draw connections
-      connections.forEach(conn => {
-        const start = nodes[conn.start];
-        const end = nodes[conn.end];
-        const alpha = 0.15 + Math.sin(time * 2 + conn.start * 0.1) * 0.1;
-        
+      // Draw ring paths (subtle)
+      rings.forEach((ring, i) => {
         ctx.beginPath();
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
-        ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+        ctx.arc(centerX, centerY, ring.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 255, 255, 0.05)`;
         ctx.lineWidth = 1;
         ctx.stroke();
       });
       
-      // Draw nodes
-      nodes.forEach((node, i) => {
-        const pulse = 0.8 + Math.sin(time * 3 + node.pulse) * 0.2;
-        const size = node.size * pulse;
+      // Draw connections between rings
+      rings.forEach((ring, ringIndex) => {
+        const rotation = time * ring.speed;
+        for (let i = 0; i < ring.nodes; i++) {
+          const angle = (i / ring.nodes) * Math.PI * 2 + rotation;
+          const x = centerX + Math.cos(angle) * ring.radius;
+          const y = centerY + Math.sin(angle) * ring.radius;
+          
+          // Connect to center
+          const alpha = 0.1 + Math.sin(time * 2 + i) * 0.05;
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.lineTo(x, y);
+          ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+          
+          // Connect to adjacent ring nodes
+          if (ringIndex < rings.length - 1) {
+            const nextRing = rings[ringIndex + 1];
+            const nextRotation = time * nextRing.speed;
+            const closestNodeIndex = Math.round((angle - nextRotation) / (Math.PI * 2 / nextRing.nodes)) % nextRing.nodes;
+            const nextAngle = (closestNodeIndex / nextRing.nodes) * Math.PI * 2 + nextRotation;
+            const nx = centerX + Math.cos(nextAngle) * nextRing.radius;
+            const ny = centerY + Math.sin(nextAngle) * nextRing.radius;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(nx, ny);
+            ctx.strokeStyle = `rgba(6, 182, 212, ${alpha * 0.5})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      });
+      
+      // Draw ring nodes
+      rings.forEach((ring, ringIndex) => {
+        const rotation = time * ring.speed;
+        for (let i = 0; i < ring.nodes; i++) {
+          const angle = (i / ring.nodes) * Math.PI * 2 + rotation;
+          const x = centerX + Math.cos(angle) * ring.radius;
+          const y = centerY + Math.sin(angle) * ring.radius;
+          
+          const pulse = 0.7 + Math.sin(time * 3 + i + ringIndex) * 0.3;
+          const nodeSize = 3 * pulse;
+          
+          // Node glow
+          const nodeGlow = ctx.createRadialGradient(x, y, 0, x, y, nodeSize * 4);
+          nodeGlow.addColorStop(0, ring.color + '80');
+          nodeGlow.addColorStop(0.5, ring.color + '20');
+          nodeGlow.addColorStop(1, ring.color + '00');
+          ctx.beginPath();
+          ctx.arc(x, y, nodeSize * 4, 0, Math.PI * 2);
+          ctx.fillStyle = nodeGlow;
+          ctx.fill();
+          
+          // Node core
+          ctx.beginPath();
+          ctx.arc(x, y, nodeSize, 0, Math.PI * 2);
+          ctx.fillStyle = ring.color;
+          ctx.fill();
+        }
+      });
+      
+      // Draw flowing particles
+      particles.forEach(particle => {
+        const ring = rings[particle.ringIndex];
+        particle.angle += particle.speed * 0.02;
         
-        // Glow
-        const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, size * 4);
-        gradient.addColorStop(0, 'rgba(0, 212, 255, 0.8)');
-        gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.2)');
-        gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+        const x = centerX + Math.cos(particle.angle) * ring.radius;
+        const y = centerY + Math.sin(particle.angle) * ring.radius;
         
+        // Trail
+        particle.trail.unshift({ x, y });
+        if (particle.trail.length > 8) particle.trail.pop();
+        
+        particle.trail.forEach((point, i) => {
+          const trailAlpha = (1 - i / particle.trail.length) * particle.alpha * 0.5;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, particle.size * (1 - i / particle.trail.length), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${trailAlpha})`;
+          ctx.fill();
+        });
+        
+        // Main particle
         ctx.beginPath();
-        ctx.arc(node.x, node.y, size * 4, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        
-        // Core
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
-        ctx.fillStyle = '#00d4ff';
+        ctx.arc(x, y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${particle.alpha})`;
         ctx.fill();
       });
+      
+      // Draw ambient nodes
+      ambientNodes.forEach((node, i) => {
+        node.x = node.baseX + Math.sin(time * node.driftSpeed + i) * 10;
+        node.y = node.baseY + Math.cos(time * node.driftSpeed + i * 0.5) * 10;
+        
+        const pulse = 0.5 + Math.sin(time * 2 + node.pulse) * 0.5;
+        
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.size * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(6, 182, 212, ${0.3 * pulse})`;
+        ctx.fill();
+      });
+      
+      // Draw core orb with pulsing gradient
+      const corePulse = 1 + Math.sin(time * 2) * 0.05;
+      const coreGradient = ctx.createRadialGradient(
+        centerX - 20, centerY - 20, 0,
+        centerX, centerY, coreRadius * corePulse
+      );
+      coreGradient.addColorStop(0, 'rgba(139, 92, 246, 0.9)');
+      coreGradient.addColorStop(0.4, 'rgba(99, 102, 241, 0.6)');
+      coreGradient.addColorStop(0.7, 'rgba(6, 182, 212, 0.4)');
+      coreGradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, coreRadius * corePulse, 0, Math.PI * 2);
+      ctx.fillStyle = coreGradient;
+      ctx.fill();
+      
+      // Inner bright core
+      const innerGradient = ctx.createRadialGradient(
+        centerX - 15, centerY - 15, 0,
+        centerX, centerY, coreRadius * 0.6 * corePulse
+      );
+      innerGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      innerGradient.addColorStop(0.3, 'rgba(139, 92, 246, 0.7)');
+      innerGradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, coreRadius * 0.6 * corePulse, 0, Math.PI * 2);
+      ctx.fillStyle = innerGradient;
+      ctx.fill();
+      
+      // Scanning line effect
+      const scanAngle = time * 1.5;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(
+        centerX + Math.cos(scanAngle) * 220,
+        centerY + Math.sin(scanAngle) * 220
+      );
+      const scanGradient = ctx.createLinearGradient(
+        centerX, centerY,
+        centerX + Math.cos(scanAngle) * 220,
+        centerY + Math.sin(scanAngle) * 220
+      );
+      scanGradient.addColorStop(0, 'rgba(6, 182, 212, 0.5)');
+      scanGradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      ctx.strokeStyle = scanGradient;
+      ctx.lineWidth = 2;
+      ctx.stroke();
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -129,9 +257,9 @@ export default function BrainVisualization({ className = "" }) {
   return (
     <motion.div 
       className={`w-full h-full relative ${className}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isVisible ? 1 : 0 }}
-      transition={{ duration: 1 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.9 }}
+      transition={{ duration: 1.2, ease: 'easeOut' }}
     >
       <canvas
         ref={canvasRef}
