@@ -79,6 +79,5 @@ export const navigationSections = [
 ];
 
 export const adminNavigationItems = [
-  { title: "Org Admin", page: "OrgAdmin", icon: Shield, description: "Organization Settings" },
-  { title: "Demo Data", page: "DemoData", icon: Sparkles, description: "Seed Test Data" }
+  { title: "Org Admin", page: "OrgAdmin", icon: Shield, description: "Organization Settings" }
 ];
