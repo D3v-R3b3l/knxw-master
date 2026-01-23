@@ -513,8 +513,10 @@ export default function LandingPage() {
                      ))}
                   </div>
                </div>
-               <div className="relative hidden md:block h-[500px]">
-                   <BrainVisualization key="enterprise-brain" />
+               <div className="relative hidden md:flex items-center justify-center h-[500px] w-full">
+                   <div className="w-[450px] h-[450px]">
+                     <BrainVisualization key="enterprise-brain" />
+                   </div>
                </div>
             </div>
           </section>
