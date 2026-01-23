@@ -213,6 +213,11 @@ export default function Dashboard() {// Renamed from DashboardContent
       refreshData(true);
     };
 
+    const onDemoSeeded = () => {
+      // Refresh dashboard after demo data is seeded
+      refreshData(true);
+    };
+
     const handleSeedData = (event) => {
       const detail = event?.detail;
 
@@ -236,12 +241,14 @@ export default function Dashboard() {// Renamed from DashboardContent
     };
 
     window.addEventListener('knxw-demo-data-cleared', onDemoCleared);
+    window.addEventListener('knxw-demo-data-seeded', onDemoSeeded);
     window.addEventListener('seedWalkthroughExample', handleSeedData);
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener('seedWalkthroughExample', handleSeedData);
       window.removeEventListener('knxw-demo-data-cleared', onDemoCleared);
+      window.removeEventListener('knxw-demo-data-seeded', onDemoSeeded);
     };
   }, [loadUserAndCheckForApps, refreshData]);
 
