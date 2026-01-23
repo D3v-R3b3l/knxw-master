@@ -514,7 +514,7 @@ export default function LandingPage() {
                   </div>
                </div>
                <div className="relative hidden md:block h-[500px]">
-                   <BrainVisualization />
+                   <BrainVisualization key="enterprise-brain" />
                </div>
             </div>
           </section>
