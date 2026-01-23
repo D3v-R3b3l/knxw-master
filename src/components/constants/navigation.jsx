@@ -62,6 +62,7 @@ export const navigationSections = [
     items: [
       { title: "Attribution", page: "AttributionSettings", icon: AttributionIcon, description: "ROI Tracking" },
       { title: "Data Import", page: "DataImport", icon: DatabaseIcon, description: "Bulk Processing" },
+      { title: "Demo Data", page: "DemoData", icon: Sparkles, description: "Seed Test Data" },
       { title: "System Health", page: "SystemHealth", icon: HeartPulse, description: "Performance" },
       { title: "Dashboards", page: "Dashboards", icon: BarChart3, description: "Custom Reports" },
     ]

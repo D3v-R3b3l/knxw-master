@@ -192,9 +192,9 @@ export function DashboardProvider({ children }) {
     try {
       logger.info(`Loading dashboard data for app: ${appId}`);
 
-      // 1. Fetch events
+      // 1. Fetch events (include demo data)
       const fetchedEvents = await callWithRetry(
-        () => base44.entities.CapturedEvent.filter({ is_demo: false }, "-timestamp", MAX_EVENTS),
+        () => base44.entities.CapturedEvent.list("-timestamp", MAX_EVENTS),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
 
@@ -206,9 +206,9 @@ export function DashboardProvider({ children }) {
       // 2. Wait before next batch
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // 3. Fetch profiles
+      // 3. Fetch profiles (include demo data)
       const profilesRaw = await callWithRetry(
-        () => base44.entities.UserPsychographicProfile.filter({ is_demo: false }, "-last_analyzed", 100),
+        () => base44.entities.UserPsychographicProfile.list("-last_analyzed", 100),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
 
@@ -220,9 +220,9 @@ export function DashboardProvider({ children }) {
       // 4. Wait before next batch
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // 5. Fetch insights
+      // 5. Fetch insights (include demo data)
       const insightsRaw = await callWithRetry(
-        () => base44.entities.PsychographicInsight.filter({ is_demo: false }, "-created_date", 50),
+        () => base44.entities.PsychographicInsight.list("-created_date", 50),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
 
@@ -230,6 +230,8 @@ export function DashboardProvider({ children }) {
         ? insightsRaw.filter((i) => usersNow.has(i.user_id))
         : insightsRaw;
       setInsights(filteredInsights);
+
+      logger.info(`Loaded: ${filteredEvents.length} events, ${filteredProfiles.length} profiles, ${filteredInsights.length} insights`);
 
       // 6. Compute metrics
       const computedMetrics = computeMetrics(filteredProfiles, filteredEvents, filteredInsights);
