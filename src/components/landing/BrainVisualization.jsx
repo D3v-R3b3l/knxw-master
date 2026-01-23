@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-// Enterprise Security Shield - Hexagonal grid with data encryption visual
+// Enterprise Infrastructure - Server rack with real-time monitoring
 export default function BrainVisualization({ className = "" }) {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -13,13 +13,8 @@ export default function BrainVisualization({ className = "" }) {
     
     const ctx = canvas.getContext('2d');
     
-    // Get actual dimensions, with fallback
-    let width = canvas.parentElement?.clientWidth || 500;
-    let height = canvas.parentElement?.clientHeight || 500;
-    
-    // Minimum size
-    if (width < 100) width = 500;
-    if (height < 100) height = 500;
+    let width = 450;
+    let height = 450;
     
     const dpr = window.devicePixelRatio || 1;
     canvas.width = width * dpr;
@@ -27,95 +22,53 @@ export default function BrainVisualization({ className = "" }) {
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
     ctx.scale(dpr, dpr);
+    
     const centerX = width / 2;
     const centerY = height / 2;
     
-    // Hexagon grid setup
-    const hexSize = 25;
-    const hexHeight = hexSize * Math.sqrt(3);
-    const hexWidth = hexSize * 2;
-    const hexagons = [];
+    // Server nodes
+    const servers = [
+      { x: centerX - 100, y: centerY - 80, label: 'API', status: 'healthy' },
+      { x: centerX + 100, y: centerY - 80, label: 'ML', status: 'healthy' },
+      { x: centerX - 100, y: centerY + 80, label: 'DB', status: 'healthy' },
+      { x: centerX + 100, y: centerY + 80, label: 'CACHE', status: 'healthy' },
+    ];
     
-    // Create hexagonal grid
-    for (let row = -6; row <= 6; row++) {
-      for (let col = -5; col <= 5; col++) {
-        const x = centerX + col * hexWidth * 0.75;
-        const y = centerY + row * hexHeight + (col % 2 ? hexHeight / 2 : 0);
-        const dist = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-        
-        if (dist < 200) {
-          hexagons.push({
-            x, y, dist,
-            phase: Math.random() * Math.PI * 2,
-            activated: false,
-            activationTime: 0,
-            glowIntensity: 0
-          });
-        }
-      }
-    }
+    // Central hub
+    const hub = { x: centerX, y: centerY, radius: 45 };
     
-    // Data streams flowing through the grid
-    const dataStreams = [];
-    for (let i = 0; i < 12; i++) {
-      const angle = (i / 12) * Math.PI * 2;
-      dataStreams.push({
-        angle,
+    // Data packets traveling between nodes
+    const packets = [];
+    for (let i = 0; i < 20; i++) {
+      const fromServer = servers[Math.floor(Math.random() * servers.length)];
+      packets.push({
+        fromX: fromServer.x,
+        fromY: fromServer.y,
+        toHub: Math.random() > 0.5,
         progress: Math.random(),
-        speed: 0.3 + Math.random() * 0.4,
-        width: 2 + Math.random() * 2,
-        color: i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#06b6d4' : '#10b981'
+        speed: 0.8 + Math.random() * 0.8,
+        color: ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b'][Math.floor(Math.random() * 4)]
       });
     }
     
-    // Floating lock icons / security symbols
-    const securityNodes = [];
-    for (let i = 0; i < 6; i++) {
-      const angle = (i / 6) * Math.PI * 2 + Math.PI / 6;
-      securityNodes.push({
+    // Metrics rings
+    const metrics = [
+      { label: 'CPU', value: 0.65, color: '#06b6d4' },
+      { label: 'MEM', value: 0.48, color: '#8b5cf6' },
+      { label: 'NET', value: 0.72, color: '#10b981' },
+    ];
+    
+    // Status indicators
+    const statusDots = [];
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+      statusDots.push({
         angle,
-        radius: 160,
-        size: 12,
-        phase: i * 0.5
+        radius: 180,
+        active: true,
+        pulsePhase: i * 0.5
       });
     }
-    
-    // Draw hexagon helper
-    const drawHex = (x, y, size, fill = false) => {
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const angle = (Math.PI / 3) * i - Math.PI / 6;
-        const hx = x + size * Math.cos(angle);
-        const hy = y + size * Math.sin(angle);
-        if (i === 0) ctx.moveTo(hx, hy);
-        else ctx.lineTo(hx, hy);
-      }
-      ctx.closePath();
-      if (fill) ctx.fill();
-      else ctx.stroke();
-    };
-    
-    // Draw shield icon
-    const drawShield = (x, y, size) => {
-      ctx.beginPath();
-      ctx.moveTo(x, y - size);
-      ctx.bezierCurveTo(x + size, y - size * 0.7, x + size, y + size * 0.3, x, y + size);
-      ctx.bezierCurveTo(x - size, y + size * 0.3, x - size, y - size * 0.7, x, y - size);
-      ctx.closePath();
-    };
-    
-    // Draw lock icon
-    const drawLock = (x, y, size) => {
-      // Lock body
-      ctx.beginPath();
-      ctx.roundRect(x - size * 0.6, y - size * 0.2, size * 1.2, size * 1.1, 2);
-      ctx.fill();
-      // Lock shackle
-      ctx.beginPath();
-      ctx.arc(x, y - size * 0.3, size * 0.4, Math.PI, 0);
-      ctx.lineWidth = size * 0.2;
-      ctx.stroke();
-    };
     
     let time = 0;
     
@@ -123,189 +76,256 @@ export default function BrainVisualization({ className = "" }) {
       time += 0.016;
       ctx.clearRect(0, 0, width, height);
       
-      // Central glow
-      const centralGlow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 220);
-      centralGlow.addColorStop(0, 'rgba(139, 92, 246, 0.15)');
-      centralGlow.addColorStop(0.4, 'rgba(6, 182, 212, 0.08)');
-      centralGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = centralGlow;
+      // Background glow
+      const bgGlow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 220);
+      bgGlow.addColorStop(0, 'rgba(139, 92, 246, 0.08)');
+      bgGlow.addColorStop(0.5, 'rgba(6, 182, 212, 0.04)');
+      bgGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = bgGlow;
       ctx.fillRect(0, 0, width, height);
       
-      // Activate hexagons in wave pattern
-      const waveRadius = ((time * 60) % 300);
-      hexagons.forEach(hex => {
-        if (Math.abs(hex.dist - waveRadius) < 30 && !hex.activated) {
-          hex.activated = true;
-          hex.activationTime = time;
-        }
-        if (hex.activated && time - hex.activationTime > 1.5) {
-          hex.activated = false;
-        }
-        hex.glowIntensity = hex.activated ? 
-          Math.sin((time - hex.activationTime) * 3) * 0.5 + 0.5 : 
-          0.1 + Math.sin(time * 2 + hex.phase) * 0.05;
-      });
-      
-      // Draw hexagon grid
-      hexagons.forEach(hex => {
-        const distFactor = 1 - hex.dist / 200;
-        const baseAlpha = 0.1 + distFactor * 0.2;
-        const alpha = baseAlpha + hex.glowIntensity * 0.4;
-        
-        // Hex fill with gradient based on activation
-        if (hex.glowIntensity > 0.3) {
-          const hexGrad = ctx.createRadialGradient(hex.x, hex.y, 0, hex.x, hex.y, hexSize);
-          hexGrad.addColorStop(0, `rgba(6, 182, 212, ${hex.glowIntensity * 0.4})`);
-          hexGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
-          ctx.fillStyle = hexGrad;
-          drawHex(hex.x, hex.y, hexSize - 2, true);
-        }
-        
-        // Hex border
-        ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
-        ctx.lineWidth = hex.glowIntensity > 0.3 ? 1.5 : 0.5;
-        drawHex(hex.x, hex.y, hexSize - 2);
-      });
-      
-      // Draw data streams radiating from center
-      dataStreams.forEach(stream => {
-        stream.progress += stream.speed * 0.01;
-        if (stream.progress > 1) stream.progress = 0;
-        
-        const startDist = stream.progress * 180;
-        const endDist = Math.min(startDist + 60, 180);
-        
-        const x1 = centerX + Math.cos(stream.angle + time * 0.2) * startDist;
-        const y1 = centerY + Math.sin(stream.angle + time * 0.2) * startDist;
-        const x2 = centerX + Math.cos(stream.angle + time * 0.2) * endDist;
-        const y2 = centerY + Math.sin(stream.angle + time * 0.2) * endDist;
-        
-        const streamGrad = ctx.createLinearGradient(x1, y1, x2, y2);
-        streamGrad.addColorStop(0, stream.color + '00');
-        streamGrad.addColorStop(0.5, stream.color + 'aa');
-        streamGrad.addColorStop(1, stream.color + '00');
+      // Draw connection lines from servers to hub
+      servers.forEach(server => {
+        const gradient = ctx.createLinearGradient(server.x, server.y, hub.x, hub.y);
+        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
+        gradient.addColorStop(0.5, 'rgba(6, 182, 212, 0.5)');
+        gradient.addColorStop(1, 'rgba(139, 92, 246, 0.3)');
         
         ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.strokeStyle = streamGrad;
-        ctx.lineWidth = stream.width;
-        ctx.lineCap = 'round';
+        ctx.moveTo(server.x, server.y);
+        ctx.lineTo(hub.x, hub.y);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
         ctx.stroke();
-      });
-      
-      // Draw security nodes (shields/locks orbiting)
-      securityNodes.forEach((node, i) => {
-        const orbitAngle = node.angle + time * 0.3;
-        const bobY = Math.sin(time * 2 + node.phase) * 8;
-        const x = centerX + Math.cos(orbitAngle) * node.radius;
-        const y = centerY + Math.sin(orbitAngle) * node.radius * 0.6 + bobY;
         
-        // Glow behind icon
-        const iconGlow = ctx.createRadialGradient(x, y, 0, x, y, node.size * 2.5);
-        iconGlow.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
-        iconGlow.addColorStop(1, 'rgba(16, 185, 129, 0)');
-        ctx.fillStyle = iconGlow;
+        // Animated pulse along line
+        const pulsePos = (time * 0.5) % 1;
+        const px = server.x + (hub.x - server.x) * pulsePos;
+        const py = server.y + (hub.y - server.y) * pulsePos;
+        
+        const pulseGlow = ctx.createRadialGradient(px, py, 0, px, py, 8);
+        pulseGlow.addColorStop(0, 'rgba(6, 182, 212, 0.8)');
+        pulseGlow.addColorStop(1, 'rgba(6, 182, 212, 0)');
+        ctx.fillStyle = pulseGlow;
         ctx.beginPath();
-        ctx.arc(x, y, node.size * 2.5, 0, Math.PI * 2);
+        ctx.arc(px, py, 8, 0, Math.PI * 2);
         ctx.fill();
-        
-        // Draw shield or lock alternating
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
-        ctx.strokeStyle = 'rgba(16, 185, 129, 0.9)';
-        if (i % 2 === 0) {
-          drawShield(x, y, node.size);
-          ctx.fill();
-          // Checkmark inside
-          ctx.beginPath();
-          ctx.moveTo(x - 4, y);
-          ctx.lineTo(x - 1, y + 4);
-          ctx.lineTo(x + 5, y - 3);
-          ctx.strokeStyle = '#0a0a0a';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-        } else {
-          drawLock(x, y, node.size * 0.7);
-        }
       });
       
-      // Central shield with pulse
-      const shieldPulse = 1 + Math.sin(time * 2) * 0.05;
-      const shieldSize = 50 * shieldPulse;
-      
-      // Shield outer glow
-      const shieldGlow = ctx.createRadialGradient(centerX, centerY, shieldSize * 0.5, centerX, centerY, shieldSize * 2);
-      shieldGlow.addColorStop(0, 'rgba(139, 92, 246, 0.5)');
-      shieldGlow.addColorStop(0.5, 'rgba(6, 182, 212, 0.2)');
-      shieldGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = shieldGlow;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, shieldSize * 2, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Main shield
-      const mainShieldGrad = ctx.createLinearGradient(centerX, centerY - shieldSize, centerX, centerY + shieldSize);
-      mainShieldGrad.addColorStop(0, '#8b5cf6');
-      mainShieldGrad.addColorStop(0.5, '#6366f1');
-      mainShieldGrad.addColorStop(1, '#4f46e5');
-      ctx.fillStyle = mainShieldGrad;
-      drawShield(centerX, centerY, shieldSize);
-      ctx.fill();
-      
-      // Shield highlight
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY - shieldSize + 5);
-      ctx.bezierCurveTo(
-        centerX + shieldSize * 0.6, centerY - shieldSize * 0.5,
-        centerX + shieldSize * 0.3, centerY - shieldSize * 0.1,
-        centerX, centerY - shieldSize * 0.1
-      );
-      ctx.bezierCurveTo(
-        centerX - shieldSize * 0.3, centerY - shieldSize * 0.1,
-        centerX - shieldSize * 0.6, centerY - shieldSize * 0.5,
-        centerX, centerY - shieldSize + 5
-      );
-      ctx.fill();
-      
-      // Checkmark on shield
-      ctx.beginPath();
-      ctx.moveTo(centerX - 15, centerY);
-      ctx.lineTo(centerX - 3, centerY + 15);
-      ctx.lineTo(centerX + 18, centerY - 12);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
-      ctx.lineWidth = 5;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.stroke();
-      
-      // Scanning ring
-      const scanRadius = 100 + Math.sin(time) * 20;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, scanRadius, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(6, 182, 212, ${0.2 + Math.sin(time * 2) * 0.1})`;
-      ctx.lineWidth = 2;
-      ctx.setLineDash([10, 10]);
-      ctx.stroke();
+      // Draw cross connections
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      for (let i = 0; i < servers.length; i++) {
+        for (let j = i + 1; j < servers.length; j++) {
+          ctx.beginPath();
+          ctx.moveTo(servers[i].x, servers[i].y);
+          ctx.lineTo(servers[j].x, servers[j].y);
+          ctx.stroke();
+        }
+      }
       ctx.setLineDash([]);
       
-      // Outer scanning ring
-      const outerScanRadius = 180;
-      const scanArc = time * 2;
+      // Draw data packets
+      packets.forEach(packet => {
+        packet.progress += packet.speed * 0.01;
+        if (packet.progress > 1) {
+          packet.progress = 0;
+          const newServer = servers[Math.floor(Math.random() * servers.length)];
+          packet.fromX = packet.toHub ? hub.x : newServer.x;
+          packet.fromY = packet.toHub ? hub.y : newServer.y;
+          packet.toHub = !packet.toHub;
+        }
+        
+        const targetX = packet.toHub ? hub.x : servers[Math.floor(Math.random() * servers.length)].x;
+        const targetY = packet.toHub ? hub.y : servers[Math.floor(Math.random() * servers.length)].y;
+        
+        const x = packet.fromX + (targetX - packet.fromX) * packet.progress;
+        const y = packet.fromY + (targetY - packet.fromY) * packet.progress;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = packet.color;
+        ctx.fill();
+      });
+      
+      // Draw server nodes
+      servers.forEach((server, i) => {
+        // Server glow
+        const serverGlow = ctx.createRadialGradient(server.x, server.y, 0, server.x, server.y, 50);
+        serverGlow.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
+        serverGlow.addColorStop(1, 'rgba(139, 92, 246, 0)');
+        ctx.fillStyle = serverGlow;
+        ctx.beginPath();
+        ctx.arc(server.x, server.y, 50, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Server box
+        const boxSize = 35;
+        const pulse = 1 + Math.sin(time * 2 + i) * 0.05;
+        
+        ctx.fillStyle = '#111';
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(server.x - boxSize * pulse, server.y - boxSize * pulse, boxSize * 2 * pulse, boxSize * 2 * pulse, 8);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Server rack lines
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.3)';
+        ctx.lineWidth = 1;
+        for (let j = 0; j < 4; j++) {
+          const lineY = server.y - boxSize + 15 + j * 15;
+          ctx.beginPath();
+          ctx.moveTo(server.x - boxSize + 8, lineY);
+          ctx.lineTo(server.x + boxSize - 8, lineY);
+          ctx.stroke();
+        }
+        
+        // Status LED
+        const ledPulse = 0.5 + Math.sin(time * 4 + i) * 0.5;
+        ctx.fillStyle = `rgba(16, 185, 129, ${ledPulse})`;
+        ctx.beginPath();
+        ctx.arc(server.x - boxSize + 15, server.y - boxSize + 10, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Activity LED
+        ctx.fillStyle = `rgba(6, 182, 212, ${Math.random() > 0.5 ? 0.8 : 0.2})`;
+        ctx.beginPath();
+        ctx.arc(server.x - boxSize + 25, server.y - boxSize + 10, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Label
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(server.label, server.x, server.y + boxSize + 15);
+      });
+      
+      // Draw central hub
+      const hubPulse = 1 + Math.sin(time * 1.5) * 0.08;
+      
+      // Hub outer glow
+      const hubGlow = ctx.createRadialGradient(hub.x, hub.y, hub.radius * 0.5, hub.x, hub.y, hub.radius * 2);
+      hubGlow.addColorStop(0, 'rgba(6, 182, 212, 0.4)');
+      hubGlow.addColorStop(0.5, 'rgba(139, 92, 246, 0.2)');
+      hubGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = hubGlow;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, outerScanRadius, scanArc, scanArc + Math.PI * 0.5);
-      const arcGrad = ctx.createLinearGradient(
-        centerX + Math.cos(scanArc) * outerScanRadius,
-        centerY + Math.sin(scanArc) * outerScanRadius,
-        centerX + Math.cos(scanArc + Math.PI * 0.5) * outerScanRadius,
-        centerY + Math.sin(scanArc + Math.PI * 0.5) * outerScanRadius
-      );
-      arcGrad.addColorStop(0, 'rgba(6, 182, 212, 0)');
-      arcGrad.addColorStop(0.5, 'rgba(6, 182, 212, 0.6)');
-      arcGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
-      ctx.strokeStyle = arcGrad;
+      ctx.arc(hub.x, hub.y, hub.radius * 2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Hub circle
+      const hubGrad = ctx.createRadialGradient(hub.x - 10, hub.y - 10, 0, hub.x, hub.y, hub.radius * hubPulse);
+      hubGrad.addColorStop(0, '#1a1a2e');
+      hubGrad.addColorStop(1, '#0a0a0f');
+      ctx.fillStyle = hubGrad;
+      ctx.beginPath();
+      ctx.arc(hub.x, hub.y, hub.radius * hubPulse, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Hub border
+      ctx.strokeStyle = '#06b6d4';
       ctx.lineWidth = 3;
       ctx.stroke();
+      
+      // Inner ring
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(hub.x, hub.y, hub.radius * 0.6 * hubPulse, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Hub icon (network symbol)
+      ctx.fillStyle = '#06b6d4';
+      ctx.beginPath();
+      ctx.arc(hub.x, hub.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+      
+      for (let i = 0; i < 6; i++) {
+        const angle = (i / 6) * Math.PI * 2;
+        const nx = hub.x + Math.cos(angle) * 22;
+        const ny = hub.y + Math.sin(angle) * 22;
+        
+        ctx.beginPath();
+        ctx.arc(nx, ny, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(hub.x, hub.y);
+        ctx.lineTo(nx, ny);
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      
+      // Draw metric arcs around hub
+      metrics.forEach((metric, i) => {
+        const arcRadius = hub.radius + 15 + i * 12;
+        const startAngle = -Math.PI / 2;
+        const animatedValue = metric.value + Math.sin(time * 2 + i) * 0.05;
+        const endAngle = startAngle + (Math.PI * 2 * animatedValue);
+        
+        // Background arc
+        ctx.beginPath();
+        ctx.arc(hub.x, hub.y, arcRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        
+        // Value arc
+        ctx.beginPath();
+        ctx.arc(hub.x, hub.y, arcRadius, startAngle, endAngle);
+        ctx.strokeStyle = metric.color;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.lineCap = 'butt';
+      });
+      
+      // Draw outer status ring
+      statusDots.forEach((dot, i) => {
+        const x = centerX + Math.cos(dot.angle) * dot.radius;
+        const y = centerY + Math.sin(dot.angle) * dot.radius;
+        
+        const pulse = 0.3 + Math.sin(time * 3 + dot.pulsePhase) * 0.7;
+        ctx.fillStyle = `rgba(16, 185, 129, ${pulse * 0.8})`;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      
+      // Rotating scanner
+      const scanAngle = time * 0.8;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(
+        centerX + Math.cos(scanAngle) * 200,
+        centerY + Math.sin(scanAngle) * 200
+      );
+      const scanGrad = ctx.createLinearGradient(
+        centerX, centerY,
+        centerX + Math.cos(scanAngle) * 200,
+        centerY + Math.sin(scanAngle) * 200
+      );
+      scanGrad.addColorStop(0, 'rgba(6, 182, 212, 0.3)');
+      scanGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      ctx.strokeStyle = scanGrad;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Top label
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('INFRASTRUCTURE STATUS: OPTIMAL', centerX, 30);
+      
+      // Bottom stats
+      ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
+      ctx.fillText(`LATENCY: ${Math.floor(12 + Math.sin(time) * 3)}ms`, centerX - 80, height - 20);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+      ctx.fillText(`UPTIME: 99.99%`, centerX + 80, height - 20);
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -322,16 +342,14 @@ export default function BrainVisualization({ className = "" }) {
   
   return (
     <motion.div 
-      className={`w-full h-full relative ${className}`}
+      className={`w-full h-full relative flex items-center justify-center ${className}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.9 }}
       transition={{ duration: 1.2, ease: 'easeOut' }}
-      style={{ minWidth: '400px', minHeight: '400px' }}
     >
       <canvas
         ref={canvasRef}
-        className="absolute inset-0"
-        style={{ background: 'transparent', width: '100%', height: '100%' }}
+        style={{ background: 'transparent' }}
       />
     </motion.div>
   );
