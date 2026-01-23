@@ -149,20 +149,20 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     gsap.registerPlugin(ScrollTrigger);
 
-    // Initialize Lenis for smooth scrolling
+    // Initialize Lenis for smooth scrolling with snap
     let lenis;
     try {
       lenis = new Lenis({
-        duration: 1.2,
+        duration: 1.4,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
       });
-      
+
       lenis.on('scroll', ScrollTrigger.update);
-      
+
       gsap.ticker.add((time) => {
         lenis.raf(time * 1000);
       });
@@ -170,6 +170,52 @@ export default function LandingPage() {
     } catch (e) {
       console.warn('Lenis init failed:', e);
     }
+
+    // Section snap functionality
+    const snapSections = [
+      'hero', 'philosophy', 'features', 'platform', 'enterprise', 
+      'integrations', 'demo-section', 'use-cases', 'stats', 'pricing', 'faq', 'cta'
+    ];
+
+    let isSnapping = false;
+    let snapTimeout;
+
+    const snapToNearestSection = () => {
+      if (isSnapping) return;
+
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      let closestSection = null;
+      let closestDistance = Infinity;
+
+      snapSections.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        const rect = el.getBoundingClientRect();
+        const sectionTop = scrollY + rect.top;
+        const distanceFromViewport = Math.abs(rect.top);
+
+        // Only snap if section is close to viewport top (within 40% of window height)
+        if (distanceFromViewport < windowHeight * 0.4 && distanceFromViewport < closestDistance) {
+          closestDistance = distanceFromViewport;
+          closestSection = el;
+        }
+      });
+
+      if (closestSection && closestDistance > 20) {
+        isSnapping = true;
+        closestSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => { isSnapping = false; }, 800);
+      }
+    };
+
+    const handleScrollEnd = () => {
+      clearTimeout(snapTimeout);
+      snapTimeout = setTimeout(snapToNearestSection, 150);
+    };
+
+    window.addEventListener('scroll', handleScrollEnd, { passive: true });
 
     // Wait for DOM and all components to mount
     const initTimeout = setTimeout(() => {
@@ -266,11 +312,13 @@ export default function LandingPage() {
 
     return () => {
       clearTimeout(initTimeout);
+      clearTimeout(snapTimeout);
+      window.removeEventListener('scroll', handleScrollEnd);
       ScrollTrigger.getAll().forEach(st => st.kill());
       gsap.ticker.remove(lenis?.raf);
       lenis?.destroy();
     };
-  }, []);
+    }, []);
 
   return (
     <HelmetProvider>
