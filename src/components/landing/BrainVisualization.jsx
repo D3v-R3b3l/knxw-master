@@ -12,14 +12,21 @@ export default function BrainVisualization({ className = "" }) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
     
-    const width = rect.width;
-    const height = rect.height;
+    // Get actual dimensions, with fallback
+    let width = canvas.parentElement?.clientWidth || 500;
+    let height = canvas.parentElement?.clientHeight || 500;
+    
+    // Minimum size
+    if (width < 100) width = 500;
+    if (height < 100) height = 500;
+    
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.scale(dpr, dpr);
     const centerX = width / 2;
     const centerY = height / 2;
     
