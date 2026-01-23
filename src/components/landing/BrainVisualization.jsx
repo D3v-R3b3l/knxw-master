@@ -326,11 +326,12 @@ export default function BrainVisualization({ className = "" }) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.9 }}
       transition={{ duration: 1.2, ease: 'easeOut' }}
+      style={{ minWidth: '400px', minHeight: '400px' }}
     >
       <canvas
         ref={canvasRef}
-        className="w-full h-full"
-        style={{ background: 'transparent' }}
+        className="absolute inset-0"
+        style={{ background: 'transparent', width: '100%', height: '100%' }}
       />
     </motion.div>
   );
