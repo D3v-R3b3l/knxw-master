@@ -1,11 +1,9 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
 
-// Complexity to clarity - for demo teaser
-export default function PredictiveFlowAnimation({ className = "" }) {
+// Flowing curves converging to center - inspired by neural connectivity
+export default function PredictiveFlowAnimation() {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -15,8 +13,8 @@ export default function PredictiveFlowAnimation({ className = "" }) {
     
     const updateSize = () => {
       const container = canvas.parentElement;
-      const width = container?.clientWidth || 600;
-      const height = container?.clientHeight || 400;
+      const width = container?.clientWidth || 800;
+      const height = container?.clientHeight || 500;
       const dpr = window.devicePixelRatio || 1;
       
       canvas.width = width * dpr;
@@ -29,39 +27,38 @@ export default function PredictiveFlowAnimation({ className = "" }) {
     };
     
     let { width, height } = updateSize();
-    
     const centerX = width / 2;
     const centerY = height / 2;
     
-    // Input beam (user action)
-    const inputBeam = {
-      x: 50,
-      y: centerY,
-      targetX: centerX - 80,
-      targetY: centerY,
-      particles: []
-    };
+    // Create flowing curves from edges toward center
+    const curves = [];
+    const numCurves = 16;
     
-    for (let i = 0; i < 10; i++) {
-      inputBeam.particles.push({
-        progress: i * 0.1,
-        speed: 0.5 + Math.random() * 0.3
+    for (let i = 0; i < numCurves; i++) {
+      const angle = (i / numCurves) * Math.PI * 2;
+      const startDist = Math.min(width, height) * 0.7;
+      
+      curves.push({
+        angle,
+        startX: centerX + Math.cos(angle) * startDist,
+        startY: centerY + Math.sin(angle) * startDist,
+        endX: centerX,
+        endY: centerY,
+        color: i % 3 === 0 ? '#06b6d4' : i % 3 === 1 ? '#8b5cf6' : '#10b981',
+        phase: Math.random() * Math.PI * 2,
+        depth: Math.random(), // For parallax
+        particles: []
       });
+      
+      // Add particles along each curve
+      for (let p = 0; p < 8; p++) {
+        curves[i].particles.push({
+          progress: p * 0.125,
+          speed: 0.3 + Math.random() * 0.4,
+          size: 2 + Math.random() * 3
+        });
+      }
     }
-    
-    // Central processor
-    const processor = {
-      x: centerX,
-      y: centerY,
-      radius: 50
-    };
-    
-    // Output clarity beam
-    const outputNodes = [
-      { x: centerX + 100, y: centerY - 30, label: 'PREDICT', delay: 0 },
-      { x: centerX + 100, y: centerY, label: 'DECIDE', delay: 0.3 },
-      { x: centerX + 100, y: centerY + 30, label: 'ACT', delay: 0.6 },
-    ];
     
     let time = 0;
     
@@ -69,126 +66,89 @@ export default function PredictiveFlowAnimation({ className = "" }) {
       time += 0.016;
       ctx.clearRect(0, 0, width, height);
       
-      // Input beam particles
-      inputBeam.particles.forEach(particle => {
-        particle.progress += particle.speed * 0.01;
-        if (particle.progress > 1) particle.progress = 0;
+      // Sort by depth for parallax
+      const sortedCurves = [...curves].sort((a, b) => a.depth - b.depth);
+      
+      sortedCurves.forEach((curve) => {
+        // Parallax movement based on depth
+        const parallaxOffset = Math.sin(time * 0.5 + curve.phase) * 15 * curve.depth;
+        const depthScale = 0.5 + curve.depth * 0.5;
+        const depthOpacity = 0.3 + curve.depth * 0.7;
         
-        const x = inputBeam.x + (inputBeam.targetX - inputBeam.x) * particle.progress;
-        const y = inputBeam.y + (inputBeam.targetY - inputBeam.y) * particle.progress;
+        // Control points for smooth bezier curve
+        const ctrlDist = Math.hypot(curve.startX - curve.endX, curve.startY - curve.endY) * 0.5;
+        const midAngle = curve.angle + Math.PI / 2;
+        const ctrl1X = curve.startX + Math.cos(midAngle) * ctrlDist * 0.3 + parallaxOffset;
+        const ctrl1Y = curve.startY + Math.sin(midAngle) * ctrlDist * 0.3;
+        const ctrl2X = curve.endX + Math.cos(midAngle + Math.PI) * ctrlDist * 0.2;
+        const ctrl2Y = curve.endY + Math.sin(midAngle + Math.PI) * ctrlDist * 0.2;
         
-        const glow = ctx.createRadialGradient(x, y, 0, x, y, 12);
-        glow.addColorStop(0, 'rgba(6, 182, 212, 1)');
-        glow.addColorStop(1, 'rgba(6, 182, 212, 0)');
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      
-      // Input label
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.9)';
-      ctx.font = 'bold 12px monospace';
-      ctx.textAlign = 'left';
-      ctx.fillText('INPUT', 50, centerY - 35);
-      
-      // Central processor
-      const pulse = 1 + Math.sin(time * 2) * 0.12;
-      
-      // Outer glow
-      const outerGlow = ctx.createRadialGradient(processor.x, processor.y, 0, processor.x, processor.y, processor.radius * 2.5);
-      outerGlow.addColorStop(0, 'rgba(139, 92, 246, 0.6)');
-      outerGlow.addColorStop(1, 'rgba(139, 92, 246, 0)');
-      ctx.fillStyle = outerGlow;
-      ctx.beginPath();
-      ctx.arc(processor.x, processor.y, processor.radius * 2.5, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Rotating rings
-      for (let i = 0; i < 3; i++) {
-        const ringRadius = processor.radius * (0.6 + i * 0.2);
-        const rotation = time * (1 + i * 0.3);
-        
-        ctx.strokeStyle = `rgba(${i === 0 ? '6, 182, 212' : i === 1 ? '139, 92, 246' : '16, 185, 129'}, 0.4)`;
-        ctx.lineWidth = 2;
-        ctx.setLineDash([5, 10]);
-        ctx.beginPath();
-        ctx.arc(processor.x, processor.y, ringRadius, rotation, rotation + Math.PI * 1.5);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-      
-      // Processor core
-      ctx.fillStyle = '#0f0f0f';
-      ctx.strokeStyle = '#8b5cf6';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(processor.x, processor.y, processor.radius * 0.5 * pulse, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      
-      // Core pulse
-      const corePulse = 0.5 + Math.sin(time * 4) * 0.5;
-      ctx.fillStyle = `rgba(139, 92, 246, ${corePulse})`;
-      ctx.beginPath();
-      ctx.arc(processor.x, processor.y, processor.radius * 0.25, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Output nodes
-      outputNodes.forEach((node, i) => {
-        // Connection line
-        const gradient = ctx.createLinearGradient(processor.x, processor.y, node.x, node.y);
-        gradient.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
-        gradient.addColorStop(1, 'rgba(16, 185, 129, 0.5)');
+        // Draw curve path
+        const gradient = ctx.createLinearGradient(curve.startX, curve.startY, curve.endX, curve.endY);
+        gradient.addColorStop(0, `${curve.color}${Math.floor(depthOpacity * 0.3 * 255).toString(16).padStart(2, '0')}`);
+        gradient.addColorStop(1, `${curve.color}${Math.floor(depthOpacity * 0.6 * 255).toString(16).padStart(2, '0')}`);
         
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1.5 * depthScale;
         ctx.beginPath();
-        ctx.moveTo(processor.x + processor.radius * 0.5, processor.y);
-        ctx.lineTo(node.x - 15, node.y);
+        ctx.moveTo(curve.startX, curve.startY);
+        ctx.bezierCurveTo(ctrl1X, ctrl1Y, ctrl2X, ctrl2Y, curve.endX, curve.endY);
         ctx.stroke();
         
-        // Pulse along line
-        const pulseProgress = (time * 0.8 + node.delay) % 1;
-        const px = processor.x + processor.radius * 0.5 + (node.x - 15 - processor.x - processor.radius * 0.5) * pulseProgress;
-        const py = processor.y + (node.y - processor.y) * pulseProgress;
-        
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
-        ctx.beginPath();
-        ctx.arc(px, py, 3, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Node
-        const nodePulse = 1 + Math.sin(time * 2 + i * 0.5) * 0.1;
-        
-        const nodeGlow = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 25);
-        nodeGlow.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
-        nodeGlow.addColorStop(1, 'rgba(16, 185, 129, 0)');
-        ctx.fillStyle = nodeGlow;
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 25, 0, Math.PI * 2);
-        ctx.fill();
-        
-        ctx.fillStyle = '#0a0a0a';
-        ctx.strokeStyle = '#10b981';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 12 * nodePulse, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        
-        // Label
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.font = 'bold 11px monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(node.label, node.x + 20, node.y + 4);
+        // Draw particles along curve
+        curve.particles.forEach((particle) => {
+          particle.progress += particle.speed * 0.005;
+          if (particle.progress > 1) particle.progress = 0;
+          
+          // Calculate position on bezier curve
+          const t = particle.progress;
+          const mt = 1 - t;
+          const x = mt*mt*mt * curve.startX + 
+                    3*mt*mt*t * ctrl1X + 
+                    3*mt*t*t * ctrl2X + 
+                    t*t*t * curve.endX;
+          const y = mt*mt*mt * curve.startY + 
+                    3*mt*mt*t * ctrl1Y + 
+                    3*mt*t*t * ctrl2Y + 
+                    t*t*t * curve.endY;
+          
+          // Particle glow
+          const particleSize = particle.size * depthScale;
+          const glowSize = particleSize * 4;
+          const particleGlow = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
+          particleGlow.addColorStop(0, `${curve.color}${Math.floor(depthOpacity * 255).toString(16).padStart(2, '0')}`);
+          particleGlow.addColorStop(1, `${curve.color}00`);
+          
+          ctx.fillStyle = particleGlow;
+          ctx.beginPath();
+          ctx.arc(x, y, glowSize, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Solid particle
+          ctx.fillStyle = curve.color;
+          ctx.beginPath();
+          ctx.arc(x, y, particleSize, 0, Math.PI * 2);
+          ctx.fill();
+        });
       });
       
-      // Status text
-      ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
-      ctx.font = 'bold 11px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('CLARITY ACHIEVED', centerX, height - 40);
+      // Central convergence point with pulse
+      const pulse = 1 + Math.sin(time * 2) * 0.15;
+      const coreGlow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80 * pulse);
+      coreGlow.addColorStop(0, 'rgba(139, 92, 246, 0.6)');
+      coreGlow.addColorStop(0.5, 'rgba(6, 182, 212, 0.3)');
+      coreGlow.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      
+      ctx.fillStyle = coreGlow;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 80 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Inner core
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 20 * pulse, 0, Math.PI * 2);
+      ctx.fill();
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -216,7 +176,7 @@ export default function PredictiveFlowAnimation({ className = "" }) {
       ref={canvasRef}
       className="w-full h-full"
       style={{ 
-        background: 'transparent', 
+        background: 'transparent',
         minHeight: '500px',
         minWidth: '100%'
       }}
