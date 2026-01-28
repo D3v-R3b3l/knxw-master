@@ -28,6 +28,7 @@ import EvidenceViewer from "../components/dashboard/EvidenceViewer";
 import RecommendationsPanel from "../components/dashboard/RecommendationsPanel";
 import FeedbackLoopPanel from "../components/dashboard/FeedbackLoopPanel";
 import logger from "../components/system/logger";
+import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
 
 const initialMetrics = {
   totalUsers: 0,
@@ -112,6 +113,7 @@ export default function Dashboard() {// Renamed from DashboardContent
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
+      await markOnboardingStep('view_dashboard');
 
       const userApps = apps || [];
 
