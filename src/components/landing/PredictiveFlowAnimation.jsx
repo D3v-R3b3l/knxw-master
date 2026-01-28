@@ -87,21 +87,21 @@ export default function PredictiveFlowAnimation({ className = "" }) {
       });
       
       // Input label
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.6)';
-      ctx.font = 'bold 10px monospace';
+      ctx.fillStyle = 'rgba(6, 182, 212, 0.9)';
+      ctx.font = 'bold 12px monospace';
       ctx.textAlign = 'left';
-      ctx.fillText('INPUT', 50, centerY - 30);
+      ctx.fillText('INPUT', 50, centerY - 35);
       
       // Central processor
       const pulse = 1 + Math.sin(time * 2) * 0.12;
       
       // Outer glow
-      const outerGlow = ctx.createRadialGradient(processor.x, processor.y, 0, processor.x, processor.y, processor.radius * 2);
-      outerGlow.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
+      const outerGlow = ctx.createRadialGradient(processor.x, processor.y, 0, processor.x, processor.y, processor.radius * 2.5);
+      outerGlow.addColorStop(0, 'rgba(139, 92, 246, 0.6)');
       outerGlow.addColorStop(1, 'rgba(139, 92, 246, 0)');
       ctx.fillStyle = outerGlow;
       ctx.beginPath();
-      ctx.arc(processor.x, processor.y, processor.radius * 2, 0, Math.PI * 2);
+      ctx.arc(processor.x, processor.y, processor.radius * 2.5, 0, Math.PI * 2);
       ctx.fill();
       
       // Rotating rings
@@ -178,17 +178,17 @@ export default function PredictiveFlowAnimation({ className = "" }) {
         ctx.stroke();
         
         // Label
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.font = 'bold 9px monospace';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.font = 'bold 11px monospace';
         ctx.textAlign = 'left';
         ctx.fillText(node.label, node.x + 20, node.y + 4);
       });
       
       // Status text
-      ctx.fillStyle = 'rgba(16, 185, 129, 0.6)';
-      ctx.font = '10px monospace';
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+      ctx.font = 'bold 11px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('PROCESSING COMPLETE', centerX, height - 30);
+      ctx.fillText('CLARITY ACHIEVED', centerX, height - 40);
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -212,17 +212,14 @@ export default function PredictiveFlowAnimation({ className = "" }) {
   }, []);
   
   return (
-    <motion.div 
-      className={`w-full h-full relative flex items-center justify-center ${className}`}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.9 }}
-      transition={{ duration: 1.2, ease: 'easeOut' }}
-    >
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full"
-        style={{ background: 'transparent', minHeight: '400px' }}
-      />
-    </motion.div>
+    <canvas
+      ref={canvasRef}
+      className="w-full h-full"
+      style={{ 
+        background: 'transparent', 
+        minHeight: '500px',
+        minWidth: '100%'
+      }}
+    />
   );
 }

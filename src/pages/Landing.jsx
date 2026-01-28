@@ -6,7 +6,7 @@ import BrainVisualization from '@/components/landing/BrainVisualization';
 import { ArrowDown } from 'lucide-react';
 import PhilosophySection from '@/components/landing/PhilosophySection';
 import PredictiveFlowAnimation from '@/components/landing/PredictiveFlowAnimation';
-import CTABackgroundAnimation from '@/components/landing/CTABackgroundAnimation';
+import ArchitecturalBuildAnimation from '@/components/landing/ArchitecturalBuildAnimation';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
 import IntegrationsMarquee from '@/components/landing/IntegrationsMarquee';
 import UseCasesGrid from '@/components/landing/UseCasesGrid';
@@ -625,8 +625,8 @@ export default function LandingPage() {
           {/* Final CTA - Enhanced */}
           <div id="cta" data-scroll-section>
           <section className="py-28 md:py-40 bg-gradient-to-b from-black via-[#080808] to-[#111] text-center border-t border-white/10 overflow-hidden relative">
-             {/* Atmospheric Background Animation */}
-             <CTABackgroundAnimation />
+             {/* Architectural Build Animation */}
+             <ArchitecturalBuildAnimation />
              
              {/* Parallax Background */}
              <div data-parallax-bg className="absolute inset-0 h-[150%] -top-[25%]">
