@@ -377,7 +377,7 @@ export default function Dashboard() {// Renamed from DashboardContent
         {selectedApp ?
         <>
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 relative z-[2]" data-tour="dashboard-metrics">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-10 relative z-[2]" data-tour="dashboard-metrics">
               {storeIsLoading ?
             Array(5).fill(0).map((_, i) =>
             <div key={i} className="bg-[#111111] border border-[#262626] rounded-xl p-6">

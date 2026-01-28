@@ -68,7 +68,7 @@ export default function AudienceBuilder() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto" data-tour="audience-builder">
         <PageHeader
           title="Audience Builder"
           description="Create custom audience segments based on psychographic and behavioral data"

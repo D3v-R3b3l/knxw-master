@@ -17,6 +17,7 @@ import InteractiveTour from "./components/onboarding/InteractiveTour";
 import GlobalAIAssistant from "./components/ai/GlobalAIAssistant";
 import RoleBasedOnboarding, { detectUserRole } from "./components/onboarding/RoleBasedOnboarding";
 import AdaptiveOnboardingEngine from "./components/onboarding/AdaptiveOnboardingEngine";
+import OnboardingProgress from "./components/ui/OnboardingProgress";
 import { navigationSections, adminNavigationItems } from "./components/constants/navigation";
 import { ASSETS } from "./components/constants/assets";
 import { logError } from "./components/config/sentry";
@@ -244,6 +245,8 @@ export default function Layout({ children, currentPageName }) {
         
         <AdaptiveOnboardingEngine>
         <div className="h-screen bg-[#0a0a0a] text-gray-100 overflow-hidden">
+          <OnboardingProgress />
+
           {showTour && (
             <InteractiveTour
               onComplete={() => setShowTour(false)}

@@ -1,4 +1,3 @@
-
 import React from "react";
 import Section from "./Section";
 import CodeBlock from "./CodeBlock";
@@ -22,12 +21,16 @@ export default function IntroductionDoc() {
         </p>
         <ul className="list-disc ml-6 text-[#cbd5e1] space-y-2">
           <li><strong>Real-Time Analysis:</strong> Capture and analyze user behavior as it happens</li>
+          <li><strong>Predictive AI:</strong> Churn prediction, anomaly detection, and behavioral forecasting</li>
           <li><strong>Journey Builder:</strong> Create sophisticated multi-step user flows triggered by psychological states</li>
           <li><strong>AI Agents:</strong> Deploy intelligent automation for growth, compliance, and content personalization</li>
           <li><strong>Audience Builder:</strong> Segment users by psychological traits and behavioral patterns</li>
+          <li><strong>A/B Testing:</strong> Psychographically-informed experiments with automated optimization</li>
+          <li><strong>AI Marketing Copy:</strong> Generate personalized messaging based on user psychology</li>
           <li><strong>Multi-Channel Engagement:</strong> Deliver personalized experiences across email, SMS, push, and in-app</li>
+          <li><strong>BI Tool Integration:</strong> Export to Tableau, Power BI, Looker, and custom data warehouses</li>
           <li><strong>Executive Dashboard:</strong> Board-ready insights with automated reporting and batch analytics</li>
-          <li><strong>Enterprise Compliance:</strong> Built-in audit trails, consent management, and SOC2-ready architecture</li>
+          <li><strong>Enterprise Security:</strong> RBAC with granular permissions, comprehensive audit logs, and SOC2-ready architecture</li>
         </ul>
       </Section>
 
