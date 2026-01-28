@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ClientApp } from "@/entities/all";
 import { base44 } from "@/api/base44Client";
@@ -131,6 +130,7 @@ export default function MyAppsPage() {
           title: "Success",
           description: "Application created successfully"
         });
+        await markOnboardingStep('create_app');
       } else {
         const errorMsg = data?.error || "Failed to create application.";
         setCreationError(errorMsg);

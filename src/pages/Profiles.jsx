@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import PageHeader from '../components/ui/PageHeader';
 import PsychographicTrendChart from '../components/psychographic/PsychographicTrendChart';
 import CognitiveBiasDetector from '../components/psychographic/CognitiveBiasDetector';
 import EmotionalShiftTimeline from '../components/psychographic/EmotionalShiftTimeline';
+import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
 
 export default function ProfilesPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,9 +67,13 @@ export default function ProfilesPage() {
     return icons[style] || Brain;
   };
 
+  useEffect(() => {
+    markOnboardingStep('view_profiles');
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="p-6 md:p-8">
+      <div className="p-6 md:p-8" data-tour="profiles-grid">
         <PageHeader
           title="User Profiles"
           description="Detailed psychographic analysis and behavioral insights"

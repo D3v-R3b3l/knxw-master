@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import ExplainabilityView from "../components/insights/ExplainabilityView";
 import { safeFormatDate } from "../components/utils/datetime";
 import PageHeader from '../components/ui/PageHeader';
+import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
 
 export default function InsightsPage() {
   const [selectedInsight, setSelectedInsight] = useState(null);
@@ -53,9 +54,13 @@ export default function InsightsPage() {
     return acc;
   }, {});
 
+  useEffect(() => {
+    markOnboardingStep('view_insights');
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="p-6 md:p-8">
+      <div className="p-6 md:p-8" data-tour="insights-list">
         <PageHeader
           title="AI Insights"
           description="Psychographic intelligence and behavioral patterns"

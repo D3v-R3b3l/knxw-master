@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import { Activity, Filter, Search, Calendar, User, MousePointer, Eye, Download }
 import { motion } from "framer-motion";
 import { safeFormatDate } from "../components/utils/datetime"; // NEW IMPORT
 import PageHeader from '../components/ui/PageHeader';
+import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,10 +80,13 @@ export default function EventsPage() {
   };
 
   // No specific useEffect for initial load/refetch needed as useQuery handles it
+  useEffect(() => {
+    markOnboardingStep('view_events');
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#111111] p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto" data-tour="events-table">
         <PageHeader
           title="Event Stream"
           description="Real-time behavioral event capture and analysis"
