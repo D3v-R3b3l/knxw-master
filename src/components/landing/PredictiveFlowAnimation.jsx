@@ -13,15 +13,22 @@ export default function PredictiveFlowAnimation({ className = "" }) {
     
     const ctx = canvas.getContext('2d');
     
-    let width = 400;
-    let height = 300;
+    const updateSize = () => {
+      const container = canvas.parentElement;
+      const width = container?.clientWidth || 600;
+      const height = container?.clientHeight || 400;
+      const dpr = window.devicePixelRatio || 1;
+      
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.scale(dpr, dpr);
+      
+      return { width, height };
+    };
     
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-    ctx.scale(dpr, dpr);
+    let { width, height } = updateSize();
     
     const centerX = width / 2;
     const centerY = height / 2;

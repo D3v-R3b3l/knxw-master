@@ -5,6 +5,8 @@ import SEOHead from '@/components/system/SEOHead';
 import BrainVisualization from '@/components/landing/BrainVisualization';
 import { ArrowDown } from 'lucide-react';
 import PhilosophySection from '@/components/landing/PhilosophySection';
+import PredictiveFlowAnimation from '@/components/landing/PredictiveFlowAnimation';
+import CTABackgroundAnimation from '@/components/landing/CTABackgroundAnimation';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
 import IntegrationsMarquee from '@/components/landing/IntegrationsMarquee';
 import UseCasesGrid from '@/components/landing/UseCasesGrid';
@@ -529,6 +531,11 @@ export default function LandingPage() {
           {/* Interactive Demo Teaser - Enhanced */}
           <div data-scroll-section>
           <section id="demo-section" className="py-24 md:py-32 bg-[#080808] text-center overflow-hidden relative">
+             {/* Predictive Flow Animation */}
+             <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+               <PredictiveFlowAnimation />
+             </div>
+             
              {/* Parallax Background with abstract shapes */}
              <div data-parallax-bg className="absolute inset-0 h-[140%] -top-[20%]">
                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.08),transparent_50%)]" />
@@ -616,6 +623,9 @@ export default function LandingPage() {
           {/* Final CTA - Enhanced */}
           <div id="cta" data-scroll-section>
           <section className="py-28 md:py-40 bg-gradient-to-b from-black via-[#080808] to-[#111] text-center border-t border-white/10 overflow-hidden relative">
+             {/* Atmospheric Background Animation */}
+             <CTABackgroundAnimation />
+             
              {/* Parallax Background */}
              <div data-parallax-bg className="absolute inset-0 h-[150%] -top-[25%]">
                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(6,182,212,0.12),transparent_50%)]" />
