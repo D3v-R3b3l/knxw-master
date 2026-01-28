@@ -329,6 +329,7 @@ const documentationSections = [
   { id: 'gamedev-sdk', title: 'GameDev SDK', icon: Gamepad2, component: GameDevSDKDoc },
   { id: 'webhooks', title: 'Webhooks', icon: Webhook, component: WebhooksDoc },
   { id: 'audience-builder', title: 'Audience Builder', icon: Users, component: AudienceBuilderDoc },
+  { id: 'predictive-analytics', title: 'Predictive Analytics', icon: TrendingUp, component: () => <div>Coming soon</div> },
   { id: 'predictive-psychographics', title: 'Predictive Psychographics', icon: Brain, component: PredictivePsychographicsDoc },
   { id: 'market-intelligence', title: 'Market Intelligence', icon: TrendingUp, component: MarketIntelligenceDoc },
   { id: 'custom-dashboards', title: 'Custom Dashboards', icon: BarChart3, component: CustomDashboardsDoc },

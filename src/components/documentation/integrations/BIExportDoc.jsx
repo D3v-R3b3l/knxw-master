@@ -1,186 +1,144 @@
 import React from "react";
-import { Badge } from "@/components/ui/badge";
+import Section from "../Section";
+import CodeBlock from "../CodeBlock";
+import Callout from "../Callout";
 
 export default function BIExportDoc() {
   return (
-    <div className="prose prose-invert max-w-none">
-      <h3 className="text-2xl font-bold text-white mb-4">BI Data Export</h3>
-      <p className="text-[#a3a3a3] mb-6">
-        Export psychographic intelligence data to your favorite Business Intelligence tools for advanced analytics and reporting.
+    <div>
+      <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">
+        BI Tool Data Export
+      </h1>
+      <p className="text-[#cbd5e1] text-lg mb-6">
+        Export psychographic intelligence data to Tableau, Power BI, Looker, Metabase, 
+        or custom data warehouses for advanced visualization and analysis.
       </p>
 
-      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg p-6 mb-6">
-        <h4 className="text-lg font-semibold text-[#00d4ff] mb-3">Supported Platforms</h4>
+      <Section title="Supported Platforms">
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
-            <h5 className="font-medium text-white mb-2">Tableau</h5>
-            <p className="text-sm text-[#a3a3a3]">
-              Native Tableau-optimized format with proper data types and relationships.
-            </p>
-            <Badge className="mt-2 bg-[#10b981]/20 text-[#10b981] border-[#10b981]/30">CSV / JSON</Badge>
+          <div className="p-4 bg-[#1a1a1a] rounded-lg border border-[#333333]">
+            <h4 className="text-[#00d4ff] font-bold mb-2">Tableau</h4>
+            <p className="text-[#a3a3a3] text-sm">Direct connector via CSV/JSON exports or live API connection</p>
           </div>
-          <div className="p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
-            <h5 className="font-medium text-white mb-2">Power BI</h5>
-            <p className="text-sm text-[#a3a3a3]">
-              Structured for Power BI datasets with proper column formatting.
-            </p>
-            <Badge className="mt-2 bg-[#f59e0b]/20 text-[#f59e0b] border-[#f59e0b]/30">JSON</Badge>
+          <div className="p-4 bg-[#1a1a1a] rounded-lg border border-[#333333]">
+            <h4 className="text-[#00d4ff] font-bold mb-2">Power BI</h4>
+            <p className="text-[#a3a3a3] text-sm">Scheduled exports to Azure Blob or Power BI REST API</p>
           </div>
-          <div className="p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
-            <h5 className="font-medium text-white mb-2">Looker</h5>
-            <p className="text-sm text-[#a3a3a3]">
-              Compatible with Looker's data modeling requirements.
-            </p>
-            <Badge className="mt-2 bg-[#8b5cf6]/20 text-[#8b5cf6] border-[#8b5cf6]/30">CSV / JSON</Badge>
+          <div className="p-4 bg-[#1a1a1a] rounded-lg border border-[#333333]">
+            <h4 className="text-[#00d4ff] font-bold mb-2">Looker</h4>
+            <p className="text-[#a3a3a3] text-sm">JSON exports for Looker Studio dashboards</p>
           </div>
-          <div className="p-4 bg-[#0a0a0a] border border-[#262626] rounded-lg">
-            <h5 className="font-medium text-white mb-2">Generic</h5>
-            <p className="text-sm text-[#a3a3a3]">
-              Standard format for any BI tool or data warehouse.
-            </p>
-            <Badge className="mt-2 bg-[#ec4899]/20 text-[#ec4899] border-[#ec4899]/30">CSV / JSON</Badge>
+          <div className="p-4 bg-[#1a1a1a] rounded-lg border border-[#333333]">
+            <h4 className="text-[#00d4ff] font-bold mb-2">Custom Warehouses</h4>
+            <p className="text-[#a3a3a3] text-sm">Scheduled exports to S3, Azure Blob, or webhook endpoints</p>
           </div>
         </div>
-      </div>
+      </Section>
 
-      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg p-6 mb-6">
-        <h4 className="text-lg font-semibold text-[#00d4ff] mb-3">Available Data Sources</h4>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-[#262626]">
-              <th className="text-left py-2 text-white">Data Source</th>
-              <th className="text-left py-2 text-white">Description</th>
-              <th className="text-left py-2 text-white">Fields</th>
-            </tr>
-          </thead>
-          <tbody className="text-[#a3a3a3]">
-            <tr className="border-b border-[#262626]">
-              <td className="py-2 font-medium">psychographic_profiles</td>
-              <td className="py-2">User psychographic analysis data</td>
-              <td className="py-2">20+ fields</td>
-            </tr>
-            <tr className="border-b border-[#262626]">
-              <td className="py-2 font-medium">events</td>
-              <td className="py-2">Captured behavioral events</td>
-              <td className="py-2">15+ fields</td>
-            </tr>
-            <tr className="border-b border-[#262626]">
-              <td className="py-2 font-medium">insights</td>
-              <td className="py-2">AI-generated psychographic insights</td>
-              <td className="py-2">12+ fields</td>
-            </tr>
-            <tr className="border-b border-[#262626]">
-              <td className="py-2 font-medium">engagements</td>
-              <td className="py-2">Engagement delivery and response data</td>
-              <td className="py-2">18+ fields</td>
-            </tr>
-            <tr>
-              <td className="py-2 font-medium">attributions</td>
-              <td className="py-2">Conversion attribution data</td>
-              <td className="py-2">10+ fields</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg p-6 mb-6">
-        <h4 className="text-lg font-semibold text-[#00d4ff] mb-3">Export Schema</h4>
-        <pre className="bg-[#0a0a0a] border border-[#262626] rounded p-4 text-sm text-[#10b981] overflow-x-auto">
-{`// Get schema for BI tool configuration
-const schema = await knxw.bi.getSchema();
-
-// Response example:
-{
-  "psychographic_profiles": {
-    "user_id": "string",
-    "risk_profile": "string",
-    "cognitive_style": "string",
-    "emotional_mood": "string",
-    "openness": "number",
-    "conscientiousness": "number",
-    "extraversion": "number",
-    "agreeableness": "number",
-    "neuroticism": "number",
-    "motivation_labels": "array",
-    "confidence_score": "number",
-    "last_analyzed": "datetime"
-  },
-  "events": {
-    "user_id": "string",
-    "event_type": "string",
-    "event_url": "string",
-    "event_element": "string",
-    "event_timestamp": "datetime",
-    "session_id": "string"
-  }
-}`}
-        </pre>
-      </div>
-
-      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg p-6 mb-6">
-        <h4 className="text-lg font-semibold text-[#00d4ff] mb-3">API Usage</h4>
-        <pre className="bg-[#0a0a0a] border border-[#262626] rounded p-4 text-sm text-[#10b981] overflow-x-auto">
-{`// Export data for Tableau
-const exportData = await knxw.bi.export({
-  platform: 'tableau',
-  format: 'csv',
-  dataSources: ['psychographic_profiles', 'events'],
-  filters: {
-    dateRangeDays: 30,
-    includeDemoData: false
-  }
-});
-
-// Export for Power BI
-const powerBiData = await knxw.bi.export({
-  platform: 'powerbi',
-  format: 'json',
-  dataSources: ['psychographic_profiles', 'insights', 'engagements']
-});
-
-// Preview data before export
-const preview = await knxw.bi.preview({
-  dataSources: ['psychographic_profiles'],
-  limit: 10
-});`}
-        </pre>
-      </div>
-
-      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg p-6 mb-6">
-        <h4 className="text-lg font-semibold text-[#00d4ff] mb-3">Scheduled Exports</h4>
-        <p className="text-[#a3a3a3] mb-4">
-          Configure automated exports to cloud storage for regular BI refresh:
-        </p>
-        <pre className="bg-[#0a0a0a] border border-[#262626] rounded p-4 text-sm text-[#10b981] overflow-x-auto">
-{`// Create scheduled export
-await knxw.bi.createSchedule({
-  name: 'Daily Psychographic Export',
-  platform: 'tableau',
-  format: 'csv',
-  dataSources: ['psychographic_profiles', 'events'],
-  schedule: {
-    frequency: 'daily',
-    time: '02:00'
-  },
-  delivery: {
-    method: 's3',
-    bucket: 'my-bi-exports',
-    prefix: 'knxw/'
-  }
-});`}
-        </pre>
-      </div>
-
-      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg p-6">
-        <h4 className="text-lg font-semibold text-[#00d4ff] mb-3">Best Practices</h4>
-        <ul className="text-[#a3a3a3] space-y-2">
-          <li>• <strong className="text-white">Use incremental exports</strong> - Filter by date range to reduce data volume</li>
-          <li>• <strong className="text-white">Exclude demo data</strong> - Set includeDemoData: false for production dashboards</li>
-          <li>• <strong className="text-white">Schedule during off-peak</strong> - Run large exports during low-traffic hours</li>
-          <li>• <strong className="text-white">Use appropriate format</strong> - CSV for Tableau, JSON for Power BI</li>
-          <li>• <strong className="text-white">Preview first</strong> - Always preview data structure before full export</li>
+      <Section title="Export Formats">
+        <ul className="list-disc ml-6 text-[#cbd5e1] space-y-2">
+          <li><strong>CSV:</strong> Universal format for all BI tools, optimized for large datasets</li>
+          <li><strong>JSON:</strong> Structured data with nested objects for advanced analysis</li>
+          <li><strong>Parquet:</strong> Columnar format for data warehouse integration (Enterprise)</li>
         </ul>
-      </div>
+      </Section>
+
+      <Section title="Creating an Export Configuration">
+        <CodeBlock language="javascript">
+{`const exportConfig = await base44.entities.BIExportConfig.create({
+  client_app_id: "app_123",
+  name: "Weekly Tableau Export",
+  platform: "tableau",
+  export_format: "csv",
+  data_sources: [
+    "psychographic_profiles",
+    "events",
+    "insights",
+    "engagements"
+  ],
+  filters: {
+    date_range_days: 30,
+    include_demo_data: false
+  },
+  schedule: {
+    enabled: true,
+    frequency: "weekly",
+    delivery_method: "s3",
+    delivery_config: {
+      bucket: "my-bi-exports",
+      path: "knxw/weekly/"
+    }
+  }
+});`}
+        </CodeBlock>
+      </Section>
+
+      <Section title="Manual Export">
+        <p className="text-[#cbd5e1] mb-4">
+          Trigger an export on-demand:
+        </p>
+        <CodeBlock language="javascript">
+{`const response = await base44.functions.invoke('exportBI', {
+  config_id: "export_config_123",
+  format: "csv"
+});
+
+// Download the file
+const blob = await response.blob();
+const url = window.URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'knxw-export.csv';
+a.click();`}
+        </CodeBlock>
+      </Section>
+
+      <Section title="Scheduled Exports">
+        <p className="text-[#cbd5e1] mb-4">
+          Configure automated exports to run hourly, daily, or weekly:
+        </p>
+        <ul className="list-disc ml-6 text-[#cbd5e1] space-y-2">
+          <li><strong>Hourly:</strong> Real-time data feeds for operational dashboards</li>
+          <li><strong>Daily:</strong> Standard refresh for business intelligence reports</li>
+          <li><strong>Weekly:</strong> Executive summaries and trend analysis</li>
+        </ul>
+      </Section>
+
+      <Section title="Data Sources">
+        <p className="text-[#cbd5e1] mb-4">
+          Select which data to include in your exports:
+        </p>
+        <ul className="list-disc ml-6 text-[#cbd5e1] space-y-2">
+          <li><strong>psychographic_profiles:</strong> Full user psychological profiles with confidence scores</li>
+          <li><strong>events:</strong> Raw behavioral event stream</li>
+          <li><strong>insights:</strong> AI-generated insights and recommendations</li>
+          <li><strong>engagements:</strong> Engagement delivery history and responses</li>
+          <li><strong>attributions:</strong> Conversion attribution data</li>
+        </ul>
+      </Section>
+
+      <Callout type="success">
+        <p>
+          <strong>Pro Tip:</strong> Use date_range_days filter to control export size. 
+          Start with 7-30 days for initial dashboards, then expand once your BI infrastructure is tested.
+        </p>
+      </Callout>
+
+      <Section title="Integration Examples">
+        <h4 className="text-white font-bold mb-3">Tableau Connection</h4>
+        <p className="text-[#cbd5e1] mb-3 text-sm">
+          1. Export data as CSV using the exportBI function<br/>
+          2. Upload to Tableau Server or Tableau Cloud<br/>
+          3. Create visualizations using psychographic dimensions
+        </p>
+
+        <h4 className="text-white font-bold mb-3 mt-6">Power BI Connection</h4>
+        <p className="text-[#cbd5e1] mb-3 text-sm">
+          1. Configure Azure Blob delivery in your export config<br/>
+          2. Connect Power BI to your Azure storage account<br/>
+          3. Set up automatic data refresh
+        </p>
+      </Section>
     </div>
   );
 }
