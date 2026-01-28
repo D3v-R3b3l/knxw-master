@@ -70,7 +70,7 @@ export default function CTABackgroundAnimation() {
         if (orb.y < -100 || orb.y > height + 100) orb.vy *= -1;
         
         const pulse = 1 + Math.sin(time * 0.8 + orb.phase) * 0.2;
-        const opacity = 0.03 + Math.sin(time * 0.5 + orb.phase) * 0.02;
+        const opacity = 0.15 + Math.sin(time * 0.5 + orb.phase) * 0.05;
         
         const glow = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.radius * pulse);
         glow.addColorStop(0, `${orb.color}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`);
@@ -107,7 +107,7 @@ export default function CTABackgroundAnimation() {
           const tx = stream.x + (stream.targetX - stream.x) * trailProgress;
           const ty = stream.y + (stream.targetY - stream.y) * trailProgress;
           
-          const trailOpacity = (1 - i / trailLength) * 0.3;
+          const trailOpacity = (1 - i / trailLength) * 0.6;
           ctx.fillStyle = `${stream.color}${Math.floor(trailOpacity * 255).toString(16).padStart(2, '0')}`;
           ctx.beginPath();
           ctx.arc(tx, ty, 2, 0, Math.PI * 2);

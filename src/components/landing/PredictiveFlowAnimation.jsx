@@ -77,8 +77,8 @@ export default function PredictiveFlowAnimation({ className = "" }) {
         const x = inputBeam.x + (inputBeam.targetX - inputBeam.x) * particle.progress;
         const y = inputBeam.y + (inputBeam.targetY - inputBeam.y) * particle.progress;
         
-        const glow = ctx.createRadialGradient(x, y, 0, x, y, 8);
-        glow.addColorStop(0, 'rgba(6, 182, 212, 0.9)');
+        const glow = ctx.createRadialGradient(x, y, 0, x, y, 12);
+        glow.addColorStop(0, 'rgba(6, 182, 212, 1)');
         glow.addColorStop(1, 'rgba(6, 182, 212, 0)');
         ctx.fillStyle = glow;
         ctx.beginPath();
@@ -220,7 +220,8 @@ export default function PredictiveFlowAnimation({ className = "" }) {
     >
       <canvas
         ref={canvasRef}
-        style={{ background: 'transparent' }}
+        className="w-full h-full"
+        style={{ background: 'transparent', minHeight: '400px' }}
       />
     </motion.div>
   );
