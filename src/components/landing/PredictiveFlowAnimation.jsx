@@ -1,9 +1,27 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-// Flowing curves converging to center - inspired by neural connectivity
+// Data streams from sides converging to central processor
 export default function PredictiveFlowAnimation() {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
+  const containerRef = useRef(null);
+  const [scrollY, setScrollY] = useState(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const centerY = rect.top + rect.height / 2;
+      const viewportCenter = window.innerHeight / 2;
+      const offset = centerY - viewportCenter;
+      setScrollY(offset * 0.5); // Parallax factor
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -13,8 +31,8 @@ export default function PredictiveFlowAnimation() {
     
     const updateSize = () => {
       const container = canvas.parentElement;
-      const width = container?.clientWidth || 800;
-      const height = container?.clientHeight || 500;
+      const width = container?.clientWidth || 1200;
+      const height = container?.clientHeight || 600;
       const dpr = window.devicePixelRatio || 1;
       
       canvas.width = width * dpr;
@@ -30,35 +48,49 @@ export default function PredictiveFlowAnimation() {
     const centerX = width / 2;
     const centerY = height / 2;
     
-    // Create flowing curves from edges toward center
-    const curves = [];
-    const numCurves = 16;
+    // Streams from left and right
+    const streams = [];
+    const numStreamsPerSide = 12;
     
-    for (let i = 0; i < numCurves; i++) {
-      const angle = (i / numCurves) * Math.PI * 2;
-      const startDist = Math.min(width, height) * 0.7;
+    for (let i = 0; i < numStreamsPerSide; i++) {
+      const yPos = (height * 0.2) + (i / numStreamsPerSide) * (height * 0.6);
+      const depth = Math.random();
       
-      curves.push({
-        angle,
-        startX: centerX + Math.cos(angle) * startDist,
-        startY: centerY + Math.sin(angle) * startDist,
+      // Left side stream
+      streams.push({
+        startX: -50,
+        startY: yPos,
         endX: centerX,
         endY: centerY,
         color: i % 3 === 0 ? '#06b6d4' : i % 3 === 1 ? '#8b5cf6' : '#10b981',
-        phase: Math.random() * Math.PI * 2,
-        depth: Math.random(), // For parallax
-        particles: []
+        particles: [],
+        depth,
+        side: 'left'
       });
       
-      // Add particles along each curve
-      for (let p = 0; p < 8; p++) {
-        curves[i].particles.push({
-          progress: p * 0.125,
-          speed: 0.3 + Math.random() * 0.4,
-          size: 2 + Math.random() * 3
+      // Right side stream
+      streams.push({
+        startX: width + 50,
+        startY: yPos + 20,
+        endX: centerX,
+        endY: centerY,
+        color: i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#10b981' : '#06b6d4',
+        particles: [],
+        depth: Math.random(),
+        side: 'right'
+      });
+    }
+    
+    // Initialize particles
+    streams.forEach(stream => {
+      for (let p = 0; p < 6; p++) {
+        stream.particles.push({
+          progress: p * 0.17,
+          speed: 0.25 + Math.random() * 0.35,
+          size: 2 + Math.random() * 2
         });
       }
-    }
+    });
     
     let time = 0;
     
@@ -66,88 +98,105 @@ export default function PredictiveFlowAnimation() {
       time += 0.016;
       ctx.clearRect(0, 0, width, height);
       
-      // Sort by depth for parallax
-      const sortedCurves = [...curves].sort((a, b) => a.depth - b.depth);
+      // Sort by depth for layering
+      const sortedStreams = [...streams].sort((a, b) => a.depth - b.depth);
       
-      sortedCurves.forEach((curve) => {
-        // Parallax movement based on depth
-        const parallaxOffset = Math.sin(time * 0.5 + curve.phase) * 15 * curve.depth;
-        const depthScale = 0.5 + curve.depth * 0.5;
-        const depthOpacity = 0.3 + curve.depth * 0.7;
+      sortedStreams.forEach((stream) => {
+        const depthScale = 0.4 + stream.depth * 0.6;
+        const depthOpacity = 0.4 + stream.depth * 0.6;
+        const parallax = scrollY * stream.depth * 0.3;
         
-        // Control points for smooth bezier curve
-        const ctrlDist = Math.hypot(curve.startX - curve.endX, curve.startY - curve.endY) * 0.5;
-        const midAngle = curve.angle + Math.PI / 2;
-        const ctrl1X = curve.startX + Math.cos(midAngle) * ctrlDist * 0.3 + parallaxOffset;
-        const ctrl1Y = curve.startY + Math.sin(midAngle) * ctrlDist * 0.3;
-        const ctrl2X = curve.endX + Math.cos(midAngle + Math.PI) * ctrlDist * 0.2;
-        const ctrl2Y = curve.endY + Math.sin(midAngle + Math.PI) * ctrlDist * 0.2;
+        // Curved path with parallax
+        const ctrlX = stream.side === 'left' ? centerX - 200 : centerX + 200;
+        const ctrlY = stream.startY + parallax;
         
-        // Draw curve path
-        const gradient = ctx.createLinearGradient(curve.startX, curve.startY, curve.endX, curve.endY);
-        gradient.addColorStop(0, `${curve.color}${Math.floor(depthOpacity * 0.3 * 255).toString(16).padStart(2, '0')}`);
-        gradient.addColorStop(1, `${curve.color}${Math.floor(depthOpacity * 0.6 * 255).toString(16).padStart(2, '0')}`);
+        // Draw stream path
+        const gradient = ctx.createLinearGradient(stream.startX, stream.startY, stream.endX, stream.endY + parallax);
+        gradient.addColorStop(0, `${stream.color}${Math.floor(depthOpacity * 0.25 * 255).toString(16).padStart(2, '0')}`);
+        gradient.addColorStop(1, `${stream.color}${Math.floor(depthOpacity * 0.5 * 255).toString(16).padStart(2, '0')}`);
         
         ctx.strokeStyle = gradient;
         ctx.lineWidth = 1.5 * depthScale;
         ctx.beginPath();
-        ctx.moveTo(curve.startX, curve.startY);
-        ctx.bezierCurveTo(ctrl1X, ctrl1Y, ctrl2X, ctrl2Y, curve.endX, curve.endY);
+        ctx.moveTo(stream.startX, stream.startY + parallax);
+        ctx.quadraticCurveTo(ctrlX, ctrlY, stream.endX, stream.endY + parallax * 0.5);
         ctx.stroke();
         
-        // Draw particles along curve
-        curve.particles.forEach((particle) => {
-          particle.progress += particle.speed * 0.005;
+        // Draw particles
+        stream.particles.forEach((particle) => {
+          particle.progress += particle.speed * 0.008;
           if (particle.progress > 1) particle.progress = 0;
           
-          // Calculate position on bezier curve
           const t = particle.progress;
           const mt = 1 - t;
-          const x = mt*mt*mt * curve.startX + 
-                    3*mt*mt*t * ctrl1X + 
-                    3*mt*t*t * ctrl2X + 
-                    t*t*t * curve.endX;
-          const y = mt*mt*mt * curve.startY + 
-                    3*mt*mt*t * ctrl1Y + 
-                    3*mt*t*t * ctrl2Y + 
-                    t*t*t * curve.endY;
           
-          // Particle glow
-          const particleSize = particle.size * depthScale;
-          const glowSize = particleSize * 4;
+          // Quadratic bezier position
+          const x = mt*mt * stream.startX + 2*mt*t * ctrlX + t*t * stream.endX;
+          const y = mt*mt * (stream.startY + parallax) + 2*mt*t * ctrlY + t*t * (stream.endY + parallax * 0.5);
+          
+          // Glow
+          const glowSize = particle.size * 5 * depthScale;
           const particleGlow = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
-          particleGlow.addColorStop(0, `${curve.color}${Math.floor(depthOpacity * 255).toString(16).padStart(2, '0')}`);
-          particleGlow.addColorStop(1, `${curve.color}00`);
+          particleGlow.addColorStop(0, `${stream.color}${Math.floor(depthOpacity * 255).toString(16).padStart(2, '0')}`);
+          particleGlow.addColorStop(1, `${stream.color}00`);
           
           ctx.fillStyle = particleGlow;
           ctx.beginPath();
           ctx.arc(x, y, glowSize, 0, Math.PI * 2);
           ctx.fill();
           
-          // Solid particle
-          ctx.fillStyle = curve.color;
+          // Core
+          ctx.fillStyle = stream.color;
           ctx.beginPath();
-          ctx.arc(x, y, particleSize, 0, Math.PI * 2);
+          ctx.arc(x, y, particle.size * depthScale, 0, Math.PI * 2);
           ctx.fill();
         });
       });
       
-      // Central convergence point with pulse
-      const pulse = 1 + Math.sin(time * 2) * 0.15;
-      const coreGlow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 80 * pulse);
-      coreGlow.addColorStop(0, 'rgba(139, 92, 246, 0.6)');
-      coreGlow.addColorStop(0.5, 'rgba(6, 182, 212, 0.3)');
-      coreGlow.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      // Central processor/brain with parallax
+      const centralParallax = scrollY * 0.2;
+      const pulse = 1 + Math.sin(time * 1.5) * 0.12;
       
-      ctx.fillStyle = coreGlow;
+      // Outer glow
+      const outerGlow = ctx.createRadialGradient(
+        centerX, centerY + centralParallax, 0,
+        centerX, centerY + centralParallax, 120 * pulse
+      );
+      outerGlow.addColorStop(0, 'rgba(139, 92, 246, 0.5)');
+      outerGlow.addColorStop(0.5, 'rgba(6, 182, 212, 0.3)');
+      outerGlow.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      
+      ctx.fillStyle = outerGlow;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 80 * pulse, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY + centralParallax, 120 * pulse, 0, Math.PI * 2);
       ctx.fill();
       
-      // Inner core
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+      // Core structure - hexagonal pattern
+      const hexRadius = 40;
+      for (let ring = 0; ring < 3; ring++) {
+        const ringRadius = hexRadius * (1 - ring * 0.3);
+        const rotation = time * (1 + ring * 0.2);
+        
+        ctx.strokeStyle = ring === 0 ? 'rgba(139, 92, 246, 0.8)' : 
+                          ring === 1 ? 'rgba(6, 182, 212, 0.6)' : 'rgba(16, 185, 129, 0.4)';
+        ctx.lineWidth = 2;
+        
+        ctx.beginPath();
+        for (let i = 0; i <= 6; i++) {
+          const angle = rotation + (i * Math.PI / 3);
+          const x = centerX + Math.cos(angle) * ringRadius;
+          const y = centerY + centralParallax + Math.sin(angle) * ringRadius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      
+      // Inner core pulse
+      const corePulse = 0.6 + Math.sin(time * 3) * 0.4;
+      ctx.fillStyle = `rgba(255, 255, 255, ${corePulse * 0.3})`;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 20 * pulse, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY + centralParallax, 15, 0, Math.PI * 2);
       ctx.fill();
       
       animationRef.current = requestAnimationFrame(animate);
@@ -169,17 +218,19 @@ export default function PredictiveFlowAnimation() {
       }
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [scrollY]);
   
   return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-      style={{ 
-        background: 'transparent',
-        minHeight: '500px',
-        minWidth: '100%'
-      }}
-    />
+    <div ref={containerRef} className="w-full h-full">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ 
+          background: 'transparent',
+          minHeight: '600px',
+          minWidth: '100%'
+        }}
+      />
+    </div>
   );
 }
