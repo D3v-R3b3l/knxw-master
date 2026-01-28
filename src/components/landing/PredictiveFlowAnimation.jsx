@@ -212,10 +212,16 @@ export default function PredictiveFlowAnimation({ className = "" }) {
   }, []);
   
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-40"
-      style={{ background: 'transparent' }}
-    />
+    <motion.div 
+      className={`w-full h-full relative flex items-center justify-center ${className}`}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.9 }}
+      transition={{ duration: 1.2, ease: 'easeOut' }}
+    >
+      <canvas
+        ref={canvasRef}
+        style={{ background: 'transparent' }}
+      />
+    </motion.div>
   );
 }
