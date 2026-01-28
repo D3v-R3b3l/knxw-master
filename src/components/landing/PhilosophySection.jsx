@@ -1,4 +1,5 @@
 import React from 'react';
+import DataFlowVisualization from './DataFlowVisualization';
 
 export default function PhilosophySection() {
   return (
@@ -19,7 +20,12 @@ export default function PhilosophySection() {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div>
+          {/* Data Flow Visualization */}
+          <div className="hidden md:flex items-center justify-center order-2 md:order-1">
+            <DataFlowVisualization />
+          </div>
+
+          <div className="order-1 md:order-2">
             <div className="mb-6">
               <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block">
                 Philosophy
@@ -40,7 +46,7 @@ export default function PhilosophySection() {
             </div>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-5 order-3">
             {/* The Limits Card */}
             <div className="p-6 md:p-8 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl border border-white/10 relative overflow-hidden group hover:border-red-500/30 transition-colors duration-500">
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

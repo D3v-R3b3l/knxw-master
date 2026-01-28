@@ -3,10 +3,14 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Code } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import CTABackgroundAnimation from './CTABackgroundAnimation';
 
 export default function FinalCTA() {
   return (
     <section className="py-32 md:py-48 bg-gradient-to-b from-black via-[#0a0014] to-black relative overflow-hidden">
+      {/* Atmospheric data flow background */}
+      <CTABackgroundAnimation />
+      
       {/* Ambient glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1600px] h-[1600px]">
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-blue-500/10 rounded-full blur-[200px]" />

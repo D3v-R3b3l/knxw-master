@@ -3,12 +3,18 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Play, MousePointer } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import PredictiveFlowAnimation from './PredictiveFlowAnimation';
 
 export default function DemoTeaser() {
   return (
     <section className="py-32 md:py-48 bg-black relative overflow-hidden">
       {/* Radial glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1400px] h-[1400px] bg-cyan-900/10 rounded-full blur-[200px] pointer-events-none" />
+      
+      {/* Predictive Flow Animation Background */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-30">
+        <PredictiveFlowAnimation />
+      </div>
       
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <motion.div
