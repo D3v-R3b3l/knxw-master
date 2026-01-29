@@ -22,7 +22,7 @@ export default function PredictiveFlowAnimation() {
         const centerY = rect.top + rect.height / 2;
         const viewportCenter = window.innerHeight / 2;
         const offset = centerY - viewportCenter;
-        scrollOffsetRef.current = offset * 0.3; // Reduced parallax factor
+        scrollOffsetRef.current = offset * 0.8; // Significant parallax effect
         rafId = null;
       });
     };
