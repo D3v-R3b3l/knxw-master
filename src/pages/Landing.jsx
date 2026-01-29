@@ -531,11 +531,9 @@ export default function LandingPage() {
           {/* Interactive Demo Teaser - Enhanced */}
           <div data-scroll-section>
           <section id="demo-section" className="py-24 md:py-32 bg-[#080808] text-center overflow-hidden relative">
-             {/* Predictive Flow Animation */}
-             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-               <div className="w-full h-full max-w-4xl">
-                 <PredictiveFlowAnimation />
-               </div>
+             {/* Predictive Flow Animation - Fixed Background */}
+             <div className="fixed inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 0 }}>
+               <PredictiveFlowAnimation />
              </div>
              
              {/* Parallax Background with abstract shapes */}

@@ -1,10 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 
-// Subtle continuous flow - elements gently falling into orderly grid structure
+// Subtle continuous flow - elements gently organizing into grid structure
 export default function ArchitecturalBuildAnimation() {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
-  const containerRef = useRef(null);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -31,9 +30,9 @@ export default function ArchitecturalBuildAnimation() {
     const centerX = width / 2;
     
     // Grid configuration
-    const gridCols = 12;
-    const gridRows = 5;
-    const cellWidth = 50;
+    const gridCols = Math.floor(width / 70);
+    const gridRows = 6;
+    const cellWidth = 60;
     const cellHeight = 50;
     const gridStartX = centerX - (gridCols * cellWidth) / 2;
     const gridStartY = height * 0.5 - (gridRows * cellHeight) / 2;
@@ -49,7 +48,7 @@ export default function ArchitecturalBuildAnimation() {
       reset() {
         // Start from random position above screen
         this.x = Math.random() * width;
-        this.y = -20 - Math.random() * 100;
+        this.y = -20 - Math.random() * 150;
         
         // Assign to nearest grid cell
         const col = Math.floor((this.x - gridStartX) / cellWidth);
@@ -60,12 +59,12 @@ export default function ArchitecturalBuildAnimation() {
         this.targetX = gridStartX + this.targetCol * cellWidth + cellWidth / 2;
         this.targetY = gridStartY + this.targetRow * cellHeight + cellHeight / 2;
         
-        this.size = 3 + Math.random() * 2;
+        this.size = 2.5 + Math.random() * 1.5;
         this.color = ['#06b6d4', '#8b5cf6', '#10b981'][Math.floor(Math.random() * 3)];
-        this.speed = 0.3 + Math.random() * 0.4;
+        this.speed = 0.25 + Math.random() * 0.3;
         this.phase = Math.random() * Math.PI * 2;
         this.state = 'falling'; // falling, settling, placed
-        this.opacity = 0.6 + Math.random() * 0.4;
+        this.opacity = 0.5 + Math.random() * 0.3;
         this.settleProgress = 0;
       }
       
@@ -74,7 +73,7 @@ export default function ArchitecturalBuildAnimation() {
           // Gentle fall with slight drift toward target
           this.y += this.speed;
           const dx = this.targetX - this.x;
-          this.x += dx * 0.02;
+          this.x += dx * 0.015;
           
           // Check if reached target height
           if (this.y >= this.targetY - 50) {
@@ -82,11 +81,10 @@ export default function ArchitecturalBuildAnimation() {
           }
         } else if (this.state === 'settling') {
           // Smooth settle into position
-          this.settleProgress += 0.02;
-          const easeProgress = 1 - Math.pow(1 - this.settleProgress, 3);
+          this.settleProgress += 0.015;
           
-          this.x += (this.targetX - this.x) * 0.1;
-          this.y += (this.targetY - this.y) * 0.1;
+          this.x += (this.targetX - this.x) * 0.08;
+          this.y += (this.targetY - this.y) * 0.08;
           
           if (this.settleProgress >= 1) {
             this.state = 'placed';
@@ -95,7 +93,7 @@ export default function ArchitecturalBuildAnimation() {
           }
         } else if (this.state === 'placed') {
           // Fade out slowly and reset
-          this.opacity -= 0.003;
+          this.opacity -= 0.002;
           if (this.opacity <= 0) {
             this.reset();
           }
@@ -104,13 +102,13 @@ export default function ArchitecturalBuildAnimation() {
       
       draw(ctx, time) {
         // Subtle pulse
-        const pulse = 1 + Math.sin(time * 2 + this.phase) * 0.05;
+        const pulse = 1 + Math.sin(time * 2 + this.phase) * 0.04;
         const finalSize = this.size * pulse;
         
         // Glow
-        const glowSize = finalSize * 4;
+        const glowSize = finalSize * 3.5;
         const glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowSize);
-        glow.addColorStop(0, `${this.color}${Math.floor(this.opacity * 0.4 * 255).toString(16).padStart(2, '0')}`);
+        glow.addColorStop(0, `${this.color}${Math.floor(this.opacity * 0.3 * 255).toString(16).padStart(2, '0')}`);
         glow.addColorStop(1, `${this.color}00`);
         
         ctx.fillStyle = glow;
@@ -127,9 +125,9 @@ export default function ArchitecturalBuildAnimation() {
     }
     
     // Create initial particles with staggered start
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 50; i++) {
       const p = new Particle();
-      p.y = -20 - Math.random() * height; // Spread them out vertically
+      p.y = -20 - Math.random() * height * 1.2; // Spread them out vertically
       particles.push(p);
     }
     
@@ -140,8 +138,8 @@ export default function ArchitecturalBuildAnimation() {
         gridCells.push({
           x: gridStartX + col * cellWidth,
           y: gridStartY + row * cellHeight,
-          width: cellWidth - 4,
-          height: cellHeight - 4,
+          width: cellWidth - 6,
+          height: cellHeight - 6,
           opacity: 0,
           lastHit: 0
         });
@@ -157,13 +155,13 @@ export default function ArchitecturalBuildAnimation() {
       // Update and draw grid cells with subtle fade
       gridCells.forEach((cell) => {
         if (cell.opacity > 0) {
-          cell.opacity -= 0.01;
+          cell.opacity -= 0.008;
           
-          ctx.fillStyle = `rgba(139, 92, 246, ${cell.opacity * 0.1})`;
-          ctx.strokeStyle = `rgba(139, 92, 246, ${cell.opacity * 0.3})`;
+          ctx.fillStyle = `rgba(139, 92, 246, ${cell.opacity * 0.08})`;
+          ctx.strokeStyle = `rgba(139, 92, 246, ${cell.opacity * 0.25})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.roundRect(cell.x + 2, cell.y + 2, cell.width, cell.height, 3);
+          ctx.roundRect(cell.x + 3, cell.y + 3, cell.width, cell.height, 2);
           ctx.fill();
           ctx.stroke();
         }
@@ -189,12 +187,12 @@ export default function ArchitecturalBuildAnimation() {
       });
       
       // Draw subtle connecting lines between nearby placed particles
-      const placedParticles = particles.filter(p => p.state === 'placed' && p.opacity > 0.3);
+      const placedParticles = particles.filter(p => p.state === 'placed' && p.opacity > 0.25);
       placedParticles.forEach((p1, i) => {
         placedParticles.slice(i + 1).forEach((p2) => {
           const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-          if (dist < cellWidth * 1.5) {
-            const lineOpacity = (1 - dist / (cellWidth * 1.5)) * Math.min(p1.opacity, p2.opacity) * 0.15;
+          if (dist < cellWidth * 1.4) {
+            const lineOpacity = (1 - dist / (cellWidth * 1.4)) * Math.min(p1.opacity, p2.opacity) * 0.12;
             ctx.strokeStyle = `rgba(139, 92, 246, ${lineOpacity})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -227,12 +225,10 @@ export default function ArchitecturalBuildAnimation() {
   }, []);
   
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none">
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full"
-        style={{ background: 'transparent' }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{ background: 'transparent' }}
+    />
   );
 }
