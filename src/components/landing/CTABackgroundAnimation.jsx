@@ -12,8 +12,9 @@ export default function CTABackgroundAnimation() {
     const ctx = canvas.getContext('2d');
     
     const updateSize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const container = canvas.parentElement;
+      const width = container?.clientWidth || window.innerWidth;
+      const height = container?.clientHeight || 800;
       const dpr = window.devicePixelRatio || 1;
       
       canvas.width = width * dpr;
@@ -148,7 +149,7 @@ export default function CTABackgroundAnimation() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
+      className="w-full h-full pointer-events-none"
       style={{ background: 'transparent' }}
     />
   );
