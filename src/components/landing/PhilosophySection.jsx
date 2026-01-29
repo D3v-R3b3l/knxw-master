@@ -4,12 +4,15 @@ import DataFlowVisualization from './DataFlowVisualization';
 export default function PhilosophySection() {
   return (
     <section className="py-24 md:py-40 bg-black relative overflow-hidden border-b border-white/5">
-      {/* Parallax Background - will be controlled by GSAP in Landing.js */}
-      <div data-parallax-bg className="absolute inset-0 h-[140%] -top-[20%]">
+      {/* Fixed Background Animation */}
+      <div className="fixed inset-0 pointer-events-none">
+        <DataFlowVisualization />
+      </div>
+      
+      {/* Gradient Overlays */}
+      <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(6,182,212,0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(139,92,246,0.1),transparent_50%)]" />
-        <div className="absolute top-1/4 left-1/3 w-80 h-80 bg-cyan-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[150px]" />
       </div>
       
       {/* Grid Lines */}
@@ -20,11 +23,6 @@ export default function PhilosophySection() {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Data Flow Visualization */}
-          <div className="hidden md:flex items-center justify-center order-2 md:order-1">
-            <DataFlowVisualization />
-          </div>
-
           <div className="order-1 md:order-2">
             <div className="mb-6">
               <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block">

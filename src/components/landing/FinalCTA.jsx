@@ -9,7 +9,9 @@ export default function FinalCTA() {
   return (
     <section className="py-32 md:py-48 bg-gradient-to-b from-black via-[#0a0014] to-black relative overflow-hidden">
       {/* Atmospheric data flow background */}
-      <CTABackgroundAnimation />
+      <div className="absolute inset-0 w-full h-full">
+        <CTABackgroundAnimation />
+      </div>
       
       {/* Ambient glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1600px] h-[1600px]">
