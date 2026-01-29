@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 
-// Chaos to architecture - scattered elements organizing into upward-building structure
+// Subtle continuous flow - elements gently falling into orderly grid structure
 export default function ArchitecturalBuildAnimation() {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
+  const containerRef = useRef(null);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -12,8 +13,9 @@ export default function ArchitecturalBuildAnimation() {
     const ctx = canvas.getContext('2d');
     
     const updateSize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const container = canvas.parentElement;
+      const width = container?.clientWidth || window.innerWidth;
+      const height = container?.clientHeight || 600;
       const dpr = window.devicePixelRatio || 1;
       
       canvas.width = width * dpr;
@@ -28,208 +30,180 @@ export default function ArchitecturalBuildAnimation() {
     let { width, height } = updateSize();
     const centerX = width / 2;
     
-    // Scattered particles that will organize
-    const particles = [];
-    const numParticles = 60;
+    // Grid configuration
+    const gridCols = 12;
+    const gridRows = 5;
+    const cellWidth = 50;
+    const cellHeight = 50;
+    const gridStartX = centerX - (gridCols * cellWidth) / 2;
+    const gridStartY = height * 0.5 - (gridRows * cellHeight) / 2;
     
-    for (let i = 0; i < numParticles; i++) {
-      // Start scattered randomly
-      const startX = centerX + (Math.random() - 0.5) * width * 0.6;
-      const startY = height * 0.3 + Math.random() * height * 0.5;
+    // Particles continuously falling and settling
+    const particles = [];
+    
+    class Particle {
+      constructor() {
+        this.reset();
+      }
       
-      // Organize into grid/structure
-      const col = i % 10;
-      const row = Math.floor(i / 10);
-      const targetX = centerX - 200 + col * 45;
-      const targetY = height * 0.7 - row * 40;
+      reset() {
+        // Start from random position above screen
+        this.x = Math.random() * width;
+        this.y = -20 - Math.random() * 100;
+        
+        // Assign to nearest grid cell
+        const col = Math.floor((this.x - gridStartX) / cellWidth);
+        const row = Math.floor(Math.random() * gridRows);
+        
+        this.targetCol = Math.max(0, Math.min(gridCols - 1, col));
+        this.targetRow = row;
+        this.targetX = gridStartX + this.targetCol * cellWidth + cellWidth / 2;
+        this.targetY = gridStartY + this.targetRow * cellHeight + cellHeight / 2;
+        
+        this.size = 3 + Math.random() * 2;
+        this.color = ['#06b6d4', '#8b5cf6', '#10b981'][Math.floor(Math.random() * 3)];
+        this.speed = 0.3 + Math.random() * 0.4;
+        this.phase = Math.random() * Math.PI * 2;
+        this.state = 'falling'; // falling, settling, placed
+        this.opacity = 0.6 + Math.random() * 0.4;
+        this.settleProgress = 0;
+      }
       
-      particles.push({
-        startX,
-        startY,
-        x: startX,
-        y: startY,
-        targetX,
-        targetY,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        size: 3 + Math.random() * 3,
-        color: ['#06b6d4', '#8b5cf6', '#3b82f6', '#10b981'][i % 4],
-        phase: Math.random() * Math.PI * 2,
-        buildProgress: 0
-      });
+      update() {
+        if (this.state === 'falling') {
+          // Gentle fall with slight drift toward target
+          this.y += this.speed;
+          const dx = this.targetX - this.x;
+          this.x += dx * 0.02;
+          
+          // Check if reached target height
+          if (this.y >= this.targetY - 50) {
+            this.state = 'settling';
+          }
+        } else if (this.state === 'settling') {
+          // Smooth settle into position
+          this.settleProgress += 0.02;
+          const easeProgress = 1 - Math.pow(1 - this.settleProgress, 3);
+          
+          this.x += (this.targetX - this.x) * 0.1;
+          this.y += (this.targetY - this.y) * 0.1;
+          
+          if (this.settleProgress >= 1) {
+            this.state = 'placed';
+            this.x = this.targetX;
+            this.y = this.targetY;
+          }
+        } else if (this.state === 'placed') {
+          // Fade out slowly and reset
+          this.opacity -= 0.003;
+          if (this.opacity <= 0) {
+            this.reset();
+          }
+        }
+      }
+      
+      draw(ctx, time) {
+        // Subtle pulse
+        const pulse = 1 + Math.sin(time * 2 + this.phase) * 0.05;
+        const finalSize = this.size * pulse;
+        
+        // Glow
+        const glowSize = finalSize * 4;
+        const glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowSize);
+        glow.addColorStop(0, `${this.color}${Math.floor(this.opacity * 0.4 * 255).toString(16).padStart(2, '0')}`);
+        glow.addColorStop(1, `${this.color}00`);
+        
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Core
+        ctx.fillStyle = `${this.color}${Math.floor(this.opacity * 255).toString(16).padStart(2, '0')}`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, finalSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
     
-    // Building blocks that form from organized particles
-    const buildingBlocks = [];
-    const blockRows = 6;
-    const blockCols = 10;
+    // Create initial particles with staggered start
+    for (let i = 0; i < 40; i++) {
+      const p = new Particle();
+      p.y = -20 - Math.random() * height; // Spread them out vertically
+      particles.push(p);
+    }
     
-    for (let row = 0; row < blockRows; row++) {
-      for (let col = 0; col < blockCols; col++) {
-        buildingBlocks.push({
-          x: centerX - 200 + col * 45,
-          y: height * 0.7 - row * 40,
-          width: 40,
-          height: 35,
+    // Grid cells that light up when particles land
+    const gridCells = [];
+    for (let row = 0; row < gridRows; row++) {
+      for (let col = 0; col < gridCols; col++) {
+        gridCells.push({
+          x: gridStartX + col * cellWidth,
+          y: gridStartY + row * cellHeight,
+          width: cellWidth - 4,
+          height: cellHeight - 4,
           opacity: 0,
-          color: ['#06b6d4', '#8b5cf6', '#3b82f6', '#10b981'][(row + col) % 4],
-          delay: row * 0.15 + col * 0.05
+          lastHit: 0
         });
       }
     }
     
     let time = 0;
-    const cycleDuration = 8; // 8 seconds per cycle
     
     const animate = () => {
       time += 0.016;
-      const cycleProgress = (time % cycleDuration) / cycleDuration;
-      
       ctx.clearRect(0, 0, width, height);
       
-      // Phase 1: Chaos (0-0.3)
-      // Phase 2: Organization (0.3-0.6)
-      // Phase 3: Building (0.6-1.0)
-      
-      const chaosPhase = Math.max(0, Math.min(1, (0.3 - cycleProgress) / 0.3));
-      const organizePhase = Math.max(0, Math.min(1, (cycleProgress - 0.2) / 0.4));
-      const buildPhase = Math.max(0, Math.min(1, (cycleProgress - 0.55) / 0.45));
-      
-      // Draw particles
-      particles.forEach((p, i) => {
-        // Chaotic movement early on
-        if (chaosPhase > 0) {
-          p.x += p.vx * chaosPhase;
-          p.y += p.vy * chaosPhase;
-        }
-        
-        // Organization phase - move toward targets
-        if (organizePhase > 0) {
-          const dx = p.targetX - p.x;
-          const dy = p.targetY - p.y;
-          p.x += dx * organizePhase * 0.05;
-          p.y += dy * organizePhase * 0.05;
-        }
-        
-        // Fade out as blocks build
-        const particleOpacity = Math.max(0, 1 - buildPhase * 1.2);
-        
-        // Draw particle
-        const pulse = 1 + Math.sin(time * 2 + p.phase) * 0.1;
-        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3 * pulse);
-        glow.addColorStop(0, `${p.color}${Math.floor(particleOpacity * 0.8 * 255).toString(16).padStart(2, '0')}`);
-        glow.addColorStop(1, `${p.color}00`);
-        
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * pulse, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Connection lines during organization
-        if (organizePhase > 0.3 && organizePhase < 0.9) {
-          const neighborDistance = 60;
-          particles.forEach((other, j) => {
-            if (j <= i) return;
-            const dist = Math.hypot(p.x - other.x, p.y - other.y);
-            if (dist < neighborDistance) {
-              const lineOpacity = (1 - dist / neighborDistance) * organizePhase * 0.3 * particleOpacity;
-              ctx.strokeStyle = `rgba(139, 92, 246, ${lineOpacity})`;
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(other.x, other.y);
-              ctx.stroke();
-            }
-          });
+      // Update and draw grid cells with subtle fade
+      gridCells.forEach((cell) => {
+        if (cell.opacity > 0) {
+          cell.opacity -= 0.01;
+          
+          ctx.fillStyle = `rgba(139, 92, 246, ${cell.opacity * 0.1})`;
+          ctx.strokeStyle = `rgba(139, 92, 246, ${cell.opacity * 0.3})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(cell.x + 2, cell.y + 2, cell.width, cell.height, 3);
+          ctx.fill();
+          ctx.stroke();
         }
       });
       
-      // Draw building blocks
-      buildingBlocks.forEach((block) => {
-        const blockStartTime = block.delay;
-        const blockBuildProgress = Math.max(0, Math.min(1, (buildPhase - blockStartTime) / 0.3));
+      // Update particles
+      particles.forEach((particle) => {
+        particle.update();
         
-        if (blockBuildProgress > 0) {
-          block.opacity = blockBuildProgress;
-          
-          // Draw block from bottom up
-          const currentHeight = block.height * blockBuildProgress;
-          const currentY = block.y + (block.height - currentHeight);
-          
-          // Block glow
-          const blockGlow = ctx.createRadialGradient(
-            block.x + block.width/2, 
-            currentY + currentHeight/2, 
-            0, 
-            block.x + block.width/2, 
-            currentY + currentHeight/2, 
-            block.width
-          );
-          blockGlow.addColorStop(0, `${block.color}40`);
-          blockGlow.addColorStop(1, `${block.color}00`);
-          
-          ctx.fillStyle = blockGlow;
-          ctx.fillRect(
-            block.x - 10,
-            currentY - 10,
-            block.width + 20,
-            currentHeight + 20
-          );
-          
-          // Solid block
-          ctx.fillStyle = `${block.color}20`;
-          ctx.strokeStyle = `${block.color}`;
-          ctx.lineWidth = 2;
-          
-          ctx.beginPath();
-          ctx.roundRect(block.x, currentY, block.width, currentHeight, 4);
-          ctx.fill();
-          ctx.stroke();
-          
-          // Inner detail lines
-          if (blockBuildProgress > 0.5) {
-            ctx.strokeStyle = `${block.color}60`;
-            ctx.lineWidth = 1;
-            const detailCount = 2;
-            for (let i = 1; i < detailCount; i++) {
-              const detailY = currentY + (currentHeight * i / detailCount);
-              ctx.beginPath();
-              ctx.moveTo(block.x + 5, detailY);
-              ctx.lineTo(block.x + block.width - 5, detailY);
-              ctx.stroke();
-            }
+        // Check if particle just landed
+        if (particle.state === 'settling' && particle.settleProgress < 0.1) {
+          const cellIndex = particle.targetRow * gridCols + particle.targetCol;
+          if (gridCells[cellIndex]) {
+            gridCells[cellIndex].opacity = 1;
+            gridCells[cellIndex].lastHit = time;
           }
         }
       });
       
-      // Rising energy beams during build phase
-      if (buildPhase > 0.3) {
-        const beamCount = 5;
-        for (let i = 0; i < beamCount; i++) {
-          const beamX = centerX - 150 + i * 80;
-          const beamHeight = (buildPhase - 0.3) * height * 0.6;
-          const beamOpacity = Math.sin(time * 2 + i) * 0.1 + 0.15;
-          
-          const beamGradient = ctx.createLinearGradient(beamX, height, beamX, height - beamHeight);
-          beamGradient.addColorStop(0, `rgba(6, 182, 212, ${beamOpacity})`);
-          beamGradient.addColorStop(0.5, `rgba(139, 92, 246, ${beamOpacity * 0.5})`);
-          beamGradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
-          
-          ctx.fillStyle = beamGradient;
-          ctx.fillRect(beamX - 1, height - beamHeight, 2, beamHeight);
-        }
-      }
+      // Draw particles
+      particles.forEach((particle) => {
+        particle.draw(ctx, time);
+      });
       
-      // Status indicator
-      let statusText = '';
-      if (cycleProgress < 0.3) statusText = 'ANALYZING...';
-      else if (cycleProgress < 0.6) statusText = 'ORGANIZING...';
-      else statusText = 'BUILDING...';
-      
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.5)';
-      ctx.font = 'bold 11px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(statusText, centerX, height * 0.85);
+      // Draw subtle connecting lines between nearby placed particles
+      const placedParticles = particles.filter(p => p.state === 'placed' && p.opacity > 0.3);
+      placedParticles.forEach((p1, i) => {
+        placedParticles.slice(i + 1).forEach((p2) => {
+          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          if (dist < cellWidth * 1.5) {
+            const lineOpacity = (1 - dist / (cellWidth * 1.5)) * Math.min(p1.opacity, p2.opacity) * 0.15;
+            ctx.strokeStyle = `rgba(139, 92, 246, ${lineOpacity})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        });
+      });
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -253,10 +227,12 @@ export default function ArchitecturalBuildAnimation() {
   }, []);
   
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ background: 'transparent' }}
-    />
+    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ background: 'transparent' }}
+      />
+    </div>
   );
 }
