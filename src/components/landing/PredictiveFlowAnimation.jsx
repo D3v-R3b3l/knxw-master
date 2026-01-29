@@ -117,7 +117,7 @@ export default function PredictiveFlowAnimation() {
       sortedStreams.forEach((stream) => {
         const depthScale = 0.4 + stream.depth * 0.6;
         const depthOpacity = 0.4 + stream.depth * 0.6;
-        const parallax = scrollOffsetRef.current * stream.depth * 0.3;
+        const parallax = scrollOffsetRef.current * stream.depth * 0.8;
         
         // Curved path with parallax
         const ctrlX = stream.side === 'left' ? centerX - 200 : centerX + 200;
