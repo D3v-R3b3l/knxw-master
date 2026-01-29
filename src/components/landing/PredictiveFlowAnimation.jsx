@@ -1,26 +1,39 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 // Data streams from sides converging to central processor
 export default function PredictiveFlowAnimation() {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const containerRef = useRef(null);
-  const [scrollY, setScrollY] = useState(0);
+  const scrollOffsetRef = useRef(0);
   
   useEffect(() => {
+    let rafId = null;
+    
     const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerY = rect.top + rect.height / 2;
-      const viewportCenter = window.innerHeight / 2;
-      const offset = centerY - viewportCenter;
-      setScrollY(offset * 0.5); // Parallax factor
+      if (rafId) return;
+      
+      rafId = requestAnimationFrame(() => {
+        if (!containerRef.current) {
+          rafId = null;
+          return;
+        }
+        const rect = containerRef.current.getBoundingClientRect();
+        const centerY = rect.top + rect.height / 2;
+        const viewportCenter = window.innerHeight / 2;
+        const offset = centerY - viewportCenter;
+        scrollOffsetRef.current = offset * 0.3; // Reduced parallax factor
+        rafId = null;
+      });
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
   
   useEffect(() => {
@@ -104,7 +117,7 @@ export default function PredictiveFlowAnimation() {
       sortedStreams.forEach((stream) => {
         const depthScale = 0.4 + stream.depth * 0.6;
         const depthOpacity = 0.4 + stream.depth * 0.6;
-        const parallax = scrollY * stream.depth * 0.3;
+        const parallax = scrollOffsetRef.current * stream.depth * 0.3;
         
         // Curved path with parallax
         const ctrlX = stream.side === 'left' ? centerX - 200 : centerX + 200;
@@ -154,7 +167,7 @@ export default function PredictiveFlowAnimation() {
       });
       
       // Central processor/brain with parallax
-      const centralParallax = scrollY * 0.2;
+      const centralParallax = scrollOffsetRef.current * 0.2;
       const pulse = 1 + Math.sin(time * 1.5) * 0.12;
       
       // Outer glow
@@ -218,17 +231,15 @@ export default function PredictiveFlowAnimation() {
       }
       window.removeEventListener('resize', handleResize);
     };
-  }, [scrollY]);
+  }, []);
   
   return (
-    <div ref={containerRef} className="w-full h-full">
+    <div ref={containerRef} className="absolute inset-0 w-full h-full">
       <canvas
         ref={canvasRef}
         className="w-full h-full"
         style={{ 
-          background: 'transparent',
-          minHeight: '600px',
-          minWidth: '100%'
+          background: 'transparent'
         }}
       />
     </div>
