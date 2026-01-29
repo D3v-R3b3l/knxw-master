@@ -22,7 +22,7 @@ export default function PredictiveFlowAnimation() {
         const centerY = rect.top + rect.height / 2;
         const viewportCenter = window.innerHeight / 2;
         const offset = centerY - viewportCenter;
-        scrollOffsetRef.current = offset * 0.8; // Significant parallax effect
+        scrollOffsetRef.current = offset * 0.3; // Reduced parallax factor
         rafId = null;
       });
     };
@@ -117,7 +117,7 @@ export default function PredictiveFlowAnimation() {
       sortedStreams.forEach((stream) => {
         const depthScale = 0.4 + stream.depth * 0.6;
         const depthOpacity = 0.4 + stream.depth * 0.6;
-        const parallax = scrollOffsetRef.current * stream.depth * 0.8;
+        const parallax = scrollOffsetRef.current * stream.depth * 0.3;
         
         // Curved path with parallax
         const ctrlX = stream.side === 'left' ? centerX - 200 : centerX + 200;
@@ -167,7 +167,7 @@ export default function PredictiveFlowAnimation() {
       });
       
       // Central processor/brain with parallax
-      const centralParallax = scrollOffsetRef.current * 0.5;
+      const centralParallax = scrollOffsetRef.current * 0.2;
       const pulse = 1 + Math.sin(time * 1.5) * 0.12;
       
       // Outer glow
