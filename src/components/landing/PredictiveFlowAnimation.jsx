@@ -167,7 +167,7 @@ export default function PredictiveFlowAnimation() {
       });
       
       // Central processor/brain with parallax
-      const centralParallax = scrollOffsetRef.current * 0.2;
+      const centralParallax = scrollOffsetRef.current * 0.5;
       const pulse = 1 + Math.sin(time * 1.5) * 0.12;
       
       // Outer glow
