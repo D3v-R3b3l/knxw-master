@@ -625,9 +625,14 @@ export default function LandingPage() {
           {/* Final CTA - Enhanced */}
           <div id="cta" data-scroll-section>
           <section className="py-28 md:py-40 bg-gradient-to-b from-black via-[#080808] to-[#111] text-center border-t border-white/10 overflow-hidden relative">
-             {/* Architectural Build Animation - Fixed background */}
-             <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-               <ArchitecturalBuildAnimation />
+             {/* Architectural Build Animation */}
+             <ArchitecturalBuildAnimation />
+             
+             {/* Parallax Background */}
+             <div data-parallax-bg className="absolute inset-0 h-[150%] -top-[25%]">
+               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(6,182,212,0.12),transparent_50%)]" />
+               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-cyan-500/8 rounded-full blur-[180px]" />
+               <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-[100px]" />
              </div>
              
              <div className="max-w-5xl mx-auto px-6 relative z-10">
