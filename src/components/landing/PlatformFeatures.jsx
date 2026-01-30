@@ -1,5 +1,5 @@
 import React from 'react';
-import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, Cpu, Route, UserCheck, RefreshCcw, BarChart3, Store, Users } from 'lucide-react';
+import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, Cpu, Route, UserCheck, RefreshCcw, BarChart3, Store, Users, Sparkles } from 'lucide-react';
 
 export default function PlatformFeatures() {
   return (
@@ -65,17 +65,34 @@ export default function PlatformFeatures() {
             </div>
           </div>
 
-          {/* Large Card - Developer Platform */}
-          <div className="md:col-span-8 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-orange-500/30 transition-all duration-500 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          {/* Large Card - Adaptive UI SDK - NEW */}
+          <div className="md:col-span-8 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             <div className="relative z-10">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-600/30 to-orange-600/10 flex items-center justify-center mb-6 border border-orange-500/20">
-                 <Code className="w-7 h-7 text-orange-400" />
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-600/30 to-cyan-600/10 flex items-center justify-center mb-6 border border-cyan-500/20">
+                 <Sparkles className="w-7 h-7 text-cyan-400" />
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">Developer Platform</h3>
-              <p className="text-gray-400 text-lg max-w-lg leading-relaxed">RESTful APIs, SDKs, webhooks, and playground for rapid integration.</p>
-              <span className="inline-block mt-6 text-xs font-mono bg-white/5 px-4 py-2 rounded-full text-gray-400 border border-white/10">FREE TIER</span>
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">Adaptive UI SDK</h3>
+              <p className="text-gray-400 text-lg max-w-lg leading-relaxed">React components that automatically adapt to user psychology—buttons, text, and entire sections personalized in real-time.</p>
+              <div className="flex gap-2 mt-6">
+                <span className="text-xs font-mono bg-white/5 px-4 py-2 rounded-full text-gray-400 border border-white/10">ALL PLANS</span>
+                <span className="text-xs font-mono bg-cyan-500/20 px-4 py-2 rounded-full text-cyan-300 border border-cyan-500/30">NEW</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Medium Card - Developer Platform */}
+          <div className="md:col-span-4 bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 border border-white/5 hover:border-orange-500/30 transition-all duration-500 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-600/30 to-orange-600/10 flex items-center justify-center mb-5 border border-orange-500/20">
+                 <Code className="w-6 h-6 text-orange-400" />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Developer APIs</h3>
+              <p className="text-sm text-gray-400 mb-5 leading-relaxed">RESTful APIs, webhooks, and playground for rapid integration.</p>
+              <span className="text-xs font-mono text-orange-400 bg-orange-500/10 px-3 py-1 rounded-full border border-orange-500/20">FREE TIER</span>
             </div>
           </div>
           
