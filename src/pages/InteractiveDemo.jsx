@@ -6,12 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Brain, Sparkles, TrendingUp, Target, Zap, Send, RotateCcw, Loader2, Lightbulb,
-  ChevronDown, Eye, ArrowRight, User, Menu, X, Code2
+  ChevronDown, Eye, ArrowRight, User, Menu, X, Code2, ExternalLink
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import HeadManager from '@/components/HeadManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdaptiveUIShowcase from '@/components/sdk/AdaptiveUIShowcase';
+import { PsychographicProvider, AdaptiveButton, AdaptiveText, AdaptiveContainer } from '@/components/sdk/KnxwSDK';
 
 // Helper function to create page URLs.
 const createPageUrl = (pageName) => {
@@ -92,12 +93,13 @@ export default function InteractiveDemoPage() {
         role: 'user'
       });
       
-      const { assistant_message, current_profile } = response.data;
+      const { assistant_message, adaptive_ui_elements, current_profile } = response.data;
       
       setMessages(prev => [...prev, { 
         id: `asst-${Date.now()}`,
         role: 'assistant', 
         content: assistant_message,
+        adaptiveElements: adaptive_ui_elements || []
       }]);
 
       if (current_profile) {
@@ -476,36 +478,92 @@ export default function InteractiveDemoPage() {
               {/* Messages Container */}
               <div className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
                 <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
-                  <AnimatePresence>
-                    {messages.map((message, index) => (
-                      <motion.div
-                        key={message.id || index}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={`flex gap-2 sm:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        
-                        {message.role === 'assistant' && (
-                          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] flex items-center justify-center flex-shrink-0">
-                            <Brain className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                          </div>
-                        )}
+                  <PsychographicProvider mockMode={true} mockProfile={currentProfile}>
+                    <AnimatePresence>
+                      {messages.map((message, index) => (
+                        <motion.div
+                          key={message.id || index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`flex gap-2 sm:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          
+                          {message.role === 'assistant' && (
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] flex items-center justify-center flex-shrink-0">
+                              <Brain className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                            </div>
+                          )}
 
-                        {message.role === 'user' && (
-                          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#334155] flex items-center justify-center flex-shrink-0">
-                            <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                          {message.role === 'user' && (
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#334155] flex items-center justify-center flex-shrink-0">
+                              <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                            </div>
+                          )}
+                          
+                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3 ${
+                            message.role === 'user'
+                              ? 'bg-[#1e293b] text-white'
+                              : 'bg-[#262626] text-[#e5e5e5]'
+                          }`}>
+                            <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap mb-2">{message.content}</p>
+                            
+                            {/* Render Adaptive UI Elements */}
+                            {message.role === 'assistant' && message.adaptiveElements && message.adaptiveElements.length > 0 && (
+                              <div className="mt-3 space-y-2 border-t border-[#404040] pt-3">
+                                <div className="flex items-center gap-1 mb-2">
+                                  <Sparkles className="w-3 h-3 text-[#00d4ff]" />
+                                  <span className="text-[10px] text-[#00d4ff] font-semibold uppercase tracking-wider">Adaptive UI Demo</span>
+                                </div>
+                                {message.adaptiveElements.map((element, idx) => {
+                                  if (element.type === 'button') {
+                                    return (
+                                      <div key={idx} className="bg-[#1a1a1a] rounded-lg p-3 border border-[#404040]">
+                                        {element.industryContext && (
+                                          <p className="text-[10px] text-[#a3a3a3] mb-2 uppercase tracking-wide">{element.industryContext}</p>
+                                        )}
+                                        <AdaptiveButton
+                                          baseText={element.baseText}
+                                          motivationVariants={element.motivationVariants}
+                                          riskVariants={element.riskVariants}
+                                          className="w-full bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white font-semibold px-4 py-2 rounded-lg text-xs transition-all duration-300 flex items-center justify-center gap-2"
+                                          onClick={() => {}}
+                                        />
+                                        <p className="text-[9px] text-[#6b7280] mt-2 italic">↑ Text adapts to your psychology in real-time</p>
+                                      </div>
+                                    );
+                                  }
+                                  
+                                  if (element.type === 'container') {
+                                    return (
+                                      <AdaptiveContainer
+                                        key={idx}
+                                        showFor={element.showFor}
+                                        hideFor={element.hideFor}
+                                      >
+                                        <div className="bg-gradient-to-br from-[#8b5cf6]/10 to-[#00d4ff]/10 rounded-lg p-3 border border-[#8b5cf6]/30">
+                                          {element.industryContext && (
+                                            <p className="text-[10px] text-[#a3a3a3] mb-2 uppercase tracking-wide">{element.industryContext}</p>
+                                          )}
+                                          <AdaptiveText
+                                            baseText={element.baseText}
+                                            motivationVariants={element.motivationVariants}
+                                            moodVariants={element.moodVariants}
+                                            className="text-xs text-white"
+                                          />
+                                          <p className="text-[9px] text-[#a3a3a3] mt-2 italic">↑ Only shown based on your profile</p>
+                                        </div>
+                                      </AdaptiveContainer>
+                                    );
+                                  }
+                                  
+                                  return null;
+                                })}
+                              </div>
+                            )}
                           </div>
-                        )}
-                        
-                        <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3 ${
-                          message.role === 'user'
-                            ? 'bg-[#1e293b] text-white'
-                            : 'bg-[#262626] text-[#e5e5e5]'
-                        }`}>
-                          <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </PsychographicProvider>
                   
                   {loading && (
                     <motion.div

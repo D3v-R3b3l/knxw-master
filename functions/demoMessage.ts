@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       profileContext = '\nCURRENT PROFILE: ' + JSON.stringify(conversation.profile);
     }
 
-    const prompt = `You are knXw's psychographic AI assistant conducting a live demo.
+    const prompt = `You are knXw's psychographic AI assistant conducting a live demo showcasing Adaptive UI capabilities.
 
 CONVERSATION:
 ${historyText}
@@ -74,8 +74,15 @@ TASK:
 1. Respond warmly and helpfully to the user
 2. Analyze their psychographic profile from the conversation
 3. Return all confidence values between 0.0 and 1.0
+4. CRITICAL: Include 1-3 adaptive_ui_elements that demonstrate how UI adapts to their psychology
 
-Keep responses concise and insightful.`;
+ADAPTIVE UI EXAMPLES (use these patterns):
+- E-commerce: "Shop Now" button adapts to "Start Winning" for achievement-motivated, "Secure Your Purchase" for conservative risk profiles
+- SaaS: "Get Started" adapts to "Explore Features" for analytical, "Quick Setup" for pragmatic
+- Content: Show different resources based on cognitive style (analytical gets data, intuitive gets stories)
+- Finance: Conservative risk profiles see safety features, aggressive see growth opportunities
+
+Make adaptive elements INDUSTRY-RELEVANT to their conversation. Use real-world examples that showcase cross-industry value.`;
 
     // Call LLM using the appropriate client
     const llmResponse = await client.integrations.Core.InvokeLLM({
@@ -84,6 +91,23 @@ Keep responses concise and insightful.`;
         type: 'object',
         properties: {
           assistant_response: { type: 'string' },
+          adaptive_ui_elements: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                type: { type: 'string', enum: ['button', 'container', 'text'] },
+                baseText: { type: 'string' },
+                motivationVariants: { type: 'object' },
+                riskVariants: { type: 'object' },
+                moodVariants: { type: 'object' },
+                showFor: { type: 'object' },
+                hideFor: { type: 'object' },
+                industryContext: { type: 'string' },
+                action: { type: 'string' }
+              }
+            }
+          },
           motivation_stack: { 
             type: 'array', 
             items: { 
@@ -158,6 +182,7 @@ Keep responses concise and insightful.`;
     return new Response(JSON.stringify({
       success: true,
       assistant_message: llmResponse.assistant_response,
+      adaptive_ui_elements: llmResponse.adaptive_ui_elements || [],
       current_profile: conversation.profile
     }), {
       status: 200,
