@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Brain, Sparkles, TrendingUp, Target, Zap, Send, RotateCcw, Loader2, Lightbulb,
-  ChevronDown, Eye, ArrowRight, User, Menu, X, Code2, ExternalLink
+  ChevronDown, Eye, ArrowRight, User, Menu, X, Code2, ExternalLink, AlertCircle
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import HeadManager from '@/components/HeadManager';
@@ -508,15 +508,16 @@ export default function InteractiveDemoPage() {
                             
                             {/* Render Adaptive UI Elements */}
                             {message.role === 'assistant' && message.adaptiveElements && message.adaptiveElements.length > 0 && (
-                              <div className="mt-3 space-y-2 border-t border-[#404040] pt-3">
+                              <div className="mt-3 space-y-3 border-t border-[#404040] pt-3">
                                 <div className="flex items-center gap-1 mb-2">
                                   <Sparkles className="w-3 h-3 text-[#00d4ff]" />
                                   <span className="text-[10px] text-[#00d4ff] font-semibold uppercase tracking-wider">Adaptive UI Demo</span>
                                 </div>
                                 {message.adaptiveElements.map((element, idx) => {
+                                  // Button Element
                                   if (element.type === 'button') {
                                     return (
-                                      <div key={idx} className="bg-[#1a1a1a] rounded-lg p-3 border border-[#404040]">
+                                      <div key={idx} className="bg-[#1a1a1a] rounded-lg p-3 border border-[#404040] hover:border-[#00d4ff]/30 transition-colors">
                                         {element.industryContext && (
                                           <p className="text-[10px] text-[#a3a3a3] mb-2 uppercase tracking-wide">{element.industryContext}</p>
                                         )}
@@ -524,14 +525,45 @@ export default function InteractiveDemoPage() {
                                           baseText={element.baseText}
                                           motivationVariants={element.motivationVariants}
                                           riskVariants={element.riskVariants}
-                                          className="w-full bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white font-semibold px-4 py-2 rounded-lg text-xs transition-all duration-300 flex items-center justify-center gap-2"
+                                          className="w-full bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white font-semibold px-4 py-2.5 rounded-lg text-xs transition-all duration-300 flex items-center justify-center gap-2"
                                           onClick={() => {}}
                                         />
-                                        <p className="text-[9px] text-[#6b7280] mt-2 italic">↑ Text adapts to your psychology in real-time</p>
+                                        <p className="text-[9px] text-[#6b7280] mt-2 italic">↑ CTA text adapts to your motivations</p>
                                       </div>
                                     );
                                   }
                                   
+                                  // Card Element
+                                  if (element.type === 'card') {
+                                    return (
+                                      <div key={idx} className="bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-lg p-4 border border-[#404040] hover:border-[#00d4ff]/30 transition-all">
+                                        {element.industryContext && (
+                                          <p className="text-[10px] text-[#a3a3a3] mb-3 uppercase tracking-wide flex items-center gap-1">
+                                            <span className="w-1.5 h-1.5 bg-[#00d4ff] rounded-full"></span>
+                                            {element.industryContext}
+                                          </p>
+                                        )}
+                                        <AdaptiveText
+                                          baseText={element.baseHeadline}
+                                          motivationVariants={element.motivationVariants}
+                                          className="text-sm font-bold text-white mb-2 block"
+                                          as="h4"
+                                        />
+                                        <AdaptiveText
+                                          baseText={element.baseDescription}
+                                          motivationVariants={element.motivationVariants}
+                                          className="text-xs text-[#a3a3a3] mb-3 block leading-relaxed"
+                                          as="p"
+                                        />
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-[9px] text-[#6b7280] italic">Headline & description adapt</span>
+                                          <ArrowRight className="w-3 h-3 text-[#00d4ff]" />
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                  
+                                  // Container Element (Conditional)
                                   if (element.type === 'container') {
                                     return (
                                       <AdaptiveContainer
@@ -541,17 +573,77 @@ export default function InteractiveDemoPage() {
                                       >
                                         <div className="bg-gradient-to-br from-[#8b5cf6]/10 to-[#00d4ff]/10 rounded-lg p-3 border border-[#8b5cf6]/30">
                                           {element.industryContext && (
-                                            <p className="text-[10px] text-[#a3a3a3] mb-2 uppercase tracking-wide">{element.industryContext}</p>
+                                            <div className="flex items-center gap-1 mb-2">
+                                              <Target className="w-3 h-3 text-[#8b5cf6]" />
+                                              <p className="text-[10px] text-[#a3a3a3] uppercase tracking-wide">{element.industryContext}</p>
+                                            </div>
                                           )}
                                           <AdaptiveText
                                             baseText={element.baseText}
                                             motivationVariants={element.motivationVariants}
-                                            moodVariants={element.moodVariants}
-                                            className="text-xs text-white"
+                                            className="text-xs text-white leading-relaxed"
                                           />
-                                          <p className="text-[9px] text-[#a3a3a3] mt-2 italic">↑ Only shown based on your profile</p>
+                                          <p className="text-[9px] text-[#8b5cf6] mt-2 italic flex items-center gap-1">
+                                            <Eye className="w-2.5 h-2.5" />
+                                            Visible only to matching profiles
+                                          </p>
                                         </div>
                                       </AdaptiveContainer>
+                                    );
+                                  }
+                                  
+                                  // Toast Element (Nudge)
+                                  if (element.type === 'toast') {
+                                    return (
+                                      <div key={idx} className="bg-gradient-to-r from-[#fbbf24]/10 to-[#f59e0b]/10 rounded-lg p-3 border border-[#fbbf24]/30 flex items-start gap-2">
+                                        <Lightbulb className="w-3.5 h-3.5 text-[#fbbf24] flex-shrink-0 mt-0.5" />
+                                        <div className="flex-1">
+                                          {element.industryContext && (
+                                            <p className="text-[10px] text-[#a3a3a3] mb-1 uppercase tracking-wide">{element.industryContext}</p>
+                                          )}
+                                          <AdaptiveText
+                                            baseText={element.baseText}
+                                            motivationVariants={element.motivationVariants}
+                                            className="text-xs text-white leading-relaxed"
+                                          />
+                                          <p className="text-[9px] text-[#fbbf24] mt-1.5 italic">↑ Contextual nudge based on psychology</p>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                  
+                                  // Modal Element (Decision Prompt)
+                                  if (element.type === 'modal') {
+                                    return (
+                                      <div key={idx} className="bg-[#0a0a0a] rounded-lg p-4 border-2 border-[#00d4ff]/30 shadow-[0_0_20px_rgba(0,212,255,0.15)]">
+                                        {element.industryContext && (
+                                          <div className="flex items-center gap-1 mb-3">
+                                            <Sparkles className="w-3.5 h-3.5 text-[#00d4ff]" />
+                                            <p className="text-[10px] text-[#00d4ff] font-semibold uppercase tracking-wide">{element.industryContext}</p>
+                                          </div>
+                                        )}
+                                        <AdaptiveText
+                                          baseText={element.baseHeadline}
+                                          motivationVariants={element.motivationVariants}
+                                          className="text-sm font-bold text-white mb-2 block"
+                                          as="h4"
+                                        />
+                                        <AdaptiveText
+                                          baseText={element.baseDescription}
+                                          motivationVariants={element.motivationVariants}
+                                          className="text-xs text-[#a3a3a3] mb-3 block leading-relaxed"
+                                          as="p"
+                                        />
+                                        <div className="flex gap-2">
+                                          <button className="flex-1 bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] text-white font-semibold px-3 py-2 rounded-lg text-xs">
+                                            Confirm
+                                          </button>
+                                          <button className="px-3 py-2 rounded-lg text-xs text-[#a3a3a3] border border-[#404040] hover:bg-[#1a1a1a]">
+                                            Cancel
+                                          </button>
+                                        </div>
+                                        <p className="text-[9px] text-[#6b7280] mt-2 italic">↑ Decision prompts adapt to risk profile</p>
+                                      </div>
                                     );
                                   }
                                   

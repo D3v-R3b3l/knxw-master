@@ -76,13 +76,41 @@ TASK:
 3. Return all confidence values between 0.0 and 1.0
 4. CRITICAL: Include 1-3 adaptive_ui_elements that demonstrate how UI adapts to their psychology
 
-ADAPTIVE UI EXAMPLES (use these patterns):
-- E-commerce: "Shop Now" button adapts to "Start Winning" for achievement-motivated, "Secure Your Purchase" for conservative risk profiles
-- SaaS: "Get Started" adapts to "Explore Features" for analytical, "Quick Setup" for pragmatic
-- Content: Show different resources based on cognitive style (analytical gets data, intuitive gets stories)
-- Finance: Conservative risk profiles see safety features, aggressive see growth opportunities
+ADAPTIVE UI GUIDELINES:
+1. Generate 2-4 diverse adaptive elements per response (mix buttons, cards, containers, toasts)
+2. Make elements INDUSTRY-SPECIFIC based on user's conversation context
+3. Show clear before/after adaptation (baseText vs variants)
+4. Use real-world business scenarios
 
-Make adaptive elements INDUSTRY-RELEVANT to their conversation. Use real-world examples that showcase cross-industry value.`;
+ELEMENT TYPES & USE CASES:
+- button: CTAs that adapt text/urgency (e.g., "Try Free" → "Start Winning Now" for achievement)
+- card: Product/feature cards with adaptive headlines and descriptions
+- container: Conditional content blocks (show risk warnings for conservative, growth stats for aggressive)
+- toast: Contextual nudges/tips that appear based on motivation
+- modal: Adaptive onboarding flows or decision prompts
+
+INDUSTRY EXAMPLES:
+E-commerce: 
+  - Achievement: "Unlock Premium Status", "Join Top 10% of Shoppers"
+  - Security: "Risk-Free Returns", "Trusted by 1M+ Customers"
+  - Innovation: "Be First to Access New Arrivals"
+
+SaaS/B2B:
+  - Analytical: "View Technical Specs", "Download Performance Report"
+  - Pragmatic: "Quick 5-Min Setup", "Start Immediately"
+  - Strategic: "Schedule Strategy Session", "See ROI Calculator"
+
+Gaming:
+  - Mastery: "Climb Leaderboard", "Unlock Achievement"
+  - Social: "Invite Friends", "Join Team"
+  - Exploration: "Discover Hidden Areas"
+
+Finance:
+  - Conservative: "FDIC Insured", "Guaranteed Returns"
+  - Moderate: "Balanced Portfolio", "Diversified Approach"
+  - Aggressive: "High Growth Potential", "Maximize Returns"
+
+Make every element feel native to the user's stated industry/context.`;
 
     // Call LLM using the appropriate client
     const llmResponse = await client.integrations.Core.InvokeLLM({
@@ -96,15 +124,57 @@ Make adaptive elements INDUSTRY-RELEVANT to their conversation. Use real-world e
             items: {
               type: 'object',
               properties: {
-                type: { type: 'string', enum: ['button', 'container', 'text'] },
+                type: { type: 'string', enum: ['button', 'card', 'container', 'toast', 'modal'] },
                 baseText: { type: 'string' },
-                motivationVariants: { type: 'object' },
-                riskVariants: { type: 'object' },
-                moodVariants: { type: 'object' },
-                showFor: { type: 'object' },
-                hideFor: { type: 'object' },
+                baseHeadline: { type: 'string' },
+                baseDescription: { type: 'string' },
+                motivationVariants: { 
+                  type: 'object',
+                  properties: {
+                    achievement: { type: 'string' },
+                    security: { type: 'string' },
+                    innovation: { type: 'string' },
+                    autonomy: { type: 'string' },
+                    mastery: { type: 'string' },
+                    social: { type: 'string' }
+                  }
+                },
+                riskVariants: {
+                  type: 'object',
+                  properties: {
+                    conservative: { type: 'string' },
+                    moderate: { type: 'string' },
+                    aggressive: { type: 'string' }
+                  }
+                },
+                cognitiveStyleVariants: {
+                  type: 'object',
+                  properties: {
+                    analytical: { type: 'string' },
+                    intuitive: { type: 'string' },
+                    pragmatic: { type: 'string' },
+                    strategic: { type: 'string' }
+                  }
+                },
+                showFor: { 
+                  type: 'object',
+                  properties: {
+                    motivations: { type: 'array', items: { type: 'string' } },
+                    riskProfile: { type: 'string' },
+                    cognitiveStyle: { type: 'string' }
+                  }
+                },
+                hideFor: { 
+                  type: 'object',
+                  properties: {
+                    motivations: { type: 'array', items: { type: 'string' } },
+                    riskProfile: { type: 'string' }
+                  }
+                },
                 industryContext: { type: 'string' },
-                action: { type: 'string' }
+                urgencyLevel: { type: 'string', enum: ['low', 'medium', 'high'] },
+                iconSuggestion: { type: 'string' },
+                colorScheme: { type: 'string', enum: ['primary', 'success', 'warning', 'info'] }
               }
             }
           },
