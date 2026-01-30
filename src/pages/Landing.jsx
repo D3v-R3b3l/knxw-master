@@ -531,48 +531,48 @@ export default function LandingPage() {
           {/* Interactive Demo Teaser - Enhanced */}
           <div data-scroll-section>
           <section id="demo-section" className="py-24 md:py-32 bg-[#080808] text-center overflow-hidden relative">
-             {/* Predictive Flow Animation - Fixed Background */}
-             <div className="fixed inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 0 }}>
-               <PredictiveFlowAnimation />
+          {/* Predictive Flow Animation - Fixed Background */}
+          <div className="fixed inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 0 }}>
+            <PredictiveFlowAnimation />
+          </div>
+
+          {/* Parallax Background with abstract shapes */}
+          <div data-parallax-bg className="absolute inset-0 h-[140%] -top-[20%]">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.08),transparent_50%)]" />
+            <div className="absolute top-1/4 left-1/3 w-80 h-80 bg-cyan-500/5 rounded-full blur-[100px]" />
+            <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]" />
+            {/* Abstract floating shapes */}
+            <div className="absolute top-[20%] right-[15%] w-32 h-32 border border-cyan-500/10 rounded-full" />
+            <div className="absolute bottom-[30%] left-[10%] w-24 h-24 border border-white/5 rounded-lg rotate-45" />
+          </div>
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
+
+          <div className="max-w-5xl mx-auto px-6 relative z-10">
+             <div>
+                <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
+                   Experience
+                </span>
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">Intuitive Intelligence</h2>
+                <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">Build adaptive UIs that automatically personalize to user psychology</p>
              </div>
-             
-             {/* Parallax Background with abstract shapes */}
-             <div data-parallax-bg className="absolute inset-0 h-[140%] -top-[20%]">
-               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.08),transparent_50%)]" />
-               <div className="absolute top-1/4 left-1/3 w-80 h-80 bg-cyan-500/5 rounded-full blur-[100px]" />
-               <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]" />
-               {/* Abstract floating shapes */}
-               <div className="absolute top-[20%] right-[15%] w-32 h-32 border border-cyan-500/10 rounded-full" />
-               <div className="absolute bottom-[30%] left-[10%] w-24 h-24 border border-white/5 rounded-lg rotate-45" />
-             </div>
-             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
-             
-             <div className="max-w-5xl mx-auto px-6 relative z-10">
-                <div>
-                   <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
-                      Experience
-                   </span>
-                   <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">Intuitive Intelligence</h2>
-                   <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">Complex psychological analytics made beautifully simple</p>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-6 mb-16 text-left">
-                   {[
-                      { title: "Real-Time Dashboard", desc: "Live psychographic insights with actionable metrics at a glance.", gradient: "from-cyan-500/20 to-blue-500/20" },
-                      { title: "Deep User Profiles", desc: "Understand individual psychology, motivations, and cognitive patterns.", gradient: "from-purple-500/20 to-pink-500/20" }
-                   ].map((item, i) => (
-                      <div 
-                         key={i}
-                         className={`group bg-gradient-to-br ${item.gradient} p-8 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-500 relative overflow-hidden`}
-                      >
-                         <div className="absolute inset-0 bg-[#111] opacity-80 group-hover:opacity-70 transition-opacity" />
-                         <div className="relative z-10">
-                            <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                            <p className="text-gray-400">{item.desc}</p>
-                         </div>
+
+             <div className="grid md:grid-cols-2 gap-6 mb-16 text-left">
+                {[
+                   { title: "Adaptive UI SDK", desc: "React components that automatically adapt to user motivations and psychology.", gradient: "from-cyan-500/20 to-blue-500/20" },
+                   { title: "Real-Time Insights", desc: "Live psychographic analysis with explainable AI reasoning.", gradient: "from-purple-500/20 to-pink-500/20" }
+                ].map((item, i) => (
+                   <div 
+                      key={i}
+                      className={`group bg-gradient-to-br ${item.gradient} p-8 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-500 relative overflow-hidden`}
+                   >
+                      <div className="absolute inset-0 bg-[#111] opacity-80 group-hover:opacity-70 transition-opacity" />
+                      <div className="relative z-10">
+                         <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                         <p className="text-gray-400">{item.desc}</p>
                       </div>
-                   ))}
-                </div>
+                   </div>
+                ))}
+             </div>
 
                 <button 
                   onClick={() => window.location.href = '/InteractiveDemo'}

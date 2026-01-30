@@ -58,6 +58,7 @@ import ZohoCRMIntegrationDoc from '@/components/documentation/integrations/ZohoC
 import PipedriveIntegrationDoc from '@/components/documentation/integrations/PipedriveIntegrationDoc';
 import MagentoIntegrationDoc from '@/components/documentation/integrations/MagentoIntegrationDoc';
 import BIExportDoc from '@/components/documentation/integrations/BIExportDoc';
+import AdaptiveUISDKDoc from '@/components/documentation/AdaptiveUISDKDoc';
 
 // API documentation sections
 const RESTAPIDoc = () => (
@@ -323,6 +324,7 @@ const documentationSections = [
   { id: 'training-validation', title: 'Training & Validation', icon: Target, component: TrainingValidationDoc },
   { id: 'demo-data-studio', title: 'Demo Data Studio', icon: Database, component: DemoDataStudioDoc },
   { id: 'javascript-sdk', title: 'JavaScript SDK', icon: Code, component: SDKDoc },
+  { id: 'adaptive-ui-sdk', title: 'Adaptive UI SDK', icon: Sparkles, component: AdaptiveUISDKDoc },
   { id: 'data-structures', title: 'Data Structures', icon: Layers, component: DataStructureDoc },
   { id: 'rest-api', title: 'REST API', icon: Code, component: RESTAPIDoc },
   { id: 'gamedev-api', title: 'GameDev API', icon: Gamepad2, component: GameDevAPIDoc },
