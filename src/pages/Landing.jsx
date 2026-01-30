@@ -24,6 +24,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
 import { HelmetProvider } from 'react-helmet-async';
+import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -588,6 +589,12 @@ export default function LandingPage() {
           <div id="use-cases" data-scroll-section>
             <UseCasesGrid />
           </div>
+          
+          {/* Adaptive UI SDK Showcase */}
+          <div data-scroll-section>
+            <AdaptiveSDKShowcaseSection />
+          </div>
+          
           <div id="stats" data-scroll-section>
             <AnimatedStats />
           </div>
