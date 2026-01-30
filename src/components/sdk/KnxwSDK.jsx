@@ -1,382 +1,228 @@
-/**
- * knXw JavaScript SDK
- * 
- * Official JavaScript/TypeScript client for the knXw Psychographic Intelligence API.
- * Works in both browser and Node.js environments.
- * 
- * @example
- * ```javascript
- * import { KnxwClient } from '@/components/sdk/KnxwSDK';
- * 
- * const knxw = new KnxwClient({
- *   apiKey: 'knxw_your_api_key_here',
- *   baseUrl: 'https://your-app.base44.com/functions'
- * });
- * 
- * // Track an event
- * await knxw.events.track({
- *   user_id: 'user_123',
- *   event_type: 'page_view',
- *   event_payload: {
- *     url: window.location.href,
- *     referrer: document.referrer
- *   }
- * });
- * 
- * // Get user profile
- * const profile = await knxw.profiles.get('user_123');
- * console.log('User motivations:', profile.motivations);
- * ```
- */
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 
-class KnxwError extends Error {
-  constructor(message, statusCode, response) {
-    super(message);
-    this.name = 'KnxwError';
-    this.statusCode = statusCode;
-    this.response = response;
-  }
+/**
+ * Psychographic SDK Context
+ * Provides real-time user psychographic data to child components
+ */
+const PsychographicContext = createContext(null);
+
+/**
+ * PsychographicProvider - Wraps your app to provide psychographic intelligence
+ * @param {string} userId - The user ID to track
+ * @param {boolean} mockMode - Use mock data for demo/testing
+ * @param {object} mockProfile - Custom mock profile data
+ */
+export function PsychographicProvider({ children, userId, mockMode = false, mockProfile = null }) {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (mockMode) {
+      // Use mock data for demos
+      setProfile(mockProfile || {
+        motivation_labels: ['achievement', 'autonomy'],
+        risk_profile: 'moderate',
+        cognitive_style: 'analytical',
+        emotional_state: { mood: 'confident', confidence_score: 0.85 },
+        personality_traits: {
+          openness: 0.75,
+          conscientiousness: 0.82,
+          extraversion: 0.45
+        }
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
+    // Fetch real psychographic profile
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const profiles = await base44.entities.UserPsychographicProfile.filter({ user_id: userId });
+        if (profiles && profiles.length > 0) {
+          setProfile(profiles[0]);
+        }
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [userId, mockMode, mockProfile]);
+
+  const value = {
+    profile,
+    loading,
+    error,
+    
+    // Helper methods
+    hasMotivation: (motivation) => profile?.motivation_labels?.includes(motivation),
+    getRiskProfile: () => profile?.risk_profile,
+    getCognitiveStyle: () => profile?.cognitive_style,
+    getMood: () => profile?.emotional_state?.mood,
+    getPersonalityTrait: (trait) => profile?.personality_traits?.[trait]
+  };
+
+  return (
+    <PsychographicContext.Provider value={value}>
+      {children}
+    </PsychographicContext.Provider>
+  );
 }
 
-class KnxwClient {
-  constructor(config) {
-    if (!config.apiKey) {
-      throw new Error('API key is required. Get one from the knXw Developer Portal.');
-    }
+/**
+ * usePsychographic Hook - Access psychographic data in any component
+ */
+export function usePsychographic() {
+  const context = useContext(PsychographicContext);
+  if (!context) {
+    throw new Error('usePsychographic must be used within a PsychographicProvider');
+  }
+  return context;
+}
 
-    this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || 'https://your-app.base44.com/functions';
-    this.timeout = config.timeout || 30000; // 30 second default timeout
-    this.retries = config.retries !== undefined ? config.retries : 3;
-    this.debug = config.debug || false;
+/**
+ * AdaptiveButton - Button that adapts text/style based on user psychology
+ */
+export function AdaptiveButton({ 
+  baseText, 
+  motivationVariants = {}, 
+  riskVariants = {},
+  className = '',
+  ...props 
+}) {
+  const { profile, loading, hasMotivation, getRiskProfile } = usePsychographic();
 
-    // Initialize API modules
-    this.events = new EventsAPI(this);
-    this.profiles = new ProfilesAPI(this);
-    this.insights = new InsightsAPI(this);
-    this.recommendations = new RecommendationsAPI(this);
-    this.usage = new UsageAPI(this);
-    this.webhooks = new WebhooksAPI(this);
+  if (loading) {
+    return <button className={className} disabled {...props}>{baseText}</button>;
   }
 
-  /**
-   * Make an HTTP request to the knXw API
-   * @private
-   */
-  async _request(method, path, data = null, options = {}) {
-    const url = `${this.baseUrl}${path}`;
-    const headers = {
-      'Authorization': `Bearer ${this.apiKey}`,
-      'Content-Type': 'application/json',
-      'User-Agent': 'knXw-JS-SDK/1.0.0',
-      ...options.headers
-    };
-
-    const requestOptions = {
-      method,
-      headers,
-      ...(data && { body: JSON.stringify(data) })
-    };
-
-    if (this.debug) {
-      console.log(`[knXw SDK] ${method} ${url}`, data);
-    }
-
-    let lastError;
-    for (let attempt = 0; attempt <= this.retries; attempt++) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-        const response = await fetch(url, {
-          ...requestOptions,
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new KnxwError(
-            responseData.error || `Request failed with status ${response.status}`,
-            response.status,
-            responseData
-          );
-        }
-
-        if (this.debug) {
-          console.log(`[knXw SDK] Response:`, responseData);
-        }
-
-        return responseData;
-      } catch (error) {
-        lastError = error;
-
-        // Don't retry on client errors (4xx) or if it's the last attempt
-        if (error.statusCode && error.statusCode < 500) {
-          throw error;
-        }
-
-        if (attempt === this.retries) {
-          throw error;
-        }
-
-        // Exponential backoff
-        const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+  // Adapt based on motivations
+  let adaptedText = baseText;
+  if (profile && motivationVariants) {
+    for (const [motivation, text] of Object.entries(motivationVariants)) {
+      if (hasMotivation(motivation)) {
+        adaptedText = text;
+        break;
       }
     }
-
-    throw lastError;
   }
+
+  // Adapt based on risk profile
+  if (profile && riskVariants) {
+    const risk = getRiskProfile();
+    if (riskVariants[risk]) {
+      adaptedText = riskVariants[risk];
+    }
+  }
+
+  return <button className={className} {...props}>{adaptedText}</button>;
 }
 
 /**
- * Events API - Track user behavior
+ * AdaptiveText - Text that changes based on user psychology
  */
-class EventsAPI {
-  constructor(client) {
-    this.client = client;
+export function AdaptiveText({ 
+  baseText, 
+  motivationVariants = {},
+  moodVariants = {},
+  className = '',
+  as: Component = 'span'
+}) {
+  const { profile, loading, hasMotivation, getMood } = usePsychographic();
+
+  if (loading) {
+    return <Component className={className}>{baseText}</Component>;
   }
 
-  /**
-   * Track a behavioral event
-   * 
-   * @param {Object} event - Event data
-   * @param {string} event.user_id - User identifier
-   * @param {string} event.event_type - Type of event (page_view, click, etc.)
-   * @param {Object} [event.event_payload] - Additional event data
-   * @param {string} [event.session_id] - Browser session ID
-   * @param {string} [event.timestamp] - Event timestamp (ISO 8601)
-   * @returns {Promise<Object>} Event ingestion response
-   * 
-   * @example
-   * await knxw.events.track({
-   *   user_id: 'user_123',
-   *   event_type: 'page_view',
-   *   event_payload: {
-   *     url: '/pricing',
-   *     referrer: '/home'
-   *   }
-   * });
-   */
-  async track(event) {
-    return this.client._request('POST', '/api/v1/events', event);
+  let adaptedText = baseText;
+
+  // Adapt based on motivations
+  if (profile && motivationVariants) {
+    for (const [motivation, text] of Object.entries(motivationVariants)) {
+      if (hasMotivation(motivation)) {
+        adaptedText = text;
+        break;
+      }
+    }
   }
 
-  /**
-   * Convenience method for tracking page views
-   */
-  async trackPageView(userId, url, options = {}) {
-    return this.track({
-      user_id: userId,
-      event_type: 'page_view',
-      event_payload: {
-        url,
-        referrer: options.referrer,
-        duration: options.duration,
-        ...options.payload
-      },
-      session_id: options.session_id,
-      timestamp: options.timestamp
-    });
+  // Adapt based on mood
+  if (profile && moodVariants) {
+    const mood = getMood();
+    if (moodVariants[mood]) {
+      adaptedText = moodVariants[mood];
+    }
   }
 
-  /**
-   * Convenience method for tracking clicks
-   */
-  async trackClick(userId, element, options = {}) {
-    return this.track({
-      user_id: userId,
-      event_type: 'click',
-      event_payload: {
-        element,
-        coordinates: options.coordinates,
-        ...options.payload
-      },
-      session_id: options.session_id,
-      timestamp: options.timestamp
-    });
-  }
+  return <Component className={className}>{adaptedText}</Component>;
 }
 
 /**
- * Profiles API - Access psychographic profiles
+ * AdaptiveContainer - Container that shows/hides based on psychographic criteria
  */
-class ProfilesAPI {
-  constructor(client) {
-    this.client = client;
+export function AdaptiveContainer({ 
+  children, 
+  showFor = {},
+  hideFor = {},
+  fallback = null 
+}) {
+  const { profile, loading, hasMotivation, getRiskProfile, getCognitiveStyle } = usePsychographic();
+
+  if (loading) return fallback;
+
+  // Check show conditions
+  if (showFor.motivations) {
+    const hasAny = showFor.motivations.some(m => hasMotivation(m));
+    if (!hasAny) return fallback;
   }
 
-  /**
-   * Get a user's psychographic profile
-   * 
-   * @param {string} userId - User identifier
-   * @returns {Promise<Object>} User profile with motivations, cognitive style, etc.
-   * 
-   * @example
-   * const profile = await knxw.profiles.get('user_123');
-   * console.log('Motivations:', profile.motivations);
-   * console.log('Cognitive style:', profile.cognitive_style);
-   */
-  async get(userId) {
-    const response = await this.client._request('GET', `/api/v1/profiles/${encodeURIComponent(userId)}`);
-    return response.data;
+  if (showFor.riskProfile) {
+    if (getRiskProfile() !== showFor.riskProfile) return fallback;
   }
+
+  if (showFor.cognitiveStyle) {
+    if (getCognitiveStyle() !== showFor.cognitiveStyle) return fallback;
+  }
+
+  // Check hide conditions
+  if (hideFor.motivations) {
+    const hasAny = hideFor.motivations.some(m => hasMotivation(m));
+    if (hasAny) return fallback;
+  }
+
+  if (hideFor.riskProfile) {
+    if (getRiskProfile() === hideFor.riskProfile) return fallback;
+  }
+
+  return <>{children}</>;
 }
 
 /**
- * Insights API - Query AI-powered insights
+ * withPsychographic HOC - Wrap any component to receive psychographic props
  */
-class InsightsAPI {
-  constructor(client) {
-    this.client = client;
-  }
-
-  /**
-   * Query insights for users
-   * 
-   * @param {Object} [options] - Query options
-   * @param {string[]} [options.user_ids] - Filter by user IDs
-   * @param {string} [options.insight_type] - Filter by insight type
-   * @param {number} [options.min_confidence] - Minimum confidence threshold (0-1)
-   * @param {number} [options.limit] - Max results to return
-   * @returns {Promise<Array>} List of insights
-   * 
-   * @example
-   * const insights = await knxw.insights.query({
-   *   user_ids: ['user_123'],
-   *   insight_type: 'engagement_optimization',
-   *   min_confidence: 0.8
-   * });
-   */
-  async query(options = {}) {
-    const response = await this.client._request('POST', '/api/v1/insights/query', options);
-    return response.data;
-  }
+export function withPsychographic(Component) {
+  return function PsychographicComponent(props) {
+    const psychographic = usePsychographic();
+    return <Component {...props} psychographic={psychographic} />;
+  };
 }
 
-/**
- * Recommendations API - Get personalized content recommendations
- */
-class RecommendationsAPI {
-  constructor(client) {
-    this.client = client;
-  }
-
-  /**
-   * Get recommendations for a user
-   * 
-   * @param {string} userId - User identifier
-   * @param {Object} [options] - Recommendation options
-   * @param {string[]} [options.content_types] - Filter by content types
-   * @param {number} [options.limit] - Number of recommendations
-   * @param {boolean} [options.refresh] - Force regeneration
-   * @returns {Promise<Array>} List of recommendations
-   * 
-   * @example
-   * const recs = await knxw.recommendations.get('user_123', {
-   *   content_types: ['feature_guide'],
-   *   limit: 3
-   * });
-   */
-  async get(userId, options = {}) {
-    const response = await this.client._request('POST', '/api/v1/recommendations', {
-      user_id: userId,
-      ...options
-    });
-    return response.data;
-  }
-}
-
-/**
- * Usage API - Monitor API usage
- */
-class UsageAPI {
-  constructor(client) {
-    this.client = client;
-  }
-
-  /**
-   * Get usage statistics
-   * 
-   * @param {Object} [options] - Query options
-   * @param {number} [options.days] - Number of days to query (1-90)
-   * @returns {Promise<Object>} Usage statistics
-   * 
-   * @example
-   * const usage = await knxw.usage.get({ days: 7 });
-   * console.log('Total requests:', usage.totals.requests);
-   */
-  async get(options = {}) {
-    const queryParams = new URLSearchParams();
-    if (options.days) queryParams.append('days', options.days);
-    
-    const path = `/api/v1/usage${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
-    const response = await this.client._request('GET', path);
-    return response.data;
-  }
-}
-
-/**
- * Webhooks API - Manage webhook endpoints
- */
-class WebhooksAPI {
-  constructor(client) {
-    this.client = client;
-  }
-
-  /**
-   * List all webhook endpoints
-   */
-  async list() {
-    const response = await this.client._request('GET', '/api/v1/webhooks/endpoints');
-    return response.data;
-  }
-
-  /**
-   * Create a new webhook endpoint
-   * 
-   * @param {Object} webhook - Webhook configuration
-   * @param {string} webhook.name - Webhook name
-   * @param {string} webhook.url - HTTPS URL to receive events
-   * @param {string[]} webhook.events - Event types to subscribe to
-   * @param {string} [webhook.secret] - Optional webhook secret
-   * 
-   * @example
-   * const webhook = await knxw.webhooks.create({
-   *   name: 'Production Webhook',
-   *   url: 'https://example.com/webhooks/knxw',
-   *   events: ['profile.updated', 'insight.created']
-   * });
-   */
-  async create(webhook) {
-    const response = await this.client._request('POST', '/api/v1/webhooks/endpoints', webhook);
-    return response.data;
-  }
-
-  /**
-   * Update a webhook endpoint
-   */
-  async update(webhookId, updates) {
-    const response = await this.client._request('PUT', `/api/v1/webhooks/endpoints/${webhookId}`, updates);
-    return response.data;
-  }
-
-  /**
-   * Delete a webhook endpoint
-   */
-  async delete(webhookId) {
-    return this.client._request('DELETE', `/api/v1/webhooks/endpoints/${webhookId}`);
-  }
-}
-
-// Export for use in other modules
-export { KnxwClient, KnxwError };
-
-// For browser environments, attach to window
-if (typeof window !== 'undefined') {
-  window.KnxwClient = KnxwClient;
-  window.KnxwError = KnxwError;
-}
+// Export all components
+export default {
+  PsychographicProvider,
+  usePsychographic,
+  AdaptiveButton,
+  AdaptiveText,
+  AdaptiveContainer,
+  withPsychographic
+};
