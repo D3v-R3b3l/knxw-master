@@ -25,6 +25,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
 import { HelmetProvider } from 'react-helmet-async';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
+import AdaptiveUIIndustryShowcase from '@/components/landing/AdaptiveUIIndustryShowcase';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -593,6 +594,11 @@ export default function LandingPage() {
           {/* Adaptive UI SDK Showcase */}
           <div data-scroll-section>
             <AdaptiveSDKShowcaseSection />
+          </div>
+          
+          {/* Adaptive UI Industry Use Cases */}
+          <div data-scroll-section>
+            <AdaptiveUIIndustryShowcase />
           </div>
           
           <div id="stats" data-scroll-section>

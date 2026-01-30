@@ -59,6 +59,9 @@ import PipedriveIntegrationDoc from '@/components/documentation/integrations/Pip
 import MagentoIntegrationDoc from '@/components/documentation/integrations/MagentoIntegrationDoc';
 import BIExportDoc from '@/components/documentation/integrations/BIExportDoc';
 import AdaptiveUISDKDoc from '@/components/documentation/AdaptiveUISDKDoc';
+import AdaptiveUIEcommerceDoc from '@/components/documentation/AdaptiveUIEcommerceDoc';
+import AdaptiveUIGamingDoc from '@/components/documentation/AdaptiveUIGamingDoc';
+import AdaptiveUISaaSDoc from '@/components/documentation/AdaptiveUISaaSDoc';
 
 // API documentation sections
 const RESTAPIDoc = () => (
@@ -325,6 +328,9 @@ const documentationSections = [
   { id: 'demo-data-studio', title: 'Demo Data Studio', icon: Database, component: DemoDataStudioDoc },
   { id: 'javascript-sdk', title: 'JavaScript SDK', icon: Code, component: SDKDoc },
   { id: 'adaptive-ui-sdk', title: 'Adaptive UI SDK', icon: Sparkles, component: AdaptiveUISDKDoc },
+  { id: 'adaptive-ui-ecommerce', title: 'E-commerce Use Cases', icon: Store, component: AdaptiveUIEcommerceDoc },
+  { id: 'adaptive-ui-gaming', title: 'Gaming Use Cases', icon: Gamepad2, component: AdaptiveUIGamingDoc },
+  { id: 'adaptive-ui-saas', title: 'SaaS Use Cases', icon: Rocket, component: AdaptiveUISaaSDoc },
   { id: 'data-structures', title: 'Data Structures', icon: Layers, component: DataStructureDoc },
   { id: 'rest-api', title: 'REST API', icon: Code, component: RESTAPIDoc },
   { id: 'gamedev-api', title: 'GameDev API', icon: Gamepad2, component: GameDevAPIDoc },
