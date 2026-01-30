@@ -6,11 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Brain, Sparkles, TrendingUp, Target, Zap, Send, RotateCcw, Loader2, Lightbulb,
-  ChevronDown, Eye, ArrowRight, User, Menu, X
+  ChevronDown, Eye, ArrowRight, User, Menu, X, Code2
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import HeadManager from '@/components/HeadManager';
 import { motion, AnimatePresence } from 'framer-motion';
+import AdaptiveUIShowcase from '@/components/sdk/AdaptiveUIShowcase';
 
 // Helper function to create page URLs.
 const createPageUrl = (pageName) => {
@@ -33,6 +34,7 @@ export default function InteractiveDemoPage() {
   const [sessionStarted, setSessionStarted] = useState(false);
   const [profileExpanded, setProfileExpanded] = useState(true);
   const [mobileAnalysisOpen, setMobileAnalysisOpen] = useState(false);
+  const [showAdaptiveUI, setShowAdaptiveUI] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -419,7 +421,7 @@ export default function InteractiveDemoPage() {
               </Button>
             </motion.div>
 
-            <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
               {[
                 { icon: Brain, title: "Live Analysis", desc: "Watch profile build in real-time" },
                 { icon: Eye, title: "Full Transparency", desc: "See every AI inference explained" },
@@ -434,6 +436,37 @@ export default function InteractiveDemoPage() {
                 </Card>
               ))}
             </div>
+
+            {/* Adaptive UI SDK Showcase */}
+            <Card className="bg-gradient-to-br from-[#111111] to-[#0a0a0a] border-[#00d4ff]/30 mb-6">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Code2 className="w-5 h-5 text-[#00d4ff]" />
+                      <CardTitle className="text-white">Adaptive UI SDK Preview</CardTitle>
+                      <Badge className="bg-[#00d4ff]/20 text-[#00d4ff] border-[#00d4ff]/30">New</Badge>
+                    </div>
+                    <p className="text-sm text-[#a3a3a3]">
+                      See how UI components automatically adapt to user psychology
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => setShowAdaptiveUI(!showAdaptiveUI)}
+                    variant="outline"
+                    size="sm"
+                    className="border-[#00d4ff]/30 text-[#00d4ff] hover:bg-[#00d4ff]/10"
+                  >
+                    {showAdaptiveUI ? 'Hide' : 'Try It'}
+                  </Button>
+                </div>
+              </CardHeader>
+              {showAdaptiveUI && (
+                <CardContent className="pt-0">
+                  <AdaptiveUIShowcase />
+                </CardContent>
+              )}
+            </Card>
           </div>
         ) : (
           /* Demo Interface */
