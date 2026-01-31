@@ -62,6 +62,7 @@ import AdaptiveUISDKDoc from '@/components/documentation/AdaptiveUISDKDoc';
 import AdaptiveUIEcommerceDoc from '@/components/documentation/AdaptiveUIEcommerceDoc';
 import AdaptiveUIGamingDoc from '@/components/documentation/AdaptiveUIGamingDoc';
 import AdaptiveUISaaSDoc from '@/components/documentation/AdaptiveUISaaSDoc';
+import AdaptiveUIVueDoc from '@/components/documentation/AdaptiveUIVueDoc';
 
 // API documentation sections
 const RESTAPIDoc = () => (
@@ -331,6 +332,7 @@ const documentationSections = [
   { id: 'adaptive-ui-ecommerce', title: 'E-commerce Use Cases', icon: Store, component: AdaptiveUIEcommerceDoc },
   { id: 'adaptive-ui-gaming', title: 'Gaming Use Cases', icon: Gamepad2, component: AdaptiveUIGamingDoc },
   { id: 'adaptive-ui-saas', title: 'SaaS Use Cases', icon: Rocket, component: AdaptiveUISaaSDoc },
+  { id: 'adaptive-ui-vue', title: 'Vue.js SDK', icon: Code, component: AdaptiveUIVueDoc },
   { id: 'data-structures', title: 'Data Structures', icon: Layers, component: DataStructureDoc },
   { id: 'rest-api', title: 'REST API', icon: Code, component: RESTAPIDoc },
   { id: 'gamedev-api', title: 'GameDev API', icon: Gamepad2, component: GameDevAPIDoc },
