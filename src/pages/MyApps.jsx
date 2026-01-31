@@ -125,7 +125,12 @@ export default function MyAppsPage() {
         setCreationSuccess("Application created successfully.");
         setNewAppName("");
         setNewAppDomains("");
-        await loadApps();
+        
+        // Force immediate reload with a small delay to ensure DB consistency
+        setTimeout(async () => {
+          await loadApps();
+        }, 500);
+        
         toast({
           title: "Success",
           description: "Application created successfully"
