@@ -83,6 +83,14 @@ export default function MyAppsPage() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       
+      // Debug: Check what's actually in the database
+      try {
+        const debugResponse = await base44.functions.invoke('debugClientApps');
+        console.log('🔍 Debug Info:', debugResponse.data);
+      } catch (debugErr) {
+        console.warn('Debug function failed:', debugErr);
+      }
+      
       // If admin, show all apps. Otherwise, show only owned apps.
       let userApps;
       if (currentUser.role === 'admin') {
