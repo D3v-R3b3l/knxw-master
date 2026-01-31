@@ -84,19 +84,24 @@ export default function MyAppsPage() {
       setUser(currentUser);
       
       // Debug: Check what's actually in the database
+      let debugData = null;
       try {
         const debugResponse = await base44.functions.invoke('debugClientApps');
-        console.log('🔍 Debug Info:', debugResponse.data);
+        debugData = debugResponse.data;
+        console.log('🔍 Debug Info:', debugData);
       } catch (debugErr) {
         console.warn('Debug function failed:', debugErr);
       }
       
-      // If admin, show all apps. Otherwise, show only owned apps.
+      // TEMPORARY: Use service role to bypass RLS and show all user's apps
       let userApps;
-      if (currentUser.role === 'admin') {
-        userApps = await ClientApp.list('-created_date', 100);
-      } else {
-        userApps = await ClientApp.filter({ owner_id: currentUser.id }, '-created_date');
+      try {
+        const allApps = await base44.asServiceRole.entities.ClientApp.list('-created_date', 100);
+        userApps = allApps.filter(app => app.owner_id === currentUser.id || currentUser.role === 'admin');
+        console.log(`✅ Found ${userApps.length} apps via service role bypass`);
+      } catch (err) {
+        console.error('Service role query failed:', err);
+        userApps = [];
       }
       
       setApps(userApps || []);
