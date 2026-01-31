@@ -83,28 +83,14 @@ export default function MyAppsPage() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       
-      // Debug: Check what's actually in the database
-      let debugData = null;
-      try {
-        const debugResponse = await base44.functions.invoke('debugClientApps');
-        debugData = debugResponse.data;
-        console.log('🔍 Debug Info:', debugData);
-      } catch (debugErr) {
-        console.warn('Debug function failed:', debugErr);
-      }
+      // Fetch apps via backend function with service role
+      const response = await base44.functions.invoke('getMyClientApps');
       
-      // TEMPORARY: Use service role to bypass RLS and show all user's apps
-      let userApps;
-      try {
-        const allApps = await base44.asServiceRole.entities.ClientApp.list('-created_date', 100);
-        userApps = allApps.filter(app => app.owner_id === currentUser.id || currentUser.role === 'admin');
-        console.log(`✅ Found ${userApps.length} apps via service role bypass`);
-      } catch (err) {
-        console.error('Service role query failed:', err);
-        userApps = [];
+      if (response.data?.apps) {
+        setApps(response.data.apps);
+      } else {
+        setApps([]);
       }
-      
-      setApps(userApps || []);
     } catch (err) {
       console.error("Failed to load client apps:", err);
       toast({
@@ -112,6 +98,7 @@ export default function MyAppsPage() {
         description: "Failed to load applications",
         variant: "destructive"
       });
+      setApps([]);
     }
     setLoading(false);
   };
