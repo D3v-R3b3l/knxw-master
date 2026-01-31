@@ -68,8 +68,7 @@ export default function DemoDataPage() {
         setLastResult(response.data);
         toast({
           title: "Demo Data Seeded",
-          description: `Successfully created ${response.data.counts.profiles} profiles, ${response.data.counts.events} events, and ${response.data.counts.insights} insights.`,
-          variant: "success"
+          description: `Successfully created ${response.data.counts.profiles} profiles, ${response.data.counts.events} events, and ${response.data.counts.insights} insights.`
         });
 
         // Dispatch event to refresh dashboard
@@ -104,8 +103,7 @@ export default function DemoDataPage() {
       if (response.data?.success) {
         toast({
           title: "Demo Data Cleared",
-          description: `Removed ${response.data.total_records_deleted} demo records.`,
-          variant: "success"
+          description: `Removed ${response.data.total_records_deleted} demo records.`
         });
 
         setLastResult(null);

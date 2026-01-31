@@ -130,7 +130,6 @@ export default function MyAppsPage() {
           title: "Success",
           description: "Application created successfully"
         });
-        await markOnboardingStep('create_app');
       } else {
         const errorMsg = data?.error || "Failed to create application.";
         setCreationError(errorMsg);
