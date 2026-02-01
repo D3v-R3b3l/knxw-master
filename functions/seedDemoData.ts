@@ -1,5 +1,4 @@
-
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { faker } from 'npm:@faker-js/faker@8.4.1';
 
 // Helper to add delay between operations
