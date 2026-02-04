@@ -67,14 +67,19 @@ export default function DemoDataPage() {
       if (response.data?.success) {
         setLastResult(response.data);
         toast({
-          title: "Demo Data Seeded",
-          description: `Successfully created ${response.data.counts.profiles} profiles, ${response.data.counts.events} events, and ${response.data.counts.insights} insights.`
+          title: "Demo Data Seeded Successfully",
+          description: `Created ${response.data.counts.profiles} profiles, ${response.data.counts.events} events, and ${response.data.counts.insights} insights.`
         });
 
         // Dispatch event to refresh dashboard
         window.dispatchEvent(new CustomEvent('knxw-demo-data-seeded', {
           detail: { scenario: scenario.id, counts: response.data.counts }
         }));
+        
+        // Small delay before redirecting to allow toast to show
+        setTimeout(() => {
+          window.location.href = '/Dashboard';
+        }, 1500);
       } else {
         throw new Error(response.data?.error || 'Seeding failed');
       }

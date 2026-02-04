@@ -197,13 +197,22 @@ Deno.serve(async (req) => {
       clientApp: 0
     };
 
-    // Step 1: Optionally clear existing demo data
+    // Step 1: Optionally clear existing demo data for this user
     if (clearExisting) {
       console.log('Clearing existing demo data...');
       try {
-        const demoProfiles = await base44Service.entities.UserPsychographicProfile.filter({ is_demo: true });
-        const demoEvents = await base44Service.entities.CapturedEvent.filter({ is_demo: true });
-        const demoInsights = await base44Service.entities.PsychographicInsight.filter({ is_demo: true });
+        const demoProfiles = await base44Service.entities.UserPsychographicProfile.filter({ 
+          is_demo: true,
+          created_by: user.email 
+        });
+        const demoEvents = await base44Service.entities.CapturedEvent.filter({ 
+          is_demo: true,
+          created_by: user.email 
+        });
+        const demoInsights = await base44Service.entities.PsychographicInsight.filter({ 
+          is_demo: true,
+          created_by: user.email 
+        });
 
         for (const profile of demoProfiles) {
           await base44Service.entities.UserPsychographicProfile.delete(profile.id);
@@ -214,7 +223,7 @@ Deno.serve(async (req) => {
         for (const insight of demoInsights) {
           await base44Service.entities.PsychographicInsight.delete(insight.id);
         }
-        console.log('Demo data cleared successfully');
+        console.log(`Demo data cleared successfully: ${demoProfiles.length} profiles, ${demoEvents.length} events, ${demoInsights.length} insights`);
       } catch (error) {
         console.error('Error clearing demo data:', error);
       }
@@ -260,16 +269,19 @@ Deno.serve(async (req) => {
       for (let j = 0; j < BATCH_SIZE && (i + j) < userCount; j++) {
         const userId = generateUserId();
         
-        // Generate profile
+        // Generate profile with created_by for RLS
         const profile = generatePsychographicProfile(userId, scenario);
+        profile.created_by = user.email;
         profileBatch.push(profile);
         
-        // Generate events
+        // Generate events with created_by for RLS
         const events = generateRealisticEvents(userId, scenario, faker.number.int({ min: 10, max: 30 }));
+        events.forEach(event => event.created_by = user.email);
         eventBatch.push(...events);
         
-        // Generate insights
+        // Generate insights with created_by for RLS
         const insights = generateRealisticInsights(userId, profile);
+        insights.forEach(insight => insight.created_by = user.email);
         insightBatch.push(...insights);
       }
 
