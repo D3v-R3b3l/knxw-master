@@ -254,11 +254,7 @@ export default function Dashboard() {// Renamed from DashboardContent
     };
   }, [loadUserAndCheckForApps, refreshData]);
 
-  // Show welcome screen only if: loading, no apps exist yet
-  // Don't show if we have apps with data or if loading is complete
-  const shouldShowWelcome = !hasClientApp && apps.length === 0;
-  
-  if (isInitialSetupLoading && shouldShowWelcome) {
+  if (isInitialSetupLoading && !hasClientApp) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-[#0a0a0a] to-[#0a0a0a] text-white flex items-center justify-center p-4">
         <div className="w-full max-w-5xl">
