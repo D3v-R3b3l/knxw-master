@@ -17,6 +17,7 @@ import InteractiveTour from "./components/onboarding/InteractiveTour";
 import GlobalAIAssistant from "./components/ai/GlobalAIAssistant";
 import RoleBasedOnboarding, { detectUserRole } from "./components/onboarding/RoleBasedOnboarding";
 import AdaptiveOnboardingEngine from "./components/onboarding/AdaptiveOnboardingEngine";
+import OnboardingAssistant from "./components/onboarding/OnboardingAssistant";
 import OnboardingProgress from "./components/ui/OnboardingProgress";
 import { navigationSections, adminNavigationItems } from "./components/constants/navigation";
 import { ASSETS } from "./components/constants/assets";
@@ -96,6 +97,7 @@ export default function Layout({ children, currentPageName }) {
   const [showTour, setShowTour] = useState(false);
       const [showAIAssistant, setShowAIAssistant] = useState(false);
       const [showRoleOnboarding, setShowRoleOnboarding] = useState(false);
+      const [showOnboardingAssistant, setShowOnboardingAssistant] = useState(false);
       const [userRole, setUserRole] = useState('marketer');
       const [authError, setAuthError] = useState(null);
 
@@ -120,17 +122,21 @@ export default function Layout({ children, currentPageName }) {
         setCurrentUser(user);
         const detectedRole = detectUserRole(user);
         setUserRole(detectedRole);
-        
+
         // Check backend for onboarding state
         const onboardingKey = `${detectedRole}_completed`;
         const dismissedKey = `${detectedRole}_dismissed`;
-        
-        if (!user.onboarding_state?.[onboardingKey] && !user.onboarding_state?.[dismissedKey]) {
+
+        // Show interactive onboarding assistant for new users
+        const hasCompletedAnyOnboarding = user.onboarding_state?.onboarding_progress > 0;
+        const hasSeenAssistant = user.onboarding_state?.assistant_dismissed;
+
+        if (!hasCompletedAnyOnboarding && !hasSeenAssistant) {
           setTimeout(() => {
-            setShowRoleOnboarding(true);
+            setShowOnboardingAssistant(true);
           }, 2000);
         }
-        
+
         // Check for tour state in backend
         if (user.onboarding_state?.tour_requested && !user.onboarding_state?.tour_completed) {
           setShowTour(true);
@@ -138,10 +144,10 @@ export default function Layout({ children, currentPageName }) {
 
         // Listen for onboarding trigger from dashboard
         const handleOnboardingTrigger = () => {
-          setShowRoleOnboarding(true);
+          setShowOnboardingAssistant(true);
         };
         window.addEventListener('knxw-trigger-onboarding', handleOnboardingTrigger);
-        
+
         return () => {
           window.removeEventListener('knxw-trigger-onboarding', handleOnboardingTrigger);
         };
@@ -254,13 +260,32 @@ export default function Layout({ children, currentPageName }) {
             />
           )}
 
+          <OnboardingAssistant
+            isOpen={showOnboardingAssistant}
+            onClose={async () => {
+              setShowOnboardingAssistant(false);
+
+              try {
+                const user = await base44.auth.me();
+                await base44.auth.updateMe({
+                  onboarding_state: {
+                    ...user.onboarding_state,
+                    assistant_dismissed: true,
+                    assistant_dismissed_at: new Date().toISOString()
+                  }
+                });
+              } catch (error) {
+                console.error('Failed to save assistant dismissal:', error);
+              }
+            }}
+          />
+
           <RoleBasedOnboarding
             isOpen={showRoleOnboarding}
             onClose={async () => {
               setShowRoleOnboarding(false);
-              
+
               try {
-                // Mark as dismissed so it doesn't show again
                 const user = await base44.auth.me();
                 await base44.auth.updateMe({
                   onboarding_state: {
@@ -449,19 +474,19 @@ export default function Layout({ children, currentPageName }) {
           {/* Floating Action Buttons */}
           <div className="fixed bottom-4 right-4 flex flex-col gap-3 z-40">
             <Button
+                onClick={() => setShowOnboardingAssistant(true)}
+                className="w-14 h-14 rounded-full bg-gradient-to-br from-[#10b981] to-[#059669] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
+                title="Getting Started"
+              >
+                <GraduationCap className="w-6 h-6" />
+              </Button>
+            <Button
                 onClick={() => setShowAIAssistant(true)}
                 className="w-14 h-14 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.5)]"
                 title="AI Assistant"
               >
                 <Bot className="w-6 h-6" />
               </Button>
-              <Button
-                    onClick={() => setShowRoleOnboarding(true)}
-                    className="w-14 h-14 rounded-full bg-gradient-to-br from-[#ec4899] to-[#db2777] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]"
-                    title={`${userRole.charAt(0).toUpperCase() + userRole.slice(1)} Guide`}
-                  >
-                    <GraduationCap className="w-6 h-6" />
-                  </Button>
             {showBackToTop && (
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
