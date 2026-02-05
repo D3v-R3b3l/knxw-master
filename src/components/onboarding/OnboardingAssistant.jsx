@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { base44 } from '@/api/base44Client';
-import { X, Send, Sparkles, Check, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { X, Send, Sparkles, Check, ChevronDown, ChevronUp, Loader2, ArrowRight, ExternalLink } from 'lucide-react';
 import { createPageUrl } from '@/utils';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const ONBOARDING_STEPS = [
   {
@@ -14,52 +14,93 @@ const ONBOARDING_STEPS = [
     title: 'Create your first application',
     page: 'MyApps',
     check: async () => {
-      const apps = await base44.entities.ClientApp.list();
-      return apps.length > 0;
+      try {
+        const response = await base44.functions.invoke('getMyClientApps');
+        return response?.data?.apps?.length > 0;
+      } catch {
+        return false;
+      }
     },
-    guidance: "Let's start by creating your first application. This will give you an API key to integrate knXw into your product. Click 'My Apps' in the sidebar to get started."
+    getGuidance: (state) => {
+      if (!state.apps || state.apps.length === 0) {
+        return {
+          message: "👋 Welcome to knXw! I'm your AI guide. Let's create your first application to get your unique API key.",
+          action: {
+            label: "Create Application",
+            page: "MyApps"
+          }
+        };
+      }
+      return {
+        message: "✅ Great! You've created your first application. Now let's explore what knXw can do.",
+        action: null
+      };
+    }
   },
   {
     id: 'explore_dashboard',
     title: 'Explore the dashboard',
     page: 'Dashboard',
     check: async (state) => state.visited_dashboard,
-    guidance: "Great! Now let's check out your analytics dashboard. This is where you'll see real-time psychographic insights about your users."
+    getGuidance: (state) => ({
+      message: "Let's explore your analytics dashboard. This is command center for all psychographic intelligence about your users.",
+      action: {
+        label: "View Dashboard",
+        page: "Dashboard"
+      }
+    })
   },
   {
     id: 'view_profiles',
     title: 'View user profiles',
     page: 'Profiles',
     check: async (state) => state.visited_profiles,
-    guidance: "User profiles show deep psychological insights - motivations, personality traits, emotional states, and behavioral patterns. Let's take a look!"
+    getGuidance: (state) => ({
+      message: "User profiles reveal deep psychological insights - motivations, personality traits, emotional states, and cognitive patterns.",
+      action: {
+        label: "Explore Profiles",
+        page: "Profiles"
+      }
+    })
   },
   {
     id: 'check_events',
     title: 'Check event stream',
     page: 'Events',
     check: async (state) => state.visited_events,
-    guidance: "The event stream captures every user interaction in real-time. Once you integrate the SDK, you'll see clicks, scrolls, and form submissions here."
+    getGuidance: (state) => ({
+      message: "The event stream captures every user interaction in real-time. See how behavioral data flows into psychographic profiles.",
+      action: {
+        label: "View Events",
+        page: "Events"
+      }
+    })
   },
   {
-    id: 'build_segment',
-    title: 'Build an audience segment',
-    page: 'AudienceBuilder',
-    check: async (state) => state.visited_segments,
-    guidance: "Now let's explore audience segments. You can target users based on psychology, behavior, and engagement patterns."
+    id: 'integrate_sdk',
+    title: 'Integrate the SDK',
+    page: 'Documentation',
+    check: async (state) => state.sdk_integrated || state.visited_documentation,
+    getGuidance: (state) => ({
+      message: "Ready to capture real user data? Follow the SDK integration guide to start tracking psychographic insights in your app.",
+      action: {
+        label: "View Integration Guide",
+        page: "Documentation"
+      }
+    })
   },
   {
     id: 'review_insights',
     title: 'Review AI insights',
     page: 'Insights',
     check: async (state) => state.visited_insights,
-    guidance: "AI-generated insights provide actionable recommendations based on user behavior patterns. Let's see what the AI can discover!"
-  },
-  {
-    id: 'complete_tour',
-    title: 'Complete the guided tour',
-    page: 'Dashboard',
-    check: async (state) => state.tour_completed,
-    guidance: "Excellent work! You've explored the key features. You're ready to integrate knXw into your product. Check out the Documentation for SDK setup instructions."
+    getGuidance: (state) => ({
+      message: "AI-generated insights provide actionable recommendations based on behavioral patterns. Discover what your users really want.",
+      action: {
+        label: "See Insights",
+        page: "Insights"
+      }
+    })
   }
 ];
 
@@ -71,9 +112,12 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
   const [completedSteps, setCompletedSteps] = useState(new Set());
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [userState, setUserState] = useState({});
+  const [isCheckingState, setIsCheckingState] = useState(false);
+  const [currentGuidance, setCurrentGuidance] = useState(null);
   
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const currentStep = ONBOARDING_STEPS[currentStepIndex];
   const progress = (completedSteps.size / ONBOARDING_STEPS.length) * 100;
@@ -81,19 +125,20 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
 
   useEffect(() => {
     if (!isOpen) return;
-    
-    // Load state and initialize
     loadOnboardingState();
-    
-    // Add welcome message
-    if (messages.length === 0) {
-      setMessages([{
-        role: 'assistant',
-        content: "👋 Welcome to knXw! I'm your AI guide. I'll help you get started with psychographic intelligence. Ready to create your first application?",
-        timestamp: new Date()
-      }]);
-    }
   }, [isOpen]);
+
+  // Track page visits
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const currentPage = location.pathname.split('/').pop() || 'Dashboard';
+    const pageKey = `visited_${currentPage.toLowerCase()}`;
+    
+    if (!userState[pageKey]) {
+      markPageVisited(currentPage);
+    }
+  }, [location.pathname, isOpen, userState]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -111,16 +156,33 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
   }, [isOpen, currentStepIndex, userState, allComplete]);
 
   const loadOnboardingState = async () => {
+    setIsCheckingState(true);
     try {
       const user = await base44.auth.me();
       const state = user?.onboarding_state || {};
-      setUserState(state);
+      
+      // Check for existing apps
+      let apps = [];
+      try {
+        const appsResponse = await base44.functions.invoke('getMyClientApps');
+        apps = appsResponse?.data?.apps || [];
+      } catch (e) {
+        console.error('Failed to load apps:', e);
+      }
+      
+      const enrichedState = {
+        ...state,
+        apps,
+        has_apps: apps.length > 0
+      };
+      
+      setUserState(enrichedState);
 
       // Check which steps are already complete
       const completed = new Set();
       for (let i = 0; i < ONBOARDING_STEPS.length; i++) {
         const step = ONBOARDING_STEPS[i];
-        const isComplete = await step.check(state);
+        const isComplete = await step.check(enrichedState);
         if (isComplete) {
           completed.add(step.id);
         }
@@ -131,9 +193,33 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
       const firstIncomplete = ONBOARDING_STEPS.findIndex(s => !completed.has(s.id));
       if (firstIncomplete !== -1) {
         setCurrentStepIndex(firstIncomplete);
+        const step = ONBOARDING_STEPS[firstIncomplete];
+        const guidance = step.getGuidance ? step.getGuidance(enrichedState) : { message: step.guidance };
+        setCurrentGuidance(guidance);
+        
+        // Add initial guidance message
+        if (messages.length === 0) {
+          setMessages([{
+            role: 'assistant',
+            content: guidance.message,
+            action: guidance.action,
+            timestamp: new Date()
+          }]);
+        }
+      } else {
+        // All complete
+        if (messages.length === 0) {
+          setMessages([{
+            role: 'assistant',
+            content: "🎉 Congratulations! You've completed all onboarding steps. You're ready to unlock psychographic intelligence in your product!",
+            timestamp: new Date()
+          }]);
+        }
       }
     } catch (e) {
       console.error('Failed to load onboarding state:', e);
+    } finally {
+      setIsCheckingState(false);
     }
   };
 
@@ -141,29 +227,48 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
     if (completedSteps.has(currentStep.id)) return;
 
     try {
-      const isComplete = await currentStep.check(userState);
+      // Reload state to get fresh data
+      const user = await base44.auth.me();
+      let apps = [];
+      try {
+        const appsResponse = await base44.functions.invoke('getMyClientApps');
+        apps = appsResponse?.data?.apps || [];
+      } catch (e) {
+        console.error('Failed to load apps:', e);
+      }
+      
+      const freshState = {
+        ...user?.onboarding_state,
+        apps,
+        has_apps: apps.length > 0
+      };
+      setUserState(freshState);
+
+      const isComplete = await currentStep.check(freshState);
       if (isComplete) {
         const newCompleted = new Set(completedSteps);
         newCompleted.add(currentStep.id);
         setCompletedSteps(newCompleted);
 
         // Add congratulations message
-        addMessage('assistant', `✅ Great job! You completed: ${currentStep.title}`);
+        addMessage('assistant', `✅ Excellent! You completed: ${currentStep.title}`, null);
 
         // Move to next step
         if (currentStepIndex < ONBOARDING_STEPS.length - 1) {
           const nextIndex = currentStepIndex + 1;
           setCurrentStepIndex(nextIndex);
           const nextStep = ONBOARDING_STEPS[nextIndex];
+          const guidance = nextStep.getGuidance ? nextStep.getGuidance(freshState) : { message: nextStep.guidance };
+          setCurrentGuidance(guidance);
           
           setTimeout(() => {
-            addMessage('assistant', `Next step: ${nextStep.guidance}`);
-          }, 1000);
+            addMessage('assistant', guidance.message, guidance.action);
+          }, 1500);
         } else {
           // All done!
           setTimeout(() => {
-            addMessage('assistant', "🎉 Congratulations! You've completed the onboarding tour. You're now ready to unlock psychographic intelligence in your product!");
-          }, 1000);
+            addMessage('assistant', "🎉 Amazing work! You've completed the full onboarding. You're ready to integrate knXw and start capturing psychographic insights!", null);
+          }, 1500);
         }
 
         // Save progress
@@ -208,8 +313,8 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
     }
   };
 
-  const addMessage = (role, content) => {
-    setMessages(prev => [...prev, { role, content, timestamp: new Date() }]);
+  const addMessage = (role, content, action = null) => {
+    setMessages(prev => [...prev, { role, content, action, timestamp: new Date() }]);
   };
 
   const handleSend = async () => {
@@ -244,7 +349,15 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
   const goToStep = (step) => {
     navigate(createPageUrl(step.page));
     markPageVisited(step.page);
-    addMessage('assistant', step.guidance);
+    const guidance = step.getGuidance ? step.getGuidance(userState) : { message: step.guidance };
+    addMessage('assistant', guidance.message, guidance.action);
+  };
+
+  const handleActionClick = (action) => {
+    if (action?.page) {
+      navigate(createPageUrl(action.page));
+      markPageVisited(action.page);
+    }
   };
 
   if (!isOpen) return null;
@@ -335,22 +448,38 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
 
               {/* Chat Messages */}
               <CardContent className="p-4 max-h-64 overflow-y-auto space-y-3 bg-[#0a0a0a]">
-                {messages.map((msg, i) => (
-                  <div
-                    key={i}
-                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                        msg.role === 'user'
-                          ? 'bg-[#00d4ff] text-[#0a0a0a]'
-                          : 'bg-[#1a1a1a] text-white border border-white/10'
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
+                {isCheckingState && messages.length === 0 ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-[#00d4ff]" />
                   </div>
-                ))}
+                ) : (
+                  messages.map((msg, i) => (
+                    <div
+                      key={i}
+                      className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
+                    >
+                      <div
+                        className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+                          msg.role === 'user'
+                            ? 'bg-[#00d4ff] text-[#0a0a0a]'
+                            : 'bg-[#1a1a1a] text-white border border-white/10'
+                        }`}
+                      >
+                        {msg.content}
+                      </div>
+                      {msg.action && msg.role === 'assistant' && (
+                        <Button
+                          onClick={() => handleActionClick(msg.action)}
+                          size="sm"
+                          className="mt-2 bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] text-xs"
+                        >
+                          {msg.action.label}
+                          <ArrowRight className="w-3 h-3 ml-1" />
+                        </Button>
+                      )}
+                    </div>
+                  ))
+                )}
                 {isSending && (
                   <div className="flex justify-start">
                     <div className="bg-[#1a1a1a] rounded-lg px-3 py-2 border border-white/10">
