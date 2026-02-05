@@ -284,7 +284,7 @@ export default function MyAppsPage() {
 
         {/* Create App Card */}
         <div className="space-y-6">
-          <Card className="bg-[#111111] border-[#262626]" data-tour="create-app">
+          <Card className="bg-[#111111] border-[#262626] relative z-10" data-tour="create-app">
             <CardHeader>
               <CardTitle className="text-white">Create New Application</CardTitle>
               <CardDescription className="text-[#a3a3a3]">Create a new project to get a unique API Key and start tracking psychographic insights.</CardDescription>
@@ -330,7 +330,7 @@ export default function MyAppsPage() {
           {/* Apps List */}
           <div className="space-y-4">
             {apps.map((app) => (
-              <Card key={app.id} className="bg-[#111111] border-[#262626]">
+              <Card key={app.id} className="bg-[#111111] border-[#262626] relative z-10">
                 <CardHeader>
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                     <div className="flex-1 min-w-0 w-full">

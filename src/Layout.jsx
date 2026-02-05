@@ -276,10 +276,12 @@ export default function Layout({ children, currentPageName }) {
             userRole={userRole}
           />
 
-          <GlobalAIAssistant
-            isOpen={showAIAssistant}
-            onClose={() => setShowAIAssistant(false)}
-          />
+          {showAIAssistant && (
+            <GlobalAIAssistant
+              isOpen={showAIAssistant}
+              onClose={() => setShowAIAssistant(false)}
+            />
+          )}
 
           <aside className={`hidden md:flex fixed top-0 left-0 h-full bg-[#0a0a0a]/95 backdrop-blur-xl border-r border-white/5 z-30 transition-all duration-300 flex-col ${isCollapsed ? 'w-16' : 'w-72'}`}>
             <div className="border-b border-white/5 p-4 flex items-center justify-between h-20 flex-shrink-0 bg-white/5 backdrop-blur-sm">
