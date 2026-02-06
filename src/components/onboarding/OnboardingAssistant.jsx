@@ -322,25 +322,44 @@ export default function OnboardingAssistant({ isOpen, onClose }) {
 
     const userMessage = input.trim();
     setInput('');
-    addMessage('user', userMessage);
+    addMessage('user', userMessage, null);
     setIsSending(true);
 
     try {
-      // Call AI assistant for contextual help
-      const response = await base44.functions.invoke('assistantSessionStartV2', {
-        message: userMessage,
-        context: {
-          currentStep: currentStep.id,
-          completedSteps: Array.from(completedSteps),
-          userState
-        }
+      // Build comprehensive context for AI
+      const contextMessage = `You are an onboarding assistant for knXw, a psychographic intelligence platform.
+
+Current onboarding state:
+- Current step: ${currentStep.title} (${currentStep.id})
+- Completed steps: ${Array.from(completedSteps).join(', ') || 'none'}
+- Progress: ${Math.round(progress)}%
+- User has apps: ${userState.has_apps ? 'yes' : 'no'}
+- Pages visited: ${Object.keys(userState).filter(k => k.startsWith('visited_') && userState[k]).map(k => k.replace('visited_', '')).join(', ') || 'none'}
+
+Available onboarding steps:
+${ONBOARDING_STEPS.map((s, i) => `${i + 1}. ${s.title} ${completedSteps.has(s.id) ? '✓' : ''}`).join('\n')}
+
+User question: ${userMessage}
+
+Provide a helpful, concise answer (2-3 sentences max). If the user needs to take action, suggest the next step clearly.`;
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: contextMessage,
+        add_context_from_internet: false
       });
 
-      const aiResponse = response?.data?.response || "I'm here to help! What would you like to know?";
-      addMessage('assistant', aiResponse);
+      const aiResponse = response || "I'm here to guide you through the onboarding! What would you like help with?";
+      
+      // Check if we should suggest an action
+      let action = null;
+      if (!completedSteps.has(currentStep.id) && currentGuidance?.action) {
+        action = currentGuidance.action;
+      }
+      
+      addMessage('assistant', aiResponse, action);
     } catch (e) {
-      console.error('AI response error:', e);
-      addMessage('assistant', "I'm having trouble connecting right now, but I'm still here to guide you through the onboarding steps!");
+      console.error('AI error:', e);
+      addMessage('assistant', `I'm here to help you get started! Currently, you need to: ${currentStep.title}.`, currentGuidance?.action);
     } finally {
       setIsSending(false);
     }
