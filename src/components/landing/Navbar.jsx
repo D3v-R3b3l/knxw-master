@@ -75,16 +75,16 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 bg-gradient-to-br from-[#0a0a0a] via-black to-[#0a0a0a] md:hidden overflow-y-auto"
-            style={{ zIndex: 9999 }}
+            className="fixed inset-0 bg-gradient-to-br from-[#0a0a0a] via-black to-[#0a0a0a] md:hidden"
+            style={{ zIndex: 9999, height: '100vh', height: '100dvh', overflowY: 'auto' }}
           >
-            {/* Gradient overlay effects */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1),transparent_50%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.08),transparent_50%)]" />
+            {/* Gradient overlay effects - fixed */}
+            <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1),transparent_50%)] pointer-events-none" style={{ zIndex: 1 }} />
+            <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(139,92,246,0.08),transparent_50%)] pointer-events-none" style={{ zIndex: 1 }} />
             
-            <div className="relative h-full flex flex-col px-6 py-20">
+            <div className="relative min-h-full flex flex-col px-6 py-20" style={{ zIndex: 2 }}>
               {/* Navigation Links */}
-              <nav className="flex-1 flex flex-col justify-center gap-2">
+              <nav className="flex-1 flex flex-col justify-center gap-2 my-auto">
                 {links.map((link, index) => (
                   <motion.a
                     key={link.name}
