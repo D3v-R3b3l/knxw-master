@@ -64,7 +64,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden relative z-50 text-white" onClick={() => setIsOpen(!isOpen)}>
+        <button className="md:hidden relative text-white" style={{ zIndex: 10000 }} onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X /> : <Menu />}
         </button>
 
@@ -75,7 +75,8 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 bg-gradient-to-br from-[#0a0a0a] via-black to-[#0a0a0a] md:hidden z-40 overflow-y-auto"
+            className="fixed inset-0 bg-gradient-to-br from-[#0a0a0a] via-black to-[#0a0a0a] md:hidden overflow-y-auto"
+            style={{ zIndex: 9999 }}
           >
             {/* Gradient overlay effects */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(6,182,212,0.1),transparent_50%)]" />
@@ -88,16 +89,25 @@ export default function Navbar() {
                   <motion.a
                     key={link.name}
                     href={link.href}
-                    onClick={() => setIsOpen(false)}
+                    onClick={(e) => {
+                      setIsOpen(false);
+                      if (link.href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(link.href);
+                        if (target) {
+                          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }
+                    }}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     className="group relative py-4 px-6 rounded-xl border border-white/5 bg-white/5 backdrop-blur-sm hover:border-cyan-500/30 hover:bg-white/10 transition-all"
                   >
-                    <span className="text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                    <span className="text-xl font-light text-white group-hover:text-cyan-400 transition-colors tracking-wide">
                       {link.name}
                     </span>
-                    <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
                   </motion.a>
                 ))}
               </nav>
