@@ -172,6 +172,21 @@ export default function UseCasesGrid() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Scroll modal to top when card is selected on mobile
+  React.useEffect(() => {
+    if (selectedCard !== null && window.innerWidth < 768) {
+      // Small delay to ensure modal is rendered
+      const timer = setTimeout(() => {
+        if (modalRef.current) {
+          modalRef.current.scrollTo({ top: 0, behavior: 'instant' });
+        }
+        // Also scroll window to top
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedCard]);
+
   return (
     <section id="use-cases" className="py-32 bg-black relative overflow-hidden">
       {/* Parallax Background */}
@@ -275,13 +290,7 @@ export default function UseCasesGrid() {
           <div 
             ref={modalRef}
             className="fixed inset-0 z-[100] flex items-start md:items-center justify-center p-4 sm:p-10 overflow-y-auto"
-            style={{ paddingTop: window.innerWidth < 768 ? '80px' : undefined }}
-            onAnimationStart={() => {
-              // Scroll modal container to top on mobile when it opens
-              if (window.innerWidth < 768 && modalRef.current) {
-                modalRef.current.scrollTop = 0;
-              }
-            }}
+            style={{ paddingTop: window.innerWidth < 768 ? '60px' : undefined }}
           >
             <motion.div
               initial={{ opacity: 0 }}
