@@ -144,6 +144,7 @@ export default function UseCasesGrid() {
   const [useCases, setUseCases] = React.useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [loading, setLoading] = React.useState(true);
+  const cardRefs = useRef([]);
 
   // Fetch ALL case studies from database
   React.useEffect(() => {
@@ -215,8 +216,20 @@ export default function UseCasesGrid() {
             return (
               <motion.div
                 key={i}
+                ref={el => cardRefs.current[i] = el}
                 layoutId={`card-${i}`}
-                onClick={() => setSelectedCard(i)}
+                onClick={() => {
+                  setSelectedCard(i);
+                  // On mobile, scroll card to top of viewport when clicked
+                  setTimeout(() => {
+                    if (window.innerWidth < 768 && cardRefs.current[i]) {
+                      cardRefs.current[i].scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                      });
+                    }
+                  }, 100);
+                }}
                 className="cursor-pointer use-case-card"
                 data-tour-id={i === 0 ? "use-cases" : undefined}
               >
