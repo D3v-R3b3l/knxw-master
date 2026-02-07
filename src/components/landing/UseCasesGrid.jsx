@@ -144,7 +144,7 @@ export default function UseCasesGrid() {
   const [useCases, setUseCases] = React.useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [loading, setLoading] = React.useState(true);
-  const cardRefs = useRef([]);
+  const modalRef = useRef(null);
 
   // Fetch ALL case studies from database
   React.useEffect(() => {
@@ -216,20 +216,8 @@ export default function UseCasesGrid() {
             return (
               <motion.div
                 key={i}
-                ref={el => cardRefs.current[i] = el}
                 layoutId={`card-${i}`}
-                onClick={() => {
-                  setSelectedCard(i);
-                  // On mobile, scroll card to top of viewport when clicked
-                  setTimeout(() => {
-                    if (window.innerWidth < 768 && cardRefs.current[i]) {
-                      cardRefs.current[i].scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                      });
-                    }
-                  }, 100);
-                }}
+                onClick={() => setSelectedCard(i)}
                 className="cursor-pointer use-case-card"
                 data-tour-id={i === 0 ? "use-cases" : undefined}
               >
@@ -284,7 +272,17 @@ export default function UseCasesGrid() {
       {/* Expanded Card Modal */}
       <AnimatePresence>
         {selectedCard !== null && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10">
+          <div 
+            ref={modalRef}
+            className="fixed inset-0 z-[100] flex items-start md:items-center justify-center p-4 sm:p-10 overflow-y-auto"
+            style={{ paddingTop: window.innerWidth < 768 ? '80px' : undefined }}
+            onAnimationStart={() => {
+              // Scroll modal container to top on mobile when it opens
+              if (window.innerWidth < 768 && modalRef.current) {
+                modalRef.current.scrollTop = 0;
+              }
+            }}
+          >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -295,7 +293,7 @@ export default function UseCasesGrid() {
             
             <motion.div
               layoutId={`card-${selectedCard}`}
-              className="w-full max-w-3xl h-auto shadow-2xl shadow-black/50 relative"
+              className="w-full max-w-3xl h-auto shadow-2xl shadow-black/50 relative my-auto"
               onClick={(e) => e.stopPropagation()}
             >
                {/* Close button outside FoilCard to ensure clickability */}
