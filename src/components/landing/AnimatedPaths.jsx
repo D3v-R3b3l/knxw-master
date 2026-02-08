@@ -40,6 +40,7 @@ export default function AnimatedPaths() {
           frequency: 0.002 + Math.random() * 0.003,
           xOffset: (i / pathCount) * canvas.width,
           yOffset: canvas.height / 2 + (Math.random() - 0.5) * 200,
+          isBright: i === 1 || i === Math.floor(pathCount * 0.6), // Make 2 paths bright
         });
       }
     };
@@ -58,14 +59,15 @@ export default function AnimatedPaths() {
 
       // Draw gradient path
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      const opacity = path.isBright ? 1.5 : 1;
       gradient.addColorStop(0, `${path.color}00`);
-      gradient.addColorStop(0.2, `${path.color}40`);
-      gradient.addColorStop(0.5, `${path.color}80`);
-      gradient.addColorStop(0.8, `${path.color}40`);
+      gradient.addColorStop(0.2, `${path.color}${Math.floor(64 * opacity).toString(16).padStart(2, '0')}`);
+      gradient.addColorStop(0.5, `${path.color}${Math.floor(128 * opacity).toString(16).padStart(2, '0')}`);
+      gradient.addColorStop(0.8, `${path.color}${Math.floor(64 * opacity).toString(16).padStart(2, '0')}`);
       gradient.addColorStop(1, `${path.color}00`);
 
       ctx.strokeStyle = gradient;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = path.isBright ? 3 : 2;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
@@ -84,13 +86,14 @@ export default function AnimatedPaths() {
       const dotSpacing = 15;
       for (let i = 0; i < points.length; i += dotSpacing) {
         const point = points[i];
-        const opacity = Math.sin(path.progress * 2 + i * 0.1) * 0.3 + 0.5;
+        const baseOpacity = Math.sin(path.progress * 2 + i * 0.1) * 0.3 + 0.5;
+        const opacity = path.isBright ? baseOpacity * 1.8 : baseOpacity;
         
-        ctx.shadowBlur = 15;
+        ctx.shadowBlur = path.isBright ? 25 : 15;
         ctx.shadowColor = path.color;
-        ctx.fillStyle = `${path.color}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`;
+        ctx.fillStyle = `${path.color}${Math.floor(Math.min(opacity, 1) * 255).toString(16).padStart(2, '0')}`;
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+        ctx.arc(point.x, point.y, path.isBright ? 3 : 2, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
       }
