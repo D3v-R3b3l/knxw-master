@@ -122,11 +122,13 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
         className="flex flex-col sm:flex-row gap-4 justify-center items-center"
       >
-        <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto">
-          Get Started
+        <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="group px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] hover:shadow-[0_0_60px_-5px_rgba(255,255,255,0.7)] w-full sm:w-auto relative overflow-hidden">
+          <span className="relative z-10">Get Started</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
         </button>
-        <button onClick={() => window.location.href = '/Documentation'} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
-          API Docs
+        <button onClick={() => window.location.href = '/Documentation'} className="group px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 hover:shadow-[0_0_30px_-10px_rgba(255,255,255,0.3)] transition-all duration-300 backdrop-blur-sm w-full sm:w-auto relative overflow-hidden">
+          <span className="relative z-10">API Docs</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
         </button>
       </motion.div>
 
@@ -459,7 +461,7 @@ export default function LandingPage() {
                    ].map((item, i) => (
                       <div 
                          key={i} 
-                         className="group relative p-6 rounded-xl bg-gradient-to-br from-[#0a0a0a] to-[#111] border border-white/5 hover:border-cyan-500/30 transition-all duration-500"
+                         className="group relative p-6 rounded-xl bg-gradient-to-br from-[#0a0a0a] to-[#111] border border-white/5 hover:border-cyan-500/30 hover:shadow-[0_0_30px_-10px_rgba(0,212,255,0.3)] transition-all duration-500 hover:scale-[1.02]"
                       >
                          <div className="absolute top-4 right-4 text-4xl font-bold text-white/5 group-hover:text-cyan-500/10 transition-colors">{item.num}</div>
                          <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-transparent rounded-full mb-4" />
@@ -556,7 +558,7 @@ export default function LandingPage() {
                 ].map((item, i) => (
                    <div 
                       key={i}
-                      className={`group bg-gradient-to-br ${item.gradient} p-8 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-500 relative overflow-hidden`}
+                      className={`group bg-gradient-to-br ${item.gradient} p-8 rounded-2xl border border-white/10 hover:border-white/20 hover:shadow-[0_0_40px_-10px_rgba(0,212,255,0.2)] transition-all duration-500 relative overflow-hidden hover:scale-[1.02]`}
                    >
                       <div className="absolute inset-0 bg-[#111] opacity-80 group-hover:opacity-70 transition-opacity" />
                       <div className="relative z-10">
@@ -569,10 +571,13 @@ export default function LandingPage() {
 
                 <button 
                   onClick={() => window.location.href = '/InteractiveDemo'}
-                  className="group px-10 py-5 bg-white text-black font-bold text-xl rounded-full hover:scale-105 transition-all duration-300 shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_-10px_rgba(255,255,255,0.5)]"
+                  className="group px-10 py-5 bg-white text-black font-bold text-xl rounded-full hover:scale-105 transition-all duration-300 shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_70px_-5px_rgba(255,255,255,0.6)] relative overflow-hidden"
                 >
-                   Try Interactive Demo
-                   <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                   <span className="relative z-10 flex items-center justify-center">
+                     Try Interactive Demo
+                     <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                   </span>
+                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                 </button>
              </div>
           </section>
@@ -649,16 +654,20 @@ export default function LandingPage() {
                 <div className="flex flex-col sm:flex-row gap-5 justify-center mb-14">
                    <button 
                       onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} 
-                      className="group px-12 py-6 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-bold text-xl rounded-full hover:shadow-[0_0_60px_-10px_rgba(6,182,212,0.7)] transition-all duration-300 transform hover:scale-105"
+                      className="group px-12 py-6 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-bold text-xl rounded-full hover:shadow-[0_0_80px_-5px_rgba(6,182,212,0.8)] transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
                    >
-                      Start Building Free
-                      <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                      <span className="relative z-10 flex items-center justify-center">
+                        Start Building Free
+                        <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                    </button>
                    <button 
                       onClick={() => window.location.href = '/Documentation'} 
-                      className="px-12 py-6 bg-transparent border-2 border-white/20 text-white font-bold text-xl rounded-full hover:bg-white/10 hover:border-white/40 transition-all duration-300"
+                      className="group px-12 py-6 bg-transparent border-2 border-white/20 text-white font-bold text-xl rounded-full hover:bg-white/10 hover:border-white/40 hover:shadow-[0_0_30px_-10px_rgba(255,255,255,0.3)] transition-all duration-300 relative overflow-hidden"
                    >
-                      View Docs
+                      <span className="relative z-10">View Docs</span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                    </button>
                 </div>
                 
