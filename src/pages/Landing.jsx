@@ -5,7 +5,7 @@ import SEOHead from '@/components/system/SEOHead';
 import BrainVisualization from '@/components/landing/BrainVisualization';
 import { ArrowDown } from 'lucide-react';
 import PhilosophySection from '@/components/landing/PhilosophySection';
-import PredictiveFlowAnimation from '@/components/landing/PredictiveFlowAnimation';
+import AnimatedPaths from '@/components/landing/AnimatedPaths';
 import ArchitecturalBuildAnimation from '@/components/landing/ArchitecturalBuildAnimation';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
 import IntegrationsMarquee from '@/components/landing/IntegrationsMarquee';
@@ -535,21 +535,10 @@ export default function LandingPage() {
           {/* Interactive Demo Teaser - Enhanced */}
           <div data-scroll-section>
           <section id="demo-section" className="py-24 md:py-32 bg-[#080808] text-center overflow-hidden relative">
-          {/* Predictive Flow Animation - Fixed Background */}
-          <div className="fixed inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 0 }}>
-            <PredictiveFlowAnimation />
+          {/* Animated Paths Background */}
+          <div className="absolute inset-0 pointer-events-none">
+            <AnimatedPaths />
           </div>
-
-          {/* Parallax Background with abstract shapes */}
-          <div data-parallax-bg className="absolute inset-0 h-[140%] -top-[20%]">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.08),transparent_50%)]" />
-            <div className="absolute top-1/4 left-1/3 w-80 h-80 bg-cyan-500/5 rounded-full blur-[100px]" />
-            <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]" />
-            {/* Abstract floating shapes */}
-            <div className="absolute top-[20%] right-[15%] w-32 h-32 border border-cyan-500/10 rounded-full" />
-            <div className="absolute bottom-[30%] left-[10%] w-24 h-24 border border-white/5 rounded-lg rotate-45" />
-          </div>
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
 
           <div className="max-w-5xl mx-auto px-6 relative z-10">
              <div>
