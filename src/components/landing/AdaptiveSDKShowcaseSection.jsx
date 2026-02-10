@@ -37,7 +37,7 @@ export default function AdaptiveSDKShowcaseSection() {
               <h3 className="font-semibold text-white">Traditional Approach</h3>
             </div>
             <pre className="text-xs text-gray-500 bg-black/50 rounded-lg p-4 overflow-x-auto border border-white/5">
-{`// Complex conditional logic
+              {`// Complex conditional logic
 function Hero() {
   const [profile, setProfile] = useState(null);
   
@@ -69,7 +69,7 @@ function Hero() {
               <h3 className="font-semibold text-white">With Adaptive UI SDK</h3>
             </div>
             <pre className="text-xs text-gray-300 bg-black/50 rounded-lg p-4 overflow-x-auto border border-cyan-500/20">
-{`// Automatically adapts
+              {`// Automatically adapts
 import { AdaptiveButton } from '@knxw/sdk';
 
 function Hero() {
@@ -92,18 +92,18 @@ function Hero() {
         {/* Key Benefits */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {[
-            { icon: Zap, title: "Zero Complexity", desc: "No state management or API calls. Just declarative components." },
-            { icon: Sparkles, title: "Real-Time Adaptation", desc: "Components update instantly as user psychology is analyzed." },
-            { icon: Code2, title: "Type-Safe", desc: "Full TypeScript support with intelligent autocomplete." }
-          ].map((item, i) => (
-            <div key={i} className="bg-[#111] rounded-xl p-6 border border-white/10 hover:border-cyan-500/30 transition-colors">
+          { icon: Zap, title: "Zero Complexity", desc: "No state management or API calls. Just declarative components." },
+          { icon: Sparkles, title: "Real-Time Adaptation", desc: "Components update instantly as user psychology is analyzed." },
+          { icon: Code2, title: "Type-Safe", desc: "Full TypeScript support with intelligent autocomplete." }].
+          map((item, i) =>
+          <div key={i} className="bg-[#111] rounded-xl p-6 border border-white/10 hover:border-cyan-500/30 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4 border border-cyan-500/20">
                 <item.icon className="w-5 h-5 text-cyan-400" />
               </div>
               <h4 className="font-semibold text-white mb-2">{item.title}</h4>
               <p className="text-sm text-gray-400">{item.desc}</p>
             </div>
-          ))}
+          )}
         </div>
 
         {/* CTA */}
@@ -111,22 +111,22 @@ function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
-              className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white font-bold px-8 py-6 text-lg rounded-xl"
-            >
+              className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white font-bold px-8 py-6 text-lg rounded-xl">
+
               <Sparkles className="w-5 h-5 mr-2" />
               Try Live Demo
             </Button>
             <Button
               onClick={() => window.location.href = createPageUrl('Documentation')}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/5 px-8 py-6 text-lg rounded-xl"
-            >
+              variant="outline" className="bg-background text-slate-900 px-8 py-6 text-lg font-medium rounded-xl inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-white/20 hover:bg-white/5">
+
+
               <Code2 className="w-5 h-5 mr-2" />
               View SDK Docs
             </Button>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
