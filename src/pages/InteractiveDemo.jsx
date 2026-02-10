@@ -516,6 +516,15 @@ export default function InteractiveDemoPage() {
                                 {message.adaptiveElements.filter(element => element && element.type).map((element, idx) => {
                                   // Button Element
                                   if (element.type === 'button') {
+                                    const visualClasses = {
+                                      minimal: 'border border-[#00d4ff] text-[#00d4ff] hover:bg-[#00d4ff]/10',
+                                      standard: 'bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white',
+                                      bold: 'bg-[#00d4ff] text-black font-bold shadow-[0_0_20px_rgba(0,212,255,0.5)]',
+                                      animated: 'bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] text-white animate-pulse shadow-[0_0_30px_rgba(0,212,255,0.6)]'
+                                    };
+                                    
+                                    const buttonClass = visualClasses[element.visualStyle] || visualClasses.standard;
+                                    
                                     return (
                                       <div key={idx} className="bg-[#1a1a1a] rounded-lg p-3 border border-[#404040] hover:border-[#00d4ff]/30 transition-colors">
                                         {element.industryContext && (
@@ -525,10 +534,12 @@ export default function InteractiveDemoPage() {
                                           baseText={element.baseText}
                                           motivationVariants={element.motivationVariants}
                                           riskVariants={element.riskVariants}
-                                          className="w-full bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white font-semibold px-4 py-2.5 rounded-lg text-xs transition-all duration-300 flex items-center justify-center gap-2"
+                                          className={`w-full font-semibold px-4 py-2.5 rounded-lg text-xs transition-all duration-300 flex items-center justify-center gap-2 ${buttonClass}`}
                                           onClick={() => {}}
                                         />
-                                        <p className="text-[9px] text-[#6b7280] mt-2 italic">↑ CTA text adapts to your motivations</p>
+                                        <p className="text-[9px] text-[#6b7280] mt-2 italic">
+                                          ↑ Text & style adapt ({element.visualStyle || 'standard'} for your risk profile)
+                                        </p>
                                       </div>
                                     );
                                   }

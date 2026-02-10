@@ -77,10 +77,11 @@ TASK:
 4. CRITICAL: Include 1-3 adaptive_ui_elements that demonstrate how UI adapts to their psychology
 
 ADAPTIVE UI GUIDELINES:
-1. Generate 2-4 diverse adaptive elements per response (mix buttons, cards, containers, toasts)
+1. ALWAYS generate 2-3 adaptive elements per response showing DIFFERENT types (button, card, toast, etc.)
 2. Make elements INDUSTRY-SPECIFIC based on user's conversation context
-3. Show clear before/after adaptation (baseText vs variants)
-4. Use real-world business scenarios
+3. Elements MUST adapt in MULTIPLE WAYS: text, urgency, visual emphasis
+4. Show DRAMATIC differences between conservative vs aggressive variants
+5. If user mentions specific UI preferences (flashing, bold, minimal), incorporate that into urgencyLevel
 
 ELEMENT TYPES & USE CASES:
 - button: CTAs that adapt text/urgency (e.g., "Try Free" → "Start Winning Now" for achievement)
@@ -172,9 +173,10 @@ Make every element feel native to the user's stated industry/context.`;
                   }
                 },
                 industryContext: { type: 'string' },
-                urgencyLevel: { type: 'string', enum: ['low', 'medium', 'high'] },
+                urgencyLevel: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                visualStyle: { type: 'string', enum: ['minimal', 'standard', 'bold', 'animated'] },
                 iconSuggestion: { type: 'string' },
-                colorScheme: { type: 'string', enum: ['primary', 'success', 'warning', 'info'] }
+                colorScheme: { type: 'string', enum: ['primary', 'success', 'warning', 'info', 'danger'] }
               }
             }
           },
@@ -231,7 +233,7 @@ Make every element feel native to the user's stated industry/context.`;
           },
           overall_confidence: { type: 'number' }
         },
-        required: ['assistant_response', 'overall_confidence']
+        required: ['assistant_response', 'adaptive_ui_elements', 'overall_confidence']
       }
     });
 
