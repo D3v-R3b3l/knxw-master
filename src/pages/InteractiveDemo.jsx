@@ -513,7 +513,7 @@ export default function InteractiveDemoPage() {
                                   <Sparkles className="w-3 h-3 text-[#00d4ff]" />
                                   <span className="text-[10px] text-[#00d4ff] font-semibold uppercase tracking-wider">Adaptive UI Demo</span>
                                 </div>
-                                {message.adaptiveElements.map((element, idx) => {
+                                {message.adaptiveElements.filter(element => element && element.type).map((element, idx) => {
                                   // Button Element
                                   if (element.type === 'button') {
                                     return (
