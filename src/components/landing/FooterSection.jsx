@@ -57,7 +57,7 @@ export default function FooterSection() {
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm">
-            © 2025 knXw • Intelligence Platform
+            © 2026 knXw • Intelligence Platform
           </div>
           <div className="flex gap-6 text-sm">
              {/* Social links or other footer items can go here */}

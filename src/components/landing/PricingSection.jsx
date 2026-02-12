@@ -7,7 +7,7 @@ import { toast } from '@/components/ui/use-toast';
 export default function PricingSection() {
   const plans = [
     {
-      name: "Builder",
+      name: "Developer",
       price: "Free",
       description: "Launch psychographic intelligence into your app",
       outcomes: [
@@ -16,36 +16,36 @@ export default function PricingSection() {
         "Basic cognitive insights",
         "JavaScript SDK"
       ],
-      limits: "1,000 credits/month • No content engine • Limited horizons",
+      limits: "1,000 credits/month • Basic dashboards",
       cta: "Start Building",
       key: "developer",
       mode: "subscription", 
       highlight: false
     },
     {
-      name: "Scale",
+      name: "Growth",
       price: "$99",
       period: "/mo",
-      description: "Where behavior starts to affect money",
+      description: "Increase conversions, reduce churn",
       outcomes: [
         "Increase conversion rates",
         "Reduce churn with insights",
         "Personalize user experiences",
-        "Optimize customer journeys",
+        "A/B testing",
         "AI-powered content engine"
       ],
-      limits: "50,000 credits/month included • $0.015 per 1,000 after",
-      cta: "Scale Now",
+      limits: "10,000–50,000 credits/month included",
+      cta: "Start Growing",
       key: "growth",
       mode: "subscription",
       highlight: true,
       badge: "MOST POPULAR"
     },
     {
-      name: "Infrastructure",
+      name: "Pro",
       price: "$499",
       period: "/mo",
-      description: "knXw becomes a system dependency",
+      description: "Full API access, priority SLA",
       outcomes: [
         "Predict user churn before it happens",
         "Market intelligence & trends",
@@ -53,8 +53,8 @@ export default function PricingSection() {
         "Batch analytics at scale",
         "Priority support & SLA"
       ],
-      limits: "250,000 credits/month included • $0.012 per 1,000 after",
-      cta: "Deploy Infrastructure",
+      limits: "100,000–500,000 credits/month included",
+      cta: "Go Pro",
       key: "pro",
       mode: "subscription",
       highlight: false

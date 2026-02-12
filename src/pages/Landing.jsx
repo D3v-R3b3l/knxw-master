@@ -125,7 +125,7 @@ function HeroContent({ heroRef }) {
         <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto">
           Get Started
         </button>
-        <button onClick={() => window.location.href = '/Documentation'} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
+        <button onClick={() => window.location.href = createPageUrl('Documentation')} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
           API Docs
         </button>
       </motion.div>
@@ -566,7 +566,7 @@ export default function LandingPage() {
              </div>
 
                 <button 
-                  onClick={() => window.location.href = '/InteractiveDemo'}
+                  onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
                   className="group px-10 py-5 bg-white text-black font-bold text-xl rounded-full hover:scale-105 transition-all duration-300 shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_-10px_rgba(255,255,255,0.5)]"
                 >
                    Try Interactive Demo
@@ -653,7 +653,7 @@ export default function LandingPage() {
                       <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
                    </button>
                    <button 
-                      onClick={() => window.location.href = '/Documentation'} 
+                      onClick={() => window.location.href = createPageUrl('Documentation')} 
                       className="px-12 py-6 bg-transparent border-2 border-white/20 text-white font-bold text-xl rounded-full hover:bg-white/10 hover:border-white/40 transition-all duration-300"
                    >
                       View Docs

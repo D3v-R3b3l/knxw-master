@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { CheckCircle, Circle, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle, Circle, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 
 const ONBOARDING_CHECKLIST = [
   { id: 'create_app', label: 'Create your first application', page: 'MyApps' },
@@ -18,12 +17,16 @@ export default function OnboardingProgress() {
   const [progress, setProgress] = useState({});
   const [isExpanded, setIsExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     const loadProgress = async () => {
       try {
         const user = await base44.auth.me();
         setProgress(user.onboarding_state || {});
+        if (user.onboarding_state?.progress_bar_dismissed) {
+          setIsDismissed(true);
+        }
       } catch (error) {
         console.error('Failed to load onboarding progress:', error);
       } finally {
@@ -34,11 +37,24 @@ export default function OnboardingProgress() {
     loadProgress();
   }, []);
 
+  const handleDismiss = async () => {
+    setIsDismissed(true);
+    try {
+      const user = await base44.auth.me();
+      await base44.auth.updateMe({
+        onboarding_state: {
+          ...user.onboarding_state,
+          progress_bar_dismissed: true
+        }
+      });
+    } catch (e) {}
+  };
+
   const completedCount = ONBOARDING_CHECKLIST.filter(item => progress[item.id]).length;
   const totalCount = ONBOARDING_CHECKLIST.length;
   const percentage = Math.round((completedCount / totalCount) * 100);
 
-  if (isLoading) return null;
+  if (isLoading || isDismissed) return null;
 
   // Hide if 100% complete
   if (percentage === 100) return null;
@@ -59,7 +75,16 @@ export default function OnboardingProgress() {
               Getting Started
               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </h3>
-            <span className="text-sm text-[#00d4ff] font-bold">{percentage}%</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-[#00d4ff] font-bold">{percentage}%</span>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleDismiss(); }}
+                className="p-1 rounded hover:bg-white/10 text-[#6b7280] hover:text-white transition-colors"
+                title="Dismiss"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
           
           <div className="w-full h-2 bg-[#1a1a1a] rounded-full overflow-hidden">

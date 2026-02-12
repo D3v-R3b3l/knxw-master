@@ -361,7 +361,8 @@ export default function Dashboard() {// Renamed from DashboardContent
             actions={
             <Button
               onClick={handleRefresh}
-              variant="outline" className="bg-background text-slate-900 px-4 py-2 text-sm font-medium rounded-xl inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-[#262626] hover:bg-[#1a1a1a]"
+              variant="outline"
+              className="border-[#262626] text-[#a3a3a3] hover:text-white hover:bg-[#1a1a1a]"
 
               disabled={storeIsLoading}>
 
