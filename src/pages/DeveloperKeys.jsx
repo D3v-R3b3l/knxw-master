@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Key, Copy, Check, Plus, Trash2, Eye, EyeOff, RefreshCw, AlertCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { User } from '@/entities/User';
 import { toast } from 'sonner';
 
 export default function DeveloperKeysPage() {
@@ -26,7 +25,7 @@ export default function DeveloperKeysPage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const user = await User.me();
+      const user = await base44.auth.me();
       
       // Get or create org
       let orgs = await base44.entities.Org.filter({ created_by: user.email }, '-created_date', 1);

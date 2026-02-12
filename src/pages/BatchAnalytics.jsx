@@ -1,7 +1,8 @@
-
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { BatchAnalysisReport, ClientApp, User } from "@/entities/all";
-import { batchAnalytics } from "@/functions/batchAnalytics";
+import { base44 } from "@/api/base44Client";
+const batchAnalytics = (params) => base44.functions.invoke('batchAnalytics', params);
+const explainBatchReport_fn = (params) => base44.functions.invoke('explainBatchReport', params);
+const generateBatchReportPdf_fn = (params) => base44.functions.invoke('generateBatchReportPdf', params);
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,9 +39,7 @@ import {
 import { format } from "date-fns";
 import { SubscriptionGate } from '@/components/billing/SubscriptionGate';
 import { callWithRetry } from "@/components/system/apiRetry";
-import { explainBatchReport } from '@/functions/explainBatchReport';
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { generateBatchReportPdf } from '@/functions/generateBatchReportPdf'; // NEW: Add PDF generation
 
 const clusterColors = [
   '#00d4ff', '#10b981', '#fbbf24', '#ec4899', '#8b5cf6',
@@ -80,7 +79,7 @@ export default function BatchAnalyticsPage() {
   useEffect(() => {
     (async () => {
       try {
-        const me = await User.me();
+        const me = await base44.auth.me();
         setIsAdmin(me?.role === 'admin');
       } catch (e) {
         setIsAdmin(false);
@@ -122,7 +121,7 @@ export default function BatchAnalyticsPage() {
     setIsLoading(true);
     try {
       const [appsData] = await Promise.all([
-        ClientApp.list('-created_date')
+        base44.entities.ClientApp.list('-created_date')
       ]);
 
       setClientApps(appsData);
@@ -140,7 +139,7 @@ export default function BatchAnalyticsPage() {
 
       if (currentSelectedApp) {
         // CRITICAL: Load only non-demo reports for the selected app
-        const reportsData = await BatchAnalysisReport.filter(
+        const reportsData = await base44.entities.BatchAnalysisReport.filter(
           { is_demo: false, client_app_id: currentSelectedApp.id },
           '-created_date',
           50
@@ -195,7 +194,7 @@ export default function BatchAnalyticsPage() {
       // Reload to show new report, with a slight delay to ensure backend update
       setTimeout(async () => {
         // Fetch reports for the currently selected app to ensure data consistency
-        const reloadedReports = await BatchAnalysisReport.filter(
+        const reloadedReports = await base44.entities.BatchAnalysisReport.filter(
           { is_demo: false, client_app_id: selectedApp.id },
           '-created_date',
           50
@@ -226,7 +225,7 @@ export default function BatchAnalyticsPage() {
     setReportExplanation(''); // Clear previous explanation
     try {
       // The import is already at the top of the file
-      const { data } = await explainBatchReport({ report_id: selectedReport.id });
+      const { data } = await explainBatchReport_fn({ report_id: selectedReport.id });
       setReportExplanation(data.explanation);
     } catch (error) {
       console.error('Failed to explain report:', error);
@@ -250,7 +249,7 @@ export default function BatchAnalyticsPage() {
     }
 
     try {
-      const response = await generateBatchReportPdf({ report_id: report.id });
+      const response = await generateBatchReportPdf_fn({ report_id: report.id });
       
       // Create download from HTML content
       const blob = new Blob([response.data], { type: 'text/html' });
@@ -291,7 +290,7 @@ export default function BatchAnalyticsPage() {
     setShowDeleteDialog(false); // Close dialog immediately upon confirmation
 
     try {
-      await BatchAnalysisReport.delete(reportToDelete);
+      await base44.entities.BatchAnalysisReport.delete(reportToDelete);
 
       const updatedReports = reports.filter(r => r.id !== reportToDelete);
       setReports(updatedReports);

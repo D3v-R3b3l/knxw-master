@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { Journey } from "@/entities/Journey";
-import { JourneyVersion } from "@/entities/JourneyVersion";
-import { JourneyTask } from "@/entities/JourneyTask";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -357,7 +355,7 @@ export default function JourneysPage() {
   useEffect(() => {
     const loadJourneys = async () => {
       try {
-        const js = await Journey.list('-updated_date', 50);
+        const js = await base44.entities.Journey.list('-updated_date', 50);
         setJourneys(js);
         if (js[0]) {
           setSelectedJourney(js[0]);
@@ -373,7 +371,7 @@ export default function JourneysPage() {
     const loadVersions = async () => {
       if (!selectedJourney) return;
       try {
-        const vs = await JourneyVersion.filter({ journey_id: selectedJourney.id }, '-version', 50);
+        const vs = await base44.entities.JourneyVersion.filter({ journey_id: selectedJourney.id }, '-version', 50);
         setVersions(vs);
         const pub = vs.find(v => v.status === 'published') || vs[0];
         if (pub?.schema) {
@@ -543,10 +541,10 @@ export default function JourneysPage() {
   const saveDraft = async () => {
     if (!selectedJourney) return;
     try {
-      const existing = await JourneyVersion.filter({ journey_id: selectedJourney.id }, '-version', 1);
+      const existing = await base44.entities.JourneyVersion.filter({ journey_id: selectedJourney.id }, '-version', 1);
       const nextVersion = (existing[0]?.version || 0) + 1;
       const schema = { journey_id: selectedJourney.id, nodes, edges };
-      await JourneyVersion.create({ journey_id: selectedJourney.id, version: nextVersion, status: 'draft', schema });
+      await base44.entities.JourneyVersion.create({ journey_id: selectedJourney.id, version: nextVersion, status: 'draft', schema });
       const vs = await JourneyVersion.filter({ journey_id: selectedJourney.id }, '-version', 50);
       setVersions(vs);
       toast({ title: "Draft saved", description: `v${nextVersion} created.` });
@@ -559,14 +557,14 @@ export default function JourneysPage() {
   const publishVersion = async (version) => {
     if (!selectedJourney) return;
     try {
-      const all = await JourneyVersion.filter({ journey_id: selectedJourney.id }, null, 200);
+      const all = await base44.entities.JourneyVersion.filter({ journey_id: selectedJourney.id }, null, 200);
       for (const v of all) {
         if (v.status === 'published') {
-          await JourneyVersion.update(v.id, { status: 'archived' });
+          await base44.entities.JourneyVersion.update(v.id, { status: 'archived' });
         }
       }
-      await JourneyVersion.update(version.id, { status: 'published', published_at: new Date().toISOString() });
-      await Journey.update(selectedJourney.id, { published_version: version.version });
+      await base44.entities.JourneyVersion.update(version.id, { status: 'published', published_at: new Date().toISOString() });
+      await base44.entities.Journey.update(selectedJourney.id, { published_version: version.version });
       setCurrentVersion(version);
       toast({ title: "Published", description: `Journey v${version.version} is now live.` });
     } catch (error) {
@@ -579,8 +577,8 @@ export default function JourneysPage() {
     const name = prompt("Journey name?");
     if (!name) return;
     try {
-      const j = await Journey.create({ name, description: "" });
-      const js = await Journey.list('-updated_date', 50);
+      const j = await base44.entities.Journey.create({ name, description: "" });
+      const js = await base44.entities.Journey.list('-updated_date', 50);
       setJourneys(js);
       setSelectedJourney(js.find(x => x.id === j.id) || js[0]);
     } catch (error) {
