@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,7 +19,7 @@ export default function OnboardingPage() {
     setIsSubmitting(true);
     try {
       // Mark onboarding as completed and set tour preference
-      await User.updateMyUserData({ 
+      await base44.auth.updateMe({ 
         onboarding_completed: true,
         terms_accepted_at: new Date().toISOString(),
         onboarding_state: {

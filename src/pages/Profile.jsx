@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { User } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +36,7 @@ export default function ProfilePage() {
   const loadUserProfile = async () => {
     setIsLoading(true);
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       setUser(currentUser);
       setEditForm({
         full_name: currentUser.full_name || '',
@@ -52,7 +51,7 @@ export default function ProfilePage() {
   const handleSignOut = async () => {
     if (window.confirm('Are you sure you want to sign out?')) {
       try {
-        await User.logout();
+        await base44.auth.logout();
         // User will be redirected automatically by Base44
       } catch (error) {
         console.error('Error signing out:', error);
@@ -78,7 +77,7 @@ export default function ProfilePage() {
     setSaveMessage({ type: '', text: '' });
     
     try {
-      await User.updateMyUserData({
+      await base44.auth.updateMe({
         full_name: editForm.full_name.trim()
       });
       

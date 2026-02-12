@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { ClientApp } from "@/entities/all";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
@@ -167,7 +166,7 @@ export default function MyAppsPage() {
       const domains = editDomains.split(',').map(d => normalizeDomain(d)).filter(Boolean);
       const uniqueDomains = [...new Set(domains)];
       
-      await ClientApp.update(appId, {
+      await base44.entities.ClientApp.update(appId, {
         name: editName.trim(),
         authorized_domains: uniqueDomains
       });
@@ -207,7 +206,7 @@ export default function MyAppsPage() {
     setShowDeleteDialog(false);
     
     try {
-      await ClientApp.delete(appToDelete.id);
+      await base44.entities.ClientApp.delete(appToDelete.id);
       
       toast({
         title: "Success",
