@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ClientApp, HubSpotSync, HubSpotIntegrationConfig } from '@/entities/all';
+import { base44 } from '@/api/base44Client';
 import { syncHubSpot } from '@/functions/syncHubSpot';
-import { setupHubSpotIntegration } from '@/functions/setupHubspotIntegration';
+import { setupHubSpotIntegration } from '@/functions/setupHubSpotIntegration';
 import { azureBlobExport } from "@/functions/azureBlobExport";
 import { azureEventHubsBridge } from "@/functions/azureEventHubsBridge";
 import { awsS3Export } from "@/functions/awsS3Export";
@@ -80,7 +80,7 @@ export default function IntegrationsPage() {
 
   const loadClientApps = React.useCallback(async () => {
     try {
-      const apps = await ClientApp.list('-created_date');
+      const apps = await base44.entities.ClientApp.list('-created_date');
       setClientApps(apps);
       if (apps.length > 0 && !selectedApp) {
         setSelectedApp(apps[0]);
@@ -93,7 +93,7 @@ export default function IntegrationsPage() {
   const loadSyncHistory = React.useCallback(async () => {
     if (!selectedApp) return;
     try {
-      const history = await HubSpotSync.filter(
+      const history = await base44.entities.HubSpotSync.filter(
         { client_app_id: selectedApp.id }, 
         '-synced_at', 
         50
@@ -120,7 +120,7 @@ export default function IntegrationsPage() {
     if (!selectedApp) return;
     try {
       // Check if HubSpot integration is already configured
-      const configs = await HubSpotIntegrationConfig.filter({ client_app_id: selectedApp.id });
+      const configs = await base44.entities.HubSpotIntegrationConfig.filter({ client_app_id: selectedApp.id });
       setHubspotSetupComplete(configs.length > 0 && configs[0].setup_completed);
     } catch (error) {
       console.error('Error checking HubSpot setup:', error);
