@@ -85,7 +85,6 @@ import ExecutiveDashboard from './pages/ExecutiveDashboard';
 import FeedbackInsights from './pages/FeedbackInsights';
 import Glossary from './pages/Glossary';
 import GoogleData from './pages/GoogleData';
-import Home from './pages/Home';
 import ImportedTextRecords from './pages/ImportedTextRecords';
 import InferenceStudio from './pages/InferenceStudio';
 import Insights from './pages/Insights';
@@ -167,7 +166,6 @@ export const PAGES = {
     "FeedbackInsights": FeedbackInsights,
     "Glossary": Glossary,
     "GoogleData": GoogleData,
-    "Home": Home,
     "ImportedTextRecords": ImportedTextRecords,
     "InferenceStudio": InferenceStudio,
     "Insights": Insights,
