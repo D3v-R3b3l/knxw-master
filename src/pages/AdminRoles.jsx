@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { User } from '@/entities/User';
-import { RoleTemplate } from '@/entities/RoleTemplate';
-import { UserAppAccess } from '@/entities/UserAppAccess';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -19,22 +17,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AuditLog } from '@/entities/AuditLog';
+
 
 // Mock API functions for RBAC
 const setRoleTemplateApi = async (payload) => {
     if (payload.id) {
-        return RoleTemplate.update(payload.id, payload);
+        return base44.entities.RoleTemplate.update(payload.id, payload);
     }
-    return RoleTemplate.create(payload);
+    return base44.entities.RoleTemplate.create(payload);
 };
 
 const setUserAccessApi = async (payload) => {
-    const existing = await UserAppAccess.findOne({ client_app_id: payload.client_app_id, user_email: payload.user_email });
-    if (existing) {
-        return UserAppAccess.update(existing.id, payload);
-    }
-    return UserAppAccess.create(payload);
+    return base44.entities.UserAppAccess.create(payload);
 };
 
 export default function AdminRolesPage() {
@@ -51,10 +45,10 @@ export default function AdminRolesPage() {
         try {
             setIsLoading(true);
             const [cUser, rTemplates, uAccess, allUsers] = await Promise.all([
-                User.me(),
-                RoleTemplate.list(),
-                UserAppAccess.list(),
-                User.list(),
+                base44.auth.me(),
+                base44.entities.RoleTemplate.list(),
+                base44.entities.UserAppAccess.list(),
+                base44.entities.User.list(),
             ]);
             setCurrentUser(cUser);
             setTemplates(rTemplates);
@@ -74,7 +68,7 @@ export default function AdminRolesPage() {
     const handleSaveTemplate = async (templateData, originalData) => {
         try {
             const res = await setRoleTemplateApi(templateData);
-            await AuditLog.create({
+            await base44.entities.AuditLog.create({
                 org_id: currentUser.current_org_id,
                 user_id: currentUser.email,
                 action: templateData.id ? 'update' : 'create',
@@ -95,7 +89,7 @@ export default function AdminRolesPage() {
     const handleSaveAccess = async (accessData, originalData) => {
         try {
             const res = await setUserAccessApi(accessData);
-            await AuditLog.create({
+            await base44.entities.AuditLog.create({
                 org_id: currentUser.current_org_id,
                 user_id: currentUser.email,
                 action: accessData.id ? 'update' : 'create',

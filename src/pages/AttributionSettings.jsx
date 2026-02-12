@@ -1,8 +1,4 @@
-
 import React, { useState, useEffect } from 'react';
-import { Workspace } from '@/entities/Workspace';
-import { User } from '@/entities/User';
-// Replace direct backend import with SDK
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
@@ -62,9 +58,9 @@ export default function AttributionSettings() {
     async function loadWorkspaces() {
       setIsLoadingWorkspaces(true);
       try {
-        const user = await User.me();
+        const user = await base44.auth.me();
         if (user.role === 'admin') {
-          const ws = await Workspace.list();
+          const ws = await base44.entities.Workspace.list();
           setWorkspaces(ws);
           if (ws.length > 0) {
             setSelectedWorkspaceId(ws[0].id);

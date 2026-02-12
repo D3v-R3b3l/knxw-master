@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CRMRecord } from "@/entities/CRMRecord";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ export default function CRMRecordsPage() {
   const loadRecords = async () => {
     setIsLoading(true);
     try {
-      const data = await CRMRecord.list('-updated_date', 100);
+      const data = await base44.entities.CRMRecord.list('-updated_date', 100);
       setRecords(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading CRM records:', error);

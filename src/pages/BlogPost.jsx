@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { BlogPost } from '@/entities/BlogPost';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Clock, Eye, Share2, Twitter, Linkedin, Facebook, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import { createPageUrl } from '@/utils';
 import ReactMarkdown from 'react-markdown';
+import { base44 } from '@/api/base44Client';
 
 const samplePosts = [
   {
@@ -564,7 +564,7 @@ export default function BlogPostPage() {
       try {
         let foundPost = null;
         try {
-          const posts = await BlogPost.filter({ slug: slug, published: true }, null, 1);
+          const posts = await base44.entities.BlogPost.filter({ slug: slug, published: true }, null, 1);
           if (posts && posts.length > 0) {
             foundPost = posts[0];
           }
@@ -581,7 +581,7 @@ export default function BlogPostPage() {
           
           if (foundPost.id && !foundPost.id.startsWith('sample-')) {
             try {
-              await BlogPost.update(foundPost.id, {
+              await base44.entities.BlogPost.update(foundPost.id, {
                 view_count: (foundPost.view_count || 0) + 1
               });
             } catch (error) {
@@ -592,7 +592,7 @@ export default function BlogPostPage() {
           try {
             let related = [];
             try {
-              related = await BlogPost.filter(
+              related = await base44.entities.BlogPost.filter(
                 { category: foundPost.category, published: true }, 
                 '-published_date', 
                 4

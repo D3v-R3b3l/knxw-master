@@ -1,7 +1,5 @@
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { agentSDK } from "@/agents";
-import { User } from '@/entities/User'; // New import
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -181,7 +179,7 @@ export default function AgentsPage() {
   useEffect(() => {
     (async () => {
       try {
-        const me = await User.me();
+        const me = await base44.auth.me();
         setIsAdmin(me?.role === 'admin'); // Assuming 'admin' role grants access to this feature
       } catch (e) {
         setIsAdmin(false); // Default to no access if user fetch fails
@@ -205,7 +203,7 @@ export default function AgentsPage() {
   const startConversation = async (agentName, contextNote) => {
     try {
       unsubscribe();
-      const convo = await agentSDK.createConversation({
+      const convo = await base44.agents.createConversation({
         agent_name: agentName,
         metadata: {
           name: `${agentName} conversation`,
@@ -214,7 +212,7 @@ export default function AgentsPage() {
       });
       setConversation(convo);
       setMessages(convo?.messages || []);
-      subRef.current = agentSDK.subscribeToConversation(convo.id, (data) => {
+      subRef.current = base44.agents.subscribeToConversation(convo.id, (data) => {
         setMessages(data.messages || []);
       });
       setIsStopped(false); // reset stopped state on new convo
@@ -238,7 +236,7 @@ export default function AgentsPage() {
       try {
         // Start continuation conversation
         unsubscribe();
-        const fresh = await agentSDK.createConversation({
+        const fresh = await base44.agents.createConversation({
           agent_name: selectedAgent.name,
           metadata: {
             name: `${selectedAgent.name} conversation (cont.)`,
@@ -247,12 +245,12 @@ export default function AgentsPage() {
         });
         setConversation(fresh);
         setMessages(fresh?.messages || []);
-        subRef.current = agentSDK.subscribeToConversation(fresh.id, (data) => {
+        subRef.current = base44.agents.subscribeToConversation(fresh.id, (data) => {
           setMessages(data.messages || []);
         });
 
         // Retry sending the original user message
-        await agentSDK.addMessage(fresh, { role: "user", content: originalText });
+        await base44.agents.addMessage(fresh, { role: "user", content: originalText });
 
         toast({
           title: "New thread created",
@@ -293,7 +291,7 @@ export default function AgentsPage() {
 
     // If user previously hit Stop, re-subscribe to the same conversation before sending
     if (isStopped && !subRef.current && conversation?.id) {
-      subRef.current = agentSDK.subscribeToConversation(conversation.id, (data) => {
+      subRef.current = base44.agents.subscribeToConversation(conversation.id, (data) => {
         setMessages(data.messages || []);
       });
       setIsStopped(false); // Reset stopped state after re-subscribing
@@ -306,7 +304,7 @@ export default function AgentsPage() {
     setMessages((prev) => [...prev, { role: "user", content: text }]);
 
     try {
-      await agentSDK.addMessage(conversation, { role: "user", content: text });
+      await base44.agents.addMessage(conversation, { role: "user", content: text });
       setTimeout(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" }), 50);
     } catch (e) {
       // remove the optimistic message if needed? We’ll keep it for continuity.
