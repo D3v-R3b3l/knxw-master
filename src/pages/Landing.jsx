@@ -234,7 +234,6 @@ export default function LandingPage() {
 
       // Section fade-in animations
       const sections = main.querySelectorAll('[data-scroll-section]');
-      console.log('GSAP: Initializing scroll animations for', sections.length, 'sections');
       
       sections.forEach((section, index) => {
         // Set initial hidden state
@@ -262,7 +261,6 @@ export default function LandingPage() {
 
       // Parallax backgrounds
       const parallaxBgs = main.querySelectorAll('[data-parallax-bg]');
-      console.log('GSAP: Found', parallaxBgs.length, 'parallax backgrounds');
       
       parallaxBgs.forEach((bg) => {
         const parentSection = bg.closest('section') || bg.parentElement;
@@ -312,7 +310,7 @@ export default function LandingPage() {
       // Force refresh after setup
       setTimeout(() => {
         ScrollTrigger.refresh(true);
-        console.log('GSAP: ScrollTrigger refreshed');
+        // ScrollTrigger refreshed
       }, 100);
     }, 400);
 

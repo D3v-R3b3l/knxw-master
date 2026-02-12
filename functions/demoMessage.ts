@@ -1,7 +1,7 @@
 // Demo message handler - works for anonymous users
 // Uses createClientFromRequest and asServiceRole for LLM access
 
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 // In-memory conversation store for demo sessions
 const conversationStore = new Map();

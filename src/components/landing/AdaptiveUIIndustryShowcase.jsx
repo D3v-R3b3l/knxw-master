@@ -180,9 +180,8 @@ export default function AdaptiveUIIndustryShowcase() {
             </Button>
             <Button
               onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
-              variant="outline" className="bg-background text-slate-900 px-8 py-6 text-lg font-medium rounded-xl inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-white/20 hover:bg-white/5">
-
-
+              variant="outline"
+              className="px-8 py-6 text-lg font-medium rounded-xl border border-white/20 text-white hover:bg-white/5 transition-colors">
               Try Live Demo
             </Button>
           </div>

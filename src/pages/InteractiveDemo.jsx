@@ -9,22 +9,11 @@ import {
   ChevronDown, Eye, ArrowRight, User, Menu, X, Code2, ExternalLink, AlertCircle
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import HeadManager from '@/components/HeadManager';
+import SEOHead from '@/components/system/SEOHead';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdaptiveUIShowcase from '@/components/sdk/AdaptiveUIShowcase';
 import { PsychographicProvider, AdaptiveButton, AdaptiveText, AdaptiveContainer } from '@/components/sdk/KnxwSDK';
-
-// Helper function to create page URLs.
-const createPageUrl = (pageName) => {
-  switch (pageName) {
-    case 'Onboarding':
-      return '/app/onboarding';
-    case 'Landing':
-      return '/Landing';
-    default:
-      return '/';
-  }
-};
+import { createPageUrl } from '@/utils';
 
 export default function InteractiveDemoPage() {
   const [sessionId, setSessionId] = useState(null);
@@ -297,7 +286,7 @@ export default function InteractiveDemoPage() {
 
   return (
     <>
-      <HeadManager
+      <SEOHead
         title="knXw Interactive Demo - See Psychographic AI in Action"
         description="Experience knXw's real-time psychographic analysis firsthand. Chat with our AI assistant and watch as it builds your psychological profile in real-time. No signup required."
         keywords="AI demo, interactive demo, psychographic analysis, live demo, AI assistant, personality analysis"
@@ -715,7 +704,7 @@ export default function InteractiveDemoPage() {
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress}
                     placeholder="Type your message..."
                     disabled={loading}
                     className="flex-1 bg-[#111111] border-[#262626] text-white placeholder:text-[#6b7280] focus:border-[#00d4ff] text-sm"

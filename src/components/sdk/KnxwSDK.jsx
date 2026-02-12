@@ -59,15 +59,19 @@ export function PsychographicProvider({ children, userId, mockMode = false, mock
     fetchProfile();
   }, [userId, mockMode, mockProfile]);
 
+  // Derive motivation_labels from motivation_stack if needed
+  const motivationLabels = profile?.motivation_labels || 
+    (profile?.motivation_stack?.map(m => m.label) ?? []);
+
   const value = {
     profile,
     loading,
     error,
     
     // Helper methods
-    hasMotivation: (motivation) => profile?.motivation_labels?.includes(motivation),
+    hasMotivation: (motivation) => motivationLabels.includes(motivation),
     getRiskProfile: () => profile?.risk_profile,
-    getCognitiveStyle: () => profile?.cognitive_style,
+    getCognitiveStyle: () => profile?.cognitive_style?.style || profile?.cognitive_style,
     getMood: () => profile?.emotional_state?.mood,
     getPersonalityTrait: (trait) => profile?.personality_traits?.[trait]
   };
