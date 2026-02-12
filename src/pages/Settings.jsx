@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from 'react';
-import HeadManager from '../components/HeadManager';
+import SEOHead from '../components/system/SEOHead';
 import { Shield, KeyRound, Link as LinkIcon, CreditCard, Files, BookUser, Settings as SettingsIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -44,7 +44,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <HeadManager
+      <SEOHead
         title="Settings & Administration - knXw"
         description="Manage your organization's access, security, billing, and data configurations."
       />

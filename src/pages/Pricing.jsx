@@ -6,7 +6,7 @@ import { Check, Zap, TrendingUp, Rocket, Shield, ArrowRight, HelpCircle } from '
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
-import HeadManager from '@/components/HeadManager';
+import SEOHead from '@/components/system/SEOHead';
 
 /**
  * SEO-optimized Pricing Page with crawlable content
@@ -123,7 +123,7 @@ export default function PricingPage() {
 
   return (
     <>
-      <HeadManager
+      <SEOHead
         title="knXw Pricing - Psychographic Intelligence for Every Stage"
         description="Transparent, value-based pricing for psychographic AI. Start free, scale as you grow. Developer plan free forever, Growth from $99/mo, Pro from $499/mo. 10% annual discount."
         keywords="pricing, psychographic analytics, AI pricing, SaaS pricing, conversion optimization cost"

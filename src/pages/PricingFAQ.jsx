@@ -57,7 +57,7 @@ const faqs = [
     questions: [
       {
         q: "What's the difference between plan tiers?",
-        a: "Builder (Free): 1,000 credits/month, launch psychographic intelligence into your app, real-time profiling, basic dashboards, JavaScript SDK, no content engine. Scale ($99): 50,000 credits included + $0.015 per 1k after, where behavior starts to affect money, increase conversions, reduce churn, personalize experiences, AI content engine, advanced segmentation. Infrastructure ($499): 250,000 credits included + $0.012 per 1k after, knXw becomes a system dependency, predict churn, market intelligence, batch analytics, priority support & SLA. Enterprise: Custom credits, organizational intelligence, dedicated infrastructure."
+        a: "Developer (Free): 1,000 credits/month, real-time profiling, basic dashboards, JavaScript SDK. Growth ($99): 10,000-50,000 credits included, increase conversions, reduce churn, personalize experiences, A/B testing, AI content engine, advanced segmentation. Pro ($499): 100,000-500,000 credits included, full API access, predict churn, market intelligence, batch analytics, priority support & SLA. Enterprise: Custom credits, organizational intelligence, dedicated infrastructure."
       },
       {
         q: "What AWS integrations are included in each plan?",
@@ -69,7 +69,7 @@ const faqs = [
       },
       {
         q: "What happens if I exceed my monthly limits?",
-        a: "Scale: $0.015 per 1,000 credits after 50,000. Infrastructure: $0.012 per 1,000 credits after 250,000. AWS usage: Pay-as-you-go AWS rates. Conversion forwards: $0.001 per conversion. You'll receive alerts at 80% and 95% of your limits. All overages are clearly itemized on your next invoice. No service interruptions or throttling."
+        a: "Growth: $0.01-$0.02 per extra credit. Pro: $0.01-$0.02 per extra credit. You'll receive alerts at 80% and 95% of your limits. All overages are clearly itemized on your next invoice. No service interruptions or throttling."
       },
       {
         q: "Can I change plans anytime?",
@@ -91,8 +91,8 @@ const faqs = [
         a: "Developer: Agents are read-only (insights only, no actions). Growth: 500 agent actions per month (actions like sending emails, updating profiles, creating segments). Pro: Unlimited agent actions and custom automation workflows. Enterprise: Dedicated agent compute resources and custom agents."
       },
       {
-        q: "How does the new AI-assisted onboarding work?",
-        a: "Our 2024 onboarding system is fully AI-driven and contextual. Instead of static tutorials, an AI assistant guides you through personalized tasks based on your setup, answers questions in real-time, and validates your progress. It adapts to your role, existing data, and goals to create a unique learning path."
+        q: "How does the AI-assisted onboarding work?",
+        a: "Our onboarding system is fully AI-driven and contextual. Instead of static tutorials, an AI assistant guides you through personalized tasks based on your setup, answers questions in real-time, and validates your progress. It adapts to your role, existing data, and goals to create a unique learning path."
       },
       {
         q: "What's included in 'Advanced Analytics'?",
@@ -133,7 +133,7 @@ const faqs = [
     color: "from-[#8b5cf6] to-[#7c3aed]",
     questions: [
       {
-        q: "What enterprise features are available in 2024?",
+        q: "What enterprise features are available?",
         a: "SSO/SCIM integration, dedicated LLM instances, custom AI agent development, advanced compliance automation (GDPR/CCPA/HIPAA), SLA guarantees with 99.9% uptime, on-premises deployment options, white-label solutions, custom integration development, and dedicated customer success teams."
       },
       {
@@ -156,7 +156,7 @@ const faqs = [
     color: "from-[#06b6d4] to-[#0891b2]",
     questions: [
       {
-        q: "How long does implementation take in 2024?",
+        q: "How long does implementation take?",
         a: "Basic setup takes 5-10 minutes (add JS snippet, verify tracking). First psychographic insights appear within 15-30 minutes of user activity. Full platform onboarding with AI assistance typically takes 2-3 hours across several sessions. Complex integrations (AWS, ad platforms) can be completed within a day."
       },
       {
@@ -230,7 +230,7 @@ export default function PricingFAQ() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-white">
               <DollarSign className="w-5 h-5 text-[#10b981]" />
-              2024 Credit Usage & Feature Calculator
+              Credit Usage & Feature Calculator
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -254,16 +254,16 @@ export default function PricingFAQ() {
             </div>
             <div className="grid md:grid-cols-3 gap-4 text-center">
             <div className="p-4 rounded-lg bg-[#0f0f0f] border border-[#262626]">
-              <h4 className="font-semibold text-white mb-2">Builder - Free</h4>
+              <h4 className="font-semibold text-white mb-2">Developer - Free</h4>
               <p className="text-sm text-[#a3a3a3]">1,000 credits • Launch intelligence • Basic dashboards</p>
             </div>
             <div className="p-4 rounded-lg bg-[#0f0f0f] border border-[#10b981]/30">
-              <h4 className="font-semibold text-white mb-2">Scale - $99</h4>
-              <p className="text-sm text-[#a3a3a3]">50K credits + overage • Increase conversion • AI content</p>
+              <h4 className="font-semibold text-white mb-2">Growth - $99</h4>
+              <p className="text-sm text-[#a3a3a3]">10K-50K credits + overage • Increase conversion • AI content</p>
             </div>
             <div className="p-4 rounded-lg bg-[#0f0f0f] border border-[#00d4ff]/30">
-              <h4 className="font-semibold text-white mb-2">Infrastructure - $499</h4>
-              <p className="text-sm text-[#a3a3a3]">250K credits + overage • System dependency • Priority SLA</p>
+              <h4 className="font-semibold text-white mb-2">Pro - $499</h4>
+              <p className="text-sm text-[#a3a3a3]">100K-500K credits + overage • Full API access • Priority SLA</p>
             </div>
             </div>
             <div className="mt-6 p-4 bg-[#00d4ff]/10 border border-[#00d4ff]/30 rounded-lg">
@@ -316,7 +316,7 @@ export default function PricingFAQ() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => window.location.href = 'mailto:support@knxw.app?subject=Pricing Question - 2024'}
+                onClick={() => window.location.href = 'mailto:support@knxw.app?subject=Pricing Question'}
                 className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] font-semibold"
               >
                 Email Support Team
