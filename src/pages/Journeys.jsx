@@ -12,7 +12,6 @@ import JourneyTestDialog from "@/components/journeys/JourneyTestDialog";
 import AIJourneyAssistant from "@/components/journeys/AIJourneyAssistant";
 import DynamicJourneyOptimizer from "@/components/journeys/DynamicJourneyOptimizer";
 import RealtimeJourneyInsights from "@/components/journeys/RealtimeJourneyInsights";
-import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 
 // Journey Templates
@@ -545,7 +544,7 @@ export default function JourneysPage() {
       const nextVersion = (existing[0]?.version || 0) + 1;
       const schema = { journey_id: selectedJourney.id, nodes, edges };
       await base44.entities.JourneyVersion.create({ journey_id: selectedJourney.id, version: nextVersion, status: 'draft', schema });
-      const vs = await JourneyVersion.filter({ journey_id: selectedJourney.id }, '-version', 50);
+      const vs = await base44.entities.JourneyVersion.filter({ journey_id: selectedJourney.id }, '-version', 50);
       setVersions(vs);
       toast({ title: "Draft saved", description: `v${nextVersion} created.` });
     } catch (error) {
