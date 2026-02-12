@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { EmployeeRecord } from "@/entities/EmployeeRecord";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ export default function EmployeeRecordsPage() {
   const loadRecords = async () => {
     setIsLoading(true);
     try {
-      const data = await EmployeeRecord.list('-updated_date', 100);
+      const data = await base44.entities.EmployeeRecord.list('-updated_date', 100);
       setRecords(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading employee records:', error);

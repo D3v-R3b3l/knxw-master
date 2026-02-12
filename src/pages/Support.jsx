@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +25,8 @@ import {
   CreditCard
 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
-import { SendEmail } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
+const SendEmail = (params) => base44.integrations.Core.SendEmail(params);
 
 const FAQ_CATEGORIES = [
   {

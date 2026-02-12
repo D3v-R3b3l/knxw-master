@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ import {
 } from 'lucide-react';
 import { SecurityProvider, useSecurity } from '../components/security/SecurityProvider';
 import ThreatDetectionPanel from '../components/security/ThreatDetectionPanel';
-import { AccessLog, AuditLog, SystemEvent, Alert } from '@/entities/all';
+import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
 import AnimatedLine from '../components/charts/AnimatedLine';
 import AnimatedBar from '../components/charts/AnimatedBar';
@@ -109,10 +108,10 @@ function SecurityDashboardContent() {
     setIsLoading(true);
     try {
       const [auditData, accessData, eventsData, alertsData] = await Promise.all([
-        AuditLog.list('-timestamp', 100).catch(() => []),
-        AccessLog.list('-timestamp', 100).catch(() => []),
-        SystemEvent.filter({ event_type: 'error' }, '-timestamp', 50).catch(() => []),
-        Alert.filter({ status: 'active' }, '-created_date', 20).catch(() => [])
+        base44.entities.AuditLog.list('-timestamp', 100).catch(() => []),
+        base44.entities.AccessLog.list('-timestamp', 100).catch(() => []),
+        base44.entities.SystemEvent.filter({ event_type: 'error' }, '-timestamp', 50).catch(() => []),
+        base44.entities.Alert.filter({ status: 'active' }, '-created_date', 20).catch(() => [])
       ]);
 
       setAuditLogs(auditData);

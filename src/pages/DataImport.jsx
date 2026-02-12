@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
-import { CRMRecord } from "@/entities/CRMRecord";
-import { ImportedTextRecord } from "@/entities/ImportedTextRecord";
-import { EmployeeRecord } from "@/entities/EmployeeRecord";
+import { base44 } from "@/api/base44Client";
+const UploadFile = (params) => base44.integrations.Core.UploadFile(params);
+const ExtractDataFromUploadedFile = (params) => base44.integrations.Core.ExtractDataFromUploadedFile(params);
 import { processImportedData } from "@/functions/processImportedData";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, FileText, Database, CheckCircle2, Brain, Download, Sparkles, Search, Calendar, Tag, Building, Users, Mail, TrendingUp, Zap } from "lucide-react";
@@ -605,7 +603,7 @@ export default function DataImportPage() {
                       updated_date: r.updated_date || new Date().toISOString(),
                       analyzed: false // Ensure new records are marked as not analyzed
                     }));
-                    await CRMRecord.bulkCreate(recordsWithDates);
+                    await base44.entities.CRMRecord.bulkCreate(recordsWithDates);
                   }}
                 />
               </TabsContent>
@@ -622,7 +620,7 @@ export default function DataImportPage() {
                       updated_date: r.updated_date || new Date().toISOString(),
                       analyzed: false
                     }));
-                    await ImportedTextRecord.bulkCreate(recordsWithDates);
+                    await base44.entities.ImportedTextRecord.bulkCreate(recordsWithDates);
                   }}
                 />
               </TabsContent>
@@ -639,7 +637,7 @@ export default function DataImportPage() {
                       updated_date: r.updated_date || new Date().toISOString(),
                       analyzed: false
                     }));
-                    await EmployeeRecord.bulkCreate(recordsWithDates);
+                    await base44.entities.EmployeeRecord.bulkCreate(recordsWithDates);
                   }}
                 />
               </TabsContent>
@@ -663,7 +661,7 @@ export default function DataImportPage() {
               <TabsContent value="text">
                 <DataViewer 
                   entityType="ImportedTextRecord"
-                  EntityClass={ImportedTextRecord}
+                  EntityClass={base44.entities.ImportedTextRecord}
                   title="Text Records"
                   icon={FileText}
                 />
@@ -672,7 +670,7 @@ export default function DataImportPage() {
               <TabsContent value="crm">
                 <DataViewer 
                   entityType="CRMRecord"
-                  EntityClass={CRMRecord}
+                  EntityClass={base44.entities.CRMRecord}
                   title="CRM Records"
                   icon={Users}
                 />
@@ -681,7 +679,7 @@ export default function DataImportPage() {
               <TabsContent value="employee">
                 <DataViewer 
                   entityType="EmployeeRecord"
-                  EntityClass={EmployeeRecord}
+                  EntityClass={base44.entities.EmployeeRecord}
                   title="Employee Records"
                   icon={Building}
                 />

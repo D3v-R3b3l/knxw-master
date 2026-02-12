@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
-import { Org, Document, MetricsHour, AccessLog, TenantWorkspace } from '@/entities/all';
+import { base44 } from '@/api/base44Client';
 import { searchHybrid } from '@/functions/searchHybrid';
 import { evaluateRules } from '@/functions/evaluateRules';
 
@@ -32,7 +31,7 @@ export default function TestsPage() {
 
     // --- RLS Test ---
     try {
-      const allOrgs = await Org.list();
+      const allOrgs = await base44.entities.Org.list();
       if (allOrgs.length <= 1) {
         testResults.push({ title: 'RLS: Cross-Org Read', status: 'pass', message: 'Test passed. Only one org visible to current user, as expected.' });
       } else {
@@ -45,8 +44,8 @@ export default function TestsPage() {
     // --- Search Test ---
     try {
       // Assuming the first org and workspace belong to the user
-      const orgs = await Org.list();
-      const workspaces = await TenantWorkspace.filter({ org_id: orgs[0].id });
+      const orgs = await base44.entities.Org.list();
+      const workspaces = await base44.entities.TenantWorkspace.filter({ org_id: orgs[0].id });
       if (workspaces.length > 0) {
         const res = await searchHybrid({ workspace_id: workspaces[0].id, query: 'test' });
         if (res.data && Array.isArray(res.data.results)) {

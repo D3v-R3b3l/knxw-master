@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -26,8 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FeedbackAnalysis } from '@/entities/FeedbackAnalysis';
-import { User as UserEntity } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { analyzeFeedback } from '@/functions/analyzeFeedback';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -242,7 +240,7 @@ export default function FeedbackInsightsPage() {
 
   const loadAnalyses = React.useCallback(async () => {
     try {
-      const analysisData = await FeedbackAnalysis.list('-analyzed_at', 50);
+      const analysisData = await base44.entities.FeedbackAnalysis.list('-analyzed_at', 50);
       setAnalyses(analysisData);
     } catch (error) {
       console.error('Failed to load feedback analyses:', error);
@@ -259,7 +257,7 @@ export default function FeedbackInsightsPage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const currentUser = await UserEntity.me();
+        const currentUser = await base44.auth.me();
         setUser(currentUser);
         
         // Check if user has Growth tier access

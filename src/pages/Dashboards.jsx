@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +15,7 @@ import {
   Calendar,
   User
 } from 'lucide-react';
-import { Dashboard } from '@/entities/Dashboard';
+import { base44 } from '@/api/base44Client';
 import { dashboardOperations } from '@/functions/dashboardOperations';
 
 // New imports from the outline
@@ -48,7 +47,7 @@ export default function DashboardsPage() {
   const loadDashboards = async () => {
     setLoading(true);
     try {
-      const dashboardList = await Dashboard.list('-created_date');
+      const dashboardList = await base44.entities.Dashboard.list('-created_date');
       setDashboards(dashboardList);
     } catch (error) {
       console.error('Failed to load dashboards:', error);

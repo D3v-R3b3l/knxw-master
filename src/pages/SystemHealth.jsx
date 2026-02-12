@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { User, OrgUser, TenantWorkspace, MetricsHour } from '@/entities/all';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, HeartPulse, BarChart, AlertTriangle, ShieldOff } from 'lucide-react';
@@ -22,11 +21,11 @@ export default function SystemHealth() {
     const loadInitialData = async () => {
       setLoading(true);
       try {
-        const currentUser = await User.me();
-        const orgUsers = await OrgUser.filter({ user_email: currentUser.email });
+        const currentUser = await base44.auth.me();
+        const orgUsers = await base44.entities.OrgUser.filter({ user_email: currentUser.email });
         if (orgUsers.length > 0) {
           const orgId = orgUsers[0].org_id;
-          const userWorkspaces = await TenantWorkspace.filter({ org_id: orgId });
+          const userWorkspaces = await base44.entities.TenantWorkspace.filter({ org_id: orgId });
           setWorkspaces(userWorkspaces);
           await loadMetrics(orgId, 'all');
         }
@@ -48,7 +47,7 @@ export default function SystemHealth() {
     if (workspaceId !== 'all') {
       filter.workspace_id = workspaceId;
     }
-    const rawMetrics = await MetricsHour.filter(filter);
+    const rawMetrics = await base44.entities.MetricsHour.filter(filter);
     setMetrics(rawMetrics);
   };
 
@@ -56,8 +55,8 @@ export default function SystemHealth() {
     setSelectedWorkspaceId(workspaceId);
     setLoading(true);
     try {
-      const currentUser = await User.me();
-      const orgUsers = await OrgUser.filter({ user_email: currentUser.email });
+      const currentUser = await base44.auth.me();
+      const orgUsers = await base44.entities.OrgUser.filter({ user_email: currentUser.email });
       if (orgUsers.length > 0) {
         await loadMetrics(orgUsers[0].org_id, workspaceId);
       }

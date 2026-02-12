@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Shield, CheckCircle, TrendingUp, Users, BarChart3, FileText, Award, ExternalLink, Download, Lock, Eye, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import HeadManager from '@/components/HeadManager';
+import SEOHead from '@/components/system/SEOHead';
 import { base44 } from "@/api/base44Client";
 
 /**
@@ -141,7 +141,7 @@ export default function ProofHubPage() {
 
   return (
     <>
-      <HeadManager
+      <SEOHead
         title="knXw Proof Hub - Validation, Case Studies & Trust Evidence"
         description="Independent validation of knXw's psychographic AI accuracy, performance benchmarks, customer case studies, and security compliance certifications. 87% precision, <150ms latency, GDPR certified."
         keywords="AI validation, case studies, benchmarks, SOC 2, GDPR, psychographic accuracy, proof of concept, trust evidence"

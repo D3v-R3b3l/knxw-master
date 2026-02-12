@@ -1,6 +1,5 @@
-
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { ScheduledReportConfig } from "@/entities/ScheduledReportConfig";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,7 +62,7 @@ export default function ExecutiveDashboardPage() { // Renamed component
         action: 'executive_summary',
         time_period_days: timePeriod
       }),
-      ScheduledReportConfig.list("-created_date")]
+      base44.entities.ScheduledReportConfig.list("-created_date")]
       );
       setMetrics(metricsResponse.data); // Assuming executiveMetrics returns { data: ... }
       setSchedules(schedulesList || []);
@@ -149,7 +148,7 @@ export default function ExecutiveDashboardPage() { // Renamed component
 
   const saveSchedule = async () => {
     try {
-      await ScheduledReportConfig.create(form);
+      await base44.entities.ScheduledReportConfig.create(form);
       setShowScheduler(false);
       setForm({
         name: "",
@@ -174,7 +173,7 @@ export default function ExecutiveDashboardPage() { // Renamed component
 
   const toggleSchedule = async (schedule) => {
     try {
-      await ScheduledReportConfig.update(schedule.id, {
+      await base44.entities.ScheduledReportConfig.update(schedule.id, {
         enabled: !schedule.enabled
       });
       fetchData(); // Reload schedules
