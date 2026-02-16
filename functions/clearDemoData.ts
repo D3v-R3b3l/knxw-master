@@ -1,32 +1,51 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.5.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req).asServiceRole;
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const deletionPromises = [
-      'Org', 'OrgUser', 'TenantWorkspace', 'Document', 'DocumentEmbedding', 
-      'SystemEvent', 'MetricsHour', 'Dashboard', 'DashboardWidget',
-      'ClientApp', 'UserPsychographicProfile', 'CapturedEvent', 'PsychographicInsight'
-    ].map(async (entityName) => {
+    const service = base44.asServiceRole;
+
+    const demoEntities = [
+      'ClientApp', 'UserPsychographicProfile', 'CapturedEvent', 'PsychographicInsight',
+      'EngagementRule', 'EngagementTemplate', 'EngagementDelivery',
+      'BatchAnalysisReport', 'AudienceSegment', 'MarketTrend',
+      'ABTest', 'ABTestVariant', 'ABTestParticipant',
+      'ContentRecommendation', 'FeedbackAnalysis', 'HubSpotSync',
+      'Journey', 'JourneyVersion', 'JourneyTask'
+    ];
+
+    let totalDeleted = 0;
+    const results = [];
+
+    for (const entityName of demoEntities) {
       try {
-        const items = await base44.entities[entityName].filter({ is_demo: true });
+        const items = await service.entities[entityName].filter({ is_demo: true }, null, 500);
+        let deleted = 0;
         for (const item of items) {
-          await base44.entities[entityName].delete(item.id);
+          try {
+            await service.entities[entityName].delete(item.id);
+            deleted++;
+          } catch (e) {
+            console.warn(`Failed to delete ${entityName} ${item.id}: ${e.message}`);
+          }
         }
-        return { entity: entityName, count: items.length, status: 'success' };
+        totalDeleted += deleted;
+        results.push({ entity: entityName, found: items.length, deleted, status: 'success' });
       } catch (e) {
         console.warn(`Could not clear demo data for ${entityName}: ${e.message}`);
-        return { entity: entityName, count: 0, status: 'failed', error: e.message };
+        results.push({ entity: entityName, found: 0, deleted: 0, status: 'skipped', error: e.message });
       }
-    });
-
-    const results = await Promise.all(deletionPromises);
-    const totalCount = results.reduce((sum, r) => sum + r.count, 0);
+    }
 
     return Response.json({
       success: true,
-      message: `Successfully deleted ${totalCount} demo records.`,
+      message: `Successfully deleted ${totalDeleted} demo records.`,
+      total_deleted: totalDeleted,
       details: results,
     });
   } catch (error) {
