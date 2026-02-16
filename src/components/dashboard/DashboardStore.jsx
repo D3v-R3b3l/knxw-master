@@ -181,7 +181,7 @@ export function DashboardProvider({ children }) {
     }
 
     // Check 3: Not on dashboard page
-    if (!window.location.pathname.includes('/Dashboard')) {
+    if (!window.location.pathname.toLowerCase().includes('/dashboard')) {
       setIsLoading(false);
       return;
     }
@@ -252,7 +252,7 @@ export function DashboardProvider({ children }) {
 
   // SINGLE LOAD on app selection - NO dependencies on loadDashboardData
   useEffect(() => {
-    if (!window.location.pathname.includes('/Dashboard')) {
+    if (!window.location.pathname.toLowerCase().includes('/dashboard')) {
       setIsLoading(false);
       return;
     }
