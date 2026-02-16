@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FilterBuilder from '../components/audience/FilterBuilder';
 import AudiencePreview from '../components/audience/AudiencePreview';
+import PredictiveSegmentSuggestions from '../components/audience/PredictiveSegmentSuggestions';
 import { useDashboardStore } from '../components/dashboard/DashboardStore';
 import { useToast } from '@/components/ui/use-toast';
 import PageHeader from '../components/ui/PageHeader';
@@ -132,8 +133,14 @@ export default function AudienceBuilder() {
             </div>
           </div>
 
-          <div>
+          <div className="space-y-6">
             <AudiencePreview filters={filters} clientAppId={selectedAppId} />
+            <PredictiveSegmentSuggestions
+              onApplySegment={(name, filterData) => {
+                setSegmentName(name);
+                setFilters(filterData);
+              }}
+            />
           </div>
         </div>
       </div>

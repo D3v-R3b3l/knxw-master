@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -326,7 +325,10 @@ export default function RoboticsPage() {
         )}
 
         {error && (
-          <AlertCircle className="w-5 h-5 text-red-500 mr-2" />
+          <div className="mb-6 p-4 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-lg flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-[#ef4444] flex-shrink-0" />
+            <p className="text-sm text-[#ef4444]">{error}</p>
+          </div>
         )}
 
         <Tabs defaultValue="robots" className="space-y-6">

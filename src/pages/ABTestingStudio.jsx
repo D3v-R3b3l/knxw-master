@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -87,6 +86,14 @@ export default function ABTestingStudioPage() { // Changed component name
   const handleCreateTest = () => {
     window.location.href = createPageUrl('ABTesting');
   };
+
+  // Wire showCreateForm to redirect to ABTesting page
+  React.useEffect(() => {
+    if (showCreateForm) {
+      setShowCreateForm(false);
+      handleCreateTest();
+    }
+  }, [showCreateForm]);
 
   const handleViewTest = (test) => {
     window.location.href = `${createPageUrl('ABTesting')}?testId=${test.id}`;

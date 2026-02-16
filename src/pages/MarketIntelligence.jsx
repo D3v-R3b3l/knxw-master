@@ -19,6 +19,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AnimatedDonut from "@/components/charts/AnimatedDonut";
 
 import AnimatedLine from "@/components/charts/AnimatedLine";
+import PredictiveMarketForecast from "../components/market/PredictiveMarketForecast";
 import { CheckSquare, Square, Trash2 } from "lucide-react";
 
 // --- Components ---
@@ -657,6 +658,11 @@ export default function MarketIntelligencePage() {
                 {isAnalyzing ? <Loader2 className="w-5 h-5 animate-spin" /> : "Deep Research"}
               </Button>
             </div>
+          </div>
+
+          {/* Predictive Forecast Section */}
+          <div className="max-w-7xl mx-auto mb-12">
+            <PredictiveMarketForecast currentAnalysis={selectedAnalysis} />
           </div>
 
           {/* Results Area */}

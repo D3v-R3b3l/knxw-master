@@ -27,6 +27,7 @@ import HighlightsPanel from "../components/dashboard/HighlightsPanel";
 import EvidenceViewer from "../components/dashboard/EvidenceViewer";
 import RecommendationsPanel from "../components/dashboard/RecommendationsPanel";
 import FeedbackLoopPanel from "../components/dashboard/FeedbackLoopPanel";
+import MetricForecast from "../components/dashboard/MetricForecast";
 import logger from "../components/system/logger";
 import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
 
@@ -361,8 +362,8 @@ export default function Dashboard() {// Renamed from DashboardContent
             actions={
             <Button
               onClick={handleRefresh}
-              variant="outline"
-              className="border-[#262626] text-[#a3a3a3] hover:text-white hover:bg-[#1a1a1a]"
+              variant="ghost"
+              className="border border-[#262626] bg-[#1a1a1a] text-white hover:bg-[#262626] hover:text-white"
 
               disabled={storeIsLoading}>
 
@@ -485,6 +486,11 @@ export default function Dashboard() {// Renamed from DashboardContent
                 
                 <EvidenceViewer />
               </div>
+            </div>
+
+            {/* Predictive Forecast */}
+            <div className="mb-8 relative z-[2]" data-tour="predictive-forecast">
+              <MetricForecast metrics={metrics} profiles={profiles} events={events} />
             </div>
 
             <div className="relative z-[2] w-full">
