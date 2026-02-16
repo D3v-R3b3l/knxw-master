@@ -1,5 +1,24 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function deleteWithRetry(entity, id, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await entity.delete(id);
+      return true;
+    } catch (error) {
+      if ((error.status === 429 || error.message?.includes('Rate limit')) && i < maxRetries - 1) {
+        const waitMs = 1000 * Math.pow(2, i);
+        await delay(waitMs);
+      } else {
+        throw error;
+      }
+    }
+  }
+  return false;
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -26,12 +45,16 @@ Deno.serve(async (req) => {
       try {
         const items = await service.entities[entityName].filter({ is_demo: true }, null, 500);
         let deleted = 0;
-        for (const item of items) {
+        for (let i = 0; i < items.length; i++) {
           try {
-            await service.entities[entityName].delete(item.id);
+            await deleteWithRetry(service.entities[entityName], items[i].id);
             deleted++;
           } catch (e) {
-            console.warn(`Failed to delete ${entityName} ${item.id}: ${e.message}`);
+            console.warn(`Failed to delete ${entityName} ${items[i].id}: ${e.message}`);
+          }
+          // Throttle every 5 deletes
+          if ((i + 1) % 5 === 0) {
+            await delay(500);
           }
         }
         totalDeleted += deleted;
