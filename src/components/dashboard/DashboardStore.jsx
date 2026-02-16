@@ -6,7 +6,7 @@ import logger from "@/components/system/logger";
 // Helpers
 const LS_SELECTED_APP = "knxw_selected_app_id";
 const MAX_EVENTS = 500;
-const MIN_LOAD_INTERVAL_MS = 120000; // Minimum 2 minutes between loads
+const MIN_LOAD_INTERVAL_MS = 30000; // Minimum 30 seconds between loads
 
 // Global state to prevent multiple simultaneous loads across component re-renders
 const globalLoadState = {
@@ -201,40 +201,30 @@ export function DashboardProvider({ children }) {
       const filteredEvents = fetchedEvents.filter((e) => eventMatchesApp(e, origins));
       setEvents(filteredEvents);
 
-      const usersNow = new Set(filteredEvents.map(e => e.user_id).filter(Boolean));
-
       // 2. Wait before next batch
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 3. Fetch profiles (include demo data)
+      // 3. Fetch profiles — show ALL profiles (they belong to the same app/account)
       const profilesRaw = await callWithRetry(
         () => base44.entities.UserPsychographicProfile.list("-last_analyzed", 100),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
-
-      const filteredProfiles = usersNow.size
-        ? profilesRaw.filter((p) => usersNow.has(p.user_id))
-        : profilesRaw;
-      setProfiles(filteredProfiles);
+      setProfiles(profilesRaw);
 
       // 4. Wait before next batch
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 5. Fetch insights (include demo data)
+      // 5. Fetch insights — show ALL insights
       const insightsRaw = await callWithRetry(
         () => base44.entities.PsychographicInsight.list("-created_date", 50),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
+      setInsights(insightsRaw);
 
-      const filteredInsights = usersNow.size
-        ? insightsRaw.filter((i) => usersNow.has(i.user_id))
-        : insightsRaw;
-      setInsights(filteredInsights);
-
-      logger.info(`Loaded: ${filteredEvents.length} events, ${filteredProfiles.length} profiles, ${filteredInsights.length} insights`);
+      logger.info(`Loaded: ${filteredEvents.length} events, ${profilesRaw.length} profiles, ${insightsRaw.length} insights`);
 
       // 6. Compute metrics
-      const computedMetrics = computeMetrics(filteredProfiles, filteredEvents, filteredInsights);
+      const computedMetrics = computeMetrics(profilesRaw, filteredEvents, insightsRaw);
       setMetrics(computedMetrics);
 
       // Update global state
