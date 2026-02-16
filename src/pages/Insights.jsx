@@ -70,7 +70,7 @@ export default function InsightsPage() {
             <Button
               onClick={() => refetch()}
               variant="outline"
-              className="border-[#262626] text-white hover:bg-[#1a1a1a]"
+              className="border-[#262626] !text-white hover:bg-[#1a1a1a] hover:!text-white"
             >
               <RefreshCw className={`w-4 h-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
               Refresh
