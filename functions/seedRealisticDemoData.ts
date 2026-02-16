@@ -196,11 +196,15 @@ Deno.serve(async (req) => {
         try {
           const demoRecords = await service.entities[entityName].filter({ is_demo: true }, null, 500);
           console.log(`Found ${demoRecords.length} demo ${entityName} to delete`);
-          for (const record of demoRecords) {
+          for (let i = 0; i < demoRecords.length; i++) {
             try {
-              await service.entities[entityName].delete(record.id);
+              await withRetry(() => service.entities[entityName].delete(demoRecords[i].id));
             } catch (delErr) {
-              console.warn(`Failed to delete ${entityName} ${record.id}: ${delErr.message}`);
+              console.warn(`Failed to delete ${entityName} ${demoRecords[i].id}: ${delErr.message}`);
+            }
+            // Throttle every 5 deletes
+            if ((i + 1) % 5 === 0) {
+              await delay(500);
             }
           }
         } catch (error) {
