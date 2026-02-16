@@ -41,7 +41,7 @@ export default function DemoDataPage() {
     description: 'B2C users with diverse cognitive styles, mixed risk profiles, and social/learning motivations',
     icon: Users,
     color: 'from-[#ec4899] to-[#db2777]',
-    userCount: 75
+    userCount: 50
   },
   {
     id: 'mixed',
@@ -49,7 +49,7 @@ export default function DemoDataPage() {
     description: 'Balanced distribution across all psychographic dimensions for comprehensive testing',
     icon: Brain,
     color: 'from-[#8b5cf6] to-[#7c3aed]',
-    userCount: 100
+    userCount: 50
   }];
 
 
@@ -64,24 +64,24 @@ export default function DemoDataPage() {
         clearExisting: true
       });
 
-      if (response.data?.success) {
-        setLastResult(response.data);
+      const data = response.data || response;
+      if (data?.success) {
+        setLastResult(data);
         toast({
           title: "Demo Data Seeded Successfully",
-          description: `Created ${response.data.counts.profiles} profiles, ${response.data.counts.events} events, and ${response.data.counts.insights} insights.`
+          description: `Created ${data.counts?.profiles || 0} profiles, ${data.counts?.events || 0} events, and ${data.counts?.insights || 0} insights.`
         });
 
         // Dispatch event to refresh dashboard
         window.dispatchEvent(new CustomEvent('knxw-demo-data-seeded', {
-          detail: { scenario: scenario.id, counts: response.data.counts }
+          detail: { scenario: scenario.id, counts: data.counts }
         }));
         
-        // Small delay before redirecting to allow toast to show
         setTimeout(() => {
           window.location.href = '/Dashboard';
         }, 1500);
       } else {
-        throw new Error(response.data?.error || 'Seeding failed');
+        throw new Error(data?.error || data?.details || 'Seeding failed');
       }
     } catch (error) {
       console.error('Seeding error:', error);
@@ -105,18 +105,17 @@ export default function DemoDataPage() {
         dry_run: false
       });
 
-      if (response.data?.success) {
+      const data = response.data || response;
+      if (data?.success) {
         toast({
           title: "Demo Data Cleared",
-          description: `Removed ${response.data.total_records_deleted} demo records.`
+          description: `Removed ${data.total_records_deleted || data.total_demo_records_found || 0} demo records.`
         });
 
         setLastResult(null);
-
-        // Dispatch event to refresh dashboard
         window.dispatchEvent(new CustomEvent('knxw-demo-data-cleared'));
       } else {
-        throw new Error(response.data?.error || 'Cleanup failed');
+        throw new Error(data?.error || 'Cleanup failed');
       }
     } catch (error) {
       console.error('Cleanup error:', error);
