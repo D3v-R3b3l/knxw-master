@@ -1,25 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-async function deleteWithRetry(entity, id, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      await entity.delete(id);
-      return true;
-    } catch (error) {
-      if ((error.status === 429 || error.message?.includes('Rate limit')) && i < maxRetries - 1) {
-        const waitMs = 1000 * Math.pow(2, i);
-        console.log(`Rate limited on delete, waiting ${waitMs}ms...`);
-        await delay(waitMs);
-      } else {
-        throw error;
-      }
-    }
-  }
-  return false;
-}
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -79,24 +59,19 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        results[entityName] = { found: demoRecords.length, deleted: 0, errors: 0 };
+        results[entityName] = { found: demoRecords.length, deleted: 0 };
         totalFound += demoRecords.length;
 
         if (!dry_run && confirm && demoRecords.length > 0) {
-          // Delete with throttling to avoid rate limits
-          for (let i = 0; i < demoRecords.length; i++) {
-            try {
-              await deleteWithRetry(service.entities[entityName], demoRecords[i].id);
-              results[entityName].deleted++;
-              totalDeleted++;
-            } catch (deleteError) {
-              console.error(`Failed to delete ${entityName} ${demoRecords[i].id}:`, deleteError.message);
-              results[entityName].errors++;
-            }
-            // Throttle: pause every 5 deletes
-            if ((i + 1) % 5 === 0) {
-              await delay(500);
-            }
+          const ids = demoRecords.map(r => r.id);
+          try {
+            // Use bulkDelete for much faster cleanup
+            await service.entities[entityName].bulkDelete(ids);
+            results[entityName].deleted = ids.length;
+            totalDeleted += ids.length;
+          } catch (bulkError) {
+            console.error(`Failed bulk delete for ${entityName}:`, bulkError.message);
+            results[entityName].error = bulkError.message;
           }
         }
       } catch (error) {

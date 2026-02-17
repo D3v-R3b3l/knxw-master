@@ -1,24 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-async function deleteWithRetry(entity, id, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      await entity.delete(id);
-      return true;
-    } catch (error) {
-      if ((error.status === 429 || error.message?.includes('Rate limit')) && i < maxRetries - 1) {
-        const waitMs = 1000 * Math.pow(2, i);
-        await delay(waitMs);
-      } else {
-        throw error;
-      }
-    }
-  }
-  return false;
-}
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -29,6 +10,7 @@ Deno.serve(async (req) => {
 
     const service = base44.asServiceRole;
 
+    // Use bulkDelete for fast cleanup - much faster than individual deletes
     const demoEntities = [
       'ClientApp', 'UserPsychographicProfile', 'CapturedEvent', 'PsychographicInsight',
       'EngagementRule', 'EngagementTemplate', 'EngagementDelivery',
@@ -43,25 +25,21 @@ Deno.serve(async (req) => {
 
     for (const entityName of demoEntities) {
       try {
+        // Get all demo IDs
         const items = await service.entities[entityName].filter({ is_demo: true }, null, 500);
-        let deleted = 0;
-        for (let i = 0; i < items.length; i++) {
-          try {
-            await deleteWithRetry(service.entities[entityName], items[i].id);
-            deleted++;
-          } catch (e) {
-            console.warn(`Failed to delete ${entityName} ${items[i].id}: ${e.message}`);
-          }
-          // Throttle every 5 deletes
-          if ((i + 1) % 5 === 0) {
-            await delay(500);
-          }
+        const ids = items.map(item => item.id);
+        
+        if (ids.length > 0) {
+          // Bulk delete - much faster!
+          await service.entities[entityName].bulkDelete(ids);
+          totalDeleted += ids.length;
+          results.push({ entity: entityName, deleted: ids.length, status: 'success' });
+        } else {
+          results.push({ entity: entityName, deleted: 0, status: 'skipped' });
         }
-        totalDeleted += deleted;
-        results.push({ entity: entityName, found: items.length, deleted, status: 'success' });
       } catch (e) {
         console.warn(`Could not clear demo data for ${entityName}: ${e.message}`);
-        results.push({ entity: entityName, found: 0, deleted: 0, status: 'skipped', error: e.message });
+        results.push({ entity: entityName, deleted: 0, status: 'error', error: e.message });
       }
     }
 

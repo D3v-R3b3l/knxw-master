@@ -20,7 +20,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 export default function DemoDataPage() {
-  const [isSeeding, setIsSeeding] = useState(false);
+  const [seedingScenario, setSeedingScenario] = useState(null);
   const [isClearing, setIsClearing] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [lastResult, setLastResult] = useState(null);
@@ -33,7 +33,9 @@ export default function DemoDataPage() {
     description: 'B2B software users with analytical cognitive styles, conservative risk profiles, and achievement/security motivations',
     icon: Server,
     color: 'from-[#00d4ff] to-[#0ea5e9]',
-    userCount: 50
+    userCount: 30,
+    eventsPerUser: '8-20',
+    insightsPerUser: 2
   },
   {
     id: 'consumer_app',
@@ -41,7 +43,9 @@ export default function DemoDataPage() {
     description: 'B2C users with diverse cognitive styles, mixed risk profiles, and social/learning motivations',
     icon: Users,
     color: 'from-[#ec4899] to-[#db2777]',
-    userCount: 50
+    userCount: 50,
+    eventsPerUser: '15-30',
+    insightsPerUser: 3
   },
   {
     id: 'mixed',
@@ -49,12 +53,14 @@ export default function DemoDataPage() {
     description: 'Balanced distribution across all psychographic dimensions for comprehensive testing',
     icon: Brain,
     color: 'from-[#8b5cf6] to-[#7c3aed]',
-    userCount: 50
+    userCount: 40,
+    eventsPerUser: '10-25',
+    insightsPerUser: 3
   }];
 
 
   const handleSeedData = async (scenario) => {
-    setIsSeeding(true);
+    setSeedingScenario(scenario.id);
     setLastResult(null);
 
     try {
@@ -91,7 +97,7 @@ export default function DemoDataPage() {
         variant: "destructive"
       });
     } finally {
-      setIsSeeding(false);
+      setSeedingScenario(null);
     }
   };
 
@@ -200,18 +206,18 @@ export default function DemoDataPage() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-[#a3a3a3]">Events per user:</span>
-                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">10-30</Badge>
+                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{scenario.eventsPerUser}</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-[#a3a3a3]">Insights per user:</span>
-                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">3</Badge>
+                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{scenario.insightsPerUser}</Badge>
                     </div>
                     <Button
                       onClick={() => handleSeedData(scenario)}
-                      disabled={isSeeding}
+                      disabled={seedingScenario !== null}
                       className="w-full bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] mt-4 whitespace-nowrap overflow-hidden">
 
-                      {isSeeding ?
+                      {seedingScenario === scenario.id ?
                       <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin flex-shrink-0" />
                           <span className="truncate">Seeding...</span>
