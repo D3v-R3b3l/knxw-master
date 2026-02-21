@@ -68,7 +68,8 @@ export default function EmotionalShiftTimeline({ userId }) {
             onClick={analyzeShifts}
             disabled={loading}
             variant="outline"
-            size="sm" className="bg-slate-50 text-slate-800 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-8 border-[#262626] hover:bg-[#1a1a1a]">
+            size="sm"
+            className="border-[#00d4ff]/30 text-[#00d4ff] hover:bg-[#00d4ff]/10 hover:text-[#00d4ff]">
 
 
             {loading ? 'Analyzing...' : 'Refresh'}
