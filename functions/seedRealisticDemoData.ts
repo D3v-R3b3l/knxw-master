@@ -188,24 +188,17 @@ Deno.serve(async (req) => {
 
     const counts = { profiles: 0, events: 0, insights: 0, clientApp: 0 };
 
-    // Step 1: Clear existing demo data (filter by is_demo only, not created_by)
+    // Step 1: Clear existing demo data using bulkDelete (much faster)
     if (clearExisting) {
       console.log('Clearing existing demo data...');
       const entitiesToClear = ['UserPsychographicProfile', 'CapturedEvent', 'PsychographicInsight'];
       for (const entityName of entitiesToClear) {
         try {
           const demoRecords = await service.entities[entityName].filter({ is_demo: true }, null, 500);
-          console.log(`Found ${demoRecords.length} demo ${entityName} to delete`);
-          for (let i = 0; i < demoRecords.length; i++) {
-            try {
-              await withRetry(() => service.entities[entityName].delete(demoRecords[i].id));
-            } catch (delErr) {
-              console.warn(`Failed to delete ${entityName} ${demoRecords[i].id}: ${delErr.message}`);
-            }
-            // Throttle every 5 deletes
-            if ((i + 1) % 5 === 0) {
-              await delay(500);
-            }
+          if (demoRecords.length > 0) {
+            console.log(`Bulk deleting ${demoRecords.length} demo ${entityName}...`);
+            const ids = demoRecords.map(r => r.id);
+            await withRetry(() => service.entities[entityName].bulkDelete(ids));
           }
         } catch (error) {
           console.warn(`Could not clear ${entityName}: ${error.message}`);
@@ -281,6 +274,7 @@ Deno.serve(async (req) => {
           const subBatch = eventBatch.slice(eb, eb + 50);
           await withRetry(() => service.entities.CapturedEvent.bulkCreate(subBatch));
           counts.events += subBatch.length;
+          await delay(100); // Small delay between event sub-batches
         }
       } catch (err) {
         console.error(`Failed to create event batch: ${err.message}`);
@@ -293,7 +287,7 @@ Deno.serve(async (req) => {
         console.error(`Failed to create insight batch: ${err.message}`);
       }
 
-      await delay(200);
+      await delay(300);
     }
 
     console.log(`Seeding complete: ${counts.profiles} profiles, ${counts.events} events, ${counts.insights} insights`);
