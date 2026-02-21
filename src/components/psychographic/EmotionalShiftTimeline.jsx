@@ -68,29 +68,29 @@ export default function EmotionalShiftTimeline({ userId }) {
             onClick={analyzeShifts}
             disabled={loading}
             variant="outline"
-            size="sm"
-            className="border-[#262626] text-white hover:bg-[#1a1a1a]"
-          >
+            size="sm" className="bg-slate-50 text-slate-800 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-8 border-[#262626] hover:bg-[#1a1a1a]">
+
+
             {loading ? 'Analyzing...' : 'Refresh'}
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {loading ? (
-          <div className="text-center py-8">
+        {loading ?
+        <div className="text-center py-8">
             <div className="w-10 h-10 border-4 border-[#262626] border-t-[#00d4ff] rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-[#a3a3a3]">Analyzing emotional patterns...</p>
-          </div>
-        ) : shifts.length === 0 ? (
-          <div className="text-center py-8">
+          </div> :
+        shifts.length === 0 ?
+        <div className="text-center py-8">
             <Activity className="w-12 h-12 text-[#6b7280] mx-auto mb-3" />
             <p className="text-[#a3a3a3]">No emotional shifts detected</p>
             <p className="text-sm text-[#6b7280] mt-1">Need at least 2 psychographic snapshots</p>
-          </div>
-        ) : (
-          <>
-            {summary && (
-              <div className="grid grid-cols-3 gap-4 mb-6">
+          </div> :
+
+        <>
+            {summary &&
+          <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="bg-[#1a1a1a] p-3 rounded-lg border border-[#262626]">
                   <div className="text-xs text-[#6b7280] mb-1">Total Shifts</div>
                   <div className="text-2xl font-bold text-white">{summary.total_shifts_detected}</div>
@@ -104,11 +104,11 @@ export default function EmotionalShiftTimeline({ userId }) {
                   <div className="text-sm font-bold text-white truncate">{summary.most_common_shift || 'N/A'}</div>
                 </div>
               </div>
-            )}
+          }
 
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {shifts.map((shift, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-[#1a1a1a] rounded-lg border border-[#262626]">
+              {shifts.map((shift, index) =>
+            <div key={index} className="flex items-start gap-3 p-3 bg-[#1a1a1a] rounded-lg border border-[#262626]">
                   <div className="mt-1">
                     {getShiftIcon(shift.magnitude)}
                   </div>
@@ -135,11 +135,11 @@ export default function EmotionalShiftTimeline({ userId }) {
                     <div className="text-xs text-[#6b7280]">magnitude</div>
                   </div>
                 </div>
-              ))}
+            )}
             </div>
           </>
-        )}
+        }
       </CardContent>
-    </Card>
-  );
+    </Card>);
+
 }
