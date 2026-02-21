@@ -64,6 +64,20 @@ export default function DemoDataPage() {
     setLastResult(null);
 
     try {
+      // Step 1: Clear existing demo data first
+      toast({
+        title: "Clearing existing data...",
+        description: "Removing old demo data before seeding"
+      });
+
+      await base44.functions.invoke('clearDemoData', {});
+
+      // Step 2: Seed new data
+      toast({
+        title: "Seeding data...",
+        description: `Creating ${scenario.userCount} user profiles`
+      });
+
       const response = await base44.functions.invoke('seedRealisticDemoData', {
         scenario: scenario.id,
         userCount: scenario.userCount
