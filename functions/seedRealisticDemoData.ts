@@ -183,36 +183,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { scenario = 'enterprise_saas', userCount = 50, clearExisting = true } = await req.json();
-    console.log(`Starting demo seed: user=${user.id}, scenario=${scenario}, count=${userCount}, clear=${clearExisting}`);
+    const { scenario = 'enterprise_saas', userCount = 50 } = await req.json();
+    console.log(`Starting demo seed: user=${user.id}, scenario=${scenario}, count=${userCount}`);
 
     const counts = { profiles: 0, events: 0, insights: 0, clientApp: 0 };
 
-    // Step 1: Clear existing demo data
-    if (clearExisting) {
-      console.log('Clearing existing demo data...');
-      const entitiesToClear = ['UserPsychographicProfile', 'CapturedEvent', 'PsychographicInsight'];
-      for (const entityName of entitiesToClear) {
-        try {
-          const demoRecords = await service.entities[entityName].filter({ is_demo: true }, null, 500);
-          if (demoRecords.length > 0) {
-            console.log(`Deleting ${demoRecords.length} demo ${entityName}...`);
-            for (const record of demoRecords) {
-              try {
-                await withRetry(() => service.entities[entityName].delete(record.id));
-              } catch (delErr) {
-                console.warn(`Failed to delete ${entityName} ${record.id}: ${delErr.message}`);
-              }
-            }
-          }
-        } catch (error) {
-          console.warn(`Could not clear ${entityName}: ${error.message}`);
-        }
-      }
-      console.log('Demo data cleared');
-    }
-
-    // Step 2: Create or get Demo Client Application
+    // Step 2: Create or get Demo Client Application (skip clearing - use clearDemoData function first)
     let demoApp;
     try {
       const existingDemoApps = await service.entities.ClientApp.filter({
@@ -243,8 +219,8 @@ Deno.serve(async (req) => {
     }
 
     // Step 3: Generate realistic users and data in batches
-    const BATCH_SIZE = 10;
-    const actualCount = Math.min(userCount, 100); // Cap at 100 to avoid timeouts
+    const BATCH_SIZE = 5; // Smaller batches
+    const actualCount = Math.min(userCount, 50); // Cap at 50
 
     for (let i = 0; i < actualCount; i += BATCH_SIZE) {
       const profileBatch = [];
@@ -257,7 +233,7 @@ Deno.serve(async (req) => {
         const profile = generatePsychographicProfile(userId, scenario);
         profileBatch.push(profile);
 
-        const eventCount = faker.number.int({ min: 8, max: 25 });
+        const eventCount = faker.number.int({ min: 8, max: 15 });
         const events = generateRealisticEvents(userId, scenario, eventCount);
         eventBatch.push(...events);
 
@@ -274,12 +250,11 @@ Deno.serve(async (req) => {
       }
 
       try {
-        // Split large event batches into sub-batches of 50
-        for (let eb = 0; eb < eventBatch.length; eb += 50) {
-          const subBatch = eventBatch.slice(eb, eb + 50);
+        // Split large event batches into sub-batches of 30
+        for (let eb = 0; eb < eventBatch.length; eb += 30) {
+          const subBatch = eventBatch.slice(eb, eb + 30);
           await withRetry(() => service.entities.CapturedEvent.bulkCreate(subBatch));
           counts.events += subBatch.length;
-          await delay(100); // Small delay between event sub-batches
         }
       } catch (err) {
         console.error(`Failed to create event batch: ${err.message}`);
@@ -292,7 +267,7 @@ Deno.serve(async (req) => {
         console.error(`Failed to create insight batch: ${err.message}`);
       }
 
-      await delay(300);
+      await delay(500);
     }
 
     console.log(`Seeding complete: ${counts.profiles} profiles, ${counts.events} events, ${counts.insights} insights`);

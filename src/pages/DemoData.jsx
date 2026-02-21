@@ -66,8 +66,7 @@ export default function DemoDataPage() {
     try {
       const response = await base44.functions.invoke('seedRealisticDemoData', {
         scenario: scenario.id,
-        userCount: scenario.userCount,
-        clearExisting: true
+        userCount: scenario.userCount
       });
 
       const data = response.data || response;
@@ -301,7 +300,7 @@ export default function DemoDataPage() {
               • Seeding operations are rate-limited and batched to prevent API throttling. Large scenarios may take 30-60 seconds.
             </p>
             <p>
-              • Each seed operation clears existing demo data first to prevent duplicates.
+              • Use "Clear All Demo Data" before seeding if you want to replace existing demo data.
             </p>
             <p>
               • Demo data appears in all analytics views (Dashboard, Profiles, Events, Insights) alongside real data.
