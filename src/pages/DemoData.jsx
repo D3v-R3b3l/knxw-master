@@ -300,7 +300,7 @@ export default function DemoDataPage() {
               • Seeding operations are rate-limited and batched to prevent API throttling. Large scenarios may take 30-60 seconds.
             </p>
             <p>
-              • Use "Clear All Demo Data" before seeding if you want to replace existing demo data.
+              • Seeding automatically clears existing demo data first to prevent duplicates.
             </p>
             <p>
               • Demo data appears in all analytics views (Dashboard, Profiles, Events, Insights) alongside real data.
