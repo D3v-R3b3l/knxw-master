@@ -188,7 +188,7 @@ Deno.serve(async (req) => {
 
     const counts = { profiles: 0, events: 0, insights: 0, clientApp: 0 };
 
-    // Step 1: Clear existing demo data using bulkDelete (much faster)
+    // Step 1: Clear existing demo data
     if (clearExisting) {
       console.log('Clearing existing demo data...');
       const entitiesToClear = ['UserPsychographicProfile', 'CapturedEvent', 'PsychographicInsight'];
@@ -196,9 +196,14 @@ Deno.serve(async (req) => {
         try {
           const demoRecords = await service.entities[entityName].filter({ is_demo: true }, null, 500);
           if (demoRecords.length > 0) {
-            console.log(`Bulk deleting ${demoRecords.length} demo ${entityName}...`);
-            const ids = demoRecords.map(r => r.id);
-            await withRetry(() => service.entities[entityName].bulkDelete(ids));
+            console.log(`Deleting ${demoRecords.length} demo ${entityName}...`);
+            for (const record of demoRecords) {
+              try {
+                await withRetry(() => service.entities[entityName].delete(record.id));
+              } catch (delErr) {
+                console.warn(`Failed to delete ${entityName} ${record.id}: ${delErr.message}`);
+              }
+            }
           }
         } catch (error) {
           console.warn(`Could not clear ${entityName}: ${error.message}`);

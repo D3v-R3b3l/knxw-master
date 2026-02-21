@@ -63,15 +63,19 @@ Deno.serve(async (req) => {
         totalFound += demoRecords.length;
 
         if (!dry_run && confirm && demoRecords.length > 0) {
-          const ids = demoRecords.map(r => r.id);
           try {
-            // Use bulkDelete for much faster cleanup
-            await service.entities[entityName].bulkDelete(ids);
-            results[entityName].deleted = ids.length;
-            totalDeleted += ids.length;
-          } catch (bulkError) {
-            console.error(`Failed bulk delete for ${entityName}:`, bulkError.message);
-            results[entityName].error = bulkError.message;
+            for (const record of demoRecords) {
+              try {
+                await service.entities[entityName].delete(record.id);
+                results[entityName].deleted++;
+                totalDeleted++;
+              } catch (delErr) {
+                console.warn(`Failed to delete ${entityName} ${record.id}: ${delErr.message}`);
+              }
+            }
+          } catch (error) {
+            console.error(`Failed to delete ${entityName}:`, error.message);
+            results[entityName].error = error.message;
           }
         }
       } catch (error) {
