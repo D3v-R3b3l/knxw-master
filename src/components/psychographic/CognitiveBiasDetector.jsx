@@ -65,7 +65,7 @@ export default function CognitiveBiasDetector({ userId }) {
             disabled={loading}
             variant="outline"
             size="sm"
-            className="border-[#262626] text-white hover:bg-[#1a1a1a]"
+            className="border-[#00d4ff]/30 text-[#00d4ff] hover:bg-[#00d4ff]/10 hover:text-[#00d4ff]"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Analyze
