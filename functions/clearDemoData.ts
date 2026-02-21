@@ -25,15 +25,21 @@ Deno.serve(async (req) => {
 
     for (const entityName of demoEntities) {
       try {
-        // Get all demo IDs
+        // Get all demo records
         const items = await service.entities[entityName].filter({ is_demo: true }, null, 500);
-        const ids = items.map(item => item.id);
         
-        if (ids.length > 0) {
-          // Bulk delete - much faster!
-          await service.entities[entityName].bulkDelete(ids);
-          totalDeleted += ids.length;
-          results.push({ entity: entityName, deleted: ids.length, status: 'success' });
+        if (items.length > 0) {
+          let deleted = 0;
+          for (const item of items) {
+            try {
+              await service.entities[entityName].delete(item.id);
+              deleted++;
+            } catch (delErr) {
+              console.warn(`Failed to delete ${entityName} ${item.id}: ${delErr.message}`);
+            }
+          }
+          totalDeleted += deleted;
+          results.push({ entity: entityName, deleted, status: 'success' });
         } else {
           results.push({ entity: entityName, deleted: 0, status: 'skipped' });
         }

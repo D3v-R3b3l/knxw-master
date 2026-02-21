@@ -106,16 +106,13 @@ export default function DemoDataPage() {
     setIsClearing(true);
 
     try {
-      const response = await base44.functions.invoke('cleanupDemoData', {
-        confirm: true,
-        dry_run: false
-      });
+      const response = await base44.functions.invoke('clearDemoData', {});
 
       const data = response.data || response;
       if (data?.success) {
         toast({
           title: "Demo Data Cleared",
-          description: `Removed ${data.total_records_deleted || data.total_demo_records_found || 0} demo records.`
+          description: `Removed ${data.total_deleted || 0} demo records.`
         });
 
         setLastResult(null);
