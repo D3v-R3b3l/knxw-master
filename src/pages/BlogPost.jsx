@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Clock, Eye, Share2, Twitter, Linkedin, Facebook, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Eye, Share2, Twitter, Linkedin, Facebook, ExternalLink, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { createPageUrl } from '@/utils';
 import ReactMarkdown from 'react-markdown';
