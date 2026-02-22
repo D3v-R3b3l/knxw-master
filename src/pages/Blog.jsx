@@ -46,6 +46,23 @@ const samplePosts = [
     view_count: 1923
   },
   {
+    id: 'sample-4',
+    title: 'knXw Platform Overview: The Definitive Guide to Psychographic Intelligence, Use Cases, and Industry Impact',
+    slug: 'knxw-platform-overview-psychographic-intelligence-guide-2026',
+    excerpt: 'A complete breakdown of the knXw platform — what it does, who it serves, its highest-impact use cases, and the measurable economic value it unlocks across e-commerce, SaaS, financial services, healthcare, and media. If you\'re evaluating psychographic intelligence for your organization, start here.',
+    author: 'Travis Capps',
+    author_bio: 'Travis Capps is a Principal Systems Architect, Technology Advisor, and founder of knXw. With 20+ years in digital design, AI, and systems strategy, he helps organizations architect intelligent solutions that scale. Learn more at traviscapps.info.',
+    author_image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face',
+    featured_image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&h=600&fit=crop',
+    category: 'guide',
+    tags: ['platform-overview', 'psychographics', 'use-cases', 'enterprise', 'economic-impact', 'ROI'],
+    reading_time: 22,
+    published: true,
+    published_date: '2026-02-22T09:00:00Z',
+    featured: true,
+    view_count: 512
+  },
+  {
     id: 'sample-3',
     title: 'How Fortune 500 Companies Use Psychographic Intelligence for Conversion Optimization',
     slug: 'fortune-500-psychographic-conversion-optimization-2025',
