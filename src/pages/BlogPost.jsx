@@ -946,13 +946,9 @@ export default function BlogPostPage() {
 
           <div className="flex flex-wrap items-center gap-6 text-sm text-[#a3a3a3]">
             <div className="flex items-center gap-2">
-              {post.author_image && (
-                <img 
-                  src={post.author_image} 
-                  alt={post.author}
-                  className="w-10 h-10 rounded-full"
-                />
-              )}
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] flex items-center justify-center flex-shrink-0">
+                <User className="w-5 h-5 text-[#0a0a0a]" />
+              </div>
               <div>
                 <div className="text-white font-medium">{post.author}</div>
                 <div className="text-xs text-[#6b7280]">
@@ -1036,13 +1032,9 @@ export default function BlogPostPage() {
         {post.author_bio && (
           <div className="bg-[#111111] border border-[#262626] rounded-xl p-8 mb-12">
             <div className="flex items-start gap-4">
-              {post.author_image && (
-                <img 
-                  src={post.author_image} 
-                  alt={post.author}
-                  className="w-20 h-20 rounded-full flex-shrink-0"
-                />
-              )}
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] flex items-center justify-center flex-shrink-0">
+                <User className="w-8 h-8 text-[#0a0a0a]" />
+              </div>
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">About The Author</h3>
                 <p className="text-[#a3a3a3] leading-relaxed">{post.author_bio}</p>
