@@ -40,9 +40,13 @@ Deno.serve(async (req) => {
     }
 
     // Extract API key from header
-    const apiKey = req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
+    let apiKey = req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
     
-    if (!apiKey) {
+    // Allow demo key for landing page
+    if (apiKey === 'DEMO_LANDING_KEY') {
+       // Mock a client app for the demo key to allow processing to continue
+       // We'll skip the database lookup for this specific key
+    } else if (!apiKey) {
       return new Response(JSON.stringify({ 
         error: 'Missing API key. Include X-API-Key header or Authorization: Bearer header' 
       }), {
@@ -57,12 +61,22 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     
     // Validate API key exists and is active via ClientApp
-    const clientApps = await base44.asServiceRole.entities.ClientApp.filter({
-      api_key: apiKey,
-      status: 'active'
-    }, null, 1);
+    let clientApp;
+    
+    if (apiKey === 'DEMO_LANDING_KEY') {
+        clientApp = { id: 'demo_landing_page', owner_id: 'system' };
+    } else {
+        const clientApps = await base44.asServiceRole.entities.ClientApp.filter({
+          api_key: apiKey,
+          status: 'active'
+        }, null, 1);
+        
+        if (clientApps && clientApps.length > 0) {
+            clientApp = clientApps[0];
+        }
+    }
 
-    if (!clientApps || clientApps.length === 0) {
+    if (!clientApp) {
       return new Response(JSON.stringify({ error: 'Invalid API key' }), {
         status: 401,
         headers: {
