@@ -27,6 +27,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import AdaptiveUIIndustryShowcase from '@/components/landing/AdaptiveUIIndustryShowcase';
 import AdaptiveLandingDemo from '@/components/landing/AdaptiveLandingDemo';
+import { LandingPsychographicProvider } from '@/components/landing/LandingPsychographicContext';
+import VisitorProfileReveal from '@/components/landing/VisitorProfileReveal';
+import AdaptiveHeroContent from '@/components/landing/AdaptiveHeroContent';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
