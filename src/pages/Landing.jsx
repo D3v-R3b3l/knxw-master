@@ -296,7 +296,7 @@ export default function LandingPage() {
             
             {/* Hero content container - scrolls with parallax */}
             <div className="relative h-full flex items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
-              <HeroContent heroRef={heroSectionRef} />
+              <AdaptiveHeroContent heroRef={heroSectionRef} />
             </div>
 
             <motion.div 
