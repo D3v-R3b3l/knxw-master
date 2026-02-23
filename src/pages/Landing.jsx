@@ -213,6 +213,7 @@ export default function LandingPage() {
   return (
     <HelmetProvider>
       <ConsentProvider>
+        <LandingPsychographicProvider>
         <SEOHead 
         title="knXw - Universal Intelligence Layer for Digital Environments"
         description="Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment. Real-time behavioral analysis powered by AI."
