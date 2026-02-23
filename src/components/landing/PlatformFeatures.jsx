@@ -37,7 +37,15 @@ const FeatureCard = ({ icon: Icon, color, title, description, badge, badgeColor,
   );
 };
 
+import { usePsychographic } from '@/components/sdk/KnxwSDK';
+
 export default function PlatformFeatures() {
+  const { profile } = usePsychographic();
+  
+  // Reorder features based on cognitive style or motivation
+  const isAnalytical = profile?.cognitive_style === 'analytical' || profile?.motivation_labels?.includes('achievement');
+  const isSocial = profile?.motivation_labels?.includes('belonging') || profile?.personality_traits?.extraversion > 0.7;
+
   return (
     <section id="platform" className="py-24 md:py-32 bg-[#050505] text-white overflow-hidden relative">
       <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
@@ -63,18 +71,52 @@ export default function PlatformFeatures() {
           <FeatureCard large icon={Sparkles} color="cyan" title="Adaptive UI SDK" description="React components that automatically adapt to user psychology — buttons, text, and entire sections personalized in real-time." badge="ALL PLANS · NEW" badgeColor="bg-cyan-500/15 text-cyan-300 border-cyan-500/30" />
         </div>
 
-        {/* Row 2: Three equal cards */}
+        {/* Dynamic Rows: Reorder based on profile */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          <FeatureCard icon={Gamepad2} color="purple" title="GameDev Intelligence" description="Player motivation, adaptive difficulty, and churn prediction tailored for gaming experiences." badge="GROWTH+" badgeColor="bg-purple-500/10 text-purple-400 border-purple-500/20" />
-          <FeatureCard icon={TrendingUp} color="emerald" title="Market Intelligence" description="Analyze competitors and market trends through a psychographic lens to sharpen positioning." badge="PRO" badgeColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20" />
-          <FeatureCard icon={Code} color="orange" title="Developer APIs" description="RESTful APIs, webhooks, and a developer playground for rapid, flexible integration." badge="FREE TIER" badgeColor="bg-orange-500/10 text-orange-400 border-orange-500/20" />
+          {isAnalytical ? (
+             // Show highly technical/analytical features first for analytical users
+             <>
+               <FeatureCard icon={Code} color="orange" title="Developer APIs" description="RESTful APIs, webhooks, and a developer playground for rapid, flexible integration." badge="FREE TIER" badgeColor="bg-orange-500/10 text-orange-400 border-orange-500/20" />
+               <FeatureCard icon={Cpu} color="violet" title="AI Inference Studio" description="Fine-tune psychographic models with custom weights and confidence thresholds." badge="GROWTH+" badgeColor="bg-violet-500/10 text-violet-400 border-violet-500/20" />
+               <FeatureCard icon={TrendingUp} color="emerald" title="Market Intelligence" description="Analyze competitors and market trends through a psychographic lens to sharpen positioning." badge="PRO" badgeColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20" />
+             </>
+          ) : isSocial ? (
+             // Show user-centric and journey features first for social/empathetic users
+             <>
+               <FeatureCard icon={Route} color="fuchsia" title="AI Journey Orchestrator" description="Proactive AI suggestions for journey optimization based on behavioral patterns." badge="PRO" badgeColor="bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20" />
+               <FeatureCard icon={UserCheck} color="teal" title="User Data Portal" description="End-user transparency and full control over their psychographic data." badge="ALL PLANS" badgeColor="bg-teal-500/10 text-teal-400 border-teal-500/20" />
+               <FeatureCard icon={Gamepad2} color="purple" title="GameDev Intelligence" description="Player motivation, adaptive difficulty, and churn prediction tailored for gaming experiences." badge="GROWTH+" badgeColor="bg-purple-500/10 text-purple-400 border-purple-500/20" />
+             </>
+          ) : (
+             // Default ordering
+             <>
+               <FeatureCard icon={Gamepad2} color="purple" title="GameDev Intelligence" description="Player motivation, adaptive difficulty, and churn prediction tailored for gaming experiences." badge="GROWTH+" badgeColor="bg-purple-500/10 text-purple-400 border-purple-500/20" />
+               <FeatureCard icon={TrendingUp} color="emerald" title="Market Intelligence" description="Analyze competitors and market trends through a psychographic lens to sharpen positioning." badge="PRO" badgeColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20" />
+               <FeatureCard icon={Code} color="orange" title="Developer APIs" description="RESTful APIs, webhooks, and a developer playground for rapid, flexible integration." badge="FREE TIER" badgeColor="bg-orange-500/10 text-orange-400 border-orange-500/20" />
+             </>
+          )}
         </div>
 
-        {/* Row 3: Three equal cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          <FeatureCard icon={Cpu} color="violet" title="AI Inference Studio" description="Fine-tune psychographic models with custom weights and confidence thresholds." badge="GROWTH+" badgeColor="bg-violet-500/10 text-violet-400 border-violet-500/20" />
-          <FeatureCard icon={Route} color="fuchsia" title="AI Journey Orchestrator" description="Proactive AI suggestions for journey optimization based on behavioral patterns." badge="PRO" badgeColor="bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20" />
-          <FeatureCard icon={UserCheck} color="teal" title="User Data Portal" description="End-user transparency and full control over their psychographic data." badge="ALL PLANS" badgeColor="bg-teal-500/10 text-teal-400 border-teal-500/20" />
+          {isAnalytical ? (
+             <>
+               <FeatureCard icon={Route} color="fuchsia" title="AI Journey Orchestrator" description="Proactive AI suggestions for journey optimization based on behavioral patterns." badge="PRO" badgeColor="bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20" />
+               <FeatureCard icon={UserCheck} color="teal" title="User Data Portal" description="End-user transparency and full control over their psychographic data." badge="ALL PLANS" badgeColor="bg-teal-500/10 text-teal-400 border-teal-500/20" />
+               <FeatureCard icon={Gamepad2} color="purple" title="GameDev Intelligence" description="Player motivation, adaptive difficulty, and churn prediction tailored for gaming experiences." badge="GROWTH+" badgeColor="bg-purple-500/10 text-purple-400 border-purple-500/20" />
+             </>
+          ) : isSocial ? (
+             <>
+               <FeatureCard icon={Code} color="orange" title="Developer APIs" description="RESTful APIs, webhooks, and a developer playground for rapid, flexible integration." badge="FREE TIER" badgeColor="bg-orange-500/10 text-orange-400 border-orange-500/20" />
+               <FeatureCard icon={Cpu} color="violet" title="AI Inference Studio" description="Fine-tune psychographic models with custom weights and confidence thresholds." badge="GROWTH+" badgeColor="bg-violet-500/10 text-violet-400 border-violet-500/20" />
+               <FeatureCard icon={TrendingUp} color="emerald" title="Market Intelligence" description="Analyze competitors and market trends through a psychographic lens to sharpen positioning." badge="PRO" badgeColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20" />
+             </>
+          ) : (
+             <>
+               <FeatureCard icon={Cpu} color="violet" title="AI Inference Studio" description="Fine-tune psychographic models with custom weights and confidence thresholds." badge="GROWTH+" badgeColor="bg-violet-500/10 text-violet-400 border-violet-500/20" />
+               <FeatureCard icon={Route} color="fuchsia" title="AI Journey Orchestrator" description="Proactive AI suggestions for journey optimization based on behavioral patterns." badge="PRO" badgeColor="bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20" />
+               <FeatureCard icon={UserCheck} color="teal" title="User Data Portal" description="End-user transparency and full control over their psychographic data." badge="ALL PLANS" badgeColor="bg-teal-500/10 text-teal-400 border-teal-500/20" />
+             </>
+          )}
         </div>
 
         {/* Row 4: Four compact cards */}
