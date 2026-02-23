@@ -92,7 +92,6 @@ import Integrations from './pages/Integrations';
 import IntegrationsManagement from './pages/IntegrationsManagement';
 import InteractiveDemo from './pages/InteractiveDemo';
 import Journeys from './pages/Journeys';
-import Landing from './pages/Landing';
 import LlmEvaluation from './pages/LlmEvaluation';
 import MarketIntelligence from './pages/MarketIntelligence';
 import MarketingIntegrations from './pages/MarketingIntegrations';
@@ -124,6 +123,7 @@ import documentation from './pages/documentation';
 import landing from './pages/landing';
 import lowdown from './pages/lowdown';
 import settings from './pages/settings';
+import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
@@ -173,7 +173,6 @@ export const PAGES = {
     "IntegrationsManagement": IntegrationsManagement,
     "InteractiveDemo": InteractiveDemo,
     "Journeys": Journeys,
-    "Landing": Landing,
     "LlmEvaluation": LlmEvaluation,
     "MarketIntelligence": MarketIntelligence,
     "MarketingIntegrations": MarketingIntegrations,
@@ -205,6 +204,7 @@ export const PAGES = {
     "landing": landing,
     "lowdown": lowdown,
     "settings": settings,
+    "Landing": Landing,
 }
 
 export const pagesConfig = {
