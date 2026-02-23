@@ -575,6 +575,8 @@ export default function LandingPage() {
           <FooterSection />
         </div>
       </div>
+        <VisitorProfileReveal />
+        </LandingPsychographicProvider>
       </ConsentProvider>
     </HelmetProvider>
   );
