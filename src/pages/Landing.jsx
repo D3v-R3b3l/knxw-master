@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/landing/Navbar';
 import HeroShader from '@/components/landing/HeroShader';
 import SEOHead from '@/components/system/SEOHead';
@@ -27,11 +27,126 @@ import { HelmetProvider } from 'react-helmet-async';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import AdaptiveUIIndustryShowcase from '@/components/landing/AdaptiveUIIndustryShowcase';
 import AdaptiveLandingDemo from '@/components/landing/AdaptiveLandingDemo';
-import { LandingPsychographicProvider } from '@/components/landing/LandingPsychographicContext';
-import VisitorProfileReveal from '@/components/landing/VisitorProfileReveal';
-import AdaptiveHeroContent from '@/components/landing/AdaptiveHeroContent';
 
-// HeroContent is now handled by AdaptiveHeroContent (psychographic-aware)
+function HeroContent({ heroRef }) {
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const heroSection = heroRef?.current;
+    const content = contentRef.current;
+
+    if (heroSection && content) {
+      // Hero content parallax with scale and opacity
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroSection,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.5
+        }
+      });
+
+      // Layer 1 - Title (slowest, scales down)
+      tl.to(content.querySelectorAll('[data-parallax-layer="1"]'), {
+        yPercent: 50,
+        scale: 0.9,
+        opacity: 0,
+        ease: "none"
+      }, 0);
+
+      // Layer 2 - Description
+      tl.to(content.querySelectorAll('[data-parallax-layer="2"]'), {
+        yPercent: 70,
+        scale: 0.85,
+        opacity: 0,
+        ease: "none"
+      }, 0);
+
+      // Layer 3 - Buttons
+      tl.to(content.querySelectorAll('[data-parallax-layer="3"]'), {
+        yPercent: 90,
+        scale: 0.8,
+        opacity: 0,
+        ease: "none"
+      }, 0);
+
+      // Layer 4 - Tags (fastest)
+      tl.to(content.querySelectorAll('[data-parallax-layer="4"]'), {
+        yPercent: 120,
+        scale: 0.75,
+        opacity: 0,
+        ease: "none"
+      }, 0);
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
+  }, [heroRef]);
+
+  return (
+    <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full">
+      {/* Title - Layer 1 (Slowest) */}
+      <motion.div
+        data-parallax-layer="1"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+      >
+        <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
+          The Universal <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
+            Intelligence Layer
+          </span>
+        </h1>
+      </motion.div>
+      
+      {/* Description - Layer 2 */}
+      <motion.div
+        data-parallax-layer="2"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+      >
+        <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-12">
+          Psychographic intelligence that understands <span className="text-white font-medium">why</span> users do what they do—across web, mobile, games, and any digital environment.
+        </p>
+      </motion.div>
+
+      {/* Buttons - Layer 3 */}
+      <motion.div
+        data-parallax-layer="3"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+        className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+      >
+        <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto">
+          Get Started
+        </button>
+        <button onClick={() => window.location.href = createPageUrl('Documentation')} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
+          API Docs
+        </button>
+      </motion.div>
+
+      {/* Tags - Layer 4 (Fastest) */}
+      <motion.div
+        data-parallax-layer="4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.9 }}
+        className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest"
+      >
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Web & Mobile</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Game Engines</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>REST API</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Any Platform</span>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function LandingPage() {
   const heroSectionRef = useRef(null);
@@ -212,7 +327,6 @@ export default function LandingPage() {
 
   return (
     <HelmetProvider>
-      <LandingPsychographicProvider>
       <ConsentProvider>
         <SEOHead 
         title="knXw - Universal Intelligence Layer for Digital Environments"
@@ -296,7 +410,7 @@ export default function LandingPage() {
             
             {/* Hero content container - scrolls with parallax */}
             <div className="relative h-full flex items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
-              <AdaptiveHeroContent heroRef={heroSectionRef} />
+              <HeroContent heroRef={heroSectionRef} />
             </div>
 
             <motion.div 
@@ -361,6 +475,10 @@ export default function LandingPage() {
             <PlatformFeatures />
           </div>
 
+          <div data-scroll-section>
+            <AdaptiveLandingDemo />
+          </div>
+          
           {/* Enterprise Section - Enhanced */}
           <div id="enterprise" data-scroll-section>
           <section className="py-24 md:py-32 bg-black border-y border-white/10 overflow-hidden relative">
@@ -571,9 +689,7 @@ export default function LandingPage() {
           <FooterSection />
         </div>
       </div>
-        <VisitorProfileReveal />
       </ConsentProvider>
-      </LandingPsychographicProvider>
     </HelmetProvider>
   );
 }
