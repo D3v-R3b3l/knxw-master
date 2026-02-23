@@ -299,6 +299,7 @@ function HeroContent({ heroRef }) {
 export default function LandingPage() {
   const heroSectionRef = useRef(null);
   const mainRef = useRef(null);
+  const visitorId = useLandingTracking();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -541,6 +542,8 @@ export default function LandingPage() {
         </div>
       </noscript>
       
+      <PsychographicProvider userId={visitorId} mockMode={false}>
+      <RealTimeProfileReveal />
       <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
         <CustomCursor />
         <Navbar />
@@ -837,6 +840,7 @@ export default function LandingPage() {
           <FooterSection />
         </div>
       </div>
+      </PsychographicProvider>
       </ConsentProvider>
     </HelmetProvider>
   );
