@@ -572,8 +572,8 @@ export default function LandingPage() {
         </div>
       </div>
         <VisitorProfileReveal />
-        </LandingPsychographicProvider>
       </ConsentProvider>
+      </LandingPsychographicProvider>
     </HelmetProvider>
   );
 }
