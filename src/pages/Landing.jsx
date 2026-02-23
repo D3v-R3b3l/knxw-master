@@ -361,10 +361,6 @@ export default function LandingPage() {
             <PlatformFeatures />
           </div>
 
-          <div data-scroll-section>
-            <AdaptiveLandingDemo />
-          </div>
-          
           {/* Enterprise Section - Enhanced */}
           <div id="enterprise" data-scroll-section>
           <section className="py-24 md:py-32 bg-black border-y border-white/10 overflow-hidden relative">
