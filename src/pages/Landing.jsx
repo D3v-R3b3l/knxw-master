@@ -26,6 +26,7 @@ import Lenis from '@studio-freight/lenis';
 import { HelmetProvider } from 'react-helmet-async';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import AdaptiveUIIndustryShowcase from '@/components/landing/AdaptiveUIIndustryShowcase';
+import AdaptiveLandingDemo from '@/components/landing/AdaptiveLandingDemo';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -472,6 +473,10 @@ export default function LandingPage() {
 
           <div data-scroll-section>
             <PlatformFeatures />
+          </div>
+
+          <div data-scroll-section>
+            <AdaptiveLandingDemo />
           </div>
           
           {/* Enterprise Section - Enhanced */}
