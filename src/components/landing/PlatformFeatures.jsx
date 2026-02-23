@@ -19,7 +19,7 @@ const FeatureCard = ({ icon: Icon, color, title, description, badge, badgeColor,
   const c = colorMap[color] || colorMap.cyan;
 
   return (
-    <div className={`bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl border border-white/5 ${c.border} transition-all duration-500 relative overflow-hidden group ${large ? 'p-8 md:p-10' : 'p-7'}`}>
+    <div data-feature-card className={`bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl border border-white/5 ${c.border} transition-all duration-500 relative overflow-hidden group ${large ? 'p-8 md:p-10' : 'p-7'}`}>
       <div className={`absolute top-0 right-0 w-48 h-48 ${c.glow} rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
       <div className="relative z-10">
         <div className={`${large ? 'w-14 h-14' : 'w-11 h-11'} rounded-xl bg-gradient-to-br ${c.icon} flex items-center justify-center mb-5 border`}>
