@@ -86,8 +86,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    const clientApp = clientApps[0];
-    
     // Rate limiting by client app
     if (!checkRateLimit(clientApp.id)) {
       return new Response(JSON.stringify({ 
