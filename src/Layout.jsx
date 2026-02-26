@@ -106,13 +106,14 @@ export default function Layout({ children, currentPageName }) {
   const safePageName = (currentPageName || '').toLowerCase();
   const currentPath = (location.pathname || '').toLowerCase();
   
-  const isLandingPage = safePageName === 'landing' || currentPath === createPageUrl('Landing').toLowerCase() || currentPath === '/' || currentPath === '';
-  const isOnboardingPage = safePageName === 'onboarding';
-  const isPricingFAQPage = safePageName === 'pricingfaq';
-  const isDocsPublicPage = safePageName === 'documentation';
-  const isBlogPage = safePageName === 'blog' || safePageName === 'blogpost';
-  const isLegalPage = safePageName === 'privacy' || safePageName === 'terms';
-  const isInteractiveDemoPage = safePageName === 'interactivedemo';
+  // Robust check for public pages to prevent dashboard leakage
+  const isLandingPage = safePageName === 'landing' || currentPath === '/' || currentPath === '' || currentPath.includes('/landing');
+  const isOnboardingPage = safePageName.includes('onboarding') || currentPath.includes('/onboarding');
+  const isPricingFAQPage = safePageName.includes('pricingfaq') || currentPath.includes('/pricingfaq');
+  const isDocsPublicPage = safePageName.includes('documentation') || currentPath.includes('/documentation');
+  const isBlogPage = safePageName.includes('blog') || currentPath.includes('/blog');
+  const isLegalPage = safePageName.includes('privacy') || safePageName.includes('terms') || currentPath.includes('/privacy') || currentPath.includes('/terms');
+  const isInteractiveDemoPage = safePageName.includes('interactivedemo') || currentPath.includes('/interactivedemo');
 
   useEffect(() => {
     if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
