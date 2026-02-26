@@ -26,104 +26,6 @@ import Lenis from '@studio-freight/lenis';
 import { HelmetProvider } from 'react-helmet-async';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import AdaptiveUIIndustryShowcase from '@/components/landing/AdaptiveUIIndustryShowcase';
-import AdaptiveLandingDemo from '@/components/landing/AdaptiveLandingDemo';
-import { PsychographicProvider, AdaptiveText, AdaptiveButton } from '@/components/sdk/KnxwSDK';
-import RealTimeProfileReveal from '@/components/landing/RealTimeProfileReveal';
-
-// Custom hook to track landing page visitors and build their real-time profile
-const useLandingTracking = () => {
-  const [visitorId, setVisitorId] = useState(null);
-
-  useEffect(() => {
-    let vid = localStorage.getItem('knxw_visitor_id');
-    if (!vid) {
-      vid = 'v_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('knxw_visitor_id', vid);
-    }
-    
-    let sid = sessionStorage.getItem('knxw_session_id');
-    if (!sid) {
-      sid = 's_' + Math.random().toString(36).substring(2, 15);
-      sessionStorage.setItem('knxw_session_id', sid);
-    }
-    
-    setVisitorId(vid);
-
-    // Track events directly to the capture API with our demo key
-    const trackEvent = async (type, payload = {}) => {
-      try {
-        await fetch('/api/functions/captureEvent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': 'DEMO_LANDING_KEY'
-          },
-          body: JSON.stringify({
-            user_id: vid,
-            event_type: type,
-            session_id: sid,
-            event_payload: {
-              url: window.location.href,
-              ...payload
-            },
-            device_info: {
-              user_agent: navigator.userAgent,
-              screen_resolution: `${window.innerWidth}x${window.innerHeight}`
-            }
-          })
-        });
-      } catch (err) {
-        console.warn('Tracking failed:', err);
-      }
-    };
-
-    trackEvent('page_view');
-    
-    // Generic click tracker
-    const clickHandler = (e) => {
-      const btn = e.target.closest('button, a');
-      if (btn) {
-        trackEvent('click', { element: btn.innerText || btn.id || btn.className });
-      }
-    };
-    
-    // Generic scroll depth tracker
-    let scrollTimeout;
-    const scrollHandler = () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        trackEvent('scroll', { depth: window.scrollY });
-      }, 1500);
-    };
-
-    // Generic hover tracker for feature cards (simulates engagement)
-    let hoverTimeout;
-    const hoverHandler = (e) => {
-      const card = e.target.closest('[data-feature-card]');
-      if (card) {
-        clearTimeout(hoverTimeout);
-        hoverTimeout = setTimeout(() => {
-          trackEvent('hover', { element: card.getAttribute('data-feature-card') });
-        }, 1000);
-      }
-    };
-
-    document.addEventListener('click', clickHandler);
-    document.addEventListener('mouseover', hoverHandler);
-    window.addEventListener('scroll', scrollHandler, { passive: true });
-
-    return () => {
-      document.removeEventListener('click', clickHandler);
-      document.removeEventListener('mouseover', hoverHandler);
-      window.removeEventListener('scroll', scrollHandler);
-      clearTimeout(scrollTimeout);
-      clearTimeout(hoverTimeout);
-    };
-  }, []);
-
-  return visitorId;
-};
-
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -193,31 +95,9 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 1.2, ease: "easeOut" }}
       >
         <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
-          <AdaptiveText 
-            baseText="The Universal" 
-            motivationVariants={{
-              achievement: "Drive Exponential",
-              curiosity: "Discover Hidden",
-              security: "The Dependable",
-              belonging: "The Unified"
-            }} 
-            moodVariants={{
-              confident: "Master The",
-              anxious: "Bulletproof",
-              excited: "Unleash The"
-            }}
-          />
-          <br />
+          The Universal <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
-            <AdaptiveText 
-              baseText="Intelligence Layer" 
-              motivationVariants={{
-                achievement: "Growth Engine",
-                curiosity: "User Insights",
-                security: "Analytics Core",
-                belonging: "Intelligence Hub"
-              }} 
-            />
+            Intelligence Layer
           </span>
         </h1>
       </motion.div>
@@ -229,25 +109,8 @@ function HeroContent({ heroRef }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
       >
-        <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-12 transition-all duration-500">
-          <AdaptiveText 
-            baseText="Psychographic intelligence that understands "
-            motivationVariants={{
-              achievement: "Uncover the precise motivations that drive your highest-value users to "
-            }}
-          />
-          <span className="text-white font-medium">
-            <AdaptiveText 
-              baseText="why" 
-              motivationVariants={{ achievement: "convert" }} 
-            />
-          </span>
-          <AdaptiveText 
-            baseText=" users do what they do—across web, mobile, games, and any digital environment."
-            motivationVariants={{
-              achievement: "—optimizing every touchpoint for maximum ROI."
-            }}
-          />
+        <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-12">
+          Psychographic intelligence that understands <span className="text-white font-medium">why</span> users do what they do—across web, mobile, games, and any digital environment.
         </p>
       </motion.div>
 
@@ -259,21 +122,9 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
         className="flex flex-col sm:flex-row gap-4 justify-center items-center"
       >
-        <AdaptiveButton 
-          baseText="Get Started" 
-          motivationVariants={{
-            achievement: "Start Scaling Now",
-            curiosity: "Explore The Platform",
-            security: "See Trust & Privacy",
-            belonging: "Join Developers"
-          }}
-          riskVariants={{
-            aggressive: "Start Free — Scale Fast",
-            conservative: "Book A Demo"
-          }}
-          onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} 
-          className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto"
-        />
+        <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto">
+          Get Started
+        </button>
         <button onClick={() => window.location.href = createPageUrl('Documentation')} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
           API Docs
         </button>
@@ -299,7 +150,6 @@ function HeroContent({ heroRef }) {
 export default function LandingPage() {
   const heroSectionRef = useRef(null);
   const mainRef = useRef(null);
-  const visitorId = useLandingTracking();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -542,8 +392,6 @@ export default function LandingPage() {
         </div>
       </noscript>
       
-      <PsychographicProvider userId={visitorId} mockMode={false}>
-      <RealTimeProfileReveal />
       <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
         <CustomCursor />
         <Navbar />
@@ -624,10 +472,6 @@ export default function LandingPage() {
 
           <div data-scroll-section>
             <PlatformFeatures />
-          </div>
-
-          <div data-scroll-section>
-            <AdaptiveLandingDemo />
           </div>
           
           {/* Enterprise Section - Enhanced */}
@@ -840,7 +684,6 @@ export default function LandingPage() {
           <FooterSection />
         </div>
       </div>
-      </PsychographicProvider>
       </ConsentProvider>
     </HelmetProvider>
   );
