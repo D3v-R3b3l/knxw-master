@@ -103,13 +103,16 @@ export default function Layout({ children, currentPageName }) {
 
 
 
-  const isLandingPage = currentPageName === 'Landing' || location.pathname === createPageUrl('Landing') || location.pathname === '/';
-  const isOnboardingPage = currentPageName === 'Onboarding';
-  const isPricingFAQPage = currentPageName === 'PricingFAQ';
-  const isDocsPublicPage = currentPageName?.toLowerCase() === 'documentation';
-  const isBlogPage = currentPageName === 'Blog' || currentPageName === 'BlogPost' || currentPageName === 'blog';
-  const isLegalPage = currentPageName === 'Privacy' || currentPageName === 'Terms';
-  const isInteractiveDemoPage = currentPageName === 'InteractiveDemo';
+  const safePageName = (currentPageName || '').toLowerCase();
+  const currentPath = (location.pathname || '').toLowerCase();
+  
+  const isLandingPage = safePageName === 'landing' || currentPath === createPageUrl('Landing').toLowerCase() || currentPath === '/' || currentPath === '';
+  const isOnboardingPage = safePageName === 'onboarding';
+  const isPricingFAQPage = safePageName === 'pricingfaq';
+  const isDocsPublicPage = safePageName === 'documentation';
+  const isBlogPage = safePageName === 'blog' || safePageName === 'blogpost';
+  const isLegalPage = safePageName === 'privacy' || safePageName === 'terms';
+  const isInteractiveDemoPage = safePageName === 'interactivedemo';
 
   useEffect(() => {
     if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
