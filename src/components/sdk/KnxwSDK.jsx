@@ -41,12 +41,15 @@ export function PsychographicProvider({ children, userId, mockMode = false, mock
       return;
     }
 
+    let unsubscribe = null;
+
     // Fetch real psychographic profile
     const fetchProfile = async () => {
       try {
         setLoading(true);
         const profiles = await base44.entities.UserPsychographicProfile.filter({ user_id: userId });
         if (profiles && profiles.length > 0) {
+          // Assuming newest profile comes first, or just taking the matched one
           setProfile(profiles[0]);
         }
         setLoading(false);
@@ -57,6 +60,22 @@ export function PsychographicProvider({ children, userId, mockMode = false, mock
     };
 
     fetchProfile();
+
+    // Subscribe to real-time updates so the UI adapts immediately when the profile is generated/updated
+    try {
+      unsubscribe = base44.entities.UserPsychographicProfile.subscribe((event) => {
+        if ((event.type === 'create' || event.type === 'update') && event.data.user_id === userId) {
+          setProfile(event.data);
+          setLoading(false);
+        }
+      });
+    } catch (err) {
+      console.warn('Real-time subscription failed:', err);
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [userId, mockMode, mockProfile]);
 
   // Derive motivation_labels from motivation_stack if needed
