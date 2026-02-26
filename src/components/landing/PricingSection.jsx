@@ -168,7 +168,7 @@ export default function PricingSection() {
               Custom credits • Dedicated infrastructure • Multi-tenant • White-label • SLA guarantees
             </p>
           </div>
-          <button className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold hover:bg-white/10 transition-colors whitespace-nowrap w-full md:w-auto">
+          <button onClick={() => window.location.href = createPageUrl('Support')} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold hover:bg-white/10 transition-colors whitespace-nowrap w-full md:w-auto">
             Contact Sales
           </button>
         </div>
