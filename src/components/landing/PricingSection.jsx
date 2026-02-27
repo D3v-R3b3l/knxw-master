@@ -9,32 +9,33 @@ export default function PricingSection() {
     {
       name: "Developer",
       price: "Free",
-      description: "Launch psychographic intelligence into your app",
+      description: "Get started building with psychographic intelligence",
       outcomes: [
-        "Real-time user profiling",
-        "Behavioral event tracking",
-        "Basic cognitive insights",
-        "JavaScript SDK"
+        "Core psychographic profiling",
+        "Basic behavioral event tracking",
+        "JavaScript & React SDK access",
+        "Sandbox environment",
+        "Community support"
       ],
-      limits: "1,000 credits/month • Basic dashboards",
-      cta: "Start Building",
+      limits: "Up to 1,000 Active User Profiles • 5,000 events/month",
+      cta: "Start Building for Free",
       key: "developer",
-      mode: "subscription", 
+      mode: "subscription",
       highlight: false
     },
     {
       name: "Growth",
-      price: "$99",
+      price: "$149",
       period: "/mo",
-      description: "Increase conversions, reduce churn",
+      description: "Scale personalization with deeper insights and journey automation",
       outcomes: [
-        "Increase conversion rates",
-        "Reduce churn with insights",
-        "Personalize user experiences",
-        "A/B testing",
-        "AI-powered content engine"
+        "Advanced psychographic insights",
+        "Full journey builder",
+        "A/B testing & real-time engagement",
+        "Unlimited custom segments",
+        "Priority support (12-hr SLA)"
       ],
-      limits: "10,000–50,000 credits/month included",
+      limits: "Up to 25,000 Active User Profiles • $5/1K overage",
       cta: "Start Growing",
       key: "growth",
       mode: "subscription",
@@ -42,19 +43,19 @@ export default function PricingSection() {
       badge: "MOST POPULAR"
     },
     {
-      name: "Pro",
-      price: "$499",
+      name: "Professional",
+      price: "$399",
       period: "/mo",
-      description: "Full API access, priority SLA",
+      description: "Optimize user lifecycles with predictive intelligence",
       outcomes: [
-        "Predict user churn before it happens",
-        "Market intelligence & trends",
-        "Unlimited behavioral segments",
-        "Batch analytics at scale",
-        "Priority support & SLA"
+        "Advanced predictive analytics & churn prevention",
+        "Full market intelligence & trends",
+        "Full API access (read/write)",
+        "Dedicated account manager",
+        "Premium support (6-hr SLA)"
       ],
-      limits: "100,000–500,000 credits/month included",
-      cta: "Go Pro",
+      limits: "Up to 100,000 Active User Profiles • $3/1K overage",
+      cta: "Go Professional",
       key: "pro",
       mode: "subscription",
       highlight: false

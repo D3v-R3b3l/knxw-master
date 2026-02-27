@@ -28,89 +28,96 @@ export default function PricingPage() {
       name: 'Developer',
       price: 0,
       annualPrice: 0,
-      description: 'Perfect for testing and small-scale projects',
+      description: 'Get started building with psychographic intelligence',
       highlight: false,
       features: [
-        '1,000 monthly psychographic credits',
-        'Basic psychographic profiling',
-        'Real-time event stream',
-        'Standard dashboards',
-        'JavaScript SDK',
-        'Documentation & forum support',
-        'Up to 10,000 monthly active users'
+        'Core psychographic profiling',
+        'Basic behavioral event tracking',
+        'JavaScript & React SDK access',
+        'Sandbox environment',
+        'Basic dashboards',
+        'Community support',
+        'Up to 1,000 Active User Profiles',
+        '5,000 tracked events/month'
       ],
       limitations: [
         'No advanced AI features',
-        'Basic segmentation only',
-        'Community support'
+        'No journey builder',
+        'Community support only'
       ],
-      cta: 'Start Free',
-      popular: false
+      cta: 'Start Building for Free',
+      popular: false,
+      planKey: 'developer'
     },
     {
       name: 'Growth',
-      price: 99,
-      annualPrice: 89,
-      description: 'For growing businesses serious about conversion optimization',
+      price: 149,
+      annualPrice: 134,
+      description: 'Scale personalization with deeper insights and journey automation',
       highlight: true,
       features: [
-        '10,000-50,000 monthly credits',
-        'Advanced psychographic profiling',
-        'Limited Adaptive Engagement Engine (2 segments)',
-        'Standard integrations (HubSpot, Meta, GA4)',
-        'Email support',
-        'A/B testing capabilities',
-        'Content recommendation engine',
-        'AI feedback analysis',
-        'Up to 100,000 monthly active users'
+        'Everything in Developer',
+        'Advanced psychographic insights',
+        'Full journey builder (5 active journeys)',
+        'A/B testing (multi-variant)',
+        'Real-time engagement engine',
+        'Unlimited custom segments',
+        'Standard API access (read-only)',
+        'Email & notification integrations',
+        'Priority support (12-hr SLA)',
+        'Up to 25,000 Active User Profiles',
+        '$5 per additional 1,000 profiles'
       ],
-      overageCost: '$0.01-$0.02 per extra credit',
+      overageCost: '$5 per additional 1,000 Active User Profiles',
       cta: 'Start 14-Day Trial',
-      popular: true
+      popular: true,
+      planKey: 'growth'
     },
     {
-      name: 'Pro',
-      price: 499,
-      annualPrice: 449,
-      description: 'For teams that need enterprise-grade intelligence and scale',
+      name: 'Professional',
+      price: 399,
+      annualPrice: 359,
+      description: 'Optimize user lifecycles with predictive intelligence and dedicated resources',
       highlight: false,
       features: [
-        '100,000-500,000 monthly credits',
-        'Unlimited Adaptive Engagement Engine',
-        'Advanced Batch Analytics',
-        'Full API access',
-        'Priority support',
-        'Dedicated account manager (higher tiers)',
-        'Market intelligence analysis',
-        'Competitor psychographic insights',
-        'White-glove onboarding',
-        'Custom integrations',
-        'Up to 1M monthly active users'
+        'Everything in Growth',
+        'Advanced predictive analytics (churn, LTV)',
+        'Full market intelligence & competitor analysis',
+        'Full API access (read/write)',
+        'Unlimited active journeys',
+        'SMS & push notification integrations',
+        'Dedicated account manager',
+        'Premium support (6-hr SLA)',
+        'Data residency options',
+        'Up to 100,000 Active User Profiles',
+        '$3 per additional 1,000 profiles'
       ],
-      overageCost: '$0.01-$0.02 per extra credit',
+      overageCost: '$3 per additional 1,000 Active User Profiles',
       cta: 'Start 14-Day Trial',
-      popular: false
+      popular: false,
+      planKey: 'pro'
     },
     {
       name: 'Enterprise',
       price: null,
       annualPrice: null,
-      description: 'Custom solutions for enterprise-scale operations',
+      description: 'Tailored solutions for large organizations with complex needs',
       highlight: false,
       features: [
-        'Unlimited psychographic credits',
-        'Custom AI model training',
+        'Everything in Professional',
+        'Unlimited Active User Profiles & events',
         'Dedicated infrastructure',
+        'White-labeling options',
+        'Multi-tenant capabilities',
+        'Custom integrations',
         'SSO & SAML integration',
         'Advanced security & compliance',
-        'SLA guarantees',
-        'Custom contracts & MSA',
-        '24/7 premium support',
-        'Unlimited monthly active users',
-        'On-premise deployment options'
+        'Enterprise SLA & 24/7 support',
+        'Custom contracts & MSA'
       ],
       cta: 'Contact Sales',
-      popular: false
+      popular: false,
+      planKey: 'enterprise'
     }
   ];
 
