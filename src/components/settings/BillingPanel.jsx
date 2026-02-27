@@ -9,19 +9,19 @@ const plans = [
         key: 'developer',
         name: 'Developer',
         price: 'Free',
-        features: ['1,000 monthly credits', 'Basic psychographic profiling', 'Standard integrations', 'Community support'],
+        features: ['Up to 1,000 Active User Profiles', '5,000 events/month', 'Core psychographic profiling', 'Community support'],
     },
     {
         key: 'growth',
         name: 'Growth',
-        price: '$99/mo',
-        features: ['10,000 monthly credits', 'Advanced profiling & segmentation', 'Adaptive Engagement Engine', 'Email support'],
+        price: '$149/mo',
+        features: ['Up to 25,000 Active User Profiles', 'Full journey builder & A/B testing', 'Real-time engagement engine', 'Priority support (12-hr SLA)'],
     },
     {
         key: 'pro',
-        name: 'Pro',
-        price: '$499/mo',
-        features: ['50,000 monthly credits', 'Full API access & AI agents', 'Advanced analytics & reporting', 'Priority support'],
+        name: 'Professional',
+        price: '$399/mo',
+        features: ['Up to 100,000 Active User Profiles', 'Predictive analytics & churn prevention', 'Full API access & market intelligence', 'Premium support (6-hr SLA)'],
     }
 ];
 
