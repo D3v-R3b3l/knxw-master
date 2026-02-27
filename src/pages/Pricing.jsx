@@ -132,7 +132,7 @@ export default function PricingPage() {
     <>
       <SEOHead
         title="knXw Pricing - Psychographic Intelligence for Every Stage"
-        description="Transparent, value-based pricing for psychographic AI. Start free, scale as you grow. Developer plan free forever, Growth from $99/mo, Pro from $499/mo. 10% annual discount."
+        description="Transparent, value-based pricing for psychographic AI. Start free, scale as you grow. Developer plan free forever, Growth from $149/mo, Professional from $399/mo. 10% annual discount."
         keywords="pricing, psychographic analytics, AI pricing, SaaS pricing, conversion optimization cost"
       />
 
@@ -148,7 +148,7 @@ export default function PricingPage() {
             </h1>
             
             <p className="text-xl text-[#a3a3a3] max-w-3xl mx-auto mb-8">
-              Start free with the Developer plan. Scale confidently with Growth or Pro. 
+              Start free with the Developer plan. Scale confidently with Growth or Professional. 
               Enterprise for custom needs. All plans include core psychographic analysis, 
               real-time profiling, and explainable AI reasoning.
             </p>
@@ -204,7 +204,7 @@ export default function PricingPage() {
                         <span>{plan.name}</span>
                         {plan.name === 'Developer' && <Zap className="w-5 h-5 text-[#fbbf24]" />}
                         {plan.name === 'Growth' && <TrendingUp className="w-5 h-5 text-[#00d4ff]" />}
-                        {plan.name === 'Pro' && <Rocket className="w-5 h-5 text-[#c026d3]" />}
+                        {plan.name === 'Professional' && <Rocket className="w-5 h-5 text-[#c026d3]" />}
                         {plan.name === 'Enterprise' && <Shield className="w-5 h-5 text-[#10b981]" />}
                       </div>
                     </CardTitle>
