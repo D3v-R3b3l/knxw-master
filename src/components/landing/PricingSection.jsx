@@ -166,7 +166,7 @@ export default function PricingSection() {
             <h3 className="text-2xl font-bold text-white mb-2">Enterprise & Custom</h3>
             <p className="text-gray-400 mb-3">knXw becomes organizational intelligence</p>
             <p className="text-sm text-gray-500">
-              Custom credits • Dedicated infrastructure • Multi-tenant • White-label • SLA guarantees
+              Unlimited profiles • Dedicated infrastructure • Multi-tenant • White-label • 24/7 SLA guarantees
             </p>
           </div>
           <button onClick={() => window.location.href = createPageUrl('Support')} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold hover:bg-white/10 transition-colors whitespace-nowrap w-full md:w-auto">
