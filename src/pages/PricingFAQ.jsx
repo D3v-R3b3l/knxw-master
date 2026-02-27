@@ -57,7 +57,7 @@ const faqs = [
     questions: [
       {
         q: "What's the difference between plan tiers?",
-        a: "Developer (Free): 1,000 credits/month, real-time profiling, basic dashboards, JavaScript SDK. Growth ($99): 10,000-50,000 credits included, increase conversions, reduce churn, personalize experiences, A/B testing, AI content engine, advanced segmentation. Pro ($499): 100,000-500,000 credits included, full API access, predict churn, market intelligence, batch analytics, priority support & SLA. Enterprise: Custom credits, organizational intelligence, dedicated infrastructure."
+        a: "Developer (Free): Up to 1,000 Active User Profiles, 5,000 events/month, core psychographic profiling, JavaScript/React SDK, community support. Growth ($149/mo): Up to 25,000 Active User Profiles, full journey builder, A/B testing, real-time engagement engine, unlimited custom segments, priority support (12-hr SLA). Professional ($399/mo): Up to 100,000 Active User Profiles, advanced predictive analytics, full market intelligence, full API access, dedicated account manager, premium support (6-hr SLA). Enterprise: Unlimited profiles, dedicated infrastructure, white-labeling, custom integrations."
       },
       {
         q: "What AWS integrations are included in each plan?",
@@ -69,11 +69,11 @@ const faqs = [
       },
       {
         q: "What happens if I exceed my monthly limits?",
-        a: "Growth: $0.01-$0.02 per extra credit. Pro: $0.01-$0.02 per extra credit. You'll receive alerts at 80% and 95% of your limits. All overages are clearly itemized on your next invoice. No service interruptions or throttling."
+        a: "Growth: $5 per additional 1,000 Active User Profiles. Professional: $3 per additional 1,000 Active User Profiles. You'll receive email alerts at 80% and 95% usage. All overages are clearly itemized on your next invoice. No service interruptions or throttling — your users keep getting served."
       },
       {
         q: "Can I change plans anytime?",
-        a: "Yes. Upgrades are immediate with prorated billing. Downgrades take effect at your next billing cycle. Unused credits don't carry over, but existing data and configurations remain accessible. Annual billing saves 15% on all paid plans."
+        a: "Yes. Upgrades are immediate with prorated billing. Downgrades take effect at your next billing cycle. Existing data, profiles, and configurations are preserved on all plan changes. Annual billing saves 10% on Growth and Professional plans."
       }
     ]
   },
@@ -142,7 +142,7 @@ const faqs = [
       },
       {
         q: "What support levels are provided?",
-        a: "Developer: Community forum and documentation. Growth: Email support with 24-hour response time plus AI-assisted onboarding. Pro: Priority email support, monthly strategy calls, and dedicated success manager. Enterprise: 24/7 phone support, dedicated technical account manager, and custom SLA agreements."
+        a: "Developer: Community forum and documentation. Growth: Email support with 12-hour SLA plus AI-assisted onboarding. Professional: Priority support with 6-hour SLA, monthly strategy calls, and dedicated account manager. Enterprise: 24/7 phone support, dedicated technical account manager, and custom SLA agreements."
       },
       {
         q: "Can I get custom pricing or contract terms?",
@@ -202,8 +202,8 @@ export default function PricingFAQ() {
             </h1>
           </div>
           <p className="text-[#a3a3a3] text-lg">
-            Everything you need to know about knXw's credit-based pricing, AI agents, integrations, and enterprise features.
-          </p>
+                Everything you need to know about knXw's usage-based pricing, AI agents, integrations, and enterprise features.
+              </p>
         </div>
 
         {/* Quick Links */}
