@@ -255,15 +255,15 @@ export default function PricingFAQ() {
             <div className="grid md:grid-cols-3 gap-4 text-center">
             <div className="p-4 rounded-lg bg-[#0f0f0f] border border-[#262626]">
               <h4 className="font-semibold text-white mb-2">Developer - Free</h4>
-              <p className="text-sm text-[#a3a3a3]">1,000 credits • Launch intelligence • Basic dashboards</p>
+              <p className="text-sm text-[#a3a3a3]">1,000 profiles • 5K events/month • Basic dashboards</p>
             </div>
             <div className="p-4 rounded-lg bg-[#0f0f0f] border border-[#10b981]/30">
-              <h4 className="font-semibold text-white mb-2">Growth - $99</h4>
-              <p className="text-sm text-[#a3a3a3]">10K-50K credits + overage • Increase conversion • AI content</p>
+              <h4 className="font-semibold text-white mb-2">Growth - $149/mo</h4>
+              <p className="text-sm text-[#a3a3a3]">25K profiles • Full journeys • $5/1K overage</p>
             </div>
             <div className="p-4 rounded-lg bg-[#0f0f0f] border border-[#00d4ff]/30">
-              <h4 className="font-semibold text-white mb-2">Pro - $499</h4>
-              <p className="text-sm text-[#a3a3a3]">100K-500K credits + overage • Full API access • Priority SLA</p>
+              <h4 className="font-semibold text-white mb-2">Professional - $399/mo</h4>
+              <p className="text-sm text-[#a3a3a3]">100K profiles • Predictive analytics • $3/1K overage</p>
             </div>
             </div>
             <div className="mt-6 p-4 bg-[#00d4ff]/10 border border-[#00d4ff]/30 rounded-lg">
