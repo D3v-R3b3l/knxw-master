@@ -330,7 +330,7 @@ export default function PricingFAQ() {
               </Button>
             </div>
             <div className="mt-6 text-sm text-[#6b7280]">
-              <p>Average response time: &lt;4 hours • Available Monday-Friday, 9 AM - 6 PM EST</p>
+              <p>Average response time: &lt;6 hours • Available Monday-Friday, 9 AM - 6 PM EST</p>
             </div>
           </CardContent>
         </Card>
