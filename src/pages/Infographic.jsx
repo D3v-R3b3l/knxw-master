@@ -193,8 +193,8 @@ export default function InfographicPage() {
               <div className="accent-line"></div>
             </div>
             <div className="pipeline-stages" style={{ position: 'relative' }}>
-              {/* Stage 2 → 3 query interface label */}
-              <div style={{ position: 'absolute', top: '48px', left: '50%', transform: 'translateX(-50%)', zIndex: 3, pointerEvents: 'none' }}>
+              {/* Stage 2 → 3 query interface label: positioned on the connector line between col 2 and col 3 (50% of grid = midpoint) */}
+              <div style={{ position: 'absolute', top: '40px', left: '50%', transform: 'translateX(-50%)', zIndex: 3, pointerEvents: 'none' }}>
                 <span style={{ background: 'var(--bg)', border: '1px solid var(--cyan-mid)', color: 'var(--cyan)', fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '10px', whiteSpace: 'nowrap' }}>Psychographic State Query Interface</span>
               </div>
 
