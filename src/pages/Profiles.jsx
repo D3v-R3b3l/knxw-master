@@ -25,7 +25,7 @@ export default function ProfilesPage() {
   const { data: profiles = [], isLoading, error } = useQuery({
     queryKey: ['profiles', filterRisk, filterCognitive],
     queryFn: async () => {
-      let filter = {};
+      let filter = { is_demo: false };
       if (filterRisk !== "all") {
         filter.risk_profile = filterRisk;
       }
