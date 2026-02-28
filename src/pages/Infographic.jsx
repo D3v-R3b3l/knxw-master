@@ -962,7 +962,7 @@ export default function InfographicPage() {
         <div class="gloss-icon">🗄️</div>
         <div>
           <h4>Trait Store</h4>
-          <p>Persistent database containing inferred user psychographic state. Serves as the low-latency read interface for all downstream decisioning, triggers, and integrations.</p>
+          <p>Persistent database containing inferred user psychographic runtime state. Serves as the low-latency runtime state interface queried by Trigger Engine and downstream engagement systems at decision time.</p>
         </div>
       </div>
       <div class="gloss-card">
