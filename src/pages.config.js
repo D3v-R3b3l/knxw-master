@@ -124,6 +124,7 @@ import documentation from './pages/documentation';
 import landing from './pages/landing';
 import lowdown from './pages/lowdown';
 import settings from './pages/settings';
+import Infographic from './pages/Infographic';
 import __Layout from './Layout.jsx';
 
 
@@ -205,6 +206,7 @@ export const PAGES = {
     "landing": landing,
     "lowdown": lowdown,
     "settings": settings,
+    "Infographic": Infographic,
 }
 
 export const pagesConfig = {
