@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { callWithRetry } from "@/components/system/apiRetry";
 import { Brain, Users, Activity, Zap, TrendingUp, Eye, RefreshCw, Sparkles, Server, Code, Rocket, BookOpen, Plus, BarChart3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 
 import MetricCard from "../components/dashboard/MetricCard";
@@ -39,7 +40,8 @@ const initialMetrics = {
   totalInsights: 0
 };
 
-export default function Dashboard() {// Renamed from DashboardContent
+export default function Dashboard() {
+  const navigate = useNavigate();
   const {
     metrics, events, insights, profiles,
     isLoading: storeIsLoading,
