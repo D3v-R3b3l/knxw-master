@@ -268,7 +268,7 @@ export default function InfographicPage() {
                 <div className="stage-mktg">MKTG: Insight Generation</div>
                 <div className="stage-card">
                   <h4>Trigger Engine</h4>
-                  <div className="bullet" style={{ color: 'var(--cyan)', fontStyle: 'italic' }}>Performs real-time decision-time queries against the Trait Store runtime state layer.</div>
+                  <div className="bullet" style={{ color: 'var(--cyan)', fontStyle: 'italic' }}>Performs real-time decision-time queries against the Trait Store runtime state layer for engagement policy selection.</div>
                   <div className="bullet">intent trajectory</div>
                   <div className="bullet">state change velocity</div>
                   <div className="bullet">confidence decay</div>
