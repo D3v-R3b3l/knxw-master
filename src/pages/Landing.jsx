@@ -122,10 +122,18 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
         className="flex flex-col sm:flex-row gap-4 justify-center items-center"
       >
-        <button onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] w-full sm:w-auto">
+        <button
+          onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })}
+          className="group relative overflow-hidden px-8 py-4 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
+          style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}
+        >
           Get Started
+          <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
         </button>
-        <button onClick={() => window.location.href = createPageUrl('Documentation')} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto">
+        <button
+          onClick={() => window.location.href = createPageUrl('Documentation')}
+          className="px-8 py-4 font-bold text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto"
+        >
           API Docs
         </button>
       </motion.div>
@@ -565,12 +573,14 @@ export default function LandingPage() {
                 ))}
              </div>
 
-                <button 
+                <button
                   onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
-                  className="group px-10 py-5 bg-white text-black font-bold text-xl rounded-full hover:scale-105 transition-all duration-300 shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_-10px_rgba(255,255,255,0.5)]"
+                  className="group relative overflow-hidden px-10 py-5 font-bold text-xl text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97]"
+                  style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 40px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}
                 >
-                   Try Interactive Demo
-                   <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                  Try Interactive Demo
+                  <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                  <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
                 </button>
              </div>
           </section>
@@ -645,19 +655,21 @@ export default function LandingPage() {
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-5 justify-center mb-14">
-                   <button 
-                      onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} 
-                      className="group px-12 py-6 bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-bold text-xl rounded-full hover:shadow-[0_0_60px_-10px_rgba(6,182,212,0.7)] transition-all duration-300 transform hover:scale-105"
-                   >
-                      Start Building Free
-                      <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                   </button>
-                   <button 
-                      onClick={() => window.location.href = createPageUrl('Documentation')} 
-                      className="px-12 py-6 bg-transparent border-2 border-white/20 text-white font-bold text-xl rounded-full hover:bg-white/10 hover:border-white/40 transition-all duration-300"
-                   >
-                      View Docs
-                   </button>
+                  <button
+                     onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
+                     className="group relative overflow-hidden px-12 py-6 font-bold text-xl text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97]"
+                     style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 40px rgba(0,212,255,0.4), 0 4px 20px rgba(0,0,0,0.5)' }}
+                  >
+                     Start Building Free
+                     <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                     <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+                  </button>
+                  <button
+                     onClick={() => window.location.href = createPageUrl('Documentation')}
+                     className="px-12 py-6 font-bold text-xl text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300"
+                  >
+                     View Docs
+                  </button>
                 </div>
                 
                 <div className="flex flex-wrap gap-6 md:gap-10 justify-center text-sm text-gray-500 font-mono uppercase tracking-wider">

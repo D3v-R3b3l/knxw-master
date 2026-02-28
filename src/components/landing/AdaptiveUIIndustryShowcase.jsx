@@ -171,19 +171,21 @@ export default function AdaptiveUIIndustryShowcase() {
 
           {/* CTA */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
+            <button
               onClick={() => window.location.href = createPageUrl('Documentation')}
-              className={`bg-gradient-to-r ${active.gradient} hover:opacity-90 text-white font-bold px-8 py-6 text-lg rounded-xl`}>
-
+              className="group relative overflow-hidden inline-flex items-center gap-2 px-8 py-5 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97]"
+              style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.4)' }}
+            >
               View Full Documentation
-              <ChevronRight className="w-5 h-5 ml-2" />
-            </Button>
-            <Button
+              <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+              <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+            </button>
+            <button
               onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
-              variant="outline"
-              className="px-8 py-6 text-lg font-medium rounded-xl border border-white/20 text-white hover:bg-white/5 transition-colors">
+              className="inline-flex items-center gap-2 px-8 py-5 font-medium text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300"
+            >
               Try Live Demo
-            </Button>
+            </button>
           </div>
         </div>
       </div>
