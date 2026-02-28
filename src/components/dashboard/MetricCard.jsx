@@ -66,7 +66,7 @@ export default function MetricCard({ title, value, change, icon: Icon, gradient 
             </div>
           </CardContent>
         </Card>
-      </a>
+      </Link>
     </motion.div>
   );
 }
