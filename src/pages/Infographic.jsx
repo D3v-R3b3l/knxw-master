@@ -969,7 +969,7 @@ export default function InfographicPage() {
         <div class="gloss-icon">🎯</div>
         <div>
           <h4>Trigger Engine</h4>
-          <p>Determines when and how engagement interventions should occur by evaluating live psychographic state against configured behavioral thresholds and intent trajectories.</p>
+          <p>Performs real-time state queries against the Trait Store to evaluate decision thresholds and behavioral trajectory. Determines when and how engagement interventions are deployed.</p>
         </div>
       </div>
       <div class="gloss-card">
