@@ -87,6 +87,7 @@ import Glossary from './pages/Glossary';
 import GoogleData from './pages/GoogleData';
 import ImportedTextRecords from './pages/ImportedTextRecords';
 import InferenceStudio from './pages/InferenceStudio';
+import Infographic from './pages/Infographic';
 import Insights from './pages/Insights';
 import Integrations from './pages/Integrations';
 import IntegrationsManagement from './pages/IntegrationsManagement';
@@ -124,7 +125,6 @@ import documentation from './pages/documentation';
 import landing from './pages/landing';
 import lowdown from './pages/lowdown';
 import settings from './pages/settings';
-import Infographic from './pages/Infographic';
 import __Layout from './Layout.jsx';
 
 
@@ -169,6 +169,7 @@ export const PAGES = {
     "GoogleData": GoogleData,
     "ImportedTextRecords": ImportedTextRecords,
     "InferenceStudio": InferenceStudio,
+    "Infographic": Infographic,
     "Insights": Insights,
     "Integrations": Integrations,
     "IntegrationsManagement": IntegrationsManagement,
@@ -206,7 +207,6 @@ export const PAGES = {
     "landing": landing,
     "lowdown": lowdown,
     "settings": settings,
-    "Infographic": Infographic,
 }
 
 export const pagesConfig = {
