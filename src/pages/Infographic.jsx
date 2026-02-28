@@ -228,7 +228,7 @@ export default function InfographicPage() {
               </div>
 
               {/* Stage 2 */}
-              <div className="stage">
+              <div className="stage" style={{ position: 'relative' }}>
                 <div className="stage-num">2</div>
                 <div className="stage-label">Stage 2</div>
                 <div className="stage-title">Psychographic Inference Engine</div>
