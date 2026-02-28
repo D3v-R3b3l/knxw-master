@@ -149,13 +149,18 @@ export default function PricingSection() {
 
               <button
                 onClick={() => handleCheckout(plan.key, plan.mode)}
-                className={`w-full py-4 rounded-xl font-bold transition-all duration-300 ${
-                  plan.highlight 
-                    ? 'bg-cyan-500 text-black hover:bg-cyan-400 hover:scale-105 shadow-lg shadow-cyan-500/20' 
-                    : 'bg-white text-black hover:bg-gray-200'
+                className={`group relative overflow-hidden w-full py-4 rounded-lg font-bold transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] ${
+                  plan.highlight
+                    ? 'text-white'
+                    : 'text-[#00d4ff] border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70'
                 }`}
+                style={plan.highlight ? {
+                  background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)',
+                  boxShadow: '0 0 25px rgba(0,212,255,0.3), 0 4px 15px rgba(0,0,0,0.3)'
+                } : {}}
               >
                 {plan.cta}
+                {plan.highlight && <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />}
               </button>
             </div>
           ))}
