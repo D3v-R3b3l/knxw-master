@@ -1,33 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { faker } from 'npm:@faker-js/faker@8.4.1';
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-async function withRetry(fn, maxRetries = 3, baseDelay = 1000) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await fn();
-    } catch (error) {
-      if (error.message?.includes('Rate limit') || error.response?.status === 429) {
-        if (i === maxRetries - 1) throw error;
-        const delayMs = baseDelay * Math.pow(2, i);
-        console.log(`Rate limited, retrying in ${delayMs}ms...`);
-        await delay(delayMs);
-      } else {
-        throw error;
-      }
-    }
-  }
-}
-
 const generateUserId = () => faker.string.alphanumeric(16);
 
-const randomDateInLastNDays = (days = 30) => {
-  return new Date(Date.now() - Math.floor(Math.random() * days * 24 * 60 * 60 * 1000));
-};
+const randomDateInLastNDays = (days = 30) =>
+  new Date(Date.now() - Math.floor(Math.random() * days * 24 * 60 * 60 * 1000));
 
 const pickWeighted = (options) => {
-  // options: [{value, weight}, ...]
   const total = options.reduce((sum, o) => sum + o.weight, 0);
   let rand = Math.random() * total;
   for (const opt of options) {
@@ -108,8 +87,7 @@ const generatePsychographicProfile = (userId, scenario) => {
   };
 };
 
-const generateRealisticEvents = (userId, scenario, count = 20) => {
-  const events = [];
+const generateRealisticEvents = (userId, scenario, count = 10) => {
   const eventTypes = scenario === 'enterprise_saas'
     ? ['page_view', 'click', 'form_submit', 'scroll', 'time_on_page']
     : ['page_view', 'click', 'scroll', 'form_submit', 'hover', 'time_on_page'];
@@ -118,59 +96,50 @@ const generateRealisticEvents = (userId, scenario, count = 20) => {
     ? ['https://demo.knxw.com/', 'https://demo.knxw.com/features', 'https://demo.knxw.com/pricing', 'https://demo.knxw.com/docs']
     : ['https://shop.demo.com/', 'https://shop.demo.com/products', 'https://shop.demo.com/cart', 'https://shop.demo.com/checkout'];
 
-  for (let i = 0; i < count; i++) {
-    events.push({
-      user_id: userId,
-      session_id: faker.string.alphanumeric(24),
-      event_type: faker.helpers.arrayElement(eventTypes),
-      event_payload: {
-        url: faker.helpers.arrayElement(urls),
-        element: faker.helpers.arrayElement(['cta-button', 'nav-link', 'feature-card', 'pricing-table']),
-        duration: faker.number.int({ min: 5, max: 300 })
-      },
-      timestamp: randomDateInLastNDays(30).toISOString(),
-      processed: faker.datatype.boolean({ probability: 0.7 }),
-      is_demo: true
-    });
-  }
-
-  return events;
+  return Array.from({ length: count }, () => ({
+    user_id: userId,
+    session_id: faker.string.alphanumeric(24),
+    event_type: faker.helpers.arrayElement(eventTypes),
+    event_payload: {
+      url: faker.helpers.arrayElement(urls),
+      element: faker.helpers.arrayElement(['cta-button', 'nav-link', 'feature-card', 'pricing-table']),
+      duration: faker.number.int({ min: 5, max: 300 })
+    },
+    timestamp: randomDateInLastNDays(30).toISOString(),
+    processed: faker.datatype.boolean({ probability: 0.7 }),
+    is_demo: true
+  }));
 };
 
 const generateRealisticInsights = (userId, profile) => {
-  const insightTemplates = [
+  return [
     {
-      type: 'behavioral_pattern',
+      user_id: userId,
+      insight_type: 'behavioral_pattern',
       title: `${profile.cognitive_style.charAt(0).toUpperCase() + profile.cognitive_style.slice(1)} decision-making detected`,
-      description: `User exhibits ${profile.cognitive_style} cognitive patterns with ${Math.round(profile.cognitive_style_confidence_score * 100)}% confidence.`
+      description: `User exhibits ${profile.cognitive_style} cognitive patterns with ${Math.round(profile.cognitive_style_confidence_score * 100)}% confidence.`,
+      confidence_score: faker.number.float({ min: 0.75, max: 0.95, fractionDigits: 2 }),
+      actionable_recommendations: [
+        `Personalize content based on ${profile.cognitive_style} cognitive style`,
+        `Emphasize ${profile.motivation_labels[0]} in messaging`,
+        `Adjust risk communication for ${profile.risk_profile} profile`
+      ],
+      supporting_events: [],
+      priority: faker.helpers.arrayElement(['medium', 'high', 'critical']),
+      is_demo: true
     },
     {
-      type: 'motivation_shift',
+      user_id: userId,
+      insight_type: 'motivation_shift',
       title: `Primary motivation: ${profile.motivation_labels[0]}`,
-      description: `Strong ${profile.motivation_labels[0]} motivation detected with high confidence.`
-    },
-    {
-      type: 'engagement_optimization',
-      title: `${profile.risk_profile.charAt(0).toUpperCase() + profile.risk_profile.slice(1)} risk profile identified`,
-      description: `User shows ${profile.risk_profile} risk tolerance in behavioral patterns.`
+      description: `Strong ${profile.motivation_labels[0]} motivation detected with high confidence.`,
+      confidence_score: faker.number.float({ min: 0.75, max: 0.95, fractionDigits: 2 }),
+      actionable_recommendations: [`Tailor messaging to emphasize ${profile.motivation_labels[0]}`],
+      supporting_events: [],
+      priority: 'high',
+      is_demo: true
     }
   ];
-
-  return insightTemplates.map(template => ({
-    user_id: userId,
-    insight_type: template.type,
-    title: template.title,
-    description: template.description,
-    confidence_score: faker.number.float({ min: 0.75, max: 0.95, fractionDigits: 2 }),
-    actionable_recommendations: [
-      `Personalize content based on ${profile.cognitive_style} cognitive style`,
-      `Emphasize ${profile.motivation_labels[0]} in messaging`,
-      `Adjust risk communication for ${profile.risk_profile} profile`
-    ],
-    supporting_events: [],
-    priority: faker.helpers.arrayElement(['medium', 'high', 'critical']),
-    is_demo: true
-  }));
 };
 
 Deno.serve(async (req) => {
@@ -183,112 +152,75 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { scenario = 'enterprise_saas', userCount = 50 } = await req.json();
-    console.log(`Starting demo seed: user=${user.id}, scenario=${scenario}, count=${userCount}`);
+    const { scenario = 'enterprise_saas', userCount = 20 } = await req.json();
+    const actualCount = Math.min(userCount, 30); // Cap at 30 for speed
+    console.log(`Seeding: scenario=${scenario}, count=${actualCount}`);
 
     const counts = { profiles: 0, events: 0, insights: 0, clientApp: 0 };
 
-    // Step 2: Create or get Demo Client Application (skip clearing - use clearDemoData function first)
+    // Get or create demo app
     let demoApp;
-    try {
-      const existingDemoApps = await service.entities.ClientApp.filter({
+    const existingDemoApps = await service.entities.ClientApp.filter({ owner_id: user.id, is_demo: true });
+    if (existingDemoApps && existingDemoApps.length > 0) {
+      demoApp = existingDemoApps[0];
+    } else {
+      demoApp = await service.entities.ClientApp.create({
+        name: `${user.full_name || user.email || 'Demo'}'s Demo App`,
+        api_key: `demo_${faker.string.alphanumeric(24)}`,
+        secret_key: `sk_demo_${faker.string.alphanumeric(32)}`,
+        client_event_signing_secret: faker.string.alphanumeric(64),
         owner_id: user.id,
+        authorized_domains: ['https://demo.knxw.com', 'http://localhost'],
+        status: 'active',
         is_demo: true
       });
-
-      if (existingDemoApps && existingDemoApps.length > 0) {
-        demoApp = existingDemoApps[0];
-        console.log(`Using existing Demo App: ${demoApp.name}`);
-      } else {
-        demoApp = await withRetry(() => service.entities.ClientApp.create({
-          name: `${user.full_name || user.email || 'Demo'}'s Demo App`,
-          api_key: `demo_${faker.string.alphanumeric(24)}`,
-          secret_key: `sk_demo_${faker.string.alphanumeric(32)}`,
-          client_event_signing_secret: faker.string.alphanumeric(64),
-          owner_id: user.id,
-          authorized_domains: ['https://demo.knxw.com', 'http://localhost'],
-          status: 'active',
-          is_demo: true
-        }));
-        counts.clientApp = 1;
-        console.log(`Created Demo App: ${demoApp.name}`);
-      }
-    } catch (error) {
-      console.error('Error creating/finding demo app:', error.message);
-      return Response.json({ error: 'Failed to setup demo application', details: error.message }, { status: 500 });
+      counts.clientApp = 1;
     }
 
-    // Step 3: Generate realistic users and data in batches
-    const BATCH_SIZE = 5; // Smaller batches
-    const actualCount = Math.min(userCount, 50); // Cap at 50
+    // Generate all data upfront
+    const allProfiles = [];
+    const allEvents = [];
+    const allInsights = [];
 
-    for (let i = 0; i < actualCount; i += BATCH_SIZE) {
-      const profileBatch = [];
-      const eventBatch = [];
-      const insightBatch = [];
+    for (let i = 0; i < actualCount; i++) {
+      const userId = generateUserId();
+      const profile = generatePsychographicProfile(userId, scenario);
+      allProfiles.push(profile);
+      allEvents.push(...generateRealisticEvents(userId, scenario, 8));
+      allInsights.push(...generateRealisticInsights(userId, profile));
+    }
 
-      for (let j = 0; j < BATCH_SIZE && (i + j) < actualCount; j++) {
-        const userId = generateUserId();
+    // Bulk create all at once in parallel
+    const [profileResult, , insightResult] = await Promise.all([
+      service.entities.UserPsychographicProfile.bulkCreate(allProfiles)
+        .then(() => { counts.profiles = allProfiles.length; })
+        .catch(e => console.error('Profile bulk create failed:', e.message)),
 
-        const profile = generatePsychographicProfile(userId, scenario);
-        profileBatch.push(profile);
-
-        const eventCount = faker.number.int({ min: 8, max: 15 });
-        const events = generateRealisticEvents(userId, scenario, eventCount);
-        eventBatch.push(...events);
-
-        const insights = generateRealisticInsights(userId, profile);
-        insightBatch.push(...insights);
-      }
-
-      // Bulk create with retry
-      try {
-        await withRetry(() => service.entities.UserPsychographicProfile.bulkCreate(profileBatch));
-        counts.profiles += profileBatch.length;
-      } catch (err) {
-        console.error(`Failed to create profile batch: ${err.message}`);
-      }
-
-      try {
-        // Split large event batches into sub-batches of 30
-        for (let eb = 0; eb < eventBatch.length; eb += 30) {
-          const subBatch = eventBatch.slice(eb, eb + 30);
-          await withRetry(() => service.entities.CapturedEvent.bulkCreate(subBatch));
-          counts.events += subBatch.length;
+      // Events in chunks of 50 to stay safe
+      (async () => {
+        for (let i = 0; i < allEvents.length; i += 50) {
+          await service.entities.CapturedEvent.bulkCreate(allEvents.slice(i, i + 50));
+          counts.events += Math.min(50, allEvents.length - i);
         }
-      } catch (err) {
-        console.error(`Failed to create event batch: ${err.message}`);
-      }
+      })().catch(e => console.error('Event bulk create failed:', e.message)),
 
-      try {
-        await withRetry(() => service.entities.PsychographicInsight.bulkCreate(insightBatch));
-        counts.insights += insightBatch.length;
-      } catch (err) {
-        console.error(`Failed to create insight batch: ${err.message}`);
-      }
+      service.entities.PsychographicInsight.bulkCreate(allInsights)
+        .then(() => { counts.insights = allInsights.length; })
+        .catch(e => console.error('Insight bulk create failed:', e.message)),
+    ]);
 
-      await delay(500);
-    }
-
-    console.log(`Seeding complete: ${counts.profiles} profiles, ${counts.events} events, ${counts.insights} insights`);
+    console.log(`Done: ${counts.profiles} profiles, ${counts.events} events, ${counts.insights} insights`);
 
     return Response.json({
       success: true,
-      message: `Realistic demo data seeded successfully for ${scenario}`,
+      message: `Demo data seeded for ${scenario}`,
       scenario,
       counts,
-      demo_app: {
-        id: demoApp.id,
-        name: demoApp.name,
-        api_key: demoApp.api_key
-      }
+      demo_app: { id: demoApp.id, name: demoApp.name, api_key: demoApp.api_key }
     });
 
   } catch (error) {
-    console.error('Demo data seeding failed:', error);
-    return Response.json({
-      error: 'Seeding failed',
-      details: error.message
-    }, { status: 500 });
+    console.error('Seeding failed:', error);
+    return Response.json({ error: 'Seeding failed', details: error.message }, { status: 500 });
   }
 });
