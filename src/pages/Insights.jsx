@@ -19,7 +19,7 @@ export default function InsightsPage() {
     queryKey: ['insights'],
     queryFn: async () => {
       // CRITICAL: Load only non-demo insights
-      const data = await base44.entities.PsychographicInsight.filter({ is_demo: false }, '-created_date', 50);
+      const data = await base44.entities.PsychographicInsight.list('-created_date', 50);
       return data;
     },
   });
