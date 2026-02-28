@@ -588,9 +588,9 @@ export default function InfographicPage() {
         <div class="stage-arrow">↓</div>
         <div class="stage-card">
           <h4>Online Adaptation Loop</h4>
-          <div class="bullet">Inference → Intervention</div>
-          <div class="bullet">Behavior → Learning</div>
-          <div class="bullet">Continuous model refinement</div>
+          <div class="bullet">Inference → Policy Deployment</div>
+          <div class="bullet">Behavior → Reinforcement Feedback</div>
+          <div class="bullet">Continuous behavioral policy optimization via reinforcement feedback</div>
           <div class="bullet">No offline retraining required</div>
         </div>
       </div>
