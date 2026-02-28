@@ -132,6 +132,8 @@ export default function DemoDataPage() {
 
         setLastResult(null);
         window.dispatchEvent(new CustomEvent('knxw-demo-data-cleared'));
+        // Navigate to dashboard so it fully re-mounts with fresh data
+        setTimeout(() => navigate('/Dashboard'), 500);
       } else {
         throw new Error(data?.error || 'Cleanup failed');
       }
