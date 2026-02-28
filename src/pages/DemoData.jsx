@@ -83,7 +83,7 @@ export default function DemoDataPage() {
         userCount: scenario.userCount
       });
 
-      const data = response.data || response;
+      const data = response?.data ?? response;
       if (data?.success) {
         setLastResult(data);
         toast({
@@ -194,55 +194,47 @@ export default function DemoDataPage() {
         </div>
 
         {/* Scenario Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8 items-stretch">
           {scenarios.map((scenario) => {
             const IconComponent = scenario.icon;
             return (
-              <Card key={scenario.id} className="bg-[#111111] border-[#262626]">
-                <CardHeader>
+              <Card key={scenario.id} className="bg-[#111111] border-[#262626] flex flex-col">
+                <CardHeader className="flex-none">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${scenario.color} flex items-center justify-center mb-4`}>
                     <IconComponent className="w-6 h-6 text-[#0a0a0a]" />
                   </div>
                   <CardTitle className="text-white">{scenario.name}</CardTitle>
-                  <CardDescription className="text-[#a3a3a3]">
+                  <CardDescription className="text-[#a3a3a3] min-h-[60px]">
                     {scenario.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                <CardContent className="flex flex-col flex-1">
+                  <div className="space-y-3 flex-1">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-[#a3a3a3]">Users:</span>
-                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{scenario.userCount}</Badge>
+                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full">{scenario.userCount}</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-[#a3a3a3]">Events per user:</span>
-                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{scenario.eventsPerUser}</Badge>
+                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full">{scenario.eventsPerUser}</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-[#a3a3a3]">Insights per user:</span>
-                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{scenario.insightsPerUser}</Badge>
+                      <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-full">{scenario.insightsPerUser}</Badge>
                     </div>
-                    <Button
-                      onClick={() => handleSeedData(scenario)}
-                      disabled={seedingScenario !== null}
-                      className="w-full bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] mt-4 whitespace-nowrap overflow-hidden">
-
-                      {seedingScenario === scenario.id ?
-                      <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin flex-shrink-0" />
-                          <span className="truncate">Seeding...</span>
-                        </> :
-
-                      <>
-                          <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
-                          <span className="truncate">Seed {scenario.name}</span>
-                        </>
-                      }
-                    </Button>
                   </div>
+                  <Button
+                    onClick={() => handleSeedData(scenario)}
+                    disabled={seedingScenario !== null}
+                    className="w-full bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a] mt-4">
+                    {seedingScenario === scenario.id ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Seeding...</>
+                    ) : (
+                      <><RefreshCw className="w-4 h-4 mr-2" />Seed {scenario.name}</>
+                    )}
+                  </Button>
                 </CardContent>
               </Card>);
-
           })}
         </div>
 
