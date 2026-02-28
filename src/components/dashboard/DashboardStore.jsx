@@ -226,8 +226,12 @@ export function DashboardProvider({ children }) {
     }
   }, [computeMetrics]);
 
-  // SINGLE LOAD on app selection - NO dependencies on loadDashboardData
+  // Load on app selection or when returning to dashboard
   useEffect(() => {
+    // Reset global state so returning to dashboard always reloads
+    globalLoadState.lastLoadedAppId = null;
+    globalLoadState.lastLoadTime = 0;
+
     if (!selectedAppId || !appOrigins) {
       return;
     }
