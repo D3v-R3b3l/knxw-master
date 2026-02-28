@@ -37,7 +37,7 @@ import AttributionDoc from '@/components/documentation/AttributionDoc';
 import RoiAttributionStrategyDoc from '@/components/documentation/RoiAttributionStrategyDoc';
 import AudienceBuilderDoc from '@/components/documentation/AudienceBuilderDoc';
 import ExecutiveDashboardDoc from '@/components/documentation/ExecutiveDashboardDoc';
-import DemoDataStudioDoc from '@/components/documentation/DemoDataStudioDoc.jsx';
+import DemoDataStudioDoc from '@/components/documentation/DemoDataStudioDoc';
 import EnterpriseSecurityDoc from '@/components/documentation/EnterpriseSecurityDoc';
 import SystemMonitoringDoc from '@/components/documentation/SystemMonitoringDoc';
 import GameDevSDKDoc from '@/components/documentation/GameDevSDKDoc';
