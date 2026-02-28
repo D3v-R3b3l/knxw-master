@@ -256,11 +256,6 @@ export default function InfographicPage() {
                 </div>
               </div>
 
-              {/* Stage 2 → Stage 3 interface label */}
-              <div style={{ display: 'contents' }}>
-                {/* label injected via stage-arrow below */}
-              </div>
-
               {/* Stage 3 */}
               <div className="stage">
                 <div className="stage-num">3</div>
