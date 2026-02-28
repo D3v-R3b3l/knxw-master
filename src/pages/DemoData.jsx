@@ -35,8 +35,8 @@ export default function DemoDataPage() {
     description: 'B2B software users with analytical cognitive styles, conservative risk profiles, and achievement/security motivations',
     icon: Server,
     color: 'from-[#00d4ff] to-[#0ea5e9]',
-    userCount: 30,
-    eventsPerUser: '8-20',
+    userCount: 20,
+    eventsPerUser: '8',
     insightsPerUser: 2
   },
   {
@@ -45,9 +45,9 @@ export default function DemoDataPage() {
     description: 'B2C users with diverse cognitive styles, mixed risk profiles, and social/learning motivations',
     icon: Users,
     color: 'from-[#ec4899] to-[#db2777]',
-    userCount: 50,
-    eventsPerUser: '15-30',
-    insightsPerUser: 3
+    userCount: 25,
+    eventsPerUser: '8',
+    insightsPerUser: 2
   },
   {
     id: 'mixed',
@@ -55,9 +55,9 @@ export default function DemoDataPage() {
     description: 'Balanced distribution across all psychographic dimensions for comprehensive testing',
     icon: Brain,
     color: 'from-[#8b5cf6] to-[#7c3aed]',
-    userCount: 40,
-    eventsPerUser: '10-25',
-    insightsPerUser: 3
+    userCount: 30,
+    eventsPerUser: '8',
+    insightsPerUser: 2
   }];
 
 
