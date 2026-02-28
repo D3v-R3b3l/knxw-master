@@ -562,8 +562,8 @@ export default function InfographicPage() {
               <div className="loop-nodes">
                 <div className="loop-node">
                   <div className="loop-node-icon">🧠</div>
-                  <div className="loop-node-label">INFERENCE</div>
-                  <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '6px' }}>Trait vectors computed from behavioral stream</div>
+                  <div className="loop-node-label">TRAIT STATE</div>
+                  <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '6px' }}>Runtime psychographic state queried at decision time</div>
                 </div>
                 <div className="loop-arrow">→</div>
                 <div className="loop-node">
