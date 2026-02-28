@@ -32,7 +32,7 @@ export default function MetricCard({ title, value, change, icon: Icon, gradient 
       transition={{ delay, duration: 0.4, ease: "easeOut" }}
       className="h-full"
     >
-      <a href={href} className="block h-full group">
+      <Link to={href} className="block h-full group">
         <Card className={`relative h-full bg-[#111111] border-[#262626] transition-all duration-300 overflow-hidden group-hover:-translate-y-1 ${GLOW_COLORS[glowColor] || GLOW_COLORS.cyan}`}>
           {/* Animated gradient border on hover */}
           <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
