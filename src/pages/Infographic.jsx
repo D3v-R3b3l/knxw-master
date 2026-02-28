@@ -700,7 +700,7 @@ export default function InfographicPage() {
       <div class="feat-card">
         <div class="feat-icon" style="background:linear-gradient(135deg,#06b6d422,#0ea5e922)">🔁</div>
         <h3>Online Adaptation Loop</h3>
-        <p>Closes the reinforcement cycle between inference, intervention, observed behavior, and model learning — without requiring offline retraining or manual model updates.</p>
+        <p>Updates behavioral policy based on observed response to deployed interventions — without requiring offline retraining or manual model updates.</p>
         <div class="feat-tags"><span class="feat-tag">Reinforcement</span><span class="feat-tag">Continuous Learning</span><span class="feat-tag">No Retraining</span></div>
       </div>
 
