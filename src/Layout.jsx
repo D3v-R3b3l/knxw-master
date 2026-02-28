@@ -110,6 +110,7 @@ export default function Layout({ children, currentPageName }) {
   const isBlogPage = currentPageName === 'Blog' || currentPageName === 'BlogPost' || currentPageName === 'blog';
   const isLegalPage = currentPageName === 'Privacy' || currentPageName === 'Terms';
   const isInteractiveDemoPage = currentPageName === 'InteractiveDemo';
+  const isInfographicPage = currentPageName === 'Infographic';
 
   useEffect(() => {
     if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
