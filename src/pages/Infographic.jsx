@@ -930,7 +930,7 @@ export default function InfographicPage() {
         </div>
         <div class="loop-arrow" style="color:var(--cyan)">↩</div>
       </div>
-      <p class="loop-label">Each intervention generates a labeled training example. The system improves with every user interaction — achieving precision that static ML pipelines cannot match.</p>
+      <p class="loop-label">Each intervention generates outcome data used to update engagement policy via reinforcement feedback. The system continuously optimizes behavioral policy with every user interaction.</p>
     </div>
   </div>
 </section>
