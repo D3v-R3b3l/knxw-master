@@ -61,6 +61,8 @@ export default function InfographicPage() {
         .ig .stage:nth-child(3) .bullet::before { color: var(--magenta); }
         .ig .stage:nth-child(4) .bullet::before { color: var(--green); }
         .ig .stage-arrow { text-align: center; font-size: 20px; color: var(--dim); padding: 8px 0; }
+        .ig .stage-query-bridge { position: absolute; top: 52px; left: 50%; transform: translate(-50%, -50%); z-index: 2; }
+        .ig .stage-query-badge { background: var(--bg); border: 1px solid var(--cyan-mid); color: var(--cyan); font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; white-space: nowrap; }
 
         /* TRAIT STORE */
         .ig .traits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 24px; }
