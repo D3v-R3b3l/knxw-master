@@ -192,7 +192,7 @@ export default function Layout({ children, currentPageName }) {
       )}]
     : navigationSections;
 
-  if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
+  if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage || isInfographicPage) {
     return (
       <HelmetProvider>
         <GlobalErrorBoundary>
