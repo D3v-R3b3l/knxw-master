@@ -328,7 +328,7 @@ export default function Dashboard() {
 
           <div className="flex justify-center">
             <Button
-              onClick={() => window.location.href = createPageUrl('MyApps')}
+              onClick={() => navigate(createPageUrl('MyApps'))}
               className="bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#00c2eb] hover:to-[#0284c7] text-black font-bold text-lg px-10 py-6 rounded-full shadow-[0_0_40px_rgba(0,212,255,0.3)] hover:shadow-[0_0_60px_rgba(0,212,255,0.5)] transition-all hover:scale-105">
 
               <Rocket className="w-5 h-5 mr-3" />
@@ -503,7 +503,7 @@ export default function Dashboard() {
                     <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => window.location.href = createPageUrl("Insights")}
+                  onClick={() => navigate(createPageUrl("Insights"))}
                   className="text-[#00d4ff] hover:bg-[#00d4ff]/10">
 
                       View All
@@ -513,8 +513,8 @@ export default function Dashboard() {
                     {insights.slice(0, 6).map((insight, index) =>
                 <a
                   key={insight.id || index}
-                  href={`${createPageUrl("Insights")}?insightId=${encodeURIComponent(insight.id || "")}`}
-                  className="block p-4 rounded-lg bg-[#1a1a1a] border border-[#262626] hover:border-[#00d4ff]/40 transition-colors">
+                  onClick={() => navigate(createPageUrl("Insights"))}
+                  className="block cursor-pointer p-4 rounded-lg bg-[#1a1a1a] border border-[#262626] hover:border-[#00d4ff]/40 transition-colors">
 
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-semibold text-white text-sm line-clamp-2">{insight.title}</h4>
