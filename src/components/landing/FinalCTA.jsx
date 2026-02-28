@@ -35,23 +35,29 @@ export default function FinalCTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Button
-              size="lg"
-              className="h-16 px-12 rounded-full bg-white text-black hover:bg-gray-100 font-bold text-lg shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all hover:scale-105"
+            <motion.button
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => window.location.href = createPageUrl('Dashboard')}
+              className="group relative overflow-hidden inline-flex items-center gap-2 px-12 py-5 font-bold text-lg text-white rounded-lg transition-all duration-300"
+              style={{
+                background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)',
+                boxShadow: '0 0 40px rgba(0,212,255,0.4), 0 4px 20px rgba(0,0,0,0.5)'
+              }}
             >
               Start Building Free
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-16 px-12 rounded-full border-white/20 bg-transparent text-white hover:bg-white/5 font-medium text-lg"
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+              <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => window.location.href = createPageUrl('Documentation')}
+              className="inline-flex items-center gap-2 px-12 py-5 font-medium text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 transition-all duration-300"
             >
-              <Code className="mr-2 w-5 h-5" />
+              <Code className="w-5 h-5" />
               View Documentation
-            </Button>
+            </motion.button>
           </div>
 
           <motion.div
