@@ -6,7 +6,7 @@ import logger from "@/components/system/logger";
 // Helpers
 const LS_SELECTED_APP = "knxw_selected_app_id";
 const MAX_EVENTS = 500;
-const MIN_LOAD_INTERVAL_MS = 30000; // Minimum 30 seconds between loads
+const MIN_LOAD_INTERVAL_MS = 5000; // 5 seconds minimum between loads
 
 // Global state to prevent multiple simultaneous loads across component re-renders
 const globalLoadState = {
@@ -169,14 +169,6 @@ export function DashboardProvider({ children }) {
     // Check 1: Already loading globally
     if (globalLoadState.isLoading) {
       logger.info("Dashboard load already in progress globally, skipping");
-      return;
-    }
-
-    // Check 2: Same app loaded recently
-    if (globalLoadState.lastLoadedAppId === appId && 
-        (now - globalLoadState.lastLoadTime) < MIN_LOAD_INTERVAL_MS) {
-      logger.info(`Dashboard data for app ${appId} loaded ${Math.round((now - globalLoadState.lastLoadTime) / 1000)}s ago, skipping`);
-      setIsLoading(false);
       return;
     }
 
