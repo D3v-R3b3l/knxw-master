@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const GLOW_COLORS = {
   blue: "group-hover:shadow-[0_0_40px_rgba(0,212,255,0.25)] group-hover:border-[#00d4ff]/50",
