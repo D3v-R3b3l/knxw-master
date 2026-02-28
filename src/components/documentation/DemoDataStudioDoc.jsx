@@ -9,51 +9,47 @@ export default function DemoDataStudioDoc() {
       <div className="mb-8">
         <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight">
           <span className="gradient-text gradient-fast">Demo Data Studio</span>
-          <span className="text-[#a3a3a3]">: Comprehensive Scenario Testing</span>
+          <span className="text-[#a3a3a3]">: Scenario Testing</span>
         </h1>
         <p className="text-lg md:text-xl text-[#cbd5e1] leading-relaxed">
-          The Demo Data Studio generates realistic, interconnected datasets that showcase knXw's full capabilities across multiple modules. Perfect for demonstrations, testing, and understanding complex psychological intelligence workflows.
+          The Demo Data Studio generates realistic, psychographically-diverse datasets to test knXw's intelligence infrastructure across profiles, events, and insights. All data is marked as demo and can be cleared at any time.
         </p>
       </div>
 
       <Section title="Available Demo Scenarios">
         <p className="text-[#cbd5e1] mb-6">
-          Each scenario is carefully crafted to demonstrate specific knXw capabilities and use cases, with realistic user profiles, behavioral data, and AI-generated insights.
+          Three scenarios are available, each seeding a distinct psychographic distribution of user profiles, behavioral events, and AI-generated insights.
         </p>
 
         <div className="space-y-8">
-          {/* Growth Marketing Orchestration */}
+          {/* Enterprise SaaS */}
           <div className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-6">
             <div className="flex items-start gap-4 mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9]">
-                <span className="text-2xl">⚡</span>
+                <span className="text-2xl">🖥️</span>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-white mb-2">Growth Marketing Orchestration</h3>
+                <h3 className="text-2xl font-semibold text-white mb-2">Enterprise SaaS</h3>
                 <p className="text-[#a3a3a3] mb-3">
-                  Showcases AI-driven user engagement and personalized content delivery. Perfect for demonstrating how knXw identifies user psychology and delivers tailored experiences that drive growth.
+                  B2B software users with analytical cognitive styles, conservative risk profiles, and achievement/security motivations.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <h4 className="text-[#00d4ff] font-semibold mb-2">Generated Data:</h4>
                     <ul className="text-[#a3a3a3] space-y-1">
-                      <li>• 150 diverse user psychological profiles</li>
-                      <li>• 5-8 engagement templates (modals, check-ins, notifications)</li>
-                      <li>• 8-12 engagement rules with psychographic triggers</li>
-                      <li>• 15-25 personalized content recommendations</li>
-                      <li>• 1-2 complete user journey workflows</li>
-                      <li>• Realistic behavioral event streams</li>
+                      <li>• 30 psychographic user profiles</li>
+                      <li>• 8–20 behavioral events per user</li>
+                      <li>• 2 AI-generated insights per user</li>
+                      <li>• page_view, click, form_submit, scroll, time_on_page events</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-[#00d4ff] font-semibold mb-2">Demonstrates:</h4>
+                    <h4 className="text-[#00d4ff] font-semibold mb-2">Profile Characteristics:</h4>
                     <ul className="text-[#a3a3a3] space-y-1">
-                      <li>• Real-time psychographic profiling</li>
-                      <li>• Personalized engagement delivery</li>
-                      <li>• Automated user journey orchestration</li>
-                      <li>• Content recommendation engine</li>
-                      <li>• Behavioral trigger identification</li>
-                      <li>• Multi-channel engagement coordination</li>
+                      <li>• Predominantly analytical &amp; systematic cognitive styles</li>
+                      <li>• Conservative risk profile bias</li>
+                      <li>• Security, achievement, recognition motivations</li>
+                      <li>• URLs simulate a SaaS product site</li>
                     </ul>
                   </div>
                 </div>
@@ -61,38 +57,34 @@ export default function DemoDataStudioDoc() {
             </div>
           </div>
 
-          {/* Conversion Optimization Lab */}
+          {/* Consumer App */}
           <div className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-6">
             <div className="flex items-start gap-4 mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-[#10b981] to-[#059669]">
-                <span className="text-2xl">🎯</span>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-[#ec4899] to-[#db2777]">
+                <span className="text-2xl">👥</span>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-white mb-2">Conversion & Optimization Lab</h3>
+                <h3 className="text-2xl font-semibold text-white mb-2">Consumer App</h3>
                 <p className="text-[#a3a3a3] mb-3">
-                  Highlights advanced experimentation with A/B testing, precise audience segmentation, and intelligent feedback analysis. Shows how knXw optimizes conversion funnels through psychological insights.
+                  B2C users with diverse cognitive styles, mixed risk profiles, and social/learning motivations.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <h4 className="text-[#10b981] font-semibold mb-2">Generated Data:</h4>
+                    <h4 className="text-[#ec4899] font-semibold mb-2">Generated Data:</h4>
                     <ul className="text-[#a3a3a3] space-y-1">
-                      <li>• 200 user profiles with conversion focus</li>
-                      <li>• 3-5 audience segments with psychographic filters</li>
-                      <li>• 1-2 running A/B tests with multiple variants</li>
-                      <li>• 50-100 A/B test participants with results</li>
-                      <li>• 10-15 analyzed customer feedback entries</li>
-                      <li>• Conversion event streams and drop-off analysis</li>
+                      <li>• 50 psychographic user profiles</li>
+                      <li>• 15–30 behavioral events per user</li>
+                      <li>• 3 AI-generated insights per user</li>
+                      <li>• Includes hover and exit-intent events</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-[#10b981] font-semibold mb-2">Demonstrates:</h4>
+                    <h4 className="text-[#ec4899] font-semibold mb-2">Profile Characteristics:</h4>
                     <ul className="text-[#a3a3a3] space-y-1">
-                      <li>• Psychographic audience segmentation</li>
-                      <li>• A/B testing with psychological hypotheses</li>
-                      <li>• Statistical significance tracking</li>
-                      <li>• Intelligent feedback analysis</li>
-                      <li>• Conversion funnel optimization</li>
-                      <li>• Behavioral pattern recognition</li>
+                      <li>• Balanced mix of all cognitive styles</li>
+                      <li>• Even distribution across risk profiles</li>
+                      <li>• Social connection, learning, autonomy motivations</li>
+                      <li>• URLs simulate an e-commerce shopping experience</li>
                     </ul>
                   </div>
                 </div>
@@ -100,38 +92,34 @@ export default function DemoDataStudioDoc() {
             </div>
           </div>
 
-          {/* Strategic Intelligence & Governance */}
+          {/* Mixed Audience */}
           <div className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-6">
             <div className="flex items-start gap-4 mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed]">
                 <span className="text-2xl">🧠</span>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-white mb-2">Strategic Intelligence & Data Governance</h3>
+                <h3 className="text-2xl font-semibold text-white mb-2">Mixed Audience</h3>
                 <p className="text-[#a3a3a3] mb-3">
-                  Demonstrates knXw's capabilities in market intelligence, system health monitoring, and unified data integration for compliance and strategic insights.
+                  Balanced distribution across all psychographic dimensions for comprehensive testing.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <h4 className="text-[#8b5cf6] font-semibold mb-2">Generated Data:</h4>
                     <ul className="text-[#a3a3a3] space-y-1">
-                      <li>• Market trend analysis with psychological insights</li>
-                      <li>• Competitor content psychological analysis</li>
-                      <li>• System health metrics and monitoring</li>
-                      <li>• Comprehensive audit trail examples</li>
-                      <li>• Data integration workflow demonstrations</li>
-                      <li>• Executive-level reporting samples</li>
+                      <li>• 40 psychographic user profiles</li>
+                      <li>• 10–25 behavioral events per user</li>
+                      <li>• 3 AI-generated insights per user</li>
+                      <li>• Randomized motivation combinations</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-[#8b5cf6] font-semibold mb-2">Demonstrates:</h4>
+                    <h4 className="text-[#8b5cf6] font-semibold mb-2">Profile Characteristics:</h4>
                     <ul className="text-[#a3a3a3] space-y-1">
-                      <li>• AI-powered market intelligence</li>
-                      <li>• Competitor psychological analysis</li>
-                      <li>• System health monitoring</li>
-                      <li>• Compliance and audit capabilities</li>
-                      <li>• Data governance workflows</li>
-                      <li>• Strategic intelligence reporting</li>
+                      <li>• Fully randomized cognitive styles</li>
+                      <li>• All risk profiles represented equally</li>
+                      <li>• 2–3 random motivations per user</li>
+                      <li>• Ideal for testing the full analytics dashboard</li>
                     </ul>
                   </div>
                 </div>
@@ -141,89 +129,42 @@ export default function DemoDataStudioDoc() {
         </div>
       </Section>
 
-      <Section title="Using Demo Data Effectively">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-xl font-semibold text-white mb-4">Best Practices</h3>
-            <ul className="text-[#a3a3a3] space-y-2 list-disc list-inside">
-              <li>Start with one scenario to understand core workflows</li>
-              <li>Explore interconnected data across multiple modules</li>
-              <li>Test different user personas and psychological profiles</li>
-              <li>Experiment with engagement rules and triggers</li>
-              <li>Review AI reasoning and explainable insights</li>
-              <li>Clear demo data before implementing live tracking</li>
-            </ul>
+      <Section title="What Gets Created">
+        <p className="text-[#cbd5e1] mb-4">
+          Each seeding operation creates records in the following entities:
+        </p>
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-4">
+            <h4 className="text-[#00d4ff] font-semibold mb-2">UserPsychographicProfile</h4>
+            <p className="text-[#a3a3a3] text-sm">Full psychographic profiles including personality traits, emotional state, risk profile, cognitive style, and motivation stack.</p>
           </div>
-          <div>
-            <h3 className="text-xl font-semibold text-white mb-4">Integration Testing</h3>
-            <ul className="text-[#a3a3a3] space-y-2 list-disc list-inside">
-              <li>Each scenario includes realistic API keys for testing</li>
-              <li>Demo data is clearly marked in all modules</li>
-              <li>Scenarios can be refreshed or cleared as needed</li>
-              <li>All generated profiles include AI reasoning</li>
-              <li>Events and insights are temporally consistent</li>
-              <li>Data relationships mirror real-world usage</li>
-            </ul>
+          <div className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-4">
+            <h4 className="text-[#10b981] font-semibold mb-2">CapturedEvent</h4>
+            <p className="text-[#a3a3a3] text-sm">Behavioral events with realistic payloads, timestamps, URLs, and session IDs across the last 30 days.</p>
+          </div>
+          <div className="bg-[#1a1a1a] border border-[#262626] rounded-xl p-4">
+            <h4 className="text-[#ec4899] font-semibold mb-2">PsychographicInsight</h4>
+            <p className="text-[#a3a3a3] text-sm">3 insights per user covering behavioral patterns, motivation shifts, and engagement optimization recommendations.</p>
           </div>
         </div>
+        <p className="text-[#a3a3a3] text-sm">
+          A demo <strong className="text-white">ClientApp</strong> is also created or reused, providing a functional API key visible in the seeding result.
+        </p>
       </Section>
 
       <Section title="Accessing Demo Data Studio">
         <p className="text-[#cbd5e1] mb-4">
-          The Demo Data Studio is available to admin users through the main navigation:
+          The Demo Data Studio is available to authenticated users through the main navigation:
         </p>
         <CodeBlock language="text">
-Dashboard → Demo Data → Choose Scenario → Seed Demo Data
+Dashboard → Demo Data → Choose Scenario → Seed
         </CodeBlock>
-        
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold text-white mb-4">Demo API Integration</h3>
-          <p className="text-[#a3a3a3] mb-4">
-            Each seeded scenario includes a Demo Application with a functional API key that you can use to test SDK integration:
-          </p>
-          <CodeBlock language="html">
-{`<!-- Demo tracking snippet -->
-<script>
-!function(k,n,x,w){k.knXw=k.knXw||[],k.knXw.methods=["track","identify","page"];
-// ... SDK initialization code ...
-k.knXw.load("demo_api_key_from_seeding");
-k.knXw.page();
-}(window,document);
-</script>`}
-          </CodeBlock>
-        </div>
 
         <Callout type="warning">
           <p>
-            <strong>Demo Data Management:</strong> Demo data is clearly marked with `is_demo: true` flags and can be easily cleared using the "Clear All Demo Data" function. Always clear demo data before switching to production usage.
+            <strong>Demo Data Management:</strong> All demo records are tagged with <code>is_demo: true</code>. Seeding automatically clears existing demo data first to prevent duplicates. Use "Clear All Demo Data" before connecting real data sources.
           </p>
         </Callout>
-      </Section>
-
-      <Section title="Scenario-Specific Features">
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Growth Marketing Orchestration</h3>
-            <p className="text-[#a3a3a3] text-sm">
-              Focus on the Engagements and Journeys modules to see how psychological triggers create personalized user experiences. 
-              Check Content Recommendations to see how the AI matches content to individual user psychology.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Conversion & Optimization Lab</h3>
-            <p className="text-[#a3a3a3] text-sm">
-              Explore the A/B Testing module to see experiments in action, and use Audience Builder to understand how 
-              psychological segmentation creates more precise targeting than traditional demographics.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Strategic Intelligence & Governance</h3>
-            <p className="text-[#a3a3a3] text-sm">
-              Review Market Intelligence for competitor analysis, check System Health for monitoring examples, 
-              and explore the comprehensive audit trails that support enterprise compliance requirements.
-            </p>
-          </div>
-        </div>
       </Section>
 
       <Section title="Transitioning to Live Data">
@@ -232,16 +173,13 @@ k.knXw.page();
         </p>
         <ol className="list-decimal ml-6 text-[#cbd5e1] space-y-2">
           <li>Clear all demo data using the Demo Data Studio</li>
-          <li>Create your production Client Application</li>
+          <li>Create your production Client Application in My Apps</li>
           <li>Install the SDK with your production API key</li>
-          <li>Configure your psychographic analysis rules</li>
-          <li>Set up integrations with your existing tools</li>
           <li>Begin collecting real behavioral data</li>
         </ol>
-        
         <Callout type="success">
           <p>
-            The transition from demo to live data is seamless. All the rules, templates, and configurations you create while exploring demo data can be easily adapted for your production environment.
+            All configurations and engagement rules created while exploring demo data remain in place after clearing demo records — only the profile, event, and insight data is removed.
           </p>
         </Callout>
       </Section>
