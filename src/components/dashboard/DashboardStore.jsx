@@ -240,15 +240,6 @@ export function DashboardProvider({ children }) {
       return;
     }
 
-    // Check if we've already loaded this app recently
-    const now = Date.now();
-    if (globalLoadState.lastLoadedAppId === selectedAppId && 
-        (now - globalLoadState.lastLoadTime) < MIN_LOAD_INTERVAL_MS) {
-      logger.info("Dashboard data already loaded for this app, skipping");
-      setIsLoading(false);
-      return;
-    }
-
     loadDashboardData(selectedAppId, appOrigins);
   }, [selectedAppId, appOrigins]);
 
