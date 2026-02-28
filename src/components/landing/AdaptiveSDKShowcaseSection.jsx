@@ -109,20 +109,25 @@ function Hero() {
         {/* CTA */}
         <div className="text-center">
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
+            <button
               onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
-              className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white font-bold px-8 py-6 text-lg rounded-xl">
-
-              <Sparkles className="w-5 h-5 mr-2" />
+              className="group relative overflow-hidden inline-flex items-center gap-2 px-8 py-5 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97]"
+              style={{
+                background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)',
+                boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.4)'
+              }}
+            >
+              <Sparkles className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
               Try Live Demo
-            </Button>
-            <Button
+              <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+            </button>
+            <button
               onClick={() => window.location.href = createPageUrl('Documentation')}
-              variant="outline"
-              className="px-8 py-6 text-lg font-medium rounded-xl border border-white/20 text-white hover:bg-white/5 transition-colors">
-              <Code2 className="w-5 h-5 mr-2" />
+              className="inline-flex items-center gap-2 px-8 py-5 font-medium text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300"
+            >
+              <Code2 className="w-5 h-5" />
               View SDK Docs
-            </Button>
+            </button>
           </div>
         </div>
       </div>
