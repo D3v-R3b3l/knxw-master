@@ -511,10 +511,10 @@ export default function Dashboard() {
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {insights.slice(0, 6).map((insight, index) =>
-                <a
+                <div
                   key={insight.id || index}
                   onClick={() => navigate(createPageUrl("Insights"))}
-                  className="block cursor-pointer p-4 rounded-lg bg-[#1a1a1a] border border-[#262626] hover:border-[#00d4ff]/40 transition-colors">
+                  className="block cursor-pointer no-underline p-4 rounded-lg bg-[#1a1a1a] border border-[#262626] hover:border-[#00d4ff]/40 transition-colors">
 
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-semibold text-white text-sm line-clamp-2">{insight.title}</h4>
@@ -530,7 +530,7 @@ export default function Dashboard() {
                             {safeFormatDate(insight.created_date)}
                           </p>
                   }
-                      </a>
+                      </div>
                 )}
                   </div>
                 </div> :
@@ -545,7 +545,7 @@ export default function Dashboard() {
                       Insights will appear here as your AI analyzes user behavior patterns and generates recommendations.
                     </p>
                     <Button
-                onClick={() => window.location.href = createPageUrl("Events")}
+                onClick={() => navigate(createPageUrl("Events"))}
                 className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a]">
 
                       View Event Stream
@@ -566,7 +566,7 @@ export default function Dashboard() {
               Please select an application from the dropdown above to view its analytics data.
             </p>
             <Button
-            onClick={() => window.location.href = createPageUrl('MyApps')}
+            onClick={() => navigate(createPageUrl('MyApps'))}
             className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a]">
 
               Manage Applications
