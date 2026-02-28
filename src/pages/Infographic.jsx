@@ -900,7 +900,7 @@ export default function InfographicPage() {
   <div class="wrap">
     <div class="sec-header">
       <h2>Online Adaptation Loop</h2>
-      <p>Closing the reinforcement cycle — continuous model refinement without offline retraining.</p>
+      <p>Continuous behavioral policy optimization via reinforcement feedback — no offline retraining required.</p>
       <div class="accent-line"></div>
     </div>
     <div class="loop-diagram">
