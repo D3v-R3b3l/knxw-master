@@ -113,7 +113,7 @@ export default function Layout({ children, currentPageName }) {
   const isInfographicPage = currentPageName === 'Infographic';
 
   useEffect(() => {
-    if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage) {
+    if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage || isInfographicPage) {
       setIsLoadingUser(false);
       return;
     }
