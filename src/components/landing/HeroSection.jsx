@@ -89,23 +89,36 @@ export default function HeroSection({ onGetStarted, adaptations = {}, profile = 
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.4 }}>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
-              <Button
+            <motion.div
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full sm:w-auto">
+              <button
                 onClick={handleStartBuilding}
-                className="bg-white text-[#0a0a0a] hover:bg-white/90 font-black px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg rounded-full shadow-2xl shadow-white/20 w-full sm:w-auto"
-                style={{ boxShadow: '0 0 40px rgba(255, 255, 255, 0.2), 0 10px 40px rgba(0, 0, 0, 0.5)' }}>
-                {ctaText}
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+                className="group relative overflow-hidden w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold text-white rounded-lg transition-all duration-300"
+                style={{
+                  background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)',
+                  boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)'
+                }}>
+                <span className="relative z-10 flex items-center gap-2">
+                  {ctaText}
+                  <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+                <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+              </button>
             </motion.div>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
-              <Button
+            <motion.div
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full sm:w-auto">
+              <button
                 onClick={handleViewDocs}
-                className="px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg rounded-full border-2 border-white/20 bg-transparent text-white hover:bg-white/5 font-bold w-full sm:w-auto">
-                <Code className="w-5 h-5 mr-2" />
+                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 transition-all duration-300"
+                style={{ boxShadow: '0 0 20px rgba(0,212,255,0.08)' }}>
+                <Code className="w-5 h-5" />
                 API Docs
-              </Button>
+              </button>
             </motion.div>
           </motion.div>
 
