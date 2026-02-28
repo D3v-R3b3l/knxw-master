@@ -604,7 +604,7 @@ export default function InfographicPage() {
   <div class="wrap">
     <div class="sec-header">
       <h2>Live Psychographic Identity Graph</h2>
-      <p>Continuously updated trait vectors representing real-time cognitive and behavioral state per user.</p>
+      <p>Continuously updated runtime state layer representing real-time cognitive and behavioral trajectory per user.<br/>Queried at decision time by downstream engagement systems.</p>
       <div class="accent-line"></div>
     </div>
     <div class="traits-grid">
