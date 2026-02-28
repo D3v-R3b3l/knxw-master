@@ -679,7 +679,7 @@ export default function InfographicPage() {
       <div class="feat-card">
         <div class="feat-icon" style="background:linear-gradient(135deg,#ec489922,#db277722)">🎯</div>
         <h3>Trigger Engine</h3>
-        <p>Evaluates live psychographic state against configurable behavioral thresholds and maps inferred state to downstream engagement interventions with precision timing.</p>
+        <p>Performs real-time state queries against the Trait Store to evaluate decision thresholds and behavioral trajectory, mapping inferred state to downstream engagement interventions with precision timing.</p>
         <div class="feat-tags"><span class="feat-tag">Rule Builder</span><span class="feat-tag">Threshold Engine</span><span class="feat-tag">Auto-Trigger</span></div>
       </div>
 
