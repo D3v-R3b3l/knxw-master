@@ -174,7 +174,10 @@ export default function PricingSection() {
               Unlimited profiles • Dedicated infrastructure • Multi-tenant • White-label • 24/7 SLA guarantees
             </p>
           </div>
-          <button onClick={() => window.location.href = createPageUrl('Support')} className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-full font-bold hover:bg-white/10 transition-colors whitespace-nowrap w-full md:w-auto">
+          <button
+            onClick={() => window.location.href = createPageUrl('Support')}
+            className="inline-flex items-center justify-center px-8 py-4 font-bold text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 whitespace-nowrap w-full md:w-auto"
+          >
             Contact Sales
           </button>
         </div>
