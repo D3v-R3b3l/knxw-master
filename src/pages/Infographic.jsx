@@ -243,6 +243,7 @@ export default function InfographicPage() {
                 <div className="stage-arrow">↓</div>
                 <div className="stage-card">
                   <h4>Live Psychographic Identity Graph</h4>
+                  <div className="bullet" style={{ color: 'var(--cyan)', fontStyle: 'italic' }}>Serves as the runtime psychographic state layer queried at decision time by the Trigger Engine and downstream engagement systems.</div>
                   <div className="bullet">decision_velocity_index</div>
                   <div className="bullet">trust_acquisition_threshold</div>
                   <div className="bullet">novelty_seeking_score</div>
@@ -253,6 +254,11 @@ export default function InfographicPage() {
                 </div>
               </div>
 
+              {/* Stage 2 → Stage 3 interface label */}
+              <div style={{ display: 'contents' }}>
+                {/* label injected via stage-arrow below */}
+              </div>
+
               {/* Stage 3 */}
               <div className="stage">
                 <div className="stage-num">3</div>
@@ -261,6 +267,7 @@ export default function InfographicPage() {
                 <div className="stage-mktg">MKTG: Insight Generation</div>
                 <div className="stage-card">
                   <h4>Trigger Engine</h4>
+                  <div className="bullet" style={{ color: 'var(--cyan)', fontStyle: 'italic' }}>Performs real-time decision-time queries against the Trait Store runtime state layer.</div>
                   <div className="bullet">intent trajectory</div>
                   <div className="bullet">state change velocity</div>
                   <div className="bullet">confidence decay</div>
@@ -300,9 +307,9 @@ export default function InfographicPage() {
                 <div className="stage-arrow">↓</div>
                 <div className="stage-card">
                   <h4>Online Adaptation Loop</h4>
-                  <div className="bullet">Inference → Policy Deployment</div>
+                  <div className="bullet">Trait State → Policy Deployment</div>
                   <div className="bullet">Behavior → Reinforcement Feedback</div>
-                  <div className="bullet">Continuous behavioral policy optimization via reinforcement feedback</div>
+                  <div className="bullet">Continuous engagement policy optimization via observed behavioral response</div>
                   <div className="bullet">No offline retraining required</div>
                 </div>
               </div>
@@ -609,7 +616,7 @@ export default function InfographicPage() {
                 <div className="gloss-icon">🗄️</div>
                 <div>
                   <h4>Trait Store</h4>
-                  <p>Persistent database containing inferred user psychographic runtime state. Serves as the low-latency runtime state interface queried by Trigger Engine and downstream engagement systems at decision time.</p>
+                  <p>Persistent database containing inferred user psychographic runtime state. Serves as the low-latency runtime state interface queried by Trigger Engine and downstream engagement systems at decision time. Queried at decision time by Trigger Engine and external engagement systems for runtime intervention selection.</p>
                 </div>
               </div>
               <div className="gloss-card">
