@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 export default function DemoDataPage() {
+  const navigate = useNavigate();
   const [seedingScenario, setSeedingScenario] = useState(null);
   const [isClearing, setIsClearing] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
@@ -97,7 +99,7 @@ export default function DemoDataPage() {
         }));
         
         setTimeout(() => {
-          window.location.href = '/Dashboard';
+          navigate('/Dashboard');
         }, 1500);
       } else {
         throw new Error(data?.error || data?.details || 'Seeding failed');
