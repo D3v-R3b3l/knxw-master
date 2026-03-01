@@ -236,6 +236,29 @@ Deno.serve(async (req) => {
                 const template = templates && templates.length > 0 ? templates[0] : null;
                 
                 if (template) {
+                    // --- Governor Mode: Exploration Cost Adjustment ---
+                    const risks = await base44.entities.InterventionClassRisk.filter({ class_id: template.id });
+                    const riskProfile = risks.length > 0 ? risks[0] : { risk_score: 0, min_evidence_threshold: 0, exploration_cost_multiplier: 1.0 };
+                    
+                    // If this is a high risk class, require higher confidence/evidence before deploying
+                    const simulatedModelConfidence = profile?.motivation_confidence_score || 0.5;
+                    
+                    if (simulatedModelConfidence < riskProfile.min_evidence_threshold) {
+                        console.log(`[Governor Mode] Blocked intervention ${template.id} due to insufficient evidence (conf: ${simulatedModelConfidence} < required: ${riskProfile.min_evidence_threshold})`);
+                        continue; // Skip this rule, doesn't meet ethical evidence threshold
+                    }
+                    
+                    // Apply exploration cost multiplier to probability of deployment during exploration
+                    // For pure exploration (random chance), reduce probability by the cost multiplier
+                    const isExploring = Math.random() < 0.2; // 20% exploration rate
+                    if (isExploring) {
+                        const explorationPass = Math.random() < (1.0 / Math.max(1, riskProfile.exploration_cost_multiplier));
+                        if (!explorationPass) {
+                            console.log(`[Governor Mode] Blocked exploration for ${template.id} due to high exploration cost`);
+                            continue;
+                        }
+                    }
+                    // --------------------------------------------------
                     // Create delivery record
                     const deliveryRecord = {
                         user_id,
