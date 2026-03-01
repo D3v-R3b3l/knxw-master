@@ -45,6 +45,85 @@ Deno.serve(async (req) => {
     // Calculate learning signals based on outcome
     const learningSignals = calculateLearningSignals(user_action, profile, delivery, time_to_action_seconds);
 
+    // 1. Fetch GovernanceConfig for weights
+    const configs = await base44.asServiceRole.entities.GovernanceConfig.filter({ config_id: "default" }, null, 1);
+    const govConfig = configs.length > 0 ? configs[0] : { w_regret: 1.0, w_fatigue: 1.0, w_coercion: 1.0, w_disparity: 1.0, w_gaming: 1.0 };
+
+    // 2. Compute Guardian Ethical Assessment (Harm Proxies)
+    const isNegative = user_action === 'negative_feedback' || user_action === 'ignored';
+    const isQuickDismiss = time_to_action_seconds < 2 && user_action === 'dismissed';
+    const isUrgent = delivery.rendered_content?.message?.toLowerCase().includes('hurry') || delivery.rendered_content?.message?.toLowerCase().includes('now');
+    
+    const harmProxies = {
+      regret_score: isNegative ? 0.8 : 0,
+      fatigue_score: isQuickDismiss ? 0.9 : 0.1,
+      coercion_score: isUrgent ? 0.7 : 0,
+      gaming_risk_score: 0.1
+    };
+
+    // 3. Compute Cohort Disparity
+    const cohortBucket = `${profile?.risk_profile || 'unknown'}_${profile?.cognitive_style || 'unknown'}`;
+    const isVulnerable = profile?.personality_traits?.neuroticism > 0.7;
+    const disparityMetrics = {
+      cohort_regret_delta: profile?.cognitive_style === 'analytical' && isNegative ? 0.4 : 0.1,
+      cohort_fatigue_delta: isVulnerable && isQuickDismiss ? 0.5 : 0.1
+    };
+    const disparityScore = Math.max(disparityMetrics.cohort_regret_delta, disparityMetrics.cohort_fatigue_delta);
+
+    // 4. Calculate Ethical Penalty (Governor Mode shaping)
+    const ethicalPenalty = 
+      (govConfig.w_regret * harmProxies.regret_score) +
+      (govConfig.w_fatigue * harmProxies.fatigue_score) +
+      (govConfig.w_coercion * harmProxies.coercion_score) +
+      (govConfig.w_disparity * disparityScore) +
+      (govConfig.w_gaming * harmProxies.gaming_risk_score);
+
+    // 5. Calculate R_total = R_business - P_ethics
+    const rBusiness = user_action === 'converted' ? 1.0 : (user_action === 'engaged' ? 0.5 : 0);
+    const rTotal = rBusiness - ethicalPenalty;
+
+    // Add ethical assessment to learning signals for model update
+    learningSignals.r_business = rBusiness;
+    learningSignals.ethical_penalty = ethicalPenalty;
+    learningSignals.r_total = rTotal;
+    learningSignals.governance_constrained = ethicalPenalty > 0.5;
+
+    // 6. Record OutcomeEvent for the optimizer
+    await base44.asServiceRole.entities.OutcomeEvent.create({
+      intervention_id: delivery.id,
+      intervention_class: delivery.template_id || "default_class",
+      user_id: delivery.user_id,
+      session_id: delivery.session_id || "unknown",
+      psychographic_state_bucket: cohortBucket,
+      psychographic_state_vector: profile || {},
+      cohort_state_bucket: cohortBucket,
+      business_metrics: {
+        conversion: user_action === 'converted' ? 1 : 0,
+        retention_proxy: rBusiness,
+        completion: user_action === 'converted' ? 1 : 0,
+        r_business: rBusiness
+      },
+      harm_proxies: harmProxies,
+      disparity_metrics: disparityMetrics,
+      penalty_components: {
+        w_regret: govConfig.w_regret,
+        w_fatigue: govConfig.w_fatigue,
+        w_coercion: govConfig.w_coercion,
+        w_disparity: govConfig.w_disparity,
+        w_gaming: govConfig.w_gaming
+      },
+      ethical_penalty: ethicalPenalty,
+      r_total: rTotal,
+      window_id: "W0",
+      timestamps: {
+        intervention_time: delivery.created_date || new Date().toISOString(),
+        window_0_end: new Date().toISOString(),
+        window_1_end: new Date(Date.now() + 24*60*60*1000).toISOString(),
+        window_2_end: new Date(Date.now() + 7*24*60*60*1000).toISOString(),
+        window_3_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+      }
+    });
+
     // Create the feedback loop record
     const feedbackRecord = await base44.asServiceRole.entities.EngagementFeedbackLoop.create({
       client_app_id: delivery.client_app_id,
