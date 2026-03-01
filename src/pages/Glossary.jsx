@@ -199,8 +199,12 @@ function buildTerms() {
     ["Loss Function","The mathematical function the optimizer tries to maximize or minimize (e.g., expected KPI reward)."],
     ["Ethical Penalty","A negative reward applied to the loss function when interventions correlate with harm, coercion, or regret."],
     ["Proxy Signal","A measurable indicator (like 'time-to-regret' or 'post-intervention reversal') used to estimate harder-to-measure outcomes like sustainable influence."],
-    ["Exploration Cost","A penalty that discourages the contextual bandit from trying risky or unproven new policies."],
     ["Myopic Optimization","The tendency to focus purely on immediate gains (short-term reward) without accounting for long-term downstream effects."],
+    ["Proxy Gaming","Optimizer exploits measurement gaps to avoid penalties without reducing real harm."],
+    ["Cohort Masking","Aggregate metrics hide negative effects on specific user groups."],
+    ["Exploration Cost","Penalty applied when testing high-risk intervention strategies."],
+    ["Horizon Mismatch","Timing gap between immediate reward and delayed penalty signals."],
+    ["Reward Window","Timeframe over which outcomes are measured for optimization."],
   ].forEach(([term, def]) => {
     terms.push({ term, category: "Governor Mode & Optimization", definition: def, tags: ["ai","score"] });
   });
