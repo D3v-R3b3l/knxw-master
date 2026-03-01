@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -194,6 +193,16 @@ function buildTerms() {
     ["tags","Lightweight labels used for grouping, filtering, or annotating records. In knXw, tags help categorize insights, events, or engagements for faster retrieval and analysis."],
   ].forEach(([term, def]) => {
     terms.push({ term, category: "Tagging", definition: def, tags: ["categorization","filtering"] });
+  });
+
+  [
+    ["Loss Function","The mathematical function the optimizer tries to maximize or minimize (e.g., expected KPI reward)."],
+    ["Ethical Penalty","A negative reward applied to the loss function when interventions correlate with harm, coercion, or regret."],
+    ["Proxy Signal","A measurable indicator (like 'time-to-regret' or 'post-intervention reversal') used to estimate harder-to-measure outcomes like sustainable influence."],
+    ["Exploration Cost","A penalty that discourages the contextual bandit from trying risky or unproven new policies."],
+    ["Myopic Optimization","The tendency to focus purely on immediate gains (short-term reward) without accounting for long-term downstream effects."],
+  ].forEach(([term, def]) => {
+    terms.push({ term, category: "Governor Mode & Optimization", definition: def, tags: ["ai","score"] });
   });
 
   return terms;
