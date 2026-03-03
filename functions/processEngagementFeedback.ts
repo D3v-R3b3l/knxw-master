@@ -204,12 +204,16 @@ Deno.serve(async (req) => {
   }
 });
 
-function calculateLearningSignals(userAction, profile, delivery, timeToAction) {
+function calculateLearningSignals(userAction, profile, delivery, timeToAction, rTotal = null, ethicalPenalty = null) {
   const signals = {
     psychographic_accuracy: 0.5,
     content_relevance_score: 0.5,
     timing_effectiveness: 0.5,
-    suggested_adjustments: []
+    suggested_adjustments: [],
+    reward_metrics: {
+      R_total: rTotal,
+      P_ethics: ethicalPenalty
+    }
   };
 
   // Calculate psychographic accuracy based on outcome
