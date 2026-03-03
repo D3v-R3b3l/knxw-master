@@ -56,12 +56,18 @@ Deno.serve(async (req) => {
     conversation.messages.push({ role: 'user', content });
 
     const historyText = conversation.messages
-      .map(m => (m.role === 'user' ? 'User' : 'Assistant') + ': ' + m.content)
+      .map(m => {
+        let text = (m.role === 'user' ? 'User' : 'Assistant') + ': ' + m.content;
+        if (m.adaptive_ui_elements) {
+            text += '\n[Rendered UI Elements: ' + JSON.stringify(m.adaptive_ui_elements.map(e => ({type: e.type, accentColor: e.accentColor, visualStyle: e.visualStyle}))) + ']';
+        }
+        return text;
+      })
       .join('\n');
 
     let profileContext = '';
     if (conversation.profile) {
-      profileContext = '\nCURRENT PROFILE: ' + JSON.stringify(conversation.profile);
+      profileContext = '\nCURRENT PROFILE & PREFERENCES: ' + JSON.stringify(conversation.profile);
     }
 
     const prompt = `You are knXw's psychographic AI assistant conducting a live demo showcasing Adaptive UI capabilities.
@@ -71,17 +77,19 @@ ${historyText}
 ${profileContext}
 
 TASK: 
-1. Respond warmly and helpfully to the user
-2. Analyze their psychographic profile from the conversation
-3. Return all confidence values between 0.0 and 1.0
-4. CRITICAL: Include 2-4 adaptive_ui_elements that demonstrate how UI adapts to their psychology
+1. Respond warmly and helpfully to the user.
+2. Analyze their psychographic profile from the conversation.
+3. Extract and update their explicit 'user_preferences' (colors they hate/love, UI styles they prefer, their industry).
+4. Return all confidence values between 0.0 and 1.0.
+5. CRITICAL: Include 2-4 adaptive_ui_elements that demonstrate how UI adapts to their psychology AND strictly adheres to their user_preferences.
 
 ADAPTIVE UI GUIDELINES:
 1. ALWAYS generate 2-4 adaptive elements per response showing DIFFERENT types.
-2. Make elements INDUSTRY-SPECIFIC (gaming, ecommerce, saas, dashboard, mobile, etc.) based on user context.
+2. Make elements INDUSTRY-SPECIFIC (gaming, ecommerce, saas, dashboard, mobile, etc.) based on user_preferences or conversation context.
 3. Elements MUST adapt in MULTIPLE WAYS: text, urgency, visual emphasis, and color.
 4. Show DRAMATIC differences between conservative vs aggressive variants.
-5. If user mentions specific UI preferences (flashing, bold, minimal, dislikes a color), strictly respect it! Pick an 'accentColor' (hex) that avoids their disliked colors and fits the mood.
+5. STRICTLY ADHERE to user preferences. If they hate a color (e.g., red, blue, bright colors), NEVER use it in accentColor. Pick an 'accentColor' (hex) that completely avoids their disliked colors. If they prefer a style (e.g., minimal), favor that visualStyle.
+6. Remember past interactions. Use the CURRENT PROFILE & PREFERENCES to maintain continuity and show that you remember!
 
 ELEMENT TYPES & USE CASES (Mix and match these for variety):
 - button: CTAs that adapt text/urgency
@@ -251,13 +259,26 @@ Make every element feel native to the user's stated industry/context.`;
               } 
             } 
           },
+          user_preferences: {
+            type: 'object',
+            properties: {
+              colors_disliked: { type: 'array', items: { type: 'string' } },
+              colors_preferred: { type: 'array', items: { type: 'string' } },
+              ui_style_preferences: { type: 'array', items: { type: 'string' } },
+              industry_context: { type: 'string' }
+            }
+          },
           overall_confidence: { type: 'number' }
         },
         required: ['assistant_response', 'adaptive_ui_elements', 'overall_confidence']
       }
     });
 
-    conversation.messages.push({ role: 'assistant', content: llmResponse.assistant_response });
+    conversation.messages.push({ 
+      role: 'assistant', 
+      content: llmResponse.assistant_response,
+      adaptive_ui_elements: llmResponse.adaptive_ui_elements
+    });
     
     conversation.profile = {
       motivation_stack: llmResponse.motivation_stack || [],
@@ -266,6 +287,7 @@ Make every element feel native to the user's stated industry/context.`;
       risk_profile: llmResponse.risk_profile || {},
       personality_traits: llmResponse.personality_traits || {},
       reasoning: llmResponse.reasoning || [],
+      user_preferences: llmResponse.user_preferences || conversation.profile?.user_preferences || {},
       overall_confidence: llmResponse.overall_confidence || 0.5
     };
 
