@@ -74,21 +74,23 @@ TASK:
 1. Respond warmly and helpfully to the user
 2. Analyze their psychographic profile from the conversation
 3. Return all confidence values between 0.0 and 1.0
-4. CRITICAL: Include 1-3 adaptive_ui_elements that demonstrate how UI adapts to their psychology
+4. CRITICAL: Include 2-4 adaptive_ui_elements that demonstrate how UI adapts to their psychology
 
 ADAPTIVE UI GUIDELINES:
-1. ALWAYS generate 2-3 adaptive elements per response showing DIFFERENT types (button, card, toast, etc.)
-2. Make elements INDUSTRY-SPECIFIC based on user's conversation context
-3. Elements MUST adapt in MULTIPLE WAYS: text, urgency, visual emphasis
-4. Show DRAMATIC differences between conservative vs aggressive variants
-5. If user mentions specific UI preferences (flashing, bold, minimal), incorporate that into urgencyLevel
+1. ALWAYS generate 2-4 adaptive elements per response showing DIFFERENT types.
+2. Make elements INDUSTRY-SPECIFIC (gaming, ecommerce, saas, dashboard, mobile, etc.) based on user context.
+3. Elements MUST adapt in MULTIPLE WAYS: text, urgency, visual emphasis, and color.
+4. Show DRAMATIC differences between conservative vs aggressive variants.
+5. If user mentions specific UI preferences (flashing, bold, minimal, dislikes a color), strictly respect it! Pick an 'accentColor' (hex) that avoids their disliked colors and fits the mood.
 
-ELEMENT TYPES & USE CASES:
-- button: CTAs that adapt text/urgency (e.g., "Try Free" → "Start Winning Now" for achievement)
-- card: Product/feature cards with adaptive headlines and descriptions
-- container: Conditional content blocks (show risk warnings for conservative, growth stats for aggressive)
-- toast: Contextual nudges/tips that appear based on motivation
-- modal: Adaptive onboarding flows or decision prompts
+ELEMENT TYPES & USE CASES (Mix and match these for variety):
+- button: CTAs that adapt text/urgency
+- card: Sleek feature/content cards
+- toast: Contextual nudges/tips
+- modal: Decision prompts or dialogs
+- dashboard_widget: Data visualization or metric cards for SaaS
+- ecommerce_item: Product displays with adaptive pricing/urgency cues
+- game_hud: In-game overlay elements like health/quest trackers
 
 INDUSTRY EXAMPLES:
 E-commerce: 
@@ -125,10 +127,28 @@ Make every element feel native to the user's stated industry/context.`;
             items: {
               type: 'object',
               properties: {
-                type: { type: 'string', enum: ['button', 'card', 'container', 'toast', 'modal'] },
+                type: { type: 'string', enum: ['button', 'card', 'container', 'toast', 'modal', 'dashboard_widget', 'ecommerce_item', 'game_hud'] },
                 baseText: { type: 'string' },
                 baseHeadline: { type: 'string' },
                 baseDescription: { type: 'string' },
+                accentColor: { type: 'string', description: 'Hex code for accent color, MUST avoid colors user dislikes.' },
+                metrics: {
+                  type: 'object',
+                  properties: {
+                    label: { type: 'string' },
+                    value: { type: 'string' },
+                    trend: { type: 'string' }
+                  },
+                  description: 'Used for dashboard_widget type'
+                },
+                productDetails: {
+                  type: 'object',
+                  properties: {
+                    price: { type: 'string' },
+                    urgencyTag: { type: 'string' }
+                  },
+                  description: 'Used for ecommerce_item type'
+                },
                 motivationVariants: { 
                   type: 'object',
                   properties: {
