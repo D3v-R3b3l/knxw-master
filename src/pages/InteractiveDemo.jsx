@@ -259,6 +259,30 @@ export default function InteractiveDemoPage() {
           </div>
         )}
 
+        {/* Remembered Preferences */}
+        {currentProfile.user_preferences && (currentProfile.user_preferences.colors_disliked?.length > 0 || currentProfile.user_preferences.colors_preferred?.length > 0 || currentProfile.user_preferences.ui_style_preferences?.length > 0) && (
+          <div>
+            <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+              <Eye className="w-4 h-4 text-[#ec4899]" />
+              Remembered Preferences
+            </h4>
+            <div className="bg-[#111111] border border-[#262626] rounded-lg p-3 space-y-2">
+              {currentProfile.user_preferences.industry_context && (
+                <p className="text-xs text-[#a3a3a3]"><strong className="text-white">Industry:</strong> {currentProfile.user_preferences.industry_context}</p>
+              )}
+              {currentProfile.user_preferences.colors_preferred?.length > 0 && (
+                <p className="text-xs text-[#a3a3a3]"><strong className="text-white">Likes Colors:</strong> {currentProfile.user_preferences.colors_preferred.join(', ')}</p>
+              )}
+              {currentProfile.user_preferences.colors_disliked?.length > 0 && (
+                <p className="text-xs text-[#a3a3a3]"><strong className="text-white">Avoids Colors:</strong> {currentProfile.user_preferences.colors_disliked.join(', ')}</p>
+              )}
+              {currentProfile.user_preferences.ui_style_preferences?.length > 0 && (
+                <p className="text-xs text-[#a3a3a3]"><strong className="text-white">Styles:</strong> {currentProfile.user_preferences.ui_style_preferences.join(', ')}</p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Reasoning/Evidence */}
         {currentProfile.reasoning && currentProfile.reasoning.length > 0 && (
           <div>
