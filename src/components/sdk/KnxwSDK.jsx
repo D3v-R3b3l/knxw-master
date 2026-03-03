@@ -102,6 +102,7 @@ export function AdaptiveButton({
   motivationVariants = {}, 
   riskVariants = {},
   className = '',
+  id,
   ...props 
 }) {
   const { profile, loading, hasMotivation, getRiskProfile } = usePsychographic();
