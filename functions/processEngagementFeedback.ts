@@ -42,8 +42,88 @@ Deno.serve(async (req) => {
 
     const profile = profiles[0];
 
-    // Calculate learning signals based on outcome
-    const learningSignals = calculateLearningSignals(user_action, profile, delivery, time_to_action_seconds);
+    // Get Governance Config
+    const configs = await base44.asServiceRole.entities.GovernanceConfig.list();
+    const config = configs && configs.length > 0 ? configs[0] : {
+      mode: "governor",
+      weights: { w_regret: 1.0, w_fatigue: 1.0, w_coercion: 1.5, w_disparity: 2.0, w_gaming: 1.0 }
+    };
+
+    // Calculate business metrics
+    const conversion = user_action === 'converted' ? 1 : 0;
+    const retention_proxy = user_action === 'engaged' ? 0.5 : (user_action === 'dismissed' ? -0.2 : 0);
+    const completion = response_data?.conversion_value ? 1 : 0;
+    const R_business = conversion * 10 + retention_proxy * 5 + completion * 5;
+
+    // Calculate harm proxies
+    const regret_score = user_action === 'negative_feedback' ? 1 : (user_action === 'dismissed' ? 0.2 : 0);
+    const fatigue_score = time_to_action_seconds && time_to_action_seconds < 2 && user_action === 'dismissed' ? 0.8 : 0;
+    const coercion_score = response_data?.opt_out ? 1 : 0;
+    const gaming_risk_score = (conversion === 1 && time_to_action_seconds < 1) ? 0.9 : 0;
+
+    // Cohort-Level Penalty Detection
+    const cohort_state_bucket = profile?.risk_profile || 'unknown';
+    const previousOutcomes = await base44.asServiceRole.entities.OutcomeEvent.filter({ cohort_state_bucket }, '-created_date', 20);
+    
+    let cohort_regret_delta = 0;
+    let cohort_fatigue_delta = 0;
+
+    if (previousOutcomes && previousOutcomes.length > 0) {
+      const avgCohortRegret = previousOutcomes.reduce((acc, o) => acc + (o.harm_proxies?.regret_score || 0), 0) / previousOutcomes.length;
+      const avgCohortFatigue = previousOutcomes.reduce((acc, o) => acc + (o.harm_proxies?.fatigue_score || 0), 0) / previousOutcomes.length;
+      cohort_regret_delta = Math.max(0, regret_score - avgCohortRegret);
+      cohort_fatigue_delta = Math.max(0, fatigue_score - avgCohortFatigue);
+    }
+
+    const disparity_score = Math.max(cohort_regret_delta, cohort_fatigue_delta);
+
+    // Implement Ethical Penalty Function
+    let ethical_penalty = 0;
+    if (config.mode === 'governor') {
+      ethical_penalty = 
+        config.weights.w_regret * regret_score +
+        config.weights.w_fatigue * fatigue_score +
+        config.weights.w_coercion * coercion_score +
+        config.weights.w_disparity * disparity_score +
+        config.weights.w_gaming * gaming_risk_score;
+    }
+
+    // Contextual Bandit Reward Function
+    const R_total = R_business - ethical_penalty;
+
+    // Guardian Ethical Assessment (Governor Mode Activation)
+    const assessment = await base44.asServiceRole.entities.GuardianEthicalAssessment.create({
+      intervention_id: delivery.id,
+      harm_proxy_scores: { regret_score, fatigue_score, coercion_score, gaming_risk_score },
+      disparity_metrics: { cohort_regret_delta, cohort_fatigue_delta },
+      ethical_penalty
+    });
+
+    // Governance Reward Contract
+    const outcomeEvent = await base44.asServiceRole.entities.OutcomeEvent.create({
+      intervention_id: delivery.id,
+      intervention_class: delivery.template_id || 'unknown',
+      user_id: delivery.user_id,
+      session_id: delivery.session_id || 'unknown',
+      psychographic_state_vector: profile,
+      cohort_state_bucket,
+      business_metrics: { conversion, retention_proxy, completion },
+      harm_proxies: { regret_score, fatigue_score, coercion_score, gaming_risk_score },
+      disparity_metrics: { cohort_regret_delta, cohort_fatigue_delta },
+      timestamps: {
+        intervention_time: new Date().toISOString(),
+        window_0_end: new Date(Date.now() + 60*60*1000).toISOString(),
+        window_1_end: new Date(Date.now() + 24*60*60*1000).toISOString(),
+        window_2_end: new Date(Date.now() + 7*24*60*60*1000).toISOString(),
+        window_3_end: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+      },
+      calculated_rewards: { R_business, P_ethics: ethical_penalty, R_total },
+      window_id: "W0"
+    });
+
+    // Exploration Cost Adjustment logic is utilized during policy generation/selection (Trigger Engine)
+    // We adjust the learning signals based on the penalized R_total
+    const learningSignals = calculateLearningSignals(user_action, profile, delivery, time_to_action_seconds, R_total, ethical_penalty);
 
     // Create the feedback loop record
     const feedbackRecord = await base44.asServiceRole.entities.EngagementFeedbackLoop.create({
