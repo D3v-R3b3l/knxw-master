@@ -76,10 +76,17 @@ export default function InteractiveDemoPage() {
     setMessages(prev => [...prev, { role: 'user', content: userMessageContent, id: `temp-user-${Date.now()}` }]);
 
     try {
+      const historyPayload = messages.map(m => ({
+        role: m.role,
+        content: m.content || '',
+        adaptive_ui_elements: m.adaptiveElements || []
+      }));
+
       const response = await base44.functions.invoke('demoMessage', {
         session_id: sessionId,
         content: userMessageContent,
-        role: 'user'
+        history: historyPayload,
+        current_profile: currentProfile
       });
       
       const { assistant_message, adaptive_ui_elements, current_profile } = response.data;

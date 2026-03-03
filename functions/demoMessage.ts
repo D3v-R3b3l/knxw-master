@@ -3,16 +3,6 @@
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
-// In-memory conversation store for demo sessions
-const conversationStore = new Map();
-
-// function cleanupOldConversations() {
-//   if (conversationStore.size > 500) {
-//     const keysToDelete = Array.from(conversationStore.keys()).slice(0, conversationStore.size - 500);
-//     keysToDelete.forEach(key => conversationStore.delete(key));
-//   }
-// }
-
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', {
@@ -26,7 +16,7 @@ Deno.serve(async (req) => {
 
   try {
     const data = await req.json();
-    const { session_id, content } = data;
+    const { session_id, content, history = [], current_profile = null } = data;
 
     if (!session_id || !content) {
       return new Response(JSON.stringify({
@@ -44,30 +34,20 @@ Deno.serve(async (req) => {
     // Use service role if available (for anonymous users), otherwise fallback to base44 (authenticated user)
     const client = base44.asServiceRole || base44;
 
-    // Get or create conversation in memory
-    if (!conversationStore.has(session_id)) {
-      conversationStore.set(session_id, {
-        messages: [],
-        profile: null
-      });
-    }
-
-    const conversation = conversationStore.get(session_id);
-    conversation.messages.push({ role: 'user', content });
-
-    const historyText = conversation.messages
+    const historyText = history
       .map(m => {
         let text = (m.role === 'user' ? 'User' : 'Assistant') + ': ' + m.content;
-        if (m.adaptive_ui_elements) {
+        if (m.adaptive_ui_elements && m.adaptive_ui_elements.length > 0) {
             text += '\n[Rendered UI Elements: ' + JSON.stringify(m.adaptive_ui_elements.map(e => ({type: e.type, accentColor: e.accentColor, visualStyle: e.visualStyle}))) + ']';
         }
         return text;
       })
+      .concat([`User: ${content}`])
       .join('\n');
 
     let profileContext = '';
-    if (conversation.profile) {
-      profileContext = '\nCURRENT PROFILE & PREFERENCES: ' + JSON.stringify(conversation.profile);
+    if (current_profile) {
+      profileContext = '\nCURRENT PROFILE & PREFERENCES: ' + JSON.stringify(current_profile);
     }
 
     const prompt = `You are knXw's psychographic AI assistant conducting a live demo showcasing Adaptive UI capabilities.
@@ -77,7 +57,7 @@ ${historyText}
 ${profileContext}
 
 TASK: 
-1. Respond warmly and helpfully to the user.
+1. Respond directly and specifically to the user's latest message. If they are skeptical or challenge you, playfully prove them wrong by generating highly specific UI elements that demonstrate the system reacting instantly to their words and stated preferences.
 2. Analyze their psychographic profile from the conversation.
 3. Extract and update their explicit 'user_preferences' (colors they hate/love, UI styles they prefer, their industry).
 4. Return all confidence values between 0.0 and 1.0.
@@ -274,30 +254,22 @@ Make every element feel native to the user's stated industry/context.`;
       }
     });
 
-    conversation.messages.push({ 
-      role: 'assistant', 
-      content: llmResponse.assistant_response,
-      adaptive_ui_elements: llmResponse.adaptive_ui_elements
-    });
-    
-    conversation.profile = {
+    const updatedProfile = {
       motivation_stack: llmResponse.motivation_stack || [],
       emotional_state: llmResponse.emotional_state || {},
       cognitive_style: llmResponse.cognitive_style || {},
       risk_profile: llmResponse.risk_profile || {},
       personality_traits: llmResponse.personality_traits || {},
       reasoning: llmResponse.reasoning || [],
-      user_preferences: llmResponse.user_preferences || conversation.profile?.user_preferences || {},
+      user_preferences: llmResponse.user_preferences || current_profile?.user_preferences || {},
       overall_confidence: llmResponse.overall_confidence || 0.5
     };
-
-    // cleanupOldConversations(); // Disable cleanup for now
 
     return new Response(JSON.stringify({
       success: true,
       assistant_message: llmResponse.assistant_response,
       adaptive_ui_elements: llmResponse.adaptive_ui_elements || [],
-      current_profile: conversation.profile
+      current_profile: updatedProfile
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
