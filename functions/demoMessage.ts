@@ -93,14 +93,17 @@ Generate EXACTLY 3-4 adaptive_ui_elements per response. Rules:
 
 1. MULTI-DIMENSIONAL ADAPTATION: Each element must respond to at least 2 psychographic dimensions simultaneously (e.g., risk_profile + cognitive_style, or motivation + emotional_state).
 
-2. ELEMENT TYPE VARIETY: Use a different mix each response. Available types:
-   - button: Adapting CTA text based on motivation + risk
-   - card: Content card adapting headline/description based on cognitive style + motivation
-   - toast: Nudge/tip adapting urgency and framing based on emotional state + risk
-   - modal: Decision prompt adapting framing based on risk profile + cognitive style
-   - dashboard_widget: Metric display adapting label/focus based on motivation
-   - ecommerce_item: Product display adapting urgency cue based on risk + motivation
-   - game_hud: In-game overlay adapting challenge framing based on personality traits
+2. ELEMENT TYPE VARIETY: Use a DIFFERENT mix every single response — never repeat the same sequence twice. Available types:
+   - hero: Full hero section with headline, subtext, CTA buttons, and social proof
+   - pricing: Pricing card with features list and CTA — adapts value proposition to motivation/risk
+   - toast: Dismissable notification nudge adapting urgency and copy to emotional state
+   - modal: Full modal with stats, decision buttons, adapting framing to risk/cognitive style
+   - dashboard_widget: Metric widget with mini chart adapting label/focus to motivation
+   - ecommerce_item: Product card with image area, price, and add-to-cart action
+   - game_hud: Game progress HUD adapting challenge copy to personality + motivation
+   - card: Feature highlight card adapting headline + description
+   DO NOT use 'button' or 'container' as standalone types — they are boring alone.
+   REQUIRED: First element MUST be one of: hero, pricing, or modal. Vary this per response.
 
 3. EXPLICIT VARIANT POPULATIONS: For EVERY element, populate ALL of these variant fields with DISTINCT, meaningfully different text:
    - motivationVariants: achievement, security, innovation, autonomy, mastery, social
