@@ -35,6 +35,9 @@ export default function InteractiveDemoPage() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  // Derive interface theme from live psychographic profile
+  const theme = deriveTheme(currentProfile);
+
   // Helper to handle various score scales (0-1, 0-10, 0-100) and prevent "700%" errors
   const normalizeScore = (val) => {
     if (val == null) return 0;
