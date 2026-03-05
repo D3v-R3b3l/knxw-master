@@ -563,7 +563,15 @@ export default function InteractiveDemoPage() {
                           className={`flex gap-2 sm:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                           
                           {message.role === 'assistant' && (
-                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] flex items-center justify-center flex-shrink-0">
+                            <div
+                              className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0"
+                              style={{
+                                background: `var(--demo-accent)`,
+                                borderRadius: '50%',
+                                boxShadow: `0 0 10px var(--demo-accent-glow)`,
+                                transition: `all var(--demo-transition) ease`,
+                              }}
+                            >
                               <Brain className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                             </div>
                           )}
