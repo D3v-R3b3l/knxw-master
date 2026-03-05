@@ -66,13 +66,17 @@ export default function DemoDataPage() {
     setLastResult(null);
 
     try {
-      // Step 1: Clear existing demo data first
-      toast({
-        title: "Clearing existing data...",
-        description: "Removing old demo data before seeding"
-      });
+      // Step 1: Check if demo data exists before clearing
+      const existingDemoProfiles = await base44.entities.UserPsychographicProfile.filter({ is_demo: true }, null, 1);
+      const hasDemoData = existingDemoProfiles && existingDemoProfiles.length > 0;
 
-      await base44.functions.invoke('clearDemoData', {});
+      if (hasDemoData) {
+        toast({
+          title: "Clearing existing data...",
+          description: "Removing old demo data before seeding"
+        });
+        await base44.functions.invoke('clearDemoData', {});
+      }
 
       // Step 2: Seed new data
       toast({
@@ -93,13 +97,13 @@ export default function DemoDataPage() {
           description: `Created ${data.counts?.profiles || 0} profiles, ${data.counts?.events || 0} events, and ${data.counts?.insights || 0} insights.`
         });
 
-        // Dispatch event to refresh dashboard
+        // Dispatch event to refresh dashboard (apps + data)
         window.dispatchEvent(new CustomEvent('knxw-demo-data-seeded', {
           detail: { scenario: scenario.id, counts: data.counts }
         }));
         
         setTimeout(() => {
-          navigate('/Dashboard');
+          navigate(createPageUrl('Dashboard'));
         }, 1500);
       } else {
         throw new Error(data?.error || data?.details || 'Seeding failed');
