@@ -413,7 +413,15 @@ export default function InteractiveDemoPage() {
                     <Button
                       onClick={handleGetStarted}
                       size="sm"
-                      className="hidden sm:flex bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white font-semibold px-3 text-xs">
+                      style={{
+                        background: 'var(--demo-accent)',
+                        color: '#0a0a0a',
+                        borderRadius: 'var(--demo-radius)',
+                        fontWeight: 600,
+                        boxShadow: `0 0 20px var(--demo-accent-glow)`,
+                        transition: `all var(--demo-transition) ease`,
+                      }}
+                      className="hidden sm:flex px-3 text-xs">
                       <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       <span className="hidden sm:inline">Get Started</span>
                     </Button>
