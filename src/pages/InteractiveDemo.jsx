@@ -20,6 +20,7 @@ import ProfileFeedback from '@/components/demo/ProfileFeedback';
 import AdaptiveElementRenderer from '@/components/demo/AdaptiveElementRenderer';
 import { deriveTheme } from '@/components/demo/useDemoTheme';
 import DemoThemeIndicator from '@/components/demo/DemoThemeIndicator';
+import ProfileAnalysisContent from '@/components/demo/ProfileAnalysisContent';
 
 export default function InteractiveDemoPage() {
   const [sessionId, setSessionId] = useState(null);
