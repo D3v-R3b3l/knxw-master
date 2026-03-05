@@ -582,11 +582,18 @@ export default function InteractiveDemoPage() {
                             </div>
                           )}
                           
-                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3 ${
-                           message.role === 'user'
-                             ? 'bg-[#1e293b] text-white'
-                             : 'bg-[#262626] text-[#e5e5e5]'
-                          }`}>
+                          <div
+                            className="max-w-[85%] sm:max-w-[75%] px-3 sm:px-4 py-2 sm:py-3"
+                            style={{
+                              background: message.role === 'user' ? 'var(--demo-user-bubble)' : 'var(--demo-surface)',
+                              border: message.role === 'user'
+                                ? '1px solid transparent'
+                                : `1px solid var(--demo-border)`,
+                              borderRadius: 'var(--demo-radius)',
+                              color: message.role === 'user' ? '#fff' : '#e5e5e5',
+                              transition: `background var(--demo-transition) ease, border-color var(--demo-transition) ease`,
+                            }}
+                          >
                            {message.role === 'user' ? (
                              <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap mb-2">{message.content}</p>
                            ) : (
