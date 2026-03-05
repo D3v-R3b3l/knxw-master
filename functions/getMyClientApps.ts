@@ -12,10 +12,10 @@ Deno.serve(async (req) => {
     // Use service role to fetch apps, then filter by ownership
     const allApps = await base44.asServiceRole.entities.ClientApp.list('-created_date', 100);
     
-    // Filter to only show user's non-demo apps (or all non-demo if admin)
+    // Filter to user's apps (include demo apps so seeded data shows on dashboard)
     const userApps = user.role === 'admin'
-      ? allApps.filter(app => !app.is_demo)
-      : allApps.filter(app => app.owner_id === user.id && !app.is_demo);
+      ? allApps
+      : allApps.filter(app => app.owner_id === user.id);
 
     return Response.json({ apps: userApps });
   } catch (err) {
