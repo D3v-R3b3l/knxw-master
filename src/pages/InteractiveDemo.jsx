@@ -520,11 +520,17 @@ export default function InteractiveDemoPage() {
                           )}
                           
                           <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3 ${
-                            message.role === 'user'
-                              ? 'bg-[#1e293b] text-white'
-                              : 'bg-[#262626] text-[#e5e5e5]'
+                           message.role === 'user'
+                             ? 'bg-[#1e293b] text-white'
+                             : 'bg-[#262626] text-[#e5e5e5]'
                           }`}>
-                            <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap mb-2">{message.content}</p>
+                           {message.role === 'user' ? (
+                             <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap mb-2">{message.content}</p>
+                           ) : (
+                             <div className="text-xs sm:text-sm leading-relaxed mb-2 prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0.5 [&_h1]:text-sm [&_h2]:text-sm [&_h3]:text-xs [&_strong]:text-white [&_code]:bg-[#1a1a1a] [&_code]:px-1 [&_code]:rounded [&_code]:text-[#00d4ff] [&_code]:text-[10px]">
+                               <ReactMarkdown>{message.content}</ReactMarkdown>
+                             </div>
+                           )}
                             
                             {/* Render Adaptive UI Elements */}
                             {message.role === 'assistant' && message.adaptiveElements && message.adaptiveElements.length > 0 && (
