@@ -547,17 +547,19 @@ export default function InteractiveDemoPage() {
                               />
                             )}
 
-                            {/* Render Adaptive UI Elements */}
+                            {/* Render Adaptive UI Elements - outside bubble, full width below */}
                             {message.role === 'assistant' && message.adaptiveElements && message.adaptiveElements.length > 0 && (
-                              <div className="mt-3 space-y-3 border-t border-[#2a2a2a] pt-3">
-                                <div className="flex items-center gap-1.5 mb-3">
+                              <div className="mt-4 -mx-3 sm:-mx-4">
+                                <div className="flex items-center gap-1.5 mb-3 px-1">
                                   <Sparkles className="w-3 h-3 text-[#00d4ff]" />
-                                  <span className="text-[10px] text-[#00d4ff] font-semibold uppercase tracking-wider">Adaptive UI Demo</span>
-                                  <span className="text-[9px] text-[#6b7280]">— elements below respond to your inferred profile</span>
+                                  <span className="text-[10px] text-[#00d4ff] font-semibold uppercase tracking-wider">Adaptive UI</span>
+                                  <span className="text-[9px] text-[#4b5563]">· responding to your inferred profile</span>
                                 </div>
-                                {message.adaptiveElements.filter(el => el && el.type).map((element, idx) => (
-                                  <AdaptiveElementRenderer key={idx} element={element} idx={idx} />
-                                ))}
+                                <div className="space-y-3">
+                                  {message.adaptiveElements.filter(el => el && el.type).map((element, elIdx) => (
+                                    <AdaptiveElementRenderer key={elIdx} element={element} idx={elIdx} totalCount={message.adaptiveElements.length} />
+                                  ))}
+                                </div>
                               </div>
                             )}
                           </div>
