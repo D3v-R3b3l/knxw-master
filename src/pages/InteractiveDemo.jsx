@@ -189,7 +189,7 @@ export default function InteractiveDemoPage() {
               <Target className="w-4 h-4 text-[#00d4ff]" />
               Cognitive Style
             </h4>
-            <Badge className="bg-[#00d4ff]/20 text-[#00d4ff] border-[#00d4ff]/30">
+            <Badge style={{ background: 'var(--demo-accent-muted)', color: 'var(--demo-accent)', border: '1px solid var(--demo-accent-border)' }}>
               {currentProfile.cognitive_style.style}
             </Badge>
             <div className="mt-2">
