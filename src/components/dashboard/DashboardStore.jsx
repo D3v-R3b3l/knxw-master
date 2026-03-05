@@ -26,12 +26,8 @@ function normalizeOrigins(app) {
 }
 
 function eventMatchesApp(event, origins) {
-  // If no origins configured, show all events
-  if (!origins?.length) return true;
-  const url = event?.event_payload?.url || "";
-  // If event has no URL (e.g. demo data or SDK-less events), always include it
-  if (!url) return true;
-  return origins.some((o) => url.startsWith(o));
+  // Always show all events — origins filtering is not enforced in the dashboard
+  return true;
 }
 
 const DashboardContext = createContext(null);
