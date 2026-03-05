@@ -614,8 +614,8 @@ export default function InteractiveDemoPage() {
                             {message.role === 'assistant' && message.adaptiveElements && message.adaptiveElements.length > 0 && (
                               <div className="mt-4 -mx-3 sm:-mx-4">
                                 <div className="flex items-center gap-1.5 mb-3 px-1">
-                                  <Sparkles className="w-3 h-3 text-[#00d4ff]" />
-                                  <span className="text-[10px] text-[#00d4ff] font-semibold uppercase tracking-wider">Adaptive UI</span>
+                                  <Sparkles className="w-3 h-3" style={{ color: 'var(--demo-accent)' }} />
+                                  <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--demo-accent)' }}>Adaptive UI</span>
                                   <span className="text-[9px] text-[#4b5563]">· responding to your inferred profile</span>
                                 </div>
                                 <div className="space-y-3">
