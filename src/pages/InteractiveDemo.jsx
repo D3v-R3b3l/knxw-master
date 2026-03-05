@@ -546,7 +546,10 @@ export default function InteractiveDemoPage() {
           /* Demo Interface */
           <div className="h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] flex relative">
             {/* Main Chat Interface */}
-            <div className="flex-1 flex flex-col w-full lg:border-r border-[#262626]">
+            <div
+              className="flex-1 flex flex-col w-full lg:border-r"
+              style={{ borderColor: 'var(--demo-border)', transition: `border-color var(--demo-transition) ease` }}
+            >
               {/* Messages Container */}
               <div className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
                 <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
