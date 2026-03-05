@@ -18,6 +18,8 @@ import { createPageUrl } from '@/utils';
 import ReactMarkdown from 'react-markdown';
 import ProfileFeedback from '@/components/demo/ProfileFeedback';
 import AdaptiveElementRenderer from '@/components/demo/AdaptiveElementRenderer';
+import { deriveTheme } from '@/components/demo/useDemoTheme';
+import DemoThemeIndicator from '@/components/demo/DemoThemeIndicator';
 
 export default function InteractiveDemoPage() {
   const [sessionId, setSessionId] = useState(null);
