@@ -800,7 +800,11 @@ export default function InteractiveDemoPage() {
                     animate={{ x: 0 }}
                     exit={{ x: '100%' }}
                     transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                    className="lg:hidden fixed right-0 top-0 bottom-0 w-[85vw] max-w-sm bg-[#0a0a0a] border-l border-[#262626] z-50 flex flex-col"
+                    className="lg:hidden fixed right-0 top-0 bottom-0 w-[85vw] max-w-sm border-l z-50 flex flex-col"
+                  style={{
+                    background: theme.sidebarGradient,
+                    borderColor: 'var(--demo-border)',
+                  }}
                   >
                     {/* Mobile Panel Header */}
                     <div className="px-4 py-3 border-b border-[#262626] flex-shrink-0">
