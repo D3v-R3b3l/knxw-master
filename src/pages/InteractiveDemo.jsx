@@ -401,7 +401,12 @@ export default function InteractiveDemoPage() {
                       onClick={() => setMobileAnalysisOpen(true)}
                       variant="outline"
                       size="sm"
-                      className={`lg:hidden border-[#00d4ff] text-[#00d4ff] hover:bg-[#00d4ff]/10 px-2 sm:px-3 ${messages.length > 1 && !mobileAnalysisOpen ? 'pulse-glow-animation' : ''}`}>
+                      style={{
+                        borderColor: 'var(--demo-accent)',
+                        color: 'var(--demo-accent)',
+                        borderRadius: 'var(--demo-radius)',
+                      }}
+                      className={`lg:hidden px-2 sm:px-3 ${messages.length > 1 && !mobileAnalysisOpen ? 'pulse-glow-animation' : ''}`}>
                       <Brain className="w-4 h-4" />
                     </Button>
 
