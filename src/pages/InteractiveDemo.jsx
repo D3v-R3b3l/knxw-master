@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AdaptiveUIShowcase from '@/components/sdk/AdaptiveUIShowcase';
 import { PsychographicProvider, AdaptiveButton, AdaptiveText, AdaptiveContainer } from '@/components/sdk/KnxwSDK';
 import { createPageUrl } from '@/utils';
+import ReactMarkdown from 'react-markdown';
 
 export default function InteractiveDemoPage() {
   const [sessionId, setSessionId] = useState(null);
