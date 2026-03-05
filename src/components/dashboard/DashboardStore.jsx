@@ -107,7 +107,8 @@ export function DashboardProvider({ children }) {
   useEffect(() => {
     const handleAppDeleted = async () => {
       try {
-        const list = await base44.entities.ClientApp.list("-created_date", 50);
+        const response = await getMyClientApps();
+        const list = response?.data?.apps || [];
         setApps(list || []);
         
         if (list && list.length > 0) {
