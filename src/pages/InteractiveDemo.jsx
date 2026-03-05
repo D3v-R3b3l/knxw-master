@@ -285,7 +285,7 @@ export default function InteractiveDemoPage() {
               <Eye className="w-4 h-4 text-[#ec4899]" />
               Remembered Preferences
             </h4>
-            <div className="bg-[#111111] border border-[#262626] rounded-lg p-3 space-y-2">
+            <div className="rounded-lg p-3 space-y-2" style={{ background: 'var(--demo-surface2)', border: '1px solid var(--demo-border)', borderRadius: 'var(--demo-radius)' }}>
               {currentProfile.user_preferences.industry_context && (
                 <p className="text-xs text-[#a3a3a3]"><strong className="text-white">Industry:</strong> {currentProfile.user_preferences.industry_context}</p>
               )}
