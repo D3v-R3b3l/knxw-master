@@ -537,6 +537,14 @@ export default function InteractiveDemoPage() {
                              </div>
                            )}
                             
+                            {/* Feedback for assistant messages (after first) */}
+                            {message.role === 'assistant' && message.id && !message.id.startsWith('init-') && !message.id.startsWith('err-') && (
+                              <ProfileFeedback
+                                messageId={message.id}
+                                onSubmit={(fb) => setPendingFeedback(fb)}
+                              />
+                            )}
+
                             {/* Render Adaptive UI Elements */}
                             {message.role === 'assistant' && message.adaptiveElements && message.adaptiveElements.length > 0 && (
                               <div className="mt-3 space-y-3 border-t border-[#404040] pt-3">
