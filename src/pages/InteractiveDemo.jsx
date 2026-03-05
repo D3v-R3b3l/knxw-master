@@ -90,7 +90,7 @@ export default function InteractiveDemoPage() {
         current_profile: currentProfile
       });
       
-      const { assistant_message, adaptive_ui_elements, current_profile } = response.data;
+      const { assistant_message, adaptive_ui_elements, current_profile: updatedProfile } = response.data;
       
       setMessages(prev => [...prev, { 
         id: `asst-${Date.now()}`,
@@ -99,8 +99,8 @@ export default function InteractiveDemoPage() {
         adaptiveElements: adaptive_ui_elements || []
       }]);
 
-      if (current_profile) {
-        setCurrentProfile(current_profile);
+      if (updatedProfile) {
+        setCurrentProfile(updatedProfile);
       }
 
     } catch (error) {
