@@ -716,12 +716,27 @@ export default function InteractiveDemoPage() {
                     onKeyDown={handleKeyPress}
                     placeholder="Type your message..."
                     disabled={loading}
-                    className="flex-1 bg-[#111111] border-[#262626] text-white placeholder:text-[#6b7280] focus:border-[#00d4ff] text-sm"
+                    className="flex-1 text-white placeholder:text-[#6b7280] text-sm"
+                    style={{
+                      background: 'var(--demo-surface)',
+                      border: `1px solid var(--demo-border)`,
+                      borderRadius: 'var(--demo-radius)',
+                      transition: `all var(--demo-transition) ease`,
+                    }}
+                    onFocus={e => { e.currentTarget.style.borderColor = 'var(--demo-accent-border)'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = 'var(--demo-border)'; }}
                   />
                   <Button
                     onClick={sendMessage}
                     disabled={loading || !input.trim()}
-                    className="bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white flex-shrink-0 px-3 sm:px-4">
+                    style={{
+                      background: 'var(--demo-accent)',
+                      color: '#0a0a0a',
+                      borderRadius: 'var(--demo-radius)',
+                      boxShadow: `0 0 16px var(--demo-accent-glow)`,
+                      transition: `all var(--demo-transition) ease`,
+                    }}
+                    className="flex-shrink-0 px-3 sm:px-4">
                     {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
