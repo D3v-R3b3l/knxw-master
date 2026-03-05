@@ -807,10 +807,10 @@ export default function InteractiveDemoPage() {
                   }}
                   >
                     {/* Mobile Panel Header */}
-                    <div className="px-4 py-3 border-b border-[#262626] flex-shrink-0">
+                    <div className="px-4 py-3 border-b flex-shrink-0" style={{ borderColor: 'var(--demo-border)' }}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <Brain className="w-5 h-5 text-[#00d4ff]" />
+                          <Brain className="w-5 h-5" style={{ color: 'var(--demo-accent)' }} />
                           <h3 className="font-semibold text-white text-sm">Live Analysis</h3>
                         </div>
                         <button
