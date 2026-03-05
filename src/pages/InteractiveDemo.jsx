@@ -16,6 +16,7 @@ import { PsychographicProvider, AdaptiveButton, AdaptiveText, AdaptiveContainer 
 import { createPageUrl } from '@/utils';
 import ReactMarkdown from 'react-markdown';
 import ProfileFeedback from '@/components/demo/ProfileFeedback';
+import AdaptiveElementRenderer from '@/components/demo/AdaptiveElementRenderer';
 
 export default function InteractiveDemoPage() {
   const [sessionId, setSessionId] = useState(null);
