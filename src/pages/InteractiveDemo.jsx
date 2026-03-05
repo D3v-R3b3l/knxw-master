@@ -89,8 +89,10 @@ export default function InteractiveDemoPage() {
         session_id: sessionId,
         content: userMessageContent,
         history: historyPayload,
-        current_profile: currentProfile
+        current_profile: currentProfile,
+        feedback: pendingFeedback || null
       });
+      setPendingFeedback(null);
       
       const { assistant_message, adaptive_ui_elements, current_profile: updatedProfile } = response.data;
       
