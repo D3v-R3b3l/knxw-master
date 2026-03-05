@@ -704,7 +704,10 @@ export default function InteractiveDemoPage() {
               )}
 
               {/* Input Area - Mobile Optimized */}
-              <div className="border-t border-[#262626] px-3 sm:px-6 lg:px-8 py-3 sm:py-4 bg-[#0a0a0a]">
+              <div
+                className="border-t px-3 sm:px-6 lg:px-8 py-3 sm:py-4"
+                style={{ borderColor: 'var(--demo-border)', background: 'var(--demo-bg-from)' }}
+              >
                 <div className="max-w-3xl mx-auto flex gap-2 sm:gap-3">
                   <Input
                     ref={inputRef}
