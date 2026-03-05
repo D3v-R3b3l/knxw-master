@@ -668,7 +668,10 @@ export default function InteractiveDemoPage() {
 
               {/* Suggested Prompts - Mobile Optimized */}
               {messages.length <= 1 && (
-                <div className="border-t border-[#262626] px-3 sm:px-6 lg:px-8 py-2 sm:py-3 bg-[#0a0a0a]">
+                <div
+                  className="border-t px-3 sm:px-6 lg:px-8 py-2 sm:py-3"
+                  style={{ borderColor: 'var(--demo-border)', background: 'var(--demo-bg-from)' }}
+                >
                   <div className="max-w-3xl mx-auto">
                     <p className="text-[10px] sm:text-xs text-[#a3a3a3] mb-2">Try asking about:</p>
                     <div className="flex flex-wrap gap-1 sm:gap-2">
