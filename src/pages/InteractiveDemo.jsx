@@ -27,6 +27,7 @@ export default function InteractiveDemoPage() {
   const [profileExpanded, setProfileExpanded] = useState(true);
   const [mobileAnalysisOpen, setMobileAnalysisOpen] = useState(false);
   const [showAdaptiveUI, setShowAdaptiveUI] = useState(false);
+  const [pendingFeedback, setPendingFeedback] = useState(null); // feedback to send on next message
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
