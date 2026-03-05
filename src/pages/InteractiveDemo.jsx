@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Brain, Sparkles, TrendingUp, Target, Zap, Send, RotateCcw, Loader2, Lightbulb,
-  ChevronDown, Eye, ArrowRight, User, Menu, X, Code2, ExternalLink, AlertCircle
+  Brain, Sparkles, Send, RotateCcw, Loader2,
+  ChevronDown, Eye, ArrowRight, User, X, Code2,
+  TrendingUp, Target, Zap, Lightbulb
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import SEOHead from '@/components/system/SEOHead';
