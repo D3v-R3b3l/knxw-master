@@ -311,8 +311,8 @@ export default function InteractiveDemoPage() {
             </h4>
             <div className="space-y-2">
               {currentProfile.reasoning.slice(0, 3).map((reason, idx) => (
-                <div key={idx} className="bg-[#111111] border border-[#262626] rounded-lg p-3">
-                  <p className="text-xs font-semibold text-[#00d4ff] mb-1 capitalize">
+                <div key={idx} className="rounded-lg p-3" style={{ background: 'var(--demo-surface2)', border: '1px solid var(--demo-border)', borderRadius: 'var(--demo-radius)' }}>
+                  <p className="text-xs font-semibold mb-1 capitalize" style={{ color: 'var(--demo-accent)' }}>
                     {reason.trait}
                   </p>
                   <p className="text-xs text-[#a3a3a3] leading-relaxed">
