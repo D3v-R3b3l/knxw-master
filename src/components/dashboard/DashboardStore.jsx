@@ -128,6 +128,32 @@ export function DashboardProvider({ children }) {
     return () => window.removeEventListener('knxw-app-deleted', handleAppDeleted);
   }, [selectedAppId, selectApp]);
 
+  // Listen for demo data seeded — reload apps then data
+  useEffect(() => {
+    const handleDemoSeeded = async () => {
+      try {
+        const response = await getMyClientApps();
+        const list = response?.data?.apps || [];
+        setApps(list);
+        // Select the first app (the new demo app) and trigger data load
+        const firstId = list?.[0]?.id || null;
+        if (firstId) {
+          const app = list.find(a => a.id === firstId);
+          setSelectedAppId(firstId);
+          try { localStorage.setItem(LS_SELECTED_APP, firstId); } catch {}
+          setAppOrigins(normalizeOrigins(app));
+          globalLoadState.lastLoadedAppId = null;
+          globalLoadState.lastLoadTime = 0;
+        }
+      } catch (e) {
+        logger.warn("Failed to refresh apps after demo seed:", e);
+      }
+    };
+
+    window.addEventListener('knxw-demo-data-seeded', handleDemoSeeded);
+    return () => window.removeEventListener('knxw-demo-data-seeded', handleDemoSeeded);
+  }, []);
+
   // Ensure a ClientApp is selected (no auto-creation)
   useEffect(() => {
     if (selectedAppId) return;
