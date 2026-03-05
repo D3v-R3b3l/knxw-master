@@ -1,7 +1,5 @@
 // Demo message handler - works for anonymous users
-// Uses createClientFromRequest and asServiceRole for LLM access
-
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -16,94 +14,121 @@ Deno.serve(async (req) => {
 
   try {
     const data = await req.json();
-    const { session_id, content, history = [], current_profile = null } = data;
+    const { session_id, content, history = [], current_profile = null, feedback = null } = data;
 
     if (!session_id || !content) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Missing session_id or content'
-      }), {
+      return new Response(JSON.stringify({ success: false, error: 'Missing session_id or content' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
       });
     }
 
-    // Initialize SDK from request
     const base44 = createClientFromRequest(req);
-    
-    // Use service role if available (for anonymous users), otherwise fallback to base44 (authenticated user)
     const client = base44.asServiceRole || base44;
 
     const historyText = history
       .map(m => {
         let text = (m.role === 'user' ? 'User' : 'Assistant') + ': ' + m.content;
         if (m.adaptive_ui_elements && m.adaptive_ui_elements.length > 0) {
-            text += '\n[Rendered UI Elements: ' + JSON.stringify(m.adaptive_ui_elements.map(e => ({type: e.type, accentColor: e.accentColor, visualStyle: e.visualStyle}))) + ']';
+          text += '\n[Rendered UI Types: ' + m.adaptive_ui_elements.map(e => e.type).join(', ') + ']';
         }
         return text;
       })
       .concat([`User: ${content}`])
       .join('\n');
 
-    let profileContext = '';
-    if (current_profile) {
-      profileContext = '\nCURRENT PROFILE & PREFERENCES: ' + JSON.stringify(current_profile);
-    }
+    const profileContext = current_profile
+      ? '\n\nCURRENT INFERRED PROFILE (carry all fields forward, update with new evidence):\n' + JSON.stringify(current_profile, null, 2)
+      : '';
 
-    const prompt = `You are knXw's psychographic AI assistant conducting a live demo showcasing Adaptive UI capabilities.
+    const feedbackContext = feedback
+      ? `\n\nUSER FEEDBACK ON LAST RESPONSE:\n- Profile accuracy: ${feedback.profile_rating}/5\n- UI relevance: ${feedback.ui_rating}/5\n- Comment: "${feedback.comment || 'none'}"\nADJUST your next inference to address this feedback directly.`
+      : '';
+
+    const prompt = `You are knXw's psychographic AI conducting a live product demo. Your dual job:
+1. Have a genuinely helpful, specific conversation responding to the user's actual question.
+2. Continuously infer and maintain a complete psychographic profile from their language, concerns, and framing.
 
 CONVERSATION:
 ${historyText}
 ${profileContext}
+${feedbackContext}
 
-TASK: 
-1. Respond directly and specifically to the user's latest message. If they are skeptical or challenge you, playfully prove them wrong by generating highly specific UI elements that demonstrate the system reacting instantly to their words and stated preferences.
-2. Analyze their psychographic profile from the conversation.
-3. Extract and update their explicit 'user_preferences' (colors they hate/love, UI styles they prefer, their industry).
-4. Return all confidence values between 0.0 and 1.0.
-5. CRITICAL: Include 2-4 adaptive_ui_elements that demonstrate how UI adapts to their psychology AND strictly adheres to their user_preferences.
+═══════════════════════════════════════════════
+PSYCHOGRAPHIC INFERENCE RULES (MANDATORY):
+═══════════════════════════════════════════════
 
-ADAPTIVE UI GUIDELINES:
-1. ALWAYS generate 2-4 adaptive elements per response showing DIFFERENT types.
-2. Make elements INDUSTRY-SPECIFIC (gaming, ecommerce, saas, dashboard, mobile, etc.) based on user_preferences or conversation context.
-3. Elements MUST adapt in MULTIPLE WAYS: text, urgency, visual emphasis, and color.
-4. Show DRAMATIC differences between conservative vs aggressive variants.
-5. STRICTLY ADHERE to user preferences. If they hate a color (e.g., red, blue, bright colors), NEVER use it in accentColor. Pick an 'accentColor' (hex) that completely avoids their disliked colors. If they prefer a style (e.g., minimal), favor that visualStyle.
-6. Remember past interactions. Use the CURRENT PROFILE & PREFERENCES to maintain continuity and show that you remember!
+A. ALWAYS return ALL of the following profile fields in every response. Never omit or null any field:
+   - motivation_stack: 3-5 labeled motivations with weights 0.0-1.0 (must sum ~1.0). Infer from HOW they speak, not just what industry they're in. Labels: achievement, security, innovation, autonomy, mastery, social, efficiency, status, impact, curiosity.
+   - emotional_state: { mood, confidence (0.0-1.0) }. Mood options: positive, neutral, negative, excited, anxious, confident, uncertain, frustrated.
+   - cognitive_style: { style, confidence (0.0-1.0) }. Style options: analytical, intuitive, systematic, creative, pragmatic, strategic.
+   - risk_profile: { profile, confidence (0.0-1.0) }. Profile options: conservative, moderate, aggressive.
+   - personality_traits: ALL FIVE of openness, conscientiousness, extraversion, agreeableness, neuroticism — each 0.0-1.0.
+   - overall_confidence: weighted average of individual confidences.
+   - reasoning: 3-5 items mapping trait → specific evidence from their exact words.
+   - user_preferences: industry_context (only if explicitly stated or strongly implied), colors_preferred, colors_disliked, ui_style_preferences.
 
-ELEMENT TYPES & USE CASES (Mix and match these for variety):
-- button: CTAs that adapt text/urgency
-- card: Sleek feature/content cards
-- toast: Contextual nudges/tips
-- modal: Decision prompts or dialogs
-- dashboard_widget: Data visualization or metric cards for SaaS
-- ecommerce_item: Product displays with adaptive pricing/urgency cues
-- game_hud: In-game overlay elements like health/quest trackers
+B. CONFIDENCE CALIBRATION:
+   - First message: overall_confidence 0.25-0.45. Individual traits 0.2-0.5.
+   - Second message: 0.45-0.65. Traits 0.4-0.65.
+   - Third+ messages: 0.65-0.90 if enough signal.
+   - NEVER default to 0.5 across the board — differentiate traits based on actual evidence.
+   - If a trait has strong signal (e.g., they used risk-averse language), that specific confidence should be 0.70+.
 
-INDUSTRY EXAMPLES:
-E-commerce: 
-  - Achievement: "Unlock Premium Status", "Join Top 10% of Shoppers"
-  - Security: "Risk-Free Returns", "Trusted by 1M+ Customers"
-  - Innovation: "Be First to Access New Arrivals"
+C. INDUSTRY CONTEXT RULE:
+   - DO NOT assume SaaS/B2B unless they explicitly say it.
+   - If industry is unclear, set industry_context to null and ASK a natural clarifying question in your response.
+   - Only set industry_context when there is explicit or very strong implicit evidence.
 
-SaaS/B2B:
-  - Analytical: "View Technical Specs", "Download Performance Report"
-  - Pragmatic: "Quick 5-Min Setup", "Start Immediately"
-  - Strategic: "Schedule Strategy Session", "See ROI Calculator"
+D. PROFILE CONTINUITY:
+   - If CURRENT INFERRED PROFILE exists, carry ALL previous values forward as a baseline.
+   - Only update a field if new evidence supports a change. Never regress to defaults.
+   - Personality traits especially should evolve slowly and persistently.
 
-Gaming:
-  - Mastery: "Climb Leaderboard", "Unlock Achievement"
-  - Social: "Invite Friends", "Join Team"
-  - Exploration: "Discover Hidden Areas"
+═══════════════════════════════════════════════
+ADAPTIVE UI GENERATION RULES (MANDATORY):
+═══════════════════════════════════════════════
 
-Finance:
-  - Conservative: "FDIC Insured", "Guaranteed Returns"
-  - Moderate: "Balanced Portfolio", "Diversified Approach"
-  - Aggressive: "High Growth Potential", "Maximize Returns"
+Generate EXACTLY 3-4 adaptive_ui_elements per response. Rules:
 
-Make every element feel native to the user's stated industry/context.`;
+1. MULTI-DIMENSIONAL ADAPTATION: Each element must respond to at least 2 psychographic dimensions simultaneously (e.g., risk_profile + cognitive_style, or motivation + emotional_state).
 
-    // Call LLM using the appropriate client
+2. ELEMENT TYPE VARIETY: Use a different mix each response. Available types:
+   - button: Adapting CTA text based on motivation + risk
+   - card: Content card adapting headline/description based on cognitive style + motivation
+   - toast: Nudge/tip adapting urgency and framing based on emotional state + risk
+   - modal: Decision prompt adapting framing based on risk profile + cognitive style
+   - dashboard_widget: Metric display adapting label/focus based on motivation
+   - ecommerce_item: Product display adapting urgency cue based on risk + motivation
+   - game_hud: In-game overlay adapting challenge framing based on personality traits
+
+3. EXPLICIT VARIANT POPULATIONS: For EVERY element, populate ALL of these variant fields with DISTINCT, meaningfully different text:
+   - motivationVariants: achievement, security, innovation, autonomy, mastery, social
+   - riskVariants: conservative, moderate, aggressive
+   - cognitiveStyleVariants: analytical, intuitive, pragmatic, strategic
+
+4. INDUSTRY FIDELITY: industryContext must match what the user actually said. If unknown, use a plausible neutral context like "General" or ask them.
+
+5. COLOR & STYLE: accentColor must be a valid hex. NEVER use colors in user_preferences.colors_disliked. Derive visual style from cognitive_style: analytical→minimal, creative→bold, systematic→standard, intuitive→animated.
+
+6. URGENCY: Derive urgencyLevel from emotional_state.mood: anxious/frustrated→high, excited→medium, confident→low, uncertain→medium.
+
+INDUSTRY VARIANT EXAMPLES (use as reference, not defaults):
+- E-commerce → achievement: "Join Top 10% of Buyers", security: "Risk-Free 30-Day Returns", innovation: "Shop New Arrivals First"
+- Finance → conservative: "FDIC-Insured, Guaranteed Growth", moderate: "Balanced Portfolio Strategy", aggressive: "Maximize Market Exposure"
+- Healthcare → achievement: "Hit Your Health Milestones", security: "Clinically Validated Protocol", innovation: "Cutting-Edge Treatment Options"
+- Real Estate → conservative: "Stable Long-Term Investment", moderate: "Balanced Market Entry", aggressive: "High-Growth Opportunity Zone"
+- Gaming → mastery: "Unlock Elite Tier", social: "Invite Your Squad", exploration: "Discover Hidden Zones"
+- Legal/Professional → analytical: "Review Full Case Precedent", systematic: "Structured Compliance Framework", strategic: "Optimize Regulatory Positioning"
+
+═══════════════════════════════════════════════
+RESPONSE TONE:
+═══════════════════════════════════════════════
+- Answer the user's actual question specifically and helpfully. Don't be vague.
+- When industry is unknown, weave in a natural clarifying question ("Are you building for consumers, businesses, or something else?").
+- When user is skeptical, show don't tell — generate elements that directly reflect their stated words.
+- Keep the assistant_response concise (3-5 sentences max). The UI elements do the demonstrating.`;
+
     const llmResponse = await client.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
@@ -119,53 +144,32 @@ Make every element feel native to the user's stated industry/context.`;
                 baseText: { type: 'string' },
                 baseHeadline: { type: 'string' },
                 baseDescription: { type: 'string' },
-                accentColor: { type: 'string', description: 'Hex code for accent color, MUST avoid colors user dislikes.' },
+                accentColor: { type: 'string' },
                 metrics: {
                   type: 'object',
-                  properties: {
-                    label: { type: 'string' },
-                    value: { type: 'string' },
-                    trend: { type: 'string' }
-                  },
-                  description: 'Used for dashboard_widget type'
+                  properties: { label: { type: 'string' }, value: { type: 'string' }, trend: { type: 'string' } }
                 },
                 productDetails: {
                   type: 'object',
-                  properties: {
-                    price: { type: 'string' },
-                    urgencyTag: { type: 'string' }
-                  },
-                  description: 'Used for ecommerce_item type'
+                  properties: { price: { type: 'string' }, urgencyTag: { type: 'string' } }
                 },
-                motivationVariants: { 
+                motivationVariants: {
                   type: 'object',
                   properties: {
-                    achievement: { type: 'string' },
-                    security: { type: 'string' },
-                    innovation: { type: 'string' },
-                    autonomy: { type: 'string' },
-                    mastery: { type: 'string' },
-                    social: { type: 'string' }
+                    achievement: { type: 'string' }, security: { type: 'string' },
+                    innovation: { type: 'string' }, autonomy: { type: 'string' },
+                    mastery: { type: 'string' }, social: { type: 'string' }
                   }
                 },
                 riskVariants: {
                   type: 'object',
-                  properties: {
-                    conservative: { type: 'string' },
-                    moderate: { type: 'string' },
-                    aggressive: { type: 'string' }
-                  }
+                  properties: { conservative: { type: 'string' }, moderate: { type: 'string' }, aggressive: { type: 'string' } }
                 },
                 cognitiveStyleVariants: {
                   type: 'object',
-                  properties: {
-                    analytical: { type: 'string' },
-                    intuitive: { type: 'string' },
-                    pragmatic: { type: 'string' },
-                    strategic: { type: 'string' }
-                  }
+                  properties: { analytical: { type: 'string' }, intuitive: { type: 'string' }, pragmatic: { type: 'string' }, strategic: { type: 'string' } }
                 },
-                showFor: { 
+                showFor: {
                   type: 'object',
                   properties: {
                     motivations: { type: 'array', items: { type: 'string' } },
@@ -173,7 +177,7 @@ Make every element feel native to the user's stated industry/context.`;
                     cognitiveStyle: { type: 'string' }
                   }
                 },
-                hideFor: { 
+                hideFor: {
                   type: 'object',
                   properties: {
                     motivations: { type: 'array', items: { type: 'string' } },
@@ -183,61 +187,37 @@ Make every element feel native to the user's stated industry/context.`;
                 industryContext: { type: 'string' },
                 urgencyLevel: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
                 visualStyle: { type: 'string', enum: ['minimal', 'standard', 'bold', 'animated'] },
-                iconSuggestion: { type: 'string' },
                 colorScheme: { type: 'string', enum: ['primary', 'success', 'warning', 'info', 'danger'] }
               }
             }
           },
-          motivation_stack: { 
-            type: 'array', 
-            items: { 
-              type: 'object', 
-              properties: { 
-                label: { type: 'string' }, 
-                weight: { type: 'number' }
-              } 
-            } 
+          motivation_stack: {
+            type: 'array',
+            items: { type: 'object', properties: { label: { type: 'string' }, weight: { type: 'number' } } }
           },
-          emotional_state: { 
-            type: 'object', 
-            properties: { 
-              mood: { type: 'string' }, 
-              confidence: { type: 'number' }
-            } 
+          emotional_state: {
+            type: 'object',
+            properties: { mood: { type: 'string' }, confidence: { type: 'number' } }
           },
-          cognitive_style: { 
-            type: 'object', 
-            properties: { 
-              style: { type: 'string' }, 
-              confidence: { type: 'number' } 
-            } 
+          cognitive_style: {
+            type: 'object',
+            properties: { style: { type: 'string' }, confidence: { type: 'number' } }
           },
-          risk_profile: { 
-            type: 'object', 
-            properties: { 
-              profile: { type: 'string' }, 
-              confidence: { type: 'number' } 
-            } 
+          risk_profile: {
+            type: 'object',
+            properties: { profile: { type: 'string' }, confidence: { type: 'number' } }
           },
-          personality_traits: { 
-            type: 'object', 
-            properties: { 
-              openness: { type: 'number' }, 
-              conscientiousness: { type: 'number' }, 
-              extraversion: { type: 'number' }, 
-              agreeableness: { type: 'number' }, 
-              neuroticism: { type: 'number' } 
-            } 
+          personality_traits: {
+            type: 'object',
+            properties: {
+              openness: { type: 'number' }, conscientiousness: { type: 'number' },
+              extraversion: { type: 'number' }, agreeableness: { type: 'number' },
+              neuroticism: { type: 'number' }
+            }
           },
-          reasoning: { 
-            type: 'array', 
-            items: { 
-              type: 'object', 
-              properties: { 
-                trait: { type: 'string' }, 
-                inference: { type: 'string' }
-              } 
-            } 
+          reasoning: {
+            type: 'array',
+            items: { type: 'object', properties: { trait: { type: 'string' }, inference: { type: 'string' } } }
           },
           user_preferences: {
             type: 'object',
@@ -250,19 +230,37 @@ Make every element feel native to the user's stated industry/context.`;
           },
           overall_confidence: { type: 'number' }
         },
-        required: ['assistant_response', 'adaptive_ui_elements', 'overall_confidence']
+        required: ['assistant_response', 'adaptive_ui_elements', 'motivation_stack', 'emotional_state', 'cognitive_style', 'risk_profile', 'personality_traits', 'reasoning', 'overall_confidence']
       }
     });
 
+    // Merge with previous profile to ensure continuity — never regress fields to empty
+    const prevProfile = current_profile || {};
     const updatedProfile = {
-      motivation_stack: llmResponse.motivation_stack || [],
-      emotional_state: llmResponse.emotional_state || {},
-      cognitive_style: llmResponse.cognitive_style || {},
-      risk_profile: llmResponse.risk_profile || {},
-      personality_traits: llmResponse.personality_traits || {},
-      reasoning: llmResponse.reasoning || [],
-      user_preferences: llmResponse.user_preferences || current_profile?.user_preferences || {},
-      overall_confidence: llmResponse.overall_confidence || 0.5
+      motivation_stack: llmResponse.motivation_stack?.length > 0 ? llmResponse.motivation_stack : (prevProfile.motivation_stack || []),
+      emotional_state: (llmResponse.emotional_state?.mood) ? llmResponse.emotional_state : (prevProfile.emotional_state || {}),
+      cognitive_style: (llmResponse.cognitive_style?.style) ? llmResponse.cognitive_style : (prevProfile.cognitive_style || {}),
+      risk_profile: (llmResponse.risk_profile?.profile) ? llmResponse.risk_profile : (prevProfile.risk_profile || {}),
+      personality_traits: (llmResponse.personality_traits && Object.keys(llmResponse.personality_traits).length > 0) ? llmResponse.personality_traits : (prevProfile.personality_traits || {}),
+      reasoning: llmResponse.reasoning?.length > 0 ? llmResponse.reasoning : (prevProfile.reasoning || []),
+      user_preferences: {
+        ...(prevProfile.user_preferences || {}),
+        ...(llmResponse.user_preferences || {}),
+        // Preserve industry_context from previous if new one is null/empty
+        industry_context: llmResponse.user_preferences?.industry_context || prevProfile.user_preferences?.industry_context || null,
+        // Merge color arrays, don't overwrite with empty
+        colors_disliked: llmResponse.user_preferences?.colors_disliked?.length > 0
+          ? llmResponse.user_preferences.colors_disliked
+          : (prevProfile.user_preferences?.colors_disliked || []),
+        colors_preferred: llmResponse.user_preferences?.colors_preferred?.length > 0
+          ? llmResponse.user_preferences.colors_preferred
+          : (prevProfile.user_preferences?.colors_preferred || []),
+        ui_style_preferences: llmResponse.user_preferences?.ui_style_preferences?.length > 0
+          ? llmResponse.user_preferences.ui_style_preferences
+          : (prevProfile.user_preferences?.ui_style_preferences || []),
+      },
+      overall_confidence: llmResponse.overall_confidence || prevProfile.overall_confidence || 0.3,
+      turn_count: (prevProfile.turn_count || 0) + 1
     };
 
     return new Response(JSON.stringify({
