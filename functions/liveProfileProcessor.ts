@@ -1,5 +1,4 @@
-
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 import { fuseLayers } from './utils/fusion.js';
 import { predict as mlPredict } from './services/mlPredict.js';
 
