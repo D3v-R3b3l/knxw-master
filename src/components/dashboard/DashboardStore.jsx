@@ -65,14 +65,15 @@ export function DashboardProvider({ children }) {
     return s;
   }, [events]);
 
-  // Load apps once
+  // Load apps once — scoped to current user via backend function
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const list = await base44.entities.ClientApp.list("-created_date", 50);
+        const response = await getMyClientApps();
+        const list = response?.data?.apps || [];
         if (!mounted) return;
-        setApps(list || []);
+        setApps(list);
         const fromLs = (() => {
           try { return localStorage.getItem(LS_SELECTED_APP); } catch { return null; }
         })();
