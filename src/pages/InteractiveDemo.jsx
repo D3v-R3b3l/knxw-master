@@ -748,11 +748,21 @@ export default function InteractiveDemoPage() {
             </div>
 
             {/* Desktop Sidebar */}
-            <div className="w-[400px] flex-shrink-0 flex-col bg-[#0a0a0a] border-l border-[#262626] hidden lg:flex">
-              <div className="px-6 py-4 border-b border-[#262626] flex-shrink-0">
+            <div
+              className="w-[400px] flex-shrink-0 flex-col border-l hidden lg:flex"
+              style={{
+                background: theme.sidebarGradient,
+                borderColor: 'var(--demo-border)',
+                transition: `all var(--demo-transition) ease`,
+              }}
+            >
+              <div
+                className="px-6 py-4 border-b flex-shrink-0"
+                style={{ borderColor: 'var(--demo-border)' }}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Brain className="w-5 h-5 text-[#00d4ff]" />
+                    <Brain className="w-5 h-5" style={{ color: 'var(--demo-accent)' }} />
                     <h3 className="font-semibold text-white">Live Psychographic Analysis</h3>
                   </div>
                   <button
