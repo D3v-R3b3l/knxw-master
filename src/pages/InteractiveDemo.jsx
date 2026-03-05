@@ -349,9 +349,28 @@ export default function InteractiveDemoPage() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] text-white">
+      <div
+        className="min-h-screen text-white"
+        style={{
+          ...theme.cssVars,
+          background: `linear-gradient(135deg, var(--demo-bg-from), var(--demo-bg-via), var(--demo-bg-to))`,
+          fontWeight: theme.cog.fontWeight,
+          letterSpacing: theme.cog.letterSpacing,
+          transition: `background ${theme.anim.duration} ease`,
+        }}
+      >
+        <DemoThemeIndicator theme={theme} profile={currentProfile} />
+
         {/* Header - Mobile Optimized */}
-        <div className="border-b border-[#262626] bg-[#0a0a0a]/80 backdrop-blur-xl sticky top-0 z-50">
+        <div
+          className="border-b sticky top-0 z-50"
+          style={{
+            borderColor: 'var(--demo-border)',
+            background: `hsla(0,0%,4%, 0.85)`,
+            backdropFilter: `blur(var(--demo-blur))`,
+            transition: `border-color var(--demo-transition) ease, backdrop-filter var(--demo-transition) ease`,
+          }}
+        >
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3">
             <div className="flex items-center justify-between gap-2">
               {/* Logo Section */}
