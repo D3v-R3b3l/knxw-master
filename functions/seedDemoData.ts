@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 import { faker } from 'npm:@faker-js/faker@8.4.1';
 
 // This function is a redirect to seedRealisticDemoData for backwards compatibility.
