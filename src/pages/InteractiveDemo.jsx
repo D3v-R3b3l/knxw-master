@@ -211,7 +211,7 @@ export default function InteractiveDemoPage() {
               <TrendingUp className="w-4 h-4 text-[#8b5cf6]" />
               Risk Profile
             </h4>
-            <Badge className="bg-[#8b5cf6]/20 text-[#8b5cf6] border-[#8b5cf6]/30">
+            <Badge style={{ background: 'var(--demo-accent-muted)', color: 'var(--demo-accent)', border: '1px solid var(--demo-accent-border)' }}>
               {currentProfile.risk_profile.profile}
             </Badge>
             <div className="mt-2">
