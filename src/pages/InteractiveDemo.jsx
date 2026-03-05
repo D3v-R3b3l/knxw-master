@@ -375,7 +375,15 @@ export default function InteractiveDemoPage() {
             <div className="flex items-center justify-between gap-2">
               {/* Logo Section */}
               <div className="flex items-center gap-2 min-w-0 flex-shrink">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                <div
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: `linear-gradient(135deg, var(--demo-accent), var(--demo-accent))`,
+                    borderRadius: 'var(--demo-radius)',
+                    boxShadow: `0 0 16px var(--demo-accent-glow)`,
+                    transition: `all var(--demo-transition) ease`,
+                  }}
+                >
                   <Brain className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="min-w-0">
