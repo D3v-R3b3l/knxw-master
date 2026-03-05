@@ -172,7 +172,7 @@ export default function InteractiveDemoPage() {
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-[#a3a3a3] font-medium">OVERALL CONFIDENCE</span>
-            <span className="text-sm font-bold text-[#00d4ff]">
+            <span className="text-sm font-bold" style={{ color: 'var(--demo-accent)' }}>
               {normalizeScore(currentProfile.overall_confidence)}%
             </span>
           </div>
