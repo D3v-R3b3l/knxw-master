@@ -125,6 +125,7 @@ import documentation from './pages/documentation';
 import landing from './pages/landing';
 import lowdown from './pages/lowdown';
 import settings from './pages/settings';
+import OptimizationAnalytics from './pages/OptimizationAnalytics';
 import __Layout from './Layout.jsx';
 
 
@@ -207,6 +208,7 @@ export const PAGES = {
     "landing": landing,
     "lowdown": lowdown,
     "settings": settings,
+    "OptimizationAnalytics": OptimizationAnalytics,
 }
 
 export const pagesConfig = {
