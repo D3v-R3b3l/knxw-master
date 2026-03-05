@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useRef, useState,
 import { base44 } from "@/api/base44Client";
 import { callWithRetry } from "@/components/system/apiRetry";
 import logger from "@/components/system/logger";
+import { getMyClientApps } from "@/functions/getMyClientApps";
 
 // Helpers
 const LS_SELECTED_APP = "knxw_selected_app_id";
