@@ -679,7 +679,22 @@ export default function InteractiveDemoPage() {
                         <button
                           key={idx}
                           onClick={() => applySuggestion(prompt)}
-                          className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-[#262626] bg-[#111111] hover:bg-[#1a1a1a] hover:border-[#00d4ff]/50 transition-colors text-[#e5e5e5]">
+                          className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 text-[#e5e5e5] transition-all"
+                          style={{
+                            border: '1px solid var(--demo-border)',
+                            background: 'var(--demo-surface)',
+                            borderRadius: 'calc(var(--demo-radius) * 2)',
+                            transition: `all var(--demo-transition) ease`,
+                          }}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.borderColor = 'var(--demo-accent-border)';
+                            e.currentTarget.style.background = 'var(--demo-accent-muted)';
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.borderColor = 'var(--demo-border)';
+                            e.currentTarget.style.background = 'var(--demo-surface)';
+                          }}
+                        >
                           {prompt}
                         </button>
                       ))}
