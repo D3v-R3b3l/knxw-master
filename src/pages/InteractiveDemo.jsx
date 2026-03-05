@@ -651,7 +651,7 @@ export default function InteractiveDemoPage() {
 
                     {/* Mobile Panel Content */}
                     <div className="flex-1 overflow-y-auto px-4 py-4">
-                      <ProfileAnalysisContent />
+                      <ProfileAnalysisContent currentProfile={currentProfile} profileExpanded={profileExpanded} />
                     </div>
                   </motion.div>
                 </>
