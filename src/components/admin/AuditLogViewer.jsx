@@ -64,9 +64,9 @@ export default function AuditLogViewer() {
                   <div className="text-white text-sm font-medium">{l.action}</div>
                   <div className="text-xs text-[#a3a3a3]">{new Date(l.created_date).toLocaleString()}</div>
                 </div>
-                <div className="text-xs text-[#a3a3a3]">{l.actor_email} • {l.ip || "N/A"}</div>
-                {l.target_type || l.target_id ? (
-                  <div className="text-xs text-[#6b7280] mt-1">{l.target_type} {l.target_id ? `• ${l.target_id}` : ""}</div>
+                <div className="text-xs text-[#a3a3a3]">{l.user_id || "System"} • {l.ip_address || "N/A"}</div>
+                {l.table_name || l.record_id ? (
+                  <div className="text-xs text-[#6b7280] mt-1">{l.table_name} {l.record_id ? `• ${l.record_id}` : ""}</div>
                 ) : null}
                 {l.details ? (
                   <pre className="mt-2 text-xs text-[#a3a3a3] bg-[#111111] border border-[#262626] rounded p-2 overflow-auto">{JSON.stringify(l.details, null, 2)}</pre>
