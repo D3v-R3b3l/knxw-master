@@ -257,8 +257,8 @@ export default function Dashboard() {
     };
   }, [loadUserAndCheckForApps, refreshData]);
 
-  // Show welcome screen ONLY when user has no apps at all
-  if (!isInitialSetupLoading && !hasClientApp && apps.length === 0) {
+  // Show welcome screen ONLY when user has no apps at all AND the store has finished loading
+  if (!isInitialSetupLoading && !storeIsLoading && !hasClientApp && apps.length === 0) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-[#0a0a0a] to-[#0a0a0a] text-white flex items-center justify-center p-4">
         <div className="w-full max-w-5xl">
