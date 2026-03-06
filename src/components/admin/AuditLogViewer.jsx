@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getAuditLogs } from "@/functions/getAuditLogs";
+import { base44 } from "@/api/base44Client";
 import { Loader2, ListFilter } from "lucide-react";
 
 export default function AuditLogViewer() {
@@ -13,10 +13,20 @@ export default function AuditLogViewer() {
 
   const load = async () => {
     setLoading(true);
-    const { data, status } = await getAuditLogs({ offset: 0, limit: 100, query });
-    if (status === 200) {
-      setLogs(data.items);
-      setTotal(data.total);
+    try {
+      let results = [];
+      if (query) {
+        const allLogs = await base44.entities.AuditLog.list("-created_date", 100);
+        results = allLogs.filter(l => 
+          JSON.stringify(l).toLowerCase().includes(query.toLowerCase())
+        );
+      } else {
+        results = await base44.entities.AuditLog.list("-created_date", 100);
+      }
+      setLogs(results);
+      setTotal(results.length); // Displaying count of visible items for now
+    } catch (e) {
+      console.error("Error loading audit logs:", e);
     }
     setLoading(false);
   };
