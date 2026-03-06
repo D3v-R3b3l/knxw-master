@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Shield, Users, FileText, BarChart3, DownloadCloud, Briefcase, Key, HeartPulse } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +11,7 @@ import LogExporter from "../components/admin/LogExporter";
 
 export default function OrgAdminPage() {
   const [selectedOrgId, setSelectedOrgId] = useState(null);
+  const [activeTab, setActiveTab] = useState("orgs");
 
   // This would be set by the OrgManagement component
   const handleOrgSelection = (org) => {
