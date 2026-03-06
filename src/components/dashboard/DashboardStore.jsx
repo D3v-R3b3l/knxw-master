@@ -228,9 +228,9 @@ export function DashboardProvider({ children }) {
       // 4. Wait before next batch
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 5. Fetch insights — show ALL insights
+      // 5. Fetch insights — exclude demo data to match the Insights page
       const insightsRaw = await callWithRetry(
-        () => base44.entities.PsychographicInsight.list("-created_date", 50),
+        () => base44.entities.PsychographicInsight.filter({ is_demo: false }, "-created_date", 50),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
       setInsights(insightsRaw);
