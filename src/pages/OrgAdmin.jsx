@@ -39,53 +39,59 @@ export default function OrgAdminPage() {
         {/* Dashboard Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* User Management Card */}
-          <Card className="bg-[#111111] border-[#262626] card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-semibold text-white">User Management</CardTitle>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5]">
-                <Users className="w-5 h-5 text-[#0a0a0a]" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-[#a3a3a3]">
-                Invite, remove, and manage roles for users in your organization.
-              </p>
-            </CardContent>
-          </Card>
+          <div onClick={() => setActiveTab('orgs')} className="cursor-pointer">
+            <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-semibold text-white">User Management</CardTitle>
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5]">
+                  <Users className="w-5 h-5 text-[#0a0a0a]" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-[#a3a3a3]">
+                  Invite, remove, and manage roles for users in your organization.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Workspace Management Card */}
-          <Card className="bg-[#111111] border-[#262626] card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-semibold text-white">Workspace Management</CardTitle>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-[#f97316] to-[#ea580c]">
-                <Briefcase className="w-5 h-5 text-[#0a0a0a]" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-[#a3a3a3]">
-                Create new workspaces to isolate data and configurations.
-              </p>
-            </CardContent>
-          </Card>
+          <div onClick={() => setActiveTab('orgs')} className="cursor-pointer">
+            <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-semibold text-white">Workspace Management</CardTitle>
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#f97316] to-[#ea580c]">
+                  <Briefcase className="w-5 h-5 text-[#0a0a0a]" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-[#a3a3a3]">
+                  Create new workspaces to isolate data and configurations.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Billing & Subscription Card */}
-          <Card className="bg-[#111111] border-[#262626] card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-semibold text-white">Billing & Subscription</CardTitle>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-[#ec4899] to-[#db2777]">
-                <BarChart3 className="w-5 h-5 text-[#0a0a0a]" /> {/* Using BarChart3, could be Receipt/CreditCard */}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-[#a3a3a3]">
-                View your current plan, usage, and manage your subscription.
-              </p>
-            </CardContent>
-          </Card>
+          <Link to="/settings?tab=billing" className="block">
+            <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-semibold text-white">Billing & Subscription</CardTitle>
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#ec4899] to-[#db2777]">
+                  <BarChart3 className="w-5 h-5 text-[#0a0a0a]" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-[#a3a3a3]">
+                  View your current plan, usage, and manage your subscription.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          {/* NEW: System Health Card */}
-          <Link to="/admin/system-health"> {/* Replaced createPageUrl with a direct path */}
-            <Card className="bg-[#111111] border-[#262626] card-hover">
+          {/* System Health Card */}
+          <Link to="/system-health" className="block">
+            <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg font-semibold text-white">System Health</CardTitle>
                 <div className="p-3 rounded-xl bg-gradient-to-br from-[#10b981] to-[#059669]">
@@ -101,23 +107,25 @@ export default function OrgAdminPage() {
           </Link>
 
           {/* SSO Configuration Card */}
-          <Card className="bg-[#111111] border-[#262626] card-hover">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-semibold text-white">SSO Configuration</CardTitle>
-              <div className="p-3 rounded-xl bg-gradient-to-br from-[#a855f7] to-[#9333ea]">
-                <Key className="w-5 h-5 text-[#0a0a0a]" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-[#a3a3a3]">
-                Configure SAML or OIDC for single sign-on access.
-              </p>
-            </CardContent>
-          </Card>
+          <Link to="/settings?tab=sso" className="block">
+            <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-semibold text-white">SSO Configuration</CardTitle>
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#a855f7] to-[#9333ea]">
+                  <Key className="w-5 h-5 text-[#0a0a0a]" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-[#a3a3a3]">
+                  Configure SAML or OIDC for single sign-on access.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Tabs for detailed management */}
-        <Tabs defaultValue="orgs" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-[#111111] border border-[#262626]">
             <TabsTrigger value="orgs" className="data-[state=active]:bg-[#00d4ff] data-[state=active]:text-[#0a0a0a]">
               <Users className="w-4 h-4 mr-2" />

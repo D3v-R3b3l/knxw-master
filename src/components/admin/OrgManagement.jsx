@@ -1,13 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Org, OrgUser, TenantWorkspace } from "@/entities/all";
-import { validateOrgAccess } from "@/functions/validateOrgAccess";
-import { auditLogger } from "@/functions/auditLogger";
+import { base44 } from "@/api/base44Client";
 import { Users, Building, Shield, Plus, Trash2, Edit } from "lucide-react";
 
 export default function OrgManagement({ onOrgSelected }) {
