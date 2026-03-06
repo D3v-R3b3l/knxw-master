@@ -484,7 +484,7 @@ export default function Layout({ children, currentPageName }) {
               </Button>
             <Button
                 onClick={() => setShowAIAssistant(true)}
-                className="w-14 h-14 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.5)]"
+                className={`w-14 h-14 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] ${isDataIntegrationPage ? 'animate-pulse shadow-[0_0_30px_rgba(0,212,255,0.8)] border border-white/50' : ''}`}
                 title="AI Assistant"
               >
                 <Bot className="w-6 h-6" />
