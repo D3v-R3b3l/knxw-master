@@ -47,21 +47,32 @@ export default function AccessControl({ clientAppId }) {
   const handleAdd = async () => {
     if (!email || !roleName || !clientAppId) return;
     setSaving(true);
-    await base44.functions.invoke('updateUserAccess', { op: "create", payload: { client_app_id: clientAppId, user_email: email.trim(), role_name: roleName, status: "invited" } });
-    await base44.functions.invoke('logAudit', { action: "access.assign_role", target_type: "UserAppAccess", target_id: email, details: { role: roleName, client_app_id: clientAppId } });
+    try {
+      await base44.entities.UserAppAccess.create({ client_app_id: clientAppId, user_email: email.trim(), role_name: roleName, status: "invited" });
+    } catch (e) {
+      console.error(e);
+    }
     setEmail("");
     await loadUsers(clientAppId);
     setSaving(false);
   };
 
   const handleRoleChange = async (member, newRole) => {
-    await base44.functions.invoke('updateUserAccess', { op: "update", id: member.id, payload: { role_name: newRole, status: member.status } });
+    try {
+      await base44.entities.UserAppAccess.update(member.id, { role_name: newRole, status: member.status });
+    } catch (e) {
+      console.error(e);
+    }
     await loadUsers(clientAppId);
   };
 
   const handleRemove = async (member) => {
-    if (!confirm(`Revoke access for ${member.user_email}?`)) return;
-    await base44.functions.invoke('updateUserAccess', { op: "delete", id: member.id });
+    if (!window.confirm(`Revoke access for ${member.user_email}?`)) return;
+    try {
+      await base44.entities.UserAppAccess.delete(member.id);
+    } catch (e) {
+      console.error(e);
+    }
     await loadUsers(clientAppId);
   };
 
