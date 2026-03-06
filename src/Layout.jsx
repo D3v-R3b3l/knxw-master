@@ -111,6 +111,7 @@ export default function Layout({ children, currentPageName }) {
   const isLegalPage = currentPageName === 'Privacy' || currentPageName === 'Terms';
   const isInteractiveDemoPage = currentPageName === 'InteractiveDemo';
   const isInfographicPage = currentPageName === 'Infographic';
+  const isDataIntegrationPage = ['MyApps', 'UnifiedDataIntegration', 'IntegrationsManagement', 'MetaData', 'GoogleData'].includes(currentPageName);
 
   useEffect(() => {
     if (isLandingPage || isOnboardingPage || isPricingFAQPage || isDocsPublicPage || isBlogPage || isLegalPage || isInteractiveDemoPage || isInfographicPage) {
