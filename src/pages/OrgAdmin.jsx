@@ -3,6 +3,7 @@ import { Shield, Users, FileText, BarChart3, DownloadCloud, Briefcase, Key, Hear
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Added Card components
 import { Link } from 'react-router-dom'; // Added Link for navigation
+import { createPageUrl } from '@/utils';
 
 import OrgManagement from "../components/admin/OrgManagement";
 import AccessControl from "../components/admin/AccessControl";
@@ -73,7 +74,7 @@ export default function OrgAdminPage() {
           </div>
 
           {/* Billing & Subscription Card */}
-          <Link to="/settings?tab=billing" className="block">
+          <Link to={`${createPageUrl('Settings')}?tab=billing`} className="block">
             <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg font-semibold text-white">Billing & Subscription</CardTitle>
@@ -90,7 +91,7 @@ export default function OrgAdminPage() {
           </Link>
 
           {/* System Health Card */}
-          <Link to="/system-health" className="block">
+          <Link to={createPageUrl('SystemHealth')} className="block">
             <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg font-semibold text-white">System Health</CardTitle>
@@ -107,7 +108,7 @@ export default function OrgAdminPage() {
           </Link>
 
           {/* SSO Configuration Card */}
-          <Link to="/settings?tab=sso" className="block">
+          <Link to={`${createPageUrl('Settings')}?tab=sso`} className="block">
             <Card className="bg-[#111111] border-[#262626] card-hover h-full transition-colors hover:border-[#00d4ff]/50">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg font-semibold text-white">SSO Configuration</CardTitle>
