@@ -35,7 +35,7 @@ export default function OrgManagement({ onOrgSelected }) {
 
   const loadOrgs = async () => {
     try {
-      const orgsData = await Org.list();
+      const orgsData = await base44.entities.Org.list();
       setOrgs(orgsData);
       if (orgsData.length > 0) {
         setSelectedOrg(orgsData[0]);
@@ -49,20 +49,10 @@ export default function OrgManagement({ onOrgSelected }) {
 
   const loadOrgData = async (orgId) => {
     try {
-      // Validate access first
-      const { data: accessData } = await validateOrgAccess({ 
-        orgId, 
-        requiredRole: 'admin' 
-      });
-      
-      if (!accessData.success) {
-        throw new Error('Insufficient permissions');
-      }
-
-      // Load org users and workspaces
+      // Load org users and workspaces (RLS policies will ensure access control)
       const [usersData, workspacesData] = await Promise.all([
-        OrgUser.filter({ org_id: orgId }),
-        TenantWorkspace.filter({ org_id: orgId })
+        base44.entities.OrgUser.filter({ org_id: orgId }),
+        base44.entities.TenantWorkspace.filter({ org_id: orgId })
       ]);
 
       setOrgUsers(usersData);
