@@ -66,20 +66,11 @@ export default function OrgManagement({ onOrgSelected }) {
     if (!newUserEmail || !selectedOrg) return;
 
     try {
-      const newUser = await OrgUser.create({
+      await base44.entities.OrgUser.create({
         org_id: selectedOrg.id,
         user_email: newUserEmail,
         role: newUserRole,
         status: 'invited'
-      });
-
-      // Log the action
-      await auditLogger({
-        action: 'create',
-        tableName: 'OrgUser',
-        recordId: newUser.id,
-        after: newUser,
-        orgId: selectedOrg.id
       });
 
       setNewUserEmail("");
@@ -92,19 +83,7 @@ export default function OrgManagement({ onOrgSelected }) {
 
   const updateUserRole = async (userId, newRole) => {
     try {
-      const user = orgUsers.find(u => u.id === userId);
-      const updatedUser = await OrgUser.update(userId, { role: newRole });
-
-      // Log the action
-      await auditLogger({
-        action: 'update',
-        tableName: 'OrgUser',
-        recordId: userId,
-        before: user,
-        after: updatedUser,
-        orgId: selectedOrg.id
-      });
-
+      await base44.entities.OrgUser.update(userId, { role: newRole });
       loadOrgData(selectedOrg.id);
     } catch (error) {
       console.error('Error updating user role:', error);
@@ -112,21 +91,10 @@ export default function OrgManagement({ onOrgSelected }) {
   };
 
   const removeUser = async (userId) => {
-    if (!confirm('Remove this user from the organization?')) return;
+    if (!window.confirm('Remove this user from the organization?')) return;
 
     try {
-      const user = orgUsers.find(u => u.id === userId);
-      await OrgUser.delete(userId);
-
-      // Log the action
-      await auditLogger({
-        action: 'delete',
-        tableName: 'OrgUser',
-        recordId: userId,
-        before: user,
-        orgId: selectedOrg.id
-      });
-
+      await base44.entities.OrgUser.delete(userId);
       loadOrgData(selectedOrg.id);
     } catch (error) {
       console.error('Error removing user:', error);
