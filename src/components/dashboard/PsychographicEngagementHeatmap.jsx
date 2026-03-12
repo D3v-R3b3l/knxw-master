@@ -200,7 +200,7 @@ export default function PsychographicEngagementHeatmap() {
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1 text-xs">
-                        <Badge variant="outline" className="text-xs capitalize bg-[#0a0a0a]/50">
+                        <Badge variant="outline" className="bg-[#0a0a0a]/50 text-slate-50 px-2.5 py-0.5 text-xs font-semibold capitalize rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                           {segment.cognitive_style}
                         </Badge>
                         <Badge variant="outline" className="bg-[#0a0a0a]/50 text-amber-200 px-2.5 py-0.5 text-xs font-semibold capitalize rounded-full inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
