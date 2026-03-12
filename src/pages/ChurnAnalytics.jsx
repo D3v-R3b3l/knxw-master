@@ -34,14 +34,13 @@ export default function ChurnAnalytics() {
   const appsQuery = useQuery({
     queryKey: ['client-apps-for-churn-analytics'],
     queryFn: () => base44.entities.ClientApp.list('-created_date', 50),
-    initialData: [],
   });
 
   useEffect(() => {
     if (!selectedAppId && appsQuery.data?.[0]?.id) setSelectedAppId(appsQuery.data[0].id);
   }, [appsQuery.data, selectedAppId]);
 
-  const selectedApp = useMemo(() => appsQuery.data.find((app) => app.id === selectedAppId), [appsQuery.data, selectedAppId]);
+  const selectedApp = useMemo(() => (appsQuery.data || []).find((app) => app.id === selectedAppId), [appsQuery.data, selectedAppId]);
 
   const analyticsQuery = useQuery({
     queryKey: ['psychographic-churn-analytics', selectedAppId],
@@ -63,7 +62,6 @@ export default function ChurnAnalytics() {
         churn: churnResponse?.data?.data || { at_risk_users: [], segments: [], total_scanned: 0, high_risk_count: 0, medium_risk_count: 0 },
       };
     },
-    initialData: { events: [], profiles: [], churn: { at_risk_users: [], segments: [], total_scanned: 0, high_risk_count: 0, medium_risk_count: 0 } },
   });
 
   const profileByUser = useMemo(() => Object.fromEntries((analyticsQuery.data?.profiles || []).map((profile) => [profile.user_id, profile])), [analyticsQuery.data]);
@@ -104,7 +102,7 @@ export default function ChurnAnalytics() {
     };
   }, [filteredUsers]);
 
-  if (!appsQuery.data.length && !appsQuery.isLoading) {
+  if (!(appsQuery.data || []).length && !appsQuery.isLoading && !appsQuery.isFetching) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] p-6 text-white">
         <Card className="mx-auto max-w-2xl border-[#262626] bg-[#111111]">
@@ -133,7 +131,7 @@ export default function ChurnAnalytics() {
                 onChange={(event) => setSelectedAppId(event.target.value)}
                 className="rounded-lg border border-[#262626] bg-[#111111] px-3 py-2 text-sm text-white"
               >
-                {appsQuery.data.map((app) => <option key={app.id} value={app.id}>{app.name}</option>)}
+                {(appsQuery.data || []).map((app) => <option key={app.id} value={app.id}>{app.name}</option>)}
               </select>
               <Button onClick={() => analyticsQuery.refetch()} variant="outline" className="border-[#262626] bg-[#111111] hover:bg-[#1a1a1a]">
                 <RefreshCw className="mr-2 h-4 w-4" /> Refresh
