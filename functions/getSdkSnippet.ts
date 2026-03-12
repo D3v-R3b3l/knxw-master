@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 Deno.serve(async (req) => {
   try {
@@ -8,82 +8,39 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    let payload = {};
-    try {
-      payload = await req.json();
-    } catch (_e) {
-      // no body provided is fine
-    }
-
-    const requestedId = (payload && (payload.id || payload.app_id)) || null;
-    const requestedSlug = (payload && (payload.slug || payload.name)) || null;
+    const payload = await req.json().catch(() => ({}));
+    const requestedId = payload?.id || payload?.app_id || null;
+    const requestedName = payload?.name || payload?.slug || null;
 
     let app = null;
-
-    // 1) Try by id
     if (requestedId) {
-      try {
-        app = await base44.entities.ClientApp.get(requestedId);
-      } catch (_e) {
-        // ignore, fall through
-      }
+      app = await base44.entities.ClientApp.get(requestedId).catch(() => null);
     }
 
-    // 2) Try by "slug" (we don't have slug in schema; use name as stand-in)
-    if (!app && requestedSlug) {
-      const byName = await base44.entities.ClientApp.filter({ name: requestedSlug });
-      if (Array.isArray(byName) && byName.length > 0) {
-        app = byName[0];
-      }
+    if (!app && requestedName) {
+      const matches = await base44.entities.ClientApp.filter({ name: requestedName }, null, 1).catch(() => []);
+      app = matches?.[0] || null;
     }
 
-    // 3) Fallback to first available user's app
     if (!app) {
-      const apps = await base44.entities.ClientApp.list();
-      if (Array.isArray(apps) && apps.length > 0) {
-        app = apps[0];
-      }
+      const apps = await base44.entities.ClientApp.list('-created_date', 1).catch(() => []);
+      app = apps?.[0] || null;
     }
 
-    // 4) If still none and user is admin, attempt to auto-create default app
     if (!app && user.role === 'admin') {
-      try {
-        const res = await base44.functions.invoke('createDefaultClientApp', {});
-        const created = (res && res.data && (res.data.app || res.data)) || null;
-        if (created && created.id) {
-          app = created;
-        } else {
-          // Double-check by name in case function returned a message-only response
-          const fallback = await base44.entities.ClientApp.filter({
-            name: 'knXw Landing Page Self-Tracking'
-          });
-          if (Array.isArray(fallback) && fallback.length > 0) {
-            app = fallback[0];
-          }
-        }
-      } catch (_e) {
-        // ignore and continue
-      }
+      const res = await base44.functions.invoke('createDefaultClientApp', {}).catch(() => null);
+      app = res?.data?.app || res?.data || null;
     }
 
     if (!app) {
-      return Response.json(
-        { error: 'No ClientApp found for this user. Please create one in Settings.' },
-        { status: 404 }
-      );
+      return Response.json({ error: 'No ClientApp found for this user. Please create one first.' }, { status: 404 });
     }
 
-    // Provide a simple snippet that exposes the selected app id
-    const snippet = [
-      '// knXw SDK bootstrap',
-      '(function(){',
-      '  window.knXw = window.knXw || {};',
-      `  window.knXw.appId = '${app.id}';`,
-      '  // Example: window.knXw.track && window.knXw.track("page_view");',
-      '})();',
-    ].join('\n');
+    const origin = new URL(req.url).origin;
+    const scriptUrl = `${origin}/functions/serveAnalyticsScript?id=${app.id}`;
+    const snippet = `<script src="${scriptUrl}" defer></script>\n<script>\n  window.addEventListener('load', function () {\n    window.knxw.init({\n      userId: 'user_123',\n      autoTrack: true,\n      engagements: { pollInterval: 15000 }\n    });\n  });\n<\/script>`;
 
-    return Response.json({ app, snippet });
+    return Response.json({ app, script_url: scriptUrl, snippet });
   } catch (error) {
     return Response.json({ error: error.message || String(error) }, { status: 500 });
   }

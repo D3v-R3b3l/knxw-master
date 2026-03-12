@@ -1,140 +1,191 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 import Stripe from 'npm:stripe@14.21.0';
 
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"), {
-  apiVersion: "2023-10-16",
-  httpClient: Stripe.createFetchHttpClient(),
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
+  apiVersion: '2023-10-16',
+  httpClient: Stripe.createFetchHttpClient()
 });
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function normalizePlanKey(planKey) {
+  if (planKey === 'builder') return 'developer';
+  if (planKey === 'scale') return 'growth';
+  if (planKey === 'infrastructure') return 'pro';
+  return planKey;
+}
+
+function emptyUsage() {
+  return {
+    psychographic_credits: 0,
+    s3_exports: 0,
+    eventbridge_events: 0,
+    ses_emails: 0,
+    conversions_forwarded: 0
+  };
+}
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
-
   if (!(await base44.auth.isAuthenticated())) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json({ error: 'Unauthorized' }, 401);
   }
 
   try {
     const { plan_key, mode } = await req.json();
     const user = await base44.auth.me();
+    const svc = base44.asServiceRole;
+    const normalizedPlanKey = normalizePlanKey(plan_key);
 
-    if (!plan_key) {
-      return new Response(JSON.stringify({ error: 'plan_key is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    if (!normalizedPlanKey) {
+      return json({ error: 'plan_key is required' }, 400);
     }
 
-    // Stripe Price IDs - map both old and new tier names
     const priceIdMap = {
-      // New tier names
-      builder: Deno.env.get('STRIPE_PRICE_ID_DEVELOPER') || 'price_1RxOiNPXI4AuHlkXnpgSAkdv', // $0/mo
-      scale: Deno.env.get('STRIPE_PRICE_ID_GROWTH') || 'price_1RxOkgPXI4AuHlkXhuWHXY42',     // $99/mo
-      infrastructure: Deno.env.get('STRIPE_PRICE_ID_PRO') || 'price_1RxOlFPXI4AuHlkXQQHyZAPp', // $499/mo
-      
-      // Legacy tier names (backward compatibility)
-      developer: Deno.env.get('STRIPE_PRICE_ID_DEVELOPER') || 'price_1RxOiNPXI4AuHlkXnpgSAkdv',
-      growth: Deno.env.get('STRIPE_PRICE_ID_GROWTH') || 'price_1RxOkgPXI4AuHlkXhuWHXY42',
-      pro: Deno.env.get('STRIPE_PRICE_ID_PRO') || 'price_1RxOlFPXI4AuHlkXQQHyZAPp'
+      developer: Deno.env.get('STRIPE_PRICE_ID_DEVELOPER') || null,
+      growth: Deno.env.get('STRIPE_PRICE_ID_GROWTH') || null,
+      pro: Deno.env.get('STRIPE_PRICE_ID_PRO') || null
     };
 
-    const priceId = priceIdMap[plan_key];
-    
-    // Allow switching to builder/developer plan (free) without price ID
-    if (plan_key !== 'developer' && plan_key !== 'builder' && !priceId) {
-      return new Response(JSON.stringify({ error: 'Invalid plan key or price not configured' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    const existingSubs = await svc.entities.BillingSubscription.filter({ user_id: user.id }, null, 1);
+    const existingSub = existingSubs?.[0] || null;
 
-    // Handle free builder plan (formerly developer)
-    if (plan_key === 'developer' || plan_key === 'builder') {
-      // Normalize to 'builder' for new naming
-      const normalizedKey = 'builder';
-      
-      // Find existing subscription if any
-      const existingSubs = await base44.asServiceRole.entities.BillingSubscription.filter({ user_id: user.id });
-      
-      if (existingSubs.length > 0) {
-        await base44.asServiceRole.entities.BillingSubscription.update(existingSubs[0].id, {
-          plan_key: normalizedKey,
-          status: 'active',
-          period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
-        });
-      } else {
-         await base44.asServiceRole.entities.BillingSubscription.create({
-            user_id: user.id,
-            plan_key: normalizedKey,
-            status: 'active',
-            period_start: new Date().toISOString(),
-            period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-         });
+    if (normalizedPlanKey === 'developer') {
+      if (existingSub?.stripe_subscription_id) {
+        try {
+          await stripe.subscriptions.update(existingSub.stripe_subscription_id, { cancel_at_period_end: true });
+        } catch (error) {
+          console.warn('createCheckout downgrade cancel warning:', error.message);
+        }
       }
-      
-      // Also update user record
-      await base44.asServiceRole.auth.updateUser(user.id, {
+
+      const subscriptionPayload = {
+        user_id: user.id,
+        plan_key: 'developer',
+        status: 'active',
+        usage_this_period: existingSub?.usage_this_period || emptyUsage(),
+        stripe_customer_id: existingSub?.stripe_customer_id,
+        stripe_subscription_id: null,
+        period_start: new Date().toISOString(),
+        period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      };
+
+      if (existingSub) {
+        await svc.entities.BillingSubscription.update(existingSub.id, subscriptionPayload);
+      } else {
+        await svc.entities.BillingSubscription.create(subscriptionPayload);
+      }
+
+      await svc.auth.updateUser(user.id, {
         user_metadata: {
-           ...user.user_metadata,
-           plan: normalizedKey
+          ...(user.user_metadata || {}),
+          plan: 'developer'
         }
       });
 
-      return new Response(JSON.stringify({ 
+      return json({
         status: 'success',
-        message: 'Builder plan activated',
+        message: 'Developer plan activated',
         redirect_url: `${new URL(req.url).origin}/Dashboard`
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    // Create Stripe checkout for paid plans
-    // Determine mode: default to 'subscription' unless explicit or implied otherwise
-    const checkoutMode = mode || 'subscription';
+    const priceId = priceIdMap[normalizedPlanKey];
+    if (!priceId) {
+      return json({ error: 'Invalid plan key or price not configured' }, 400);
+    }
 
+    let customerId = existingSub?.stripe_customer_id || null;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: {
+          base44_user_id: user.id,
+          user_email: user.email
+        }
+      });
+      customerId = customer.id;
+    }
+
+    if (existingSub?.stripe_subscription_id && ['active', 'trialing', 'past_due'].includes(existingSub.status)) {
+      const currentSubscription = await stripe.subscriptions.retrieve(existingSub.stripe_subscription_id);
+      const currentItemId = currentSubscription.items.data[0]?.id;
+
+      if (currentItemId) {
+        const updatedSubscription = await stripe.subscriptions.update(existingSub.stripe_subscription_id, {
+          items: [{ id: currentItemId, price: priceId }],
+          metadata: {
+            ...(currentSubscription.metadata || {}),
+            base44_user_id: user.id,
+            plan_key: normalizedPlanKey
+          },
+          proration_behavior: 'create_prorations'
+        });
+
+        await svc.entities.BillingSubscription.update(existingSub.id, {
+          plan_key: normalizedPlanKey,
+          status: updatedSubscription.status,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: updatedSubscription.id,
+          period_start: new Date(updatedSubscription.current_period_start * 1000).toISOString(),
+          period_end: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
+          usage_this_period: existingSub.usage_this_period || emptyUsage()
+        });
+
+        return json({
+          status: 'success',
+          message: 'Subscription updated',
+          redirect_url: `${new URL(req.url).origin}/Settings?tab=billing&subscription=updated`
+        });
+      }
+    }
+
+    const subscriptionPayload = {
+      user_id: user.id,
+      plan_key: normalizedPlanKey,
+      status: existingSub?.status === 'active' ? 'active' : 'incomplete',
+      stripe_customer_id: customerId,
+      stripe_subscription_id: existingSub?.stripe_subscription_id || null,
+      usage_this_period: existingSub?.usage_this_period || emptyUsage(),
+      period_start: existingSub?.period_start || new Date().toISOString(),
+      period_end: existingSub?.period_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    };
+
+    if (existingSub) {
+      await svc.entities.BillingSubscription.update(existingSub.id, subscriptionPayload);
+    } else {
+      await svc.entities.BillingSubscription.create(subscriptionPayload);
+    }
+
+    const checkoutMode = mode || 'subscription';
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [{
-        price: priceId,
-        quantity: 1,
-      }],
+      line_items: [{ price: priceId, quantity: 1 }],
       mode: checkoutMode,
-      success_url: `${new URL(req.url).origin}/Dashboard?subscription=success&plan=${plan_key}`,
+      success_url: `${new URL(req.url).origin}/Dashboard?subscription=success&plan=${normalizedPlanKey}`,
       cancel_url: `${new URL(req.url).origin}/Settings?tab=billing&subscription=canceled`,
-      customer_email: user.email,
+      customer: customerId,
       metadata: {
         base44_user_id: user.id,
         user_email: user.email,
-        plan_key: plan_key
+        plan_key: normalizedPlanKey
       },
       subscription_data: checkoutMode === 'subscription' ? {
         metadata: {
           base44_user_id: user.id,
-          plan_key: plan_key
+          plan_key: normalizedPlanKey
         }
       } : undefined
     });
 
-    return new Response(JSON.stringify({ 
-      checkout_url: session.url,
-      session_id: session.id
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
+    return json({ checkout_url: session.url, session_id: session.id });
   } catch (error) {
     console.error('Checkout creation error:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Failed to create checkout session',
-      details: error.message 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json({ error: 'Failed to create checkout session', details: error.message }, 500);
   }
 });

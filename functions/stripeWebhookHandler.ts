@@ -1,168 +1,174 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 import Stripe from 'npm:stripe@14.21.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
   apiVersion: '2023-10-16',
-  httpClient: Stripe.createFetchHttpClient(),
+  httpClient: Stripe.createFetchHttpClient()
 });
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function emptyUsage() {
+  return {
+    psychographic_credits: 0,
+    s3_exports: 0,
+    eventbridge_events: 0,
+    ses_emails: 0,
+    conversions_forwarded: 0
+  };
+}
+
+function getPlanKeyFromPriceId(priceId) {
+  if (priceId === Deno.env.get('STRIPE_PRICE_ID_GROWTH')) return 'growth';
+  if (priceId === Deno.env.get('STRIPE_PRICE_ID_PRO')) return 'pro';
+  if (priceId === Deno.env.get('STRIPE_PRICE_ID_DEVELOPER')) return 'developer';
+  return 'developer';
+}
 
 Deno.serve(async (req) => {
   const requestId = crypto.randomUUID();
-  
+
   try {
     const base44 = createClientFromRequest(req);
-    
-    // Read raw body before any processing
     const rawBody = await req.text();
-    const sig = req.headers.get('stripe-signature');
+    const signature = req.headers.get('stripe-signature');
     const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
-    
-    if (!sig || !webhookSecret) {
-      console.error(`[${requestId}] Missing signature or webhook secret`);
-      return new Response('Missing signature', { status: 400 });
+
+    if (!signature || !webhookSecret) {
+      console.error(`[${requestId}] Missing stripe signature or STRIPE_WEBHOOK_SECRET`);
+      return new Response('Missing stripe signature', { status: 400 });
     }
-    
+
     let event;
     try {
-      event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-    } catch (err) {
-      console.error(`[${requestId}] Webhook signature verification failed: ${err.message}`);
-      return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+      event = await stripe.webhooks.constructEventAsync(rawBody, signature, webhookSecret);
+    } catch (error) {
+      console.error(`[${requestId}] Webhook verification failed:`, error.message);
+      return new Response(`Webhook Error: ${error.message}`, { status: 400 });
     }
-    
-    // Use service role for all operations in webhook
+
     const svc = base44.asServiceRole;
-    
-    let result = null;
-    
     switch (event.type) {
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted':
-        result = await handleSubscriptionChange(svc, event);
+        await handleSubscriptionChange(svc, event.data.object);
         break;
       case 'invoice.payment_succeeded':
       case 'invoice.payment_failed':
-        result = await handlePaymentEvent(svc, event);
+        await handleInvoiceEvent(svc, event.type, event.data.object);
         break;
       case 'checkout.session.completed':
-        result = await handleCheckoutCompleted(svc, event);
+        await handleCheckoutCompleted(svc, event.data.object);
         break;
       default:
-        console.log(`[${requestId}] Unhandled event type: ${event.type}`);
+        console.log(`[${requestId}] Unhandled Stripe event: ${event.type}`);
     }
-    
-    return new Response(JSON.stringify({ received: true, processed: !!result }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-    
+
+    return json({ received: true, processed: true });
   } catch (error) {
-    console.error(`[${requestId}] Internal error:`, error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    console.error(`[${requestId}] stripeWebhookHandler failed:`, error);
+    return json({ error: 'Internal server error', details: error.message }, 500);
   }
 });
 
-async function handleSubscriptionChange(svc, event) {
-  const subscription = event.data.object;
-  const customerId = subscription.customer;
-  const userId = subscription.metadata?.base44_user_id; // Use metadata if available for more reliable lookup
-  
-  // Find subscription record
-  let billingRecords = [];
-  
-  if (userId) {
-      billingRecords = await svc.entities.BillingSubscription.filter({ user_id: userId });
-  } 
-  
-  if (billingRecords.length === 0) {
-      billingRecords = await svc.entities.BillingSubscription.filter({ stripe_customer_id: customerId });
-  }
-  
-  // If still no record and we have userId (new subscription), create one
-  if (billingRecords.length === 0 && userId) {
-      const newSub = await svc.entities.BillingSubscription.create({
-          user_id: userId,
-          stripe_customer_id: customerId,
-          plan_key: 'developer', // Will be updated below
-          status: subscription.status,
-          stripe_subscription_id: subscription.id,
-          period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-          period_end: new Date(subscription.current_period_end * 1000).toISOString()
-      });
-      billingRecords = [newSub];
+async function findBillingRecord(svc, subscription, userId) {
+  let records = [];
+
+  if (subscription?.id) {
+    records = await svc.entities.BillingSubscription.filter({ stripe_subscription_id: subscription.id }, null, 1);
   }
 
-  if (billingRecords.length === 0) {
-    console.warn(`No billing record found for customer ${customerId} or user ${userId}`);
-    return null;
+  if (!records?.length && userId) {
+    records = await svc.entities.BillingSubscription.filter({ user_id: userId }, null, 1);
   }
-  
-  const billingRecord = billingRecords[0];
-  
-  // Determine plan key from price ID
-  let planKey = 'developer';
-  const priceId = subscription.items.data[0]?.price?.id;
-  
-  const growthPriceId = Deno.env.get('STRIPE_PRICE_ID_GROWTH');
-  const proPriceId = Deno.env.get('STRIPE_PRICE_ID_PRO');
-  
-  if (priceId === growthPriceId) planKey = 'growth';
-  else if (priceId === proPriceId) planKey = 'pro';
-  
-  // Update subscription
-  await svc.entities.BillingSubscription.update(billingRecord.id, {
-    plan_key: planKey,
-    status: subscription.status,
-    stripe_customer_id: customerId, // Ensure this is set
-    stripe_subscription_id: subscription.id,
-    period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-    period_end: new Date(subscription.current_period_end * 1000).toISOString()
-  });
-  
-  // Update user metadata as well
-  await svc.auth.updateUser(billingRecord.user_id, {
-      user_metadata: { plan: planKey }
-  });
-  
-  return { updated: true };
+
+  if (!records?.length && subscription?.customer) {
+    records = await svc.entities.BillingSubscription.filter({ stripe_customer_id: subscription.customer }, null, 1);
+  }
+
+  return records?.[0] || null;
 }
 
-async function handlePaymentEvent(svc, event) {
-  const invoice = event.data.object;
-  const customerId = invoice.customer;
-  
-  const billingRecords = await svc.entities.BillingSubscription.filter({
-    stripe_customer_id: customerId
-  });
-  
-  if (billingRecords.length > 0) {
-    await svc.entities.BillingSubscription.update(billingRecords[0].id, {
-      last_invoice_url: invoice.hosted_invoice_url
+async function handleSubscriptionChange(svc, subscription) {
+  const userId = subscription.metadata?.base44_user_id || null;
+  const billingRecord = await findBillingRecord(svc, subscription, userId);
+  const priceId = subscription.items.data[0]?.price?.id;
+  const planKey = getPlanKeyFromPriceId(priceId);
+  const periodStart = new Date(subscription.current_period_start * 1000).toISOString();
+  const periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+  const usageThisPeriod = billingRecord && billingRecord.period_end !== periodEnd
+    ? emptyUsage()
+    : (billingRecord?.usage_this_period || emptyUsage());
+
+  const payload = {
+    user_id: billingRecord?.user_id || userId,
+    plan_key: subscription.status === 'canceled' ? 'developer' : planKey,
+    status: subscription.status,
+    stripe_customer_id: subscription.customer,
+    stripe_subscription_id: subscription.id,
+    usage_this_period: usageThisPeriod,
+    period_start: periodStart,
+    period_end: periodEnd
+  };
+
+  let record = billingRecord;
+  if (record) {
+    await svc.entities.BillingSubscription.update(record.id, payload);
+  } else if (payload.user_id) {
+    record = await svc.entities.BillingSubscription.create(payload);
+  }
+
+  if (payload.user_id) {
+    await svc.auth.updateUser(payload.user_id, {
+      user_metadata: {
+        plan: payload.plan_key
+      }
     });
   }
-  
-  return { processed: true };
+
+  return record;
 }
 
-async function handleCheckoutCompleted(svc, event) {
-  const session = event.data.object;
+async function handleInvoiceEvent(svc, eventType, invoice) {
+  const records = await svc.entities.BillingSubscription.filter({ stripe_customer_id: invoice.customer }, null, 1);
+  const record = records?.[0] || null;
+  if (!record) return null;
+
+  await svc.entities.BillingSubscription.update(record.id, {
+    last_invoice_url: invoice.hosted_invoice_url || record.last_invoice_url,
+    status: eventType === 'invoice.payment_failed' ? 'past_due' : record.status
+  });
+
+  return record;
+}
+
+async function handleCheckoutCompleted(svc, session) {
   const userId = session.metadata?.base44_user_id;
-  
   if (!userId) return null;
-  
-  // Ensure customer ID is linked if subscription creation happened too fast or failed
-  if (session.mode === 'subscription' || session.mode === 'payment') {
-      // We can update customer ID here just in case
-      const billingRecords = await svc.entities.BillingSubscription.filter({ user_id: userId });
-      if (billingRecords.length > 0 && session.customer) {
-          await svc.entities.BillingSubscription.update(billingRecords[0].id, {
-             stripe_customer_id: session.customer
-          });
-      }
+
+  const records = await svc.entities.BillingSubscription.filter({ user_id: userId }, null, 1);
+  const record = records?.[0] || null;
+  const payload = {
+    user_id: userId,
+    plan_key: session.metadata?.plan_key || record?.plan_key || 'developer',
+    status: record?.status || 'incomplete',
+    stripe_customer_id: session.customer || record?.stripe_customer_id || null,
+    stripe_subscription_id: session.subscription || record?.stripe_subscription_id || null,
+    usage_this_period: record?.usage_this_period || emptyUsage(),
+    period_start: record?.period_start || new Date().toISOString(),
+    period_end: record?.period_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+  };
+
+  if (record) {
+    await svc.entities.BillingSubscription.update(record.id, payload);
+    return record;
   }
-  return { processed: true };
+
+  return await svc.entities.BillingSubscription.create(payload);
 }
