@@ -24,7 +24,7 @@ export default function DevelopersPage() {
     {
       number: 3,
       title: "Integrate Your App",
-      description: "Use our SDK or REST API to integrate knXw into your application",
+      description: "Load the browser SDK, track live events, and activate adaptive engagements",
       link: createPageUrl('Documentation'),
       linkText: "View Docs"
     }
@@ -296,24 +296,24 @@ export default function DevelopersPage() {
           <CardContent>
             <div className="grid md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-3xl font-bold text-[#00d4ff] mb-2">&lt;150ms</div>
-                <div className="text-sm text-[#a3a3a3]">p95 Latency</div>
-                <div className="text-xs text-[#666666] mt-1">Edge-optimized endpoints</div>
+                <div className="text-3xl font-bold text-[#00d4ff] mb-2">JS</div>
+                <div className="text-sm text-[#a3a3a3]">Browser SDK</div>
+                <div className="text-xs text-[#666666] mt-1">Served from your own app</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#10b981] mb-2">1000</div>
-                <div className="text-sm text-[#a3a3a3]">Requests/min</div>
-                <div className="text-xs text-[#666666] mt-1">Per API key default</div>
+                <div className="text-3xl font-bold text-[#10b981] mb-2">3</div>
+                <div className="text-sm text-[#a3a3a3]">Engagement UIs</div>
+                <div className="text-xs text-[#666666] mt-1">Modal, tooltip, notification</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#ec4899] mb-2">99.9%</div>
-                <div className="text-sm text-[#a3a3a3]">Uptime SLA</div>
-                <div className="text-xs text-[#666666] mt-1">Enterprise tier</div>
+                <div className="text-3xl font-bold text-[#ec4899] mb-2">Live</div>
+                <div className="text-sm text-[#a3a3a3]">Event Processing</div>
+                <div className="text-xs text-[#666666] mt-1">captureEvent → liveProfileProcessor</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#fbbf24] mb-2">HMAC</div>
-                <div className="text-sm text-[#a3a3a3]">Webhook Security</div>
-                <div className="text-xs text-[#666666] mt-1">SHA-256 signed</div>
+                <div className="text-3xl font-bold text-[#fbbf24] mb-2">Stripe</div>
+                <div className="text-sm text-[#a3a3a3]">Subscription Sync</div>
+                <div className="text-xs text-[#666666] mt-1">Checkout + webhook-backed updates</div>
               </div>
             </div>
           </CardContent>

@@ -125,6 +125,8 @@ export default function Layout({ children, currentPageName }) {
         const detectedRole = detectUserRole(user);
         setUserRole(detectedRole);
 
+        base44.functions.invoke('ensureBillingSubscription', { user_id: user.id }).catch(() => null);
+
         // Check backend for onboarding state
         const onboardingKey = `${detectedRole}_completed`;
         const dismissedKey = `${detectedRole}_dismissed`;

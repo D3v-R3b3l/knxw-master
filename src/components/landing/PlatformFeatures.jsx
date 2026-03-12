@@ -60,7 +60,7 @@ export default function PlatformFeatures() {
         {/* Row 1: Two hero cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
           <FeatureCard large icon={Brain} color="blue" title="Psychographic Profiling" description="Automatically generate psychological profiles revealing motivations, cognitive styles, and personality traits from behavioral signals." badge="ALL PLANS" />
-          <FeatureCard large icon={Sparkles} color="cyan" title="Adaptive UI SDK" description="React components that automatically adapt to user psychology — buttons, text, and entire sections personalized in real-time." badge="ALL PLANS · NEW" badgeColor="bg-cyan-500/15 text-cyan-300 border-cyan-500/30" />
+          <FeatureCard large icon={Sparkles} color="cyan" title="Adaptive UI SDK" description="Lightweight JavaScript SDK for live event capture plus adaptive modals, tooltips, and notifications driven by engagement rules." badge="ALL PLANS" badgeColor="bg-cyan-500/15 text-cyan-300 border-cyan-500/30" />
         </div>
 
         {/* Row 2: Three equal cards */}
