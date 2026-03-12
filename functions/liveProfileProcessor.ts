@@ -220,7 +220,7 @@ function buildFusedProfile(heur, ml, llm) {
   };
 }
 
-function buildInsightPayload(userId, fusedProfile, eventWindow, appId) {
+function buildInsightPayload(userId, fusedProfile, eventWindow) {
   const mood = fusedProfile.emotional_state?.mood || 'neutral';
   const risk = fusedProfile.risk_profile || 'moderate';
   const cognitiveStyle = fusedProfile.cognitive_style || 'analytical';
@@ -239,8 +239,7 @@ function buildInsightPayload(userId, fusedProfile, eventWindow, appId) {
       ],
       priority: mood === 'anxious' || mood === 'uncertain' ? 'high' : 'medium',
       supporting_events: eventWindow.map((event) => event.id).filter(Boolean),
-      is_demo: false,
-      app_id: appId
+      is_demo: false
     },
     {
       user_id: userId,
@@ -254,8 +253,7 @@ function buildInsightPayload(userId, fusedProfile, eventWindow, appId) {
       ],
       priority: 'medium',
       supporting_events: eventWindow.map((event) => event.id).filter(Boolean),
-      is_demo: false,
-      app_id: appId
+      is_demo: false
     }
   ];
 }

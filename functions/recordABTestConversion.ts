@@ -33,30 +33,32 @@ Deno.serve(async (req) => {
     const participant = participants[0];
     const now = new Date().toISOString();
 
-    // Append conversion event and mark converted
     const conversionEvents = participant.conversion_events || [];
-    const updatedEvents = [...conversionEvents, { metric_name, value, timestamp: now }];
-    const hasPrimaryConversion = metric_name === 'conversion' || !participant.converted;
+    const updatedEvents = [...conversionEvents, { metric_name, event_type: metric_name, value, timestamp: now }];
+    const isPrimaryConversion = metric_name === 'conversion';
+    const shouldIncrementConversion = isPrimaryConversion ? !participant.converted : false;
 
     await base44.asServiceRole.entities.ABTestParticipant.update(participant.id, {
-      converted: hasPrimaryConversion ? true : participant.converted,
+      converted: participant.converted || isPrimaryConversion,
       last_interaction_at: now,
       conversion_events: updatedEvents,
     });
 
-    // Update variant metrics
     const variants = await base44.asServiceRole.entities.ABTestVariant.filter({ id: participant.variant_id });
     const variant = variants[0];
     if (variant) {
       const m = variant.metrics || {};
-      const impressions = m.impressions || 1;
-      const conversions = (m.conversions || 0) + (hasPrimaryConversion ? 1 : 0);
+      const impressions = Math.max(m.impressions || 0, 1);
+      const conversions = (m.conversions || 0) + (shouldIncrementConversion ? 1 : 0);
       const conversionRate = impressions > 0 ? conversions / impressions : 0;
-      const avgEngagementScore = ((m.avg_engagement_score || 0) * (impressions - 1) + value) / impressions;
+      const totalEvents = updatedEvents.length;
+      const totalValue = updatedEvents.reduce((sum, event) => sum + Number(event.value || 0), 0);
+      const avgEngagementScore = totalEvents > 0 ? totalValue / totalEvents : 0;
 
       await base44.asServiceRole.entities.ABTestVariant.update(variant.id, {
         metrics: {
           ...m,
+          impressions,
           conversions,
           conversion_rate: parseFloat(conversionRate.toFixed(4)),
           avg_engagement_score: parseFloat(avgEngagementScore.toFixed(4)),

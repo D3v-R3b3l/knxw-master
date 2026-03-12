@@ -67,17 +67,20 @@ export default function ABTestingPage() {
                 name: testData.name,
                 description: testData.description,
                 client_app_id: selectedApp.id,
+                test_type: testData.test_type,
                 traffic_allocation: testData.traffic_allocation,
-                psychographic_targeting: testData.targeting_conditions
+                psychographic_targeting: testData.targeting_conditions,
+                statistical_settings: testData.statistical_settings,
+                results_summary: {}
             });
-
-            const variantsToCreate = testData.variants || [];
-
-            for (const variantData of variantsToCreate) {
+...
                 await base44.entities.ABTestVariant.create({
                     name: variantData.name,
+                    description: variantData.description,
+                    is_control: !!variantData.is_control,
                     traffic_weight: variantData.traffic_weight,
                     engagement_template_id: variantData.configuration?.engagement_template_id || null,
+                    configuration: variantData.configuration || {},
                     ab_test_id: test.id
                 });
             }

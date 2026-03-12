@@ -93,11 +93,11 @@ export default function ChurnAnalytics() {
 
   const summary = useMemo(() => {
     const avgRisk = filteredUsers.length ? Math.round((filteredUsers.reduce((sum, user) => sum + user.churn_score, 0) / filteredUsers.length) * 100) : 0;
-    const projected30d = filteredUsers.length ? Math.round((filteredUsers.reduce((sum, user) => sum + Math.min(1, user.churn_score + 0.28), 0) / filteredUsers.length) * 100) : 0;
+    const heuristicPreview30d = filteredUsers.length ? Math.round((filteredUsers.reduce((sum, user) => sum + Math.min(1, user.churn_score + 0.28), 0) / filteredUsers.length) * 100) : 0;
     return {
       filteredCount: filteredUsers.length,
       avgRisk,
-      projected30d,
+      heuristicPreview30d,
       highRisk: filteredUsers.filter((user) => user.risk_level === 'high').length,
     };
   }, [filteredUsers]);
@@ -121,7 +121,7 @@ export default function ChurnAnalytics() {
       <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
         <PageHeader
           title="Churn Analytics"
-          description="Psychographic interaction divergence, churn indicators, and projected cohort risk in one dedicated dashboard."
+          description="Psychographic interaction divergence, live churn indicators, and a heuristic 30-day cohort risk preview in one dedicated dashboard."
           icon={TrendingDown}
           docSection="predictive-psychographics"
           actions={
@@ -159,7 +159,7 @@ export default function ChurnAnalytics() {
           {[
             { label: 'Filtered cohort', value: summary.filteredCount, icon: Users, color: 'text-[#00d4ff]' },
             { label: 'Avg current risk', value: `${summary.avgRisk}%`, icon: TrendingDown, color: 'text-[#fbbf24]' },
-            { label: 'Projected 30d', value: `${summary.projected30d}%`, icon: Brain, color: 'text-[#ef4444]' },
+            { label: 'Heuristic 30d preview', value: `${summary.heuristicPreview30d}%`, icon: Brain, color: 'text-[#ef4444]' },
             { label: 'High-risk users', value: summary.highRisk, icon: AlertTriangle, color: 'text-[#ef4444]' },
           ].map((item) => (
             <Card key={item.label} className="border-[#262626] bg-[#111111]">

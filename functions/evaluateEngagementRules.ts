@@ -264,7 +264,7 @@ Deno.serve(async (req) => {
     const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
     triggeredEngagements.sort((a, b) => (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0));
 
-    return json({ triggered_engagements: triggeredEngagements.slice(0, 3) });
+    return json({ triggered_engagements: triggeredEngagements.slice(0, 3), unsupported_action_types: Array.from(unsupportedActionTypes) });
   } catch (error) {
     console.error('Error in evaluateEngagementRules:', error);
     return json({ error: 'Internal Server Error', details: error.message }, 500);

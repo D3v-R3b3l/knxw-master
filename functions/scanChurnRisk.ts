@@ -45,91 +45,17 @@ const SEGMENT_INTERVENTIONS = {
   ],
 };
 
+function getIndicatorValue(profile, key) {
+  const indicators = profile?.fused_profile?.indicators || [];
+  return indicators.find((indicator) => indicator.key === key)?.value;
+}
+
 function scoreChurnRisk(profile, psyProfile) {
   let score = 0;
-
-  // Staleness from legacy profile
-  if (psyProfile) {
-    const staleness = psyProfile.staleness_score || 0;
-    score += staleness * CHURN_SIGNAL_WEIGHTS.staleness_score;
-
-    const mood = psyProfile.emotional_state?.mood;
-    if (mood === 'negative' || mood === 'anxious') {
-      score += CHURN_SIGNAL_WEIGHTS.negative_mood;
-    }
-
-    const energy = psyProfile.emotional_state?.energy_level;
-    if (energy === 'low') score += CHURN_SIGNAL_WEIGHTS.low_energy;
-
-    const neuroticism = psyProfile.personality_traits?.neuroticism || 0;
-    if (neuroticism > 0.7) score += CHURN_SIGNAL_WEIGHTS.high_neuroticism;
-  }
-
-  // Low event recency from HybridUserProfile updated_date
-  if (profile?.updated_date) {
-    const daysSinceUpdate = (Date.now() - new Date(profile.updated_date).getTime()) / 86400000;
-    if (daysSinceUpdate > 14) score += CHURN_SIGNAL_WEIGHTS.low_event_recency;
-    else if (daysSinceUpdate > 7) score += CHURN_SIGNAL_WEIGHTS.low_event_recency * 0.5;
-  }
-
-  return Math.min(score, 1);
-}
-
-function classifyRisk(score) {
-  if (score >= 0.65) return 'high';
-  if (score >= 0.35) return 'medium';
-  return 'low';
-}
-
-Deno.serve(async (req) => {
-  const requestId = req.headers.get('X-Request-ID') || crypto.randomUUID();
-  const base44 = createClientFromRequest(req);
-
-  try {
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const rawBody = req.method === 'POST' ? await req.text() : '';
-    const parsedBody = rawBody ? JSON.parse(rawBody) : {};
-    const { app_id, limit = 200 } = parsedBody;
-
-    // Fetch hybrid profiles
-    const filter = app_id ? { app_id } : {};
-    const hybridProfiles = await base44.asServiceRole.entities.HybridUserProfile.filter(
-      filter, '-updated_date', Math.min(limit, 500)
-    );
-
-    if (!hybridProfiles.length) {
-      return Response.json({
-        success: true,
-        data: { at_risk_users: [], segments: [], total_scanned: 0, high_risk_count: 0, medium_risk_count: 0 },
-        meta: { requestId },
-      });
-    }
-
-    // Fetch legacy psychographic profiles for the same user_ids (for staleness/mood data)
-    const userIds = hybridProfiles.map(p => p.user_id).filter(Boolean);
-    // Batch fetch legacy profiles (up to 100 at a time)
-    const legacyMap = {};
-    try {
-      const legacyProfiles = await base44.asServiceRole.entities.UserPsychographicProfile.filter(
-        {}, '-last_analyzed', Math.min(limit, 500)
-      );
-      for (const lp of legacyProfiles) {
-        if (userIds.includes(lp.user_id)) legacyMap[lp.user_id] = lp;
-      }
-    } catch (_e) {
-      // Legacy profile fetch is best-effort
-    }
-
-    // Score each user
-    const scored = hybridProfiles.map(profile => {
-      const psy = legacyMap[profile.user_id];
-      const churnScore = scoreChurnRisk(profile, psy);
-      const riskLevel = classifyRisk(churnScore);
+...
       const fusedProfile = profile.fused_profile || {};
-      const cognitiveStyle = fusedProfile.cognitive_style || psy?.cognitive_style || 'unknown';
-      const primaryMotivation = fusedProfile.primary_motivation || psy?.risk_profile || null;
+      const cognitiveStyle = fusedProfile.cognitive_style || getIndicatorValue(profile, 'cognitive_style') || psy?.cognitive_style || 'unknown';
+      const primaryMotivation = fusedProfile.primary_motivation || getIndicatorValue(profile, 'primary_motivation') || psy?.motivation_labels?.[0] || null;
 
       return {
         user_id: profile.user_id,
