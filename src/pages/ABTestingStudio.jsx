@@ -29,6 +29,7 @@ import { createPageUrl } from '@/utils';
 import { useToast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
 import PredictiveABTesting from '../components/testing/PredictiveABTesting';
+import PsychographicConversionChart from '../components/testing/PsychographicConversionChart';
 import { CollaborationProvider } from '../components/collaboration/CollaborationProvider';
 import PresenceIndicator from '../components/collaboration/PresenceIndicator';
 import PageHeader from '../components/ui/PageHeader'; // New import
@@ -258,12 +259,13 @@ export default function ABTestingStudioPage() { // Changed component name
             )}
 
             {showPredictive && test.status === 'running' && (
-              <div className="pt-4 border-t border-[#262626]">
+              <div className="pt-4 border-t border-[#262626] space-y-4">
                 <PredictiveABTesting
                   test={test}
-                  variants={testVariants} // Pass the fetched variants
+                  variants={testVariants}
                   onUpdateTest={loadTests}
                 />
+                <PsychographicConversionChart abTestId={test.id} />
               </div>
             )}
 
