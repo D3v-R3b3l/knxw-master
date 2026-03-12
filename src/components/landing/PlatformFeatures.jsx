@@ -79,7 +79,7 @@ export default function PlatformFeatures() {
 
         {/* Row 4: Four compact cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-5">
-          <FeatureCard icon={FileText} color="cyan" title="Content Engine" description="Auto-recommend content based on unique psychological profiles." />
+          <FeatureCard icon={FileText} color="cyan" title="Content Engine" description="Prioritize content using cognitive style and motivation signals from psychographic profiles." />
           <FeatureCard icon={Bot} color="pink" title="AI Automation" description="Deploy intelligent agents for personalized, timely engagements." />
           <FeatureCard icon={Activity} color="rose" title="Emotional Shift Tracking" description="Monitor subtle emotional changes with volatility analysis." />
           <FeatureCard icon={Layers} color="indigo" title="Custom Dimensions" description="Define industry-specific psychographic traits and metrics." />

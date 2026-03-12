@@ -21,7 +21,7 @@ export default function PredictiveABTesting({ test, variants, onUpdateTest }) {
 
 Current test: ${test.name}
 Test type: ${test.test_type}
-Target segments: ${JSON.stringify(test.targeting_conditions)}
+Target segments: ${JSON.stringify(test.psychographic_targeting || test.targeting_conditions || {})}
 
 Analyze psychographic and behavioral data to suggest 3 specific test hypotheses that could improve engagement or conversion.
 
@@ -116,7 +116,7 @@ Return JSON:
         prompt: `Calculate multi-armed bandit traffic allocation for A/B test variants.
 
 Variants performance:
-${variants.map(v => `- ${v.name}: ${v.performance_metrics?.participants || 0} participants, ${v.performance_metrics?.conversion_rate || 0}% conversion`).join('\n')}
+${variants.map(v => `- ${v.name}: ${v.metrics?.impressions || v.performance_metrics?.participants || 0} participants, ${((v.metrics?.conversion_rate || v.performance_metrics?.conversion_rate || 0) * 100).toFixed ? ((v.metrics?.conversion_rate || v.performance_metrics?.conversion_rate || 0) * 100).toFixed(1) : 0}% conversion`).join('\n')}
 
 Use Thompson Sampling to recommend traffic allocation that balances:
 1. Exploitation (sending more traffic to winning variants)
@@ -190,7 +190,7 @@ Test configuration:
 - Current participants: ${totalParticipants}
 
 Variant performance:
-${variants.map(v => `- ${v.name}: ${v.performance_metrics?.conversion_rate || 0}% conversion (${v.performance_metrics?.participants || 0} participants)`).join('\n')}
+${variants.map(v => `- ${v.name}: ${(((v.metrics?.conversion_rate || v.performance_metrics?.conversion_rate || 0) * 100).toFixed ? ((v.metrics?.conversion_rate || v.performance_metrics?.conversion_rate || 0) * 100).toFixed(1) : 0)}% conversion (${v.metrics?.impressions || v.performance_metrics?.participants || 0} participants)`).join('\n')}
 
 Determine if:
 1. There's a statistically significant winner

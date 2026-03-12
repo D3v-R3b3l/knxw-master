@@ -9,14 +9,13 @@ export default function ABTestingDoc() {
     <div className="space-y-8">
       <Section title="Overview">
         <p className="text-[#e5e5e5] leading-relaxed mb-4">
-          knXw's A/B Testing Studio goes beyond traditional testing by incorporating psychographic segmentation. 
-          Test different approaches for different psychological profiles simultaneously, dramatically increasing 
-          test velocity and learning speed.
+          knXw's A/B Testing Studio supports psychographic targeting, weighted variant assignment, conversion recording,
+          and segment-level result views for running experiments against different user profiles.
         </p>
 
         <Callout type="info" icon={FlaskConical}>
-          <strong>Psychographic Testing:</strong> Instead of testing one variant against another for all users, 
-          test which approach works best for each psychological profile. This can 3-5x your learning rate.
+          <strong>Current implementation:</strong> tests can target psychographic conditions, assign users deterministically,
+          record conversions per participant, and show conversion breakdowns by cognitive segment.
         </Callout>
       </Section>
 
@@ -84,14 +83,14 @@ export default function ABTestingDoc() {
         </CodeBlock>
       </Section>
 
-      <Section title="Bandit Optimization">
+      <Section title="Results Available Today">
         <p className="text-[#e5e5e5] mb-4">
-          Enable multi-armed bandit mode to automatically shift traffic to winning variants in real-time, 
-          maximizing performance while still gathering data.
+          The current system records participant assignments and conversion events, then surfaces variant metrics and
+          psychographic conversion breakdowns for running tests.
         </p>
 
         <Callout type="success" icon={TrendingUp}>
-          Bandit optimization can improve overall test performance by 15-30% compared to static splits.
+          Available now: impressions, conversions, conversion rate, average engagement score, and conversion breakdowns by cognitive segment.
         </Callout>
       </Section>
     </div>

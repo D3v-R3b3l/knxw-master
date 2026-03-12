@@ -64,14 +64,21 @@ export default function ABTestingPage() {
         try {
             const user = await base44.auth.me();
             const test = await base44.entities.ABTest.create({
-                ...testData,
+                name: testData.name,
+                description: testData.description,
                 client_app_id: selectedApp.id,
+                traffic_allocation: testData.traffic_allocation,
+                psychographic_targeting: testData.targeting_conditions,
                 owner_id: user.id
             });
 
-            for (const variantData of testData.variants) {
+            const variantsToCreate = testData.variants || [];
+
+            for (const variantData of variantsToCreate) {
                 await base44.entities.ABTestVariant.create({
-                    ...variantData,
+                    name: variantData.name,
+                    traffic_weight: variantData.traffic_weight,
+                    engagement_template_id: variantData.configuration?.engagement_template_id || null,
                     ab_test_id: test.id
                 });
             }
