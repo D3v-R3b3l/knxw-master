@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
       return json({ error: 'Invalid API key or client app' }, 401);
     }
 
-    const isInternalInvocation = !req.headers.get('X-API-Key') && !req.headers.get('Authorization') && !!(data?.apiKey || data?.api_key || data?.app_id || data?.client_app_id);
+    const isInternalInvocation = !!(data?.apiKey || data?.api_key);
     if (!isInternalInvocation && !isAuthorizedOrigin(req, clientApp)) {
       return json({ error: 'Origin not authorized for this client app' }, 403);
     }
