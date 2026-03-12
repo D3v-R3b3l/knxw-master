@@ -14,15 +14,20 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole;
-    const payload = await req.json().catch(() => ({}));
+    const user = await base44.auth.me();
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const userId = payload?.user_id || payload?.data?.id || payload?.event?.entity_id;
+    const payload = await req.json().catch(() => ({}));
+    const requestedUserId = payload?.user_id || payload?.data?.id || payload?.event?.entity_id || null;
+    if (requestedUserId && requestedUserId !== user.id && user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: cannot create billing records for another user' }, { status: 403 });
+    }
+
+    const userId = requestedUserId && user.role === 'admin' ? requestedUserId : user.id;
     const planKey = payload?.plan_key || 'developer';
     const status = payload?.status || 'active';
-
-    if (!userId) {
-      return Response.json({ error: 'user_id is required' }, { status: 400 });
-    }
 
     const existing = await svc.entities.BillingSubscription.filter({ user_id: userId }, null, 1);
     const periodStart = new Date().toISOString();

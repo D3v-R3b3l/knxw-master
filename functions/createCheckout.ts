@@ -62,6 +62,14 @@ Deno.serve(async (req) => {
         } catch (error) {
           console.warn('createCheckout downgrade cancel warning:', error.message);
         }
+
+        const redirectUrl = `${new URL(req.url).origin}/Settings?tab=billing&subscription=downgrade_scheduled`;
+        return json({
+          status: 'success',
+          message: 'Paid subscription downgrade scheduled. Stripe remains authoritative until the subscription ends.',
+          redirect_url: redirectUrl,
+          url: redirectUrl
+        });
       }
 
       const subscriptionPayload = {
@@ -69,7 +77,7 @@ Deno.serve(async (req) => {
         plan_key: 'developer',
         status: 'active',
         usage_this_period: existingSub?.usage_this_period || emptyUsage(),
-        stripe_customer_id: existingSub?.stripe_customer_id,
+        stripe_customer_id: existingSub?.stripe_customer_id || null,
         stripe_subscription_id: null,
         period_start: new Date().toISOString(),
         period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -81,17 +89,12 @@ Deno.serve(async (req) => {
         await svc.entities.BillingSubscription.create(subscriptionPayload);
       }
 
-      await svc.auth.updateUser(user.id, {
-        user_metadata: {
-          ...(user.user_metadata || {}),
-          plan: 'developer'
-        }
-      });
-
+      const redirectUrl = `${new URL(req.url).origin}/Dashboard`;
       return json({
         status: 'success',
         message: 'Developer plan activated',
-        redirect_url: `${new URL(req.url).origin}/Dashboard`
+        redirect_url: redirectUrl,
+        url: redirectUrl
       });
     }
 
@@ -117,7 +120,7 @@ Deno.serve(async (req) => {
       const currentItemId = currentSubscription.items.data[0]?.id;
 
       if (currentItemId) {
-        const updatedSubscription = await stripe.subscriptions.update(existingSub.stripe_subscription_id, {
+        await stripe.subscriptions.update(existingSub.stripe_subscription_id, {
           items: [{ id: currentItemId, price: priceId }],
           metadata: {
             ...(currentSubscription.metadata || {}),
@@ -127,20 +130,19 @@ Deno.serve(async (req) => {
           proration_behavior: 'create_prorations'
         });
 
-        await svc.entities.BillingSubscription.update(existingSub.id, {
-          plan_key: normalizedPlanKey,
-          status: updatedSubscription.status,
-          stripe_customer_id: customerId,
-          stripe_subscription_id: updatedSubscription.id,
-          period_start: new Date(updatedSubscription.current_period_start * 1000).toISOString(),
-          period_end: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
-          usage_this_period: existingSub.usage_this_period || emptyUsage()
-        });
+        if (!existingSub.stripe_customer_id) {
+          await svc.entities.BillingSubscription.update(existingSub.id, {
+            stripe_customer_id: customerId,
+            stripe_subscription_id: existingSub.stripe_subscription_id
+          });
+        }
 
+        const redirectUrl = `${new URL(req.url).origin}/Settings?tab=billing&subscription=updated`;
         return json({
           status: 'success',
-          message: 'Subscription updated',
-          redirect_url: `${new URL(req.url).origin}/Settings?tab=billing&subscription=updated`
+          message: 'Subscription update initiated. Stripe webhook sync remains authoritative.',
+          redirect_url: redirectUrl,
+          url: redirectUrl
         });
       }
     }
@@ -183,7 +185,7 @@ Deno.serve(async (req) => {
       } : undefined
     });
 
-    return json({ checkout_url: session.url, session_id: session.id });
+    return json({ checkout_url: session.url, url: session.url, session_id: session.id });
   } catch (error) {
     console.error('Checkout creation error:', error);
     return json({ error: 'Failed to create checkout session', details: error.message }, 500);

@@ -366,7 +366,7 @@ Deno.serve(async (req) => {
       await svc.entities.UserPsychographicProfile.create({ user_id, ...legacyPatch });
     }
 
-    const insightPayloads = buildInsightPayload(user_id, fused, eventWindow, resolvedAppId);
+    const insightPayloads = buildInsightPayload(user_id, fused, eventWindow);
     const recentInsights = await svc.entities.PsychographicInsight.filter({ user_id }, '-created_date', 10).catch(() => []);
     for (const insightPayload of insightPayloads) {
       const existingInsight = recentInsights.find((insight) => insight.insight_type === insightPayload.insight_type);

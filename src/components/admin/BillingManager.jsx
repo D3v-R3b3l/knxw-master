@@ -77,8 +77,10 @@ export default function BillingManager() {
   const handleSubscribe = async (planKey) => {
     try {
       const { data } = await createCheckout({ plan_key: planKey });
-      if (data?.url) {
-        window.location.href = data.url;
+      if (data?.checkout_url || data?.url) {
+        window.location.href = data.checkout_url || data.url;
+      } else if (data?.redirect_url) {
+        window.location.href = data.redirect_url;
       }
     } catch (error) {
       console.error('Subscription error:', error);

@@ -124,14 +124,6 @@ async function handleSubscriptionChange(svc, subscription) {
     record = await svc.entities.BillingSubscription.create(payload);
   }
 
-  if (payload.user_id) {
-    await svc.auth.updateUser(payload.user_id, {
-      user_metadata: {
-        plan: payload.plan_key
-      }
-    });
-  }
-
   return record;
 }
 

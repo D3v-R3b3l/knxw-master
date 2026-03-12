@@ -36,7 +36,7 @@ export default function BillingPanel() {
             setIsLoading(true);
             try {
                 const user = await base44.auth.me();
-                await base44.functions.invoke('ensureBillingSubscription', { user_id: user.id }).catch(() => null);
+                await base44.functions.invoke('ensureBillingSubscription', {}).catch(() => null);
                 const subs = await base44.entities.BillingSubscription.filter({ user_id: user.id }, null, 1);
                 const sub = subs[0] || null;
                 setSubscription(sub);
@@ -55,10 +55,13 @@ export default function BillingPanel() {
         setIsProcessing(true);
         try {
             const { data } = await base44.functions.invoke('createCheckout', { plan_key: planKey });
-            if (data.checkout_url) {
-                window.location.href = data.checkout_url;
+            if (data.checkout_url || data.url) {
+                window.location.href = data.checkout_url || data.url;
+            } else if (data.redirect_url) {
+                toast({ title: 'Success', description: data.message || 'Your plan has been updated.' });
+                window.location.href = data.redirect_url;
             } else if (data.status === 'success') {
-                toast({ title: 'Success', description: 'Your plan has been updated.' });
+                toast({ title: 'Success', description: data.message || 'Your plan has been updated.' });
                 window.location.reload();
             }
         } catch (e) {
