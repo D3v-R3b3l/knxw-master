@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 
 import MetricCard from "../components/dashboard/MetricCard";
+import ChurnAlertWidget from "../components/dashboard/ChurnAlertWidget";
 import EmotionalStateChart from "../components/dashboard/EmotionalStateChart";
 import RealTimeActivity from "../components/dashboard/RealTimeActivity";
 import PsychographicHeatmap from "../components/dashboard/PsychographicHeatmap";
@@ -464,6 +465,10 @@ export default function Dashboard() {
 
                 <div data-tour="churn-prediction">
                   <ChurnPredictionPanel />
+                </div>
+
+                <div data-tour="churn-alert-widget">
+                  <ChurnAlertWidget appId={selectedAppId} />
                 </div>
               </div>
               
