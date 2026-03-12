@@ -262,12 +262,6 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole;
-    const isAuthenticated = await base44.auth.isAuthenticated().catch(() => false);
-
-    if (!isAuthenticated) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const payload = await req.json().catch(() => ({}));
     const action = payload?.action || 'process_live_events';
     const user_id = payload?.user_id;
