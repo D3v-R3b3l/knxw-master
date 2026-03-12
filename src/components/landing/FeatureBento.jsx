@@ -26,7 +26,7 @@ export default function FeatureBento() {
             </div>
             <h3 className="text-2xl font-bold text-white mb-2">Psychographic Intelligence</h3>
             <p className="text-gray-400 max-w-md">
-              Go beyond demographics. Our AI analyzes behavioral patterns to construct accurate psychological profiles in real-time, revealing motivation, risk tolerance, and cognitive style.
+              Go beyond demographics. Analyze behavioral patterns to build psychographic profiles, compare interaction hotspots across cognitive styles, and monitor churn cohorts by trait-driven risk.
             </p>
           </div>
           <div className="mt-8 flex gap-2">
