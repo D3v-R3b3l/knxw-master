@@ -89,7 +89,9 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { app_id, limit = 200 } = req.method === 'POST' ? await req.json() : {};
+    const rawBody = req.method === 'POST' ? await req.text() : '';
+    const parsedBody = rawBody ? JSON.parse(rawBody) : {};
+    const { app_id, limit = 200 } = parsedBody;
 
     // Fetch hybrid profiles
     const filter = app_id ? { app_id } : {};
