@@ -207,7 +207,7 @@ export default function PsychographicEngagementHeatmap() {
                           {segment.risk_profile}
                         </Badge>
                         {segment.motivation !== 'unknown' &&
-                      <Badge variant="outline" className="text-xs capitalize bg-[#0a0a0a]/50">
+                      <Badge variant="outline" className="bg-[#0a0a0a]/50 text-zinc-100 px-2.5 py-0.5 text-xs font-semibold capitalize rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                             {segment.motivation}
                           </Badge>
                       }
