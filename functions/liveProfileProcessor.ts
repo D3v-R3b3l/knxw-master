@@ -277,10 +277,15 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    const scopedEvents = await svc.entities.CapturedEvent.filter(app_id ? { user_id, client_app_id: app_id, is_demo: false } : { user_id, is_demo: false }, '-timestamp', 50).catch(() => []);
+    const recentEvents = await svc.entities.CapturedEvent.list('-timestamp', 200).catch(() => []);
+    const scopedEvents = recentEvents.filter((event) => (
+      event.user_id === user_id &&
+      event.is_demo === false &&
+      (!app_id || event.client_app_id === app_id || event.event_payload?.client_app_id === app_id)
+    ));
     const events = scopedEvents.length > 0
       ? scopedEvents
-      : await svc.entities.CapturedEvent.filter({ user_id, is_demo: false }, '-timestamp', 50).catch(() => []);
+      : recentEvents.filter((event) => event.user_id === user_id && event.is_demo === false);
 
     if (!Array.isArray(events) || events.length === 0) {
       return Response.json({ message: 'No events for user', processed: 0 });

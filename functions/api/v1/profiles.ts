@@ -38,10 +38,11 @@ Deno.serve(async (req) => {
 
     const clientApp = await resolveClientApp(base44, req, body);
     const appId = body?.app_id || clientApp?.id || null;
-    const profiles = await base44.asServiceRole.entities.HybridUserProfile.filter({ user_id: userId }, '-updated_date', 10);
+    const profiles = await base44.asServiceRole.entities.HybridUserProfile.list('-updated_date', 50);
+    const relevantProfiles = (profiles || []).filter((item) => item.user_id === userId);
     const profile = appId
-      ? (profiles || []).find((item) => item.client_app_id === appId || item.app_id === appId) || null
-      : (profiles?.[0] || null);
+      ? relevantProfiles.find((item) => item.client_app_id === appId || item.app_id === appId) || null
+      : (relevantProfiles[0] || null);
 
     if (!profile) {
       return json({

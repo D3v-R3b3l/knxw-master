@@ -49,24 +49,43 @@ Deno.serve(async (req) => {
       return json({ success: false, error: `Unsupported event_type: ${eventType}` }, 400);
     }
 
-    const ingestResponse = await base44.functions.invoke('captureEvent', {
-      apiKey: body?.apiKey || body?.api_key || null,
-      app_id: body?.app_id || null,
+    const apiKey = body?.apiKey || body?.api_key || null;
+    if (!apiKey) {
+      return json({ success: false, error: 'apiKey is required' }, 400);
+    }
+
+    const clientApps = await base44.asServiceRole.entities.ClientApp.filter({ api_key: apiKey, status: 'active' }, null, 1);
+    const clientApp = clientApps?.[0] || null;
+    if (!clientApp) {
+      return json({ success: false, error: 'Invalid or inactive API key' }, 403);
+    }
+
+    const savedEvent = await base44.asServiceRole.entities.CapturedEvent.create({
+      client_app_id: clientApp.id,
       user_id: userId,
+      session_id: body?.session_id || crypto.randomUUID(),
       event_type: eventType,
-      event_payload: body?.event_payload || {},
-      session_id: body?.session_id || null,
+      event_payload: {
+        ...(body?.event_payload || {}),
+        client_app_id: clientApp.id
+      },
       device_info: body?.device_info || {},
-      timestamp: body?.timestamp || new Date().toISOString()
+      timestamp: body?.timestamp || new Date().toISOString(),
+      processed: false,
+      is_demo: false
     });
 
-    const ingestData = ingestResponse?.data || {};
+    base44.functions.invoke('liveProfileProcessor', {
+      action: 'process_live_events',
+      user_id: userId,
+      app_id: clientApp.id
+    }).catch((error) => console.warn(`Profile refresh failed for user ${userId}:`, error.message));
 
     return json({
       success: true,
       data: {
-        event_id: ingestData.event_id || null,
-        client_app_id: ingestData.client_app_id || body?.app_id || null,
+        event_id: savedEvent.id,
+        client_app_id: clientApp.id,
         status: 'accepted',
         message: 'Event ingested successfully. Profile analysis queued.'
       },
