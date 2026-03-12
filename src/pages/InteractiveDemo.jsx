@@ -33,6 +33,7 @@ export default function InteractiveDemoPage() {
   const [mobileAnalysisOpen, setMobileAnalysisOpen] = useState(false);
   const [showAdaptiveUI, setShowAdaptiveUI] = useState(false);
   const [pendingFeedback, setPendingFeedback] = useState(null); // feedback to send on next message
+  const [homePageUrl, setHomePageUrl] = useState(createPageUrl('Landing'));
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -54,6 +55,16 @@ export default function InteractiveDemoPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    base44.auth.isAuthenticated()
+      .then((isAuthenticated) => {
+        setHomePageUrl(createPageUrl(isAuthenticated ? 'Dashboard' : 'Landing'));
+      })
+      .catch(() => {
+        setHomePageUrl(createPageUrl('Landing'));
+      });
+  }, []);
 
   const startSession = async () => {
     // Generate session ID locally - no backend call needed
@@ -261,7 +272,7 @@ export default function InteractiveDemoPage() {
                   </>
                 )}
                 {/* Mobile Back to Home button */}
-                <a href={createPageUrl('Landing')} className="lg:hidden">
+                <a href={homePageUrl} className="lg:hidden">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -270,7 +281,7 @@ export default function InteractiveDemoPage() {
                   </Button>
                 </a>
                 {/* Desktop Back to Home button */}
-                <a href={createPageUrl('Landing')} className="hidden lg:block">
+                <a href={homePageUrl} className="hidden lg:block">
                   <Button
                     variant="ghost"
                     size="sm"
