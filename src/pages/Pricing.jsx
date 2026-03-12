@@ -6,6 +6,7 @@ import { Check, Zap, TrendingUp, Rocket, Shield, ArrowRight, HelpCircle } from '
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
+import { createCheckout } from "@/functions/createCheckout";
 import SEOHead from '@/components/system/SEOHead';
 
 /**
@@ -15,6 +16,7 @@ export default function PricingPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [annualBilling, setAnnualBilling] = useState(false);
+  const [processingPlan, setProcessingPlan] = useState(null);
 
   useEffect(() => {
     base44.auth.me()
@@ -126,6 +128,37 @@ export default function PricingPage() {
     const annualTotal = monthlyPrice * 12;
     const discountedAnnual = monthlyPrice * 0.9 * 12;
     return Math.round(annualTotal - discountedAnnual);
+  };
+
+  const handlePlanSelect = async (planKey) => {
+    if (planKey === 'enterprise') {
+      window.location.href = createPageUrl('Support');
+      return;
+    }
+
+    if (loading) return;
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.href);
+      return;
+    }
+
+    setProcessingPlan(planKey);
+    try {
+      const response = await createCheckout({ plan_key: planKey });
+      const data = response?.data || {};
+
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+        return;
+      }
+
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+        return;
+      }
+    } finally {
+      setProcessingPlan(null);
+    }
   };
 
   return (
@@ -242,15 +275,10 @@ export default function PricingPage() {
                           ? 'bg-[#00d4ff] hover:bg-[#00b4d8] text-black'
                           : 'bg-[#262626] hover:bg-[#333333] text-white'
                       }`}
-                      onClick={() => {
-                        if (plan.name === 'Enterprise') {
-                          window.location.href = createPageUrl('Support');
-                        } else if (!loading && !user) {
-                          base44.auth.redirectToLogin(window.location.href);
-                        }
-                      }}
+                      disabled={processingPlan === plan.planKey}
+                      onClick={() => handlePlanSelect(plan.planKey)}
                     >
-                      {plan.cta}
+                      {processingPlan === plan.planKey ? 'Processing…' : plan.cta}
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                     
