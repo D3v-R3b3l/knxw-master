@@ -73,7 +73,10 @@ export default function ABTestingPage() {
                 statistical_settings: testData.statistical_settings,
                 results_summary: {}
             });
-...
+
+            const variantsToCreate = testData.variants || [];
+
+            for (const variantData of variantsToCreate) {
                 await base44.entities.ABTestVariant.create({
                     name: variantData.name,
                     description: variantData.description,
@@ -438,9 +441,9 @@ export default function ABTestingPage() {
                                                 <span className="text-[#a3a3a3]">
                                                     Type: <span className="text-white">{test.test_type?.replace('_', ' ')}</span>
                                                 </span>
-                                                {test.started_at && (
+                                                {(test.start_date || test.started_at) && (
                                                     <span className="text-[#a3a3a3]">
-                                                        Started: <span className="text-white">{format(new Date(test.started_at), 'MMM d, yyyy')}</span>
+                                                        Started: <span className="text-white">{format(new Date(test.start_date || test.started_at), 'MMM d, yyyy')}</span>
                                                     </span>
                                                 )}
                                                 {test.results_summary?.total_participants && (

@@ -1,16 +1,40 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
+const PROFILE_FIELD_ALIASES = {
+  'emotional_state.confidence': 'emotional_state.confidence_score',
+};
+
+const PAYLOAD_FIELD_ALIASES = {
+  className: 'element',
+  page: 'url',
+  page_url: 'url',
+};
+
+const SUPPORTED_ENGAGEMENT_TYPES = new Set(['modal', 'tooltip', 'notification']);
+
 const getCorsHeaders = () => ({
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 });
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...getCorsHeaders() }
+    headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
   });
+}
+
+function getNestedValue(obj, path) {
+  return String(path || '').split('.').reduce((current, key) => current?.[key], obj);
+}
+
+function normalizeProfileField(field) {
+  return PROFILE_FIELD_ALIASES[field] || field;
+}
+
+function normalizePayloadField(field) {
+  return PAYLOAD_FIELD_ALIASES[field] || field;
 }
 
 function evaluatePsychographicConditions(profile, conditions) {
@@ -18,9 +42,7 @@ function evaluatePsychographicConditions(profile, conditions) {
 
   return conditions.every((condition) => {
     const { field, operator, value } = condition;
-    const profileValue = field.split('.').reduce((obj, part) => {
-      return obj && obj[part] !== undefined ? obj[part] : null;
-    }, profile);
+    const profileValue = getNestedValue(profile, normalizeProfileField(field));
 
     if (profileValue === undefined || profileValue === null) return false;
 
@@ -54,8 +76,7 @@ function evaluateBehavioralConditions(recentEvents, conditions) {
       if (event_payload_conditions && event_payload_conditions.length > 0) {
         return event_payload_conditions.every((payloadCondition) => {
           const { field, operator, value } = payloadCondition;
-          const payloadValue = event.event_payload && event.event_payload[field];
-
+          const payloadValue = event.event_payload?.[normalizePayloadField(field)];
           if (payloadValue === undefined) return false;
 
           switch (operator) {
@@ -150,7 +171,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole;
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const apiKey = body?.apiKey || req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
     const user_id = body?.user_id;
     const context = body?.context;
@@ -168,12 +189,18 @@ Deno.serve(async (req) => {
     const profiles = await svc.entities.UserPsychographicProfile.filter({ user_id }, '-updated_date', 1);
     const profile = profiles?.[0] || null;
     if (!profile) {
-      return json({ triggered_engagements: [] });
+      return json({ triggered_engagements: [], unsupported_action_types: [] });
     }
 
-    const recentEvents = await svc.entities.CapturedEvent.filter({ user_id }, '-timestamp', 50);
+    let recentEvents = await svc.entities.CapturedEvent.filter({ user_id, app_id: clientApp.id }, '-timestamp', 50).catch(() => []);
+    if (!recentEvents.length) {
+      const fallbackEvents = await svc.entities.CapturedEvent.filter({ user_id }, '-timestamp', 50).catch(() => []);
+      recentEvents = fallbackEvents.filter((event) => (event.app_id || event.event_payload?.client_app_id) === clientApp.id);
+    }
+
     const activeRules = await svc.entities.EngagementRule.filter({ client_app_id: clientApp.id, status: 'active' });
     const triggeredEngagements = [];
+    const unsupportedActionTypes = new Set();
 
     for (const rule of activeRules) {
       const triggerConditions = rule.trigger_conditions || {};
@@ -187,6 +214,10 @@ Deno.serve(async (req) => {
       const timingMatch = evaluateTimingConditions(context, triggerConditions.timing_conditions);
 
       if (!(psychographicMatch && behavioralMatch && timingMatch)) continue;
+      if (!SUPPORTED_ENGAGEMENT_TYPES.has(engagementAction.type)) {
+        unsupportedActionTypes.add(engagementAction.type || 'unknown');
+        continue;
+      }
 
       const templates = await svc.entities.EngagementTemplate.filter({ id: engagementAction.template_id }, null, 1);
       const template = templates?.[0] || null;
@@ -205,10 +236,10 @@ Deno.serve(async (req) => {
           conditions_met: [
             psychographicMatch ? 'psychographic' : null,
             behavioralMatch ? 'behavioral' : null,
-            timingMatch ? 'timing' : null
-          ].filter(Boolean)
+            timingMatch ? 'timing' : null,
+          ].filter(Boolean),
         },
-        delivery_status: 'pending'
+        delivery_status: 'pending',
       });
 
       let renderedContent = template.content;
@@ -224,9 +255,9 @@ Deno.serve(async (req) => {
                 message: { type: 'string' },
                 questions: { type: 'array', items: { type: 'string' }, default: [] },
                 buttons: { type: 'array', items: { type: 'object' }, default: [] },
-                style: { type: 'object' }
-              }
-            }
+                style: { type: 'object' },
+              },
+            },
           });
 
           if (personalized) {
@@ -239,7 +270,7 @@ Deno.serve(async (req) => {
 
       await svc.entities.EngagementDelivery.update(delivery.id, {
         rendered_content: renderedContent,
-        delivery_status: 'delivered'
+        delivery_status: 'delivered',
       });
 
       const currentAnalytics = rule.analytics || {};
@@ -247,8 +278,8 @@ Deno.serve(async (req) => {
         analytics: {
           ...currentAnalytics,
           triggered_count: (currentAnalytics.triggered_count || 0) + 1,
-          last_triggered: new Date().toISOString()
-        }
+          last_triggered: new Date().toISOString(),
+        },
       });
 
       triggeredEngagements.push({
@@ -257,14 +288,17 @@ Deno.serve(async (req) => {
         engagement_type: engagementAction.type,
         priority: engagementAction.priority,
         content: renderedContent,
-        style: renderedContent?.style || {}
+        style: renderedContent?.style || {},
       });
     }
 
     const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
     triggeredEngagements.sort((a, b) => (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0));
 
-    return json({ triggered_engagements: triggeredEngagements.slice(0, 3), unsupported_action_types: Array.from(unsupportedActionTypes) });
+    return json({
+      triggered_engagements: triggeredEngagements.slice(0, 3),
+      unsupported_action_types: Array.from(unsupportedActionTypes),
+    });
   } catch (error) {
     console.error('Error in evaluateEngagementRules:', error);
     return json({ error: 'Internal Server Error', details: error.message }, 500);
