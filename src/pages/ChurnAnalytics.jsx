@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { scanChurnRisk } from '@/functions/scanChurnRisk';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingDown, Users, Brain, AlertTriangle, RefreshCw } from 'lucide-react';
@@ -49,7 +50,7 @@ export default function ChurnAnalytics() {
       const [events, profiles, churnResponse] = await Promise.all([
         base44.entities.CapturedEvent.filter({ is_demo: false }, '-timestamp', 600),
         base44.entities.UserPsychographicProfile.filter({ is_demo: false }, '-last_analyzed', 300),
-        base44.functions.invoke('scanChurnRisk', { app_id: selectedAppId, limit: 300 }),
+        scanChurnRisk({ app_id: selectedAppId, limit: 300 }),
       ]);
 
       const scopedEvents = events.filter((event) => urlMatchesDomains(event?.event_payload?.url || event?.url, selectedApp?.authorized_domains || []));
@@ -146,6 +147,15 @@ export default function ChurnAnalytics() {
           options={filterOptions}
           onChange={(key, value) => setFilters((current) => ({ ...current, [key]: value }))}
         />
+
+        {analyticsQuery.isLoading && (
+          <Card className="border-[#262626] bg-[#111111]">
+            <CardContent className="flex items-center justify-center gap-3 p-10 text-[#a3a3a3]">
+              <RefreshCw className="h-5 w-5 animate-spin text-[#00d4ff]" />
+              Loading churn cohorts and interaction data...
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid gap-4 md:grid-cols-4">
           {[
