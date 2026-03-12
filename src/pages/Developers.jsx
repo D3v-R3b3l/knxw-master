@@ -9,10 +9,10 @@ export default function DevelopersPage() {
   const quickstartSteps = [
     {
       number: 1,
-      title: "Get Your API Key",
-      description: "Create an API key from your dashboard to authenticate requests",
-      link: createPageUrl('DeveloperKeys'),
-      linkText: "Manage Keys"
+      title: "Create a Client App",
+      description: "Generate the ClientApp key used by the browser SDK and event pipeline",
+      link: createPageUrl('MyApps'),
+      linkText: "Open My Apps"
     },
     {
       number: 2,

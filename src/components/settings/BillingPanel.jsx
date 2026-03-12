@@ -36,6 +36,7 @@ export default function BillingPanel() {
             setIsLoading(true);
             try {
                 const user = await base44.auth.me();
+                await base44.functions.invoke('ensureBillingSubscription', { user_id: user.id }).catch(() => null);
                 const subs = await base44.entities.BillingSubscription.filter({ user_id: user.id }, null, 1);
                 const sub = subs[0] || null;
                 setSubscription(sub);
