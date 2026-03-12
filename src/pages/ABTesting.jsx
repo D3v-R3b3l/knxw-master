@@ -62,14 +62,13 @@ export default function ABTestingPage() {
 
     const handleCreateTest = async (testData) => {
         try {
-            const user = await base44.auth.me();
+            await base44.auth.me();
             const test = await base44.entities.ABTest.create({
                 name: testData.name,
                 description: testData.description,
                 client_app_id: selectedApp.id,
                 traffic_allocation: testData.traffic_allocation,
-                psychographic_targeting: testData.targeting_conditions,
-                owner_id: user.id
+                psychographic_targeting: testData.targeting_conditions
             });
 
             const variantsToCreate = testData.variants || [];
@@ -97,7 +96,7 @@ export default function ABTestingPage() {
             try {
                 await base44.entities.ABTest.update(test.id, {
                     status: 'running',
-                    started_at: new Date().toISOString()
+                    start_date: new Date().toISOString()
                 });
                 loadData();
             } catch (error) {

@@ -227,8 +227,8 @@ export default function ABTestingStudioPage() { // Changed component name
               <div className="bg-[#1a1a1a] rounded-lg p-3 border border-[#262626]">
                 <div className="text-xs text-[#6b7280] mb-1">Duration</div>
                 <div className="text-lg font-bold text-white">
-                  {test.started_at
-                    ? Math.round((new Date() - new Date(test.started_at)) / (1000 * 60 * 60 * 24))
+                  {(test.started_at || test.start_date)
+                    ? Math.round((new Date() - new Date(test.started_at || test.start_date)) / (1000 * 60 * 60 * 24))
                     : 0}d
                 </div>
                 <div className="text-xs text-[#a3a3a3]">
@@ -296,8 +296,8 @@ export default function ABTestingStudioPage() { // Changed component name
 
             {/* Dates */}
             <div className="text-xs text-[#6b7280] pt-2 border-t border-[#262626]">
-              {test.started_at ? (
-                <>Started {format(new Date(test.started_at), 'MMM d, yyyy')}</>
+              {(test.started_at || test.start_date) ? (
+                <>Started {format(new Date(test.started_at || test.start_date), 'MMM d, yyyy')}</>
               ) : (
                 <>Created {format(new Date(test.created_date), 'MMM d, yyyy')}</>
               )}

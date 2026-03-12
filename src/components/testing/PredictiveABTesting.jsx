@@ -93,7 +93,7 @@ Return JSON:
     if (!variants || variants.length === 0) return;
 
     // Multi-armed bandit allocation using Thompson Sampling
-    const totalParticipants = variants.reduce((sum, v) => sum + (v.performance_metrics?.participants || 0), 0);
+    const totalParticipants = variants.reduce((sum, v) => sum + (v.metrics?.impressions || v.performance_metrics?.participants || 0), 0);
     
     if (totalParticipants < 100) {
       // Not enough data - use equal allocation
@@ -169,7 +169,7 @@ Return JSON:
   const checkEarlyStopping = async () => {
     if (!variants || variants.length === 0) return;
 
-    const totalParticipants = variants.reduce((sum, v) => sum + (v.performance_metrics?.participants || 0), 0);
+    const totalParticipants = variants.reduce((sum, v) => sum + (v.metrics?.impressions || v.performance_metrics?.participants || 0), 0);
     
     if (totalParticipants < (test.statistical_settings?.minimum_sample_size || 100)) {
       setEarlyStoppingRecommendation({
