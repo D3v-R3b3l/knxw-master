@@ -21,11 +21,12 @@ Deno.serve(async (req) => {
 
     const payload = await req.json().catch(() => ({}));
     const requestedUserId = payload?.user_id || payload?.data?.id || payload?.event?.entity_id || null;
-    if (requestedUserId && requestedUserId !== user.id && user.role !== 'admin') {
+    const isUserAutomation = payload?.event?.entity_name === 'User' && payload?.event?.entity_id;
+    if (requestedUserId && requestedUserId !== user.id && !isUserAutomation) {
       return Response.json({ error: 'Forbidden: cannot create billing records for another user' }, { status: 403 });
     }
 
-    const userId = requestedUserId && user.role === 'admin' ? requestedUserId : user.id;
+    const userId = isUserAutomation ? requestedUserId : user.id;
     const planKey = payload?.plan_key || 'developer';
     const status = payload?.status || 'active';
 

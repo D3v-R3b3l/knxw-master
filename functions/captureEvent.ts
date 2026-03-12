@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
     }
 
     const eventRecord = {
-      app_id: clientApp.id,
+      client_app_id: clientApp.id,
       user_id: String(data.user_id),
       session_id: data.session_id || crypto.randomUUID(),
       event_type: String(data.event_type),

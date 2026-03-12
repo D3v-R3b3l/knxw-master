@@ -7,7 +7,7 @@ function compactEventsForEvidence(events) {
     ts: event.timestamp,
     url: event.event_payload?.url || null,
     element: event.event_payload?.element || null,
-    app_id: event.app_id || event.event_payload?.client_app_id || null,
+    app_id: event.client_app_id || event.event_payload?.client_app_id || null,
     dur: event.event_payload?.duration || null
   }));
 }
@@ -277,7 +277,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    const scopedEvents = await svc.entities.CapturedEvent.filter(app_id ? { user_id, app_id, is_demo: false } : { user_id, is_demo: false }, '-timestamp', 50).catch(() => []);
+    const scopedEvents = await svc.entities.CapturedEvent.filter(app_id ? { user_id, client_app_id: app_id, is_demo: false } : { user_id, is_demo: false }, '-timestamp', 50).catch(() => []);
     const events = scopedEvents.length > 0
       ? scopedEvents
       : await svc.entities.CapturedEvent.filter({ user_id, is_demo: false }, '-timestamp', 50).catch(() => []);
@@ -286,7 +286,7 @@ Deno.serve(async (req) => {
       return Response.json({ message: 'No events for user', processed: 0 });
     }
 
-    const resolvedAppId = app_id || events[0]?.app_id || events[0]?.event_payload?.client_app_id || null;
+    const resolvedAppId = app_id || events[0]?.client_app_id || events[0]?.event_payload?.client_app_id || null;
     const heur = heuristicsLayer(events);
     const ml = mlLayer(events);
     const heurRisk = selectIndicator(heur.indicators, 'risk_profile')?.value;

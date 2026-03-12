@@ -192,10 +192,10 @@ Deno.serve(async (req) => {
       return json({ triggered_engagements: [], unsupported_action_types: [] });
     }
 
-    let recentEvents = await svc.entities.CapturedEvent.filter({ user_id, app_id: clientApp.id }, '-timestamp', 50).catch(() => []);
+    let recentEvents = await svc.entities.CapturedEvent.filter({ user_id, client_app_id: clientApp.id }, '-timestamp', 50).catch(() => []);
     if (!recentEvents.length) {
       const fallbackEvents = await svc.entities.CapturedEvent.filter({ user_id }, '-timestamp', 50).catch(() => []);
-      recentEvents = fallbackEvents.filter((event) => (event.app_id || event.event_payload?.client_app_id) === clientApp.id);
+      recentEvents = fallbackEvents.filter((event) => (event.client_app_id || event.event_payload?.client_app_id) === clientApp.id);
     }
 
     const activeRules = await svc.entities.EngagementRule.filter({ client_app_id: clientApp.id, status: 'active' });
