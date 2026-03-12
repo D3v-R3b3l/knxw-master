@@ -1,160 +1,138 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
-// Simple in-memory rate limiter
 const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
-const MAX_EVENTS_PER_WINDOW = 100; // per IP/API key
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const MAX_EVENTS_PER_WINDOW = 300;
+
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key'
+  };
+}
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      ...corsHeaders()
+    }
+  });
+}
 
 function checkRateLimit(key) {
   const now = Date.now();
   const windowStart = now - RATE_LIMIT_WINDOW_MS;
-  
-  if (!rateLimitMap.has(key)) {
-    rateLimitMap.set(key, []);
-  }
-  
-  const timestamps = rateLimitMap.get(key);
-  const validTimestamps = timestamps.filter(ts => ts > windowStart);
-  
-  if (validTimestamps.length >= MAX_EVENTS_PER_WINDOW) {
+  const timestamps = rateLimitMap.get(key) || [];
+  const valid = timestamps.filter((ts) => ts > windowStart);
+
+  if (valid.length >= MAX_EVENTS_PER_WINDOW) {
     return false;
   }
-  
-  validTimestamps.push(now);
-  rateLimitMap.set(key, validTimestamps);
+
+  valid.push(now);
+  rateLimitMap.set(key, valid);
   return true;
 }
 
-Deno.serve(async (req) => {
-  try {
-    console.log('captureEvent: Request received');
-    
-    if (req.method === 'OPTIONS') {
-      return new Response('ok', { 
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key'
-        }
-      });
-    }
+function normalizeOrigin(value) {
+  if (!value) return null;
 
-    // Extract API key from header
+  try {
+    const url = new URL(value);
+    return url.origin.toLowerCase().replace(/\/+$/, '');
+  } catch {
+    return null;
+  }
+}
+
+function isAuthorizedOrigin(req, clientApp) {
+  const allowed = Array.isArray(clientApp.authorized_domains) ? clientApp.authorized_domains : [];
+  if (allowed.length === 0) return true;
+
+  const origin = normalizeOrigin(req.headers.get('origin')) || normalizeOrigin(req.headers.get('referer'));
+  if (!origin) return true;
+
+  return allowed.some((domain) => normalizeOrigin(domain) === origin);
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders() });
+  }
+
+  if (req.method !== 'POST') {
+    return json({ error: 'Method not allowed' }, 405);
+  }
+
+  try {
     const apiKey = req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
-    
     if (!apiKey) {
-      return new Response(JSON.stringify({ 
-        error: 'Missing API key. Include X-API-Key header or Authorization: Bearer header' 
-      }), {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      return json({ error: 'Missing API key. Include X-API-Key header or Authorization: Bearer header.' }, 401);
     }
 
     const base44 = createClientFromRequest(req);
-    
-    // Validate API key exists and is active via ClientApp
-    const clientApps = await base44.asServiceRole.entities.ClientApp.filter({
-      api_key: apiKey,
-      status: 'active'
-    }, null, 1);
+    const svc = base44.asServiceRole;
 
-    if (!clientApps || clientApps.length === 0) {
-      return new Response(JSON.stringify({ error: 'Invalid API key' }), {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    const clientApps = await svc.entities.ClientApp.filter({ api_key: apiKey, status: 'active' }, null, 1);
+    const clientApp = clientApps?.[0] || null;
+
+    if (!clientApp) {
+      return json({ error: 'Invalid API key' }, 401);
     }
 
-    const clientApp = clientApps[0];
-    
-    // Rate limiting by client app
+    if (!isAuthorizedOrigin(req, clientApp)) {
+      return json({ error: 'Origin not authorized for this client app' }, 403);
+    }
+
     if (!checkRateLimit(clientApp.id)) {
-      return new Response(JSON.stringify({ 
-        error: 'Rate limit exceeded. Maximum 100 events per minute.' 
-      }), {
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Maximum 300 events per minute.' }), {
         status: 429,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Retry-After': '60'
+          'Retry-After': '60',
+          ...corsHeaders()
         }
       });
     }
 
     const data = await req.json();
-    console.log('captureEvent: Data received:', data);
-
-    // Validate required fields
-    if (!data.user_id || !data.event_type) {
-      console.log('captureEvent: Missing required fields');
-      return new Response(JSON.stringify({ error: 'Missing required fields: user_id, event_type' }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    if (!data?.user_id || !data?.event_type) {
+      return json({ error: 'Missing required fields: user_id, event_type' }, 400);
     }
 
-    // Create the event record
     const eventRecord = {
-      user_id: data.user_id,
-      event_type: data.event_type,
-      event_payload: data.event_payload || {},
-      device_info: data.device_info || {},
+      user_id: String(data.user_id),
       session_id: data.session_id || crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
+      event_type: String(data.event_type),
+      event_payload: {
+        ...(data.event_payload || {}),
+        client_app_id: clientApp.id
+      },
+      device_info: data.device_info || {},
+      timestamp: data.timestamp || new Date().toISOString(),
       processed: false,
       is_demo: false
     };
 
-    console.log('captureEvent: Creating event record:', eventRecord);
+    const savedEvent = await svc.entities.CapturedEvent.create(eventRecord);
 
-    // Save to database using service role to bypass RLS
-    const savedEvent = await base44.asServiceRole.entities.CapturedEvent.create(eventRecord);
-    
-    console.log('captureEvent: Event saved successfully:', savedEvent.id);
-
-    // Trigger live profile processing for this user (async, don't await)
-    if (data.user_id) {
-      base44.asServiceRole.functions.invoke('liveProfileProcessor', {
-        action: 'process_live_events',
-        user_id: data.user_id
-      }).catch(err => {
-        console.warn('captureEvent: Profile processing failed, but event was saved:', err.message);
-      });
-    }
-
-    return new Response(JSON.stringify({ 
-      success: true, 
-      event_id: savedEvent.id 
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    svc.functions.invoke('liveProfileProcessor', {
+      action: 'process_live_events',
+      user_id: String(data.user_id)
+    }).catch((error) => {
+      console.warn('captureEvent: liveProfileProcessor failed after save:', error.message);
     });
 
+    return json({
+      success: true,
+      event_id: savedEvent.id,
+      client_app_id: clientApp.id
+    });
   } catch (error) {
     console.error('captureEvent error:', error);
-    
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      details: error.message 
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
+    return json({ error: 'Internal server error', details: error.message }, 500);
   }
 });

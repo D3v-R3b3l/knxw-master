@@ -1,62 +1,60 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.5.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+};
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders }
+  });
+}
 
 Deno.serve(async (req) => {
-  const base44 = createClientFromRequest(req);
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
 
-  // CRITICAL: Require authentication for all engagement response recording
-  if (!(await base44.auth.isAuthenticated())) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+  if (req.method !== 'POST') {
+    return json({ error: 'Method not allowed' }, 405);
   }
 
   try {
-    const { delivery_id, action_taken, response_data, response_time_seconds } = await req.json();
+    const base44 = createClientFromRequest(req);
+    const svc = base44.asServiceRole;
+    const body = await req.json();
+    const apiKey = body?.apiKey || req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
+    const { delivery_id, action_taken, response_data, response_time_seconds } = body || {};
 
-    if (!delivery_id || !action_taken) {
-      return new Response(JSON.stringify({ 
-        error: 'Missing required fields: delivery_id and action_taken' 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    if (!apiKey || !delivery_id || !action_taken) {
+      return json({ error: 'Missing required fields: apiKey, delivery_id and action_taken' }, 400);
     }
 
-    // Verify the delivery exists and belongs to the authenticated user's client apps
-    const deliveries = await base44.entities.EngagementDelivery.filter({ id: delivery_id });
-    
-    if (deliveries.length === 0) {
-      return new Response(JSON.stringify({ error: 'Engagement delivery not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    const clientApps = await svc.entities.ClientApp.filter({ api_key: apiKey, status: 'active' }, null, 1);
+    const clientApp = clientApps?.[0] || null;
+    if (!clientApp) {
+      return json({ error: 'Invalid API key' }, 403);
     }
 
-    const delivery = deliveries[0];
-    
-    // Verify user has access to the client app associated with this delivery
-    const userApps = await base44.entities.ClientApp.filter({ id: delivery.client_app_id });
-    if (userApps.length === 0) {
-      return new Response(JSON.stringify({ error: 'Access denied to this engagement delivery' }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    const deliveries = await svc.entities.EngagementDelivery.filter({ id: delivery_id }, null, 1);
+    const delivery = deliveries?.[0] || null;
+    if (!delivery) {
+      return json({ error: 'Engagement delivery not found' }, 404);
     }
 
-    // Validate action_taken is from allowed values
-    const validActions = ['dismissed', 'responded', 'ignored', 'converted'];
+    if (delivery.client_app_id !== clientApp.id) {
+      return json({ error: 'Delivery does not belong to this client app' }, 403);
+    }
+
+    const validActions = ['dismissed', 'responded', 'ignored', 'converted', 'clicked', 'replied'];
     if (!validActions.includes(action_taken)) {
-      return new Response(JSON.stringify({ 
-        error: 'Invalid action_taken. Must be one of: ' + validActions.join(', ') 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return json({ error: 'Invalid action_taken. Must be one of: ' + validActions.join(', ') }, 400);
     }
 
-    // Update the engagement delivery with the response
-    const updatedDelivery = await base44.entities.EngagementDelivery.update(delivery_id, {
+    await svc.entities.EngagementDelivery.update(delivery_id, {
       response: {
         action_taken,
         response_data: response_data || {},
@@ -65,46 +63,31 @@ Deno.serve(async (req) => {
       delivery_status: 'delivered'
     });
 
-    // Update engagement rule analytics if conversion occurred
-    if (action_taken === 'converted' && delivery.rule_id) {
+    if ((action_taken === 'converted' || action_taken === 'clicked') && delivery.rule_id) {
       try {
-        const rules = await base44.entities.EngagementRule.filter({ id: delivery.rule_id });
-        if (rules.length > 0) {
-          const rule = rules[0];
-          const updatedAnalytics = {
-            ...rule.analytics,
-            conversion_count: (rule.analytics?.conversion_count || 0) + 1
-          };
-          
-          await base44.entities.EngagementRule.update(delivery.rule_id, {
-            analytics: updatedAnalytics
+        const rules = await svc.entities.EngagementRule.filter({ id: delivery.rule_id }, null, 1);
+        const rule = rules?.[0] || null;
+        if (rule) {
+          await svc.entities.EngagementRule.update(delivery.rule_id, {
+            analytics: {
+              ...rule.analytics,
+              conversion_count: (rule.analytics?.conversion_count || 0) + (action_taken === 'converted' ? 1 : 0)
+            }
           });
         }
       } catch (error) {
-        console.error('Error updating rule analytics:', error);
-        // Don't fail the main response for analytics errors
+        console.error('recordEngagementResponse analytics update failed:', error);
       }
     }
 
-    return new Response(JSON.stringify({
+    return json({
       status: 'success',
       message: 'Engagement response recorded successfully',
-      delivery_id: delivery_id,
-      action_taken: action_taken
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      delivery_id,
+      action_taken
     });
-
   } catch (error) {
     console.error('Error recording engagement response:', error);
-    return new Response(JSON.stringify({
-      status: 'error',
-      message: 'Failed to record engagement response',
-      error: error.message
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json({ status: 'error', message: 'Failed to record engagement response', error: error.message }, 500);
   }
 });
