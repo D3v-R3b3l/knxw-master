@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
     const parsedBody = rawBody ? JSON.parse(rawBody) : {};
     const { app_id, limit = 200 } = parsedBody;
 
-    const filter = app_id ? { app_id } : {};
+    const filter = app_id ? { client_app_id: app_id } : {};
     const hybridProfiles = await base44.asServiceRole.entities.HybridUserProfile.filter(filter, '-updated_date', Math.min(limit, 500));
 
     if (!hybridProfiles.length) {

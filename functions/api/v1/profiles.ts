@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
 
     const clientApp = await resolveClientApp(base44, req, body);
     const appId = body?.app_id || clientApp?.id || null;
-    const hybridFilter = appId ? { user_id: userId, app_id: appId } : { user_id: userId };
+    const hybridFilter = appId ? { user_id: userId, client_app_id: appId } : { user_id: userId };
     const profiles = await base44.asServiceRole.entities.HybridUserProfile.filter(hybridFilter, '-updated_date', 1);
     const profile = profiles?.[0] || null;
 

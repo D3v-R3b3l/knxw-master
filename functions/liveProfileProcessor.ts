@@ -303,11 +303,12 @@ Deno.serve(async (req) => {
     const fused = buildFusedProfile(heur, ml, llm);
     const eventWindow = compactEventsForEvidence(events);
     const evidence = llm?.reasoning || 'Live profile fused from heuristics and lightweight ML.';
-    const existing = await svc.entities.HybridUserProfile.filter(resolvedAppId ? { user_id, app_id: resolvedAppId } : { user_id }, null, 1).catch(() => []);
+    const existing = await svc.entities.HybridUserProfile.filter(resolvedAppId ? { user_id, client_app_id: resolvedAppId } : { user_id }, null, 1).catch(() => []);
 
     if (existing?.[0]) {
       await svc.entities.HybridUserProfile.update(existing[0].id, {
         app_id: resolvedAppId,
+        client_app_id: resolvedAppId,
         heuristic_inference: heur,
         ml_inference: ml,
         llm_inference: llm || {},
@@ -319,6 +320,7 @@ Deno.serve(async (req) => {
     } else {
       await svc.entities.HybridUserProfile.create({
         app_id: resolvedAppId,
+        client_app_id: resolvedAppId,
         user_id,
         heuristic_inference: heur,
         ml_inference: ml,
@@ -332,6 +334,7 @@ Deno.serve(async (req) => {
 
     await svc.entities.HybridUserProfileUpdate.create({
       app_id: resolvedAppId,
+      client_app_id: resolvedAppId,
       user_id,
       heuristic_inference: heur,
       ml_inference: ml,
