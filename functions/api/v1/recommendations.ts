@@ -1,73 +1,129 @@
-import { z } from 'https://deno.land/x/zod@v3.23.0/mod.ts';
-import { RecommendationGetSchema } from '../utils/zodSchemas.js';
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
-import { InvokeLLM } from '@/integrations/Core';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+
+// Cognitive style → preferred content format mapping
+const COGNITIVE_CONTENT_MAP = {
+  analytical:  { formats: ['data_report', 'comparison', 'technical_guide', 'case_study'], tone: 'evidence-based, precise' },
+  intuitive:   { formats: ['story', 'visual_overview', 'inspiration', 'trend_highlight'], tone: 'conceptual, big-picture' },
+  systematic:  { formats: ['step_by_step_guide', 'checklist', 'tutorial', 'process_doc'], tone: 'structured, sequential' },
+  creative:    { formats: ['interactive', 'experiment', 'showcase', 'ideation_prompt'], tone: 'open-ended, exploratory' },
+};
+
+// Motivation label → relevant content themes
+const MOTIVATION_THEME_MAP = {
+  achievement:      ['success_stories', 'benchmarks', 'milestones', 'performance_upgrades'],
+  connection:       ['community', 'collaboration', 'social_proof', 'testimonials'],
+  security:         ['risk_reduction', 'compliance', 'stability', 'reliability_guides'],
+  autonomy:         ['self_serve_tools', 'customization', 'advanced_features', 'control_panels'],
+  growth:           ['learning_resources', 'skill_builders', 'roadmaps', 'best_practices'],
+  recognition:      ['leaderboards', 'badges', 'public_profiles', 'share_achievements'],
+  curiosity:        ['deep_dives', 'research', 'experiments', 'behind_the_scenes'],
+  efficiency:       ['shortcuts', 'automation', 'integrations', 'time_savers'],
+};
+
+function extractProfileDimensions(fusedProfile) {
+  const indicators = fusedProfile.indicators || [];
+  const getIndicator = (key) => indicators.find(i => i.key === key);
+
+  const cognitiveStyle = getIndicator('cognitive_style')?.value || fusedProfile.cognitive_style || 'analytical';
+  const primaryMotivation = getIndicator('primary_motivation')?.value || fusedProfile.primary_motivation || 'growth';
+  const riskProfile = getIndicator('risk_profile')?.value || fusedProfile.risk_profile || 'moderate';
+  const emotionalState = getIndicator('emotional_state')?.value || fusedProfile.emotional_state || 'neutral';
+  const energyLevel = parseFloat(getIndicator('energy_level')?.value || fusedProfile.energy_level || 0.5);
+
+  // Extract motivation stack (array of {label, weight}) if present
+  const motivationStack = fusedProfile.motivation_stack_v2 || fusedProfile.motivation_stack || [];
+
+  // Derive top motivations from stack or fall back to primary
+  const topMotivations = motivationStack.length > 0
+    ? motivationStack.sort((a, b) => (b.weight || 0) - (a.weight || 0)).slice(0, 3).map(m => m.label)
+    : [primaryMotivation];
+
+  return { cognitiveStyle, primaryMotivation, topMotivations, riskProfile, emotionalState, energyLevel };
+}
 
 Deno.serve(async (req) => {
   const startTime = performance.now();
-  const tenantId = req.tenantId || 'anonymous';
-  const apiKey = req.apiKey || null;
   const requestId = req.headers.get('X-Request-ID') || crypto.randomUUID();
   const base44 = createClientFromRequest(req);
 
   try {
     if (req.method !== 'POST') {
-      return new Response(JSON.stringify({ success: false, error: 'Method not allowed. Use POST.' }), { 
-        status: 405, 
-        headers: { 'Content-Type': 'application/json', 'Allow': 'POST' } 
+      return new Response(JSON.stringify({ success: false, error: 'Method not allowed. Use POST.' }), {
+        status: 405,
+        headers: { 'Content-Type': 'application/json', 'Allow': 'POST' },
       });
     }
 
     const body = await req.json();
-    const validatedData = RecommendationGetSchema.parse(body);
+    const { user_id, count = 5, catalog = null, context_hint = '' } = body;
 
-    const profiles = await base44.asServiceRole.entities.HybridUserProfile.filter({ user_id: validatedData.user_id }, '-updated_date', 1);
-    const profile = profiles[0];
-
-    if (!profile) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Profile not found',
-        message: `No profile exists for user_id: ${validatedData.user_id}`,
-        meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-      }), {
-        status: 404,
+    if (!user_id) {
+      return new Response(JSON.stringify({ success: false, error: 'user_id is required' }), {
+        status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const fusedProfile = profile.fused_profile || {};
-    const indicators = fusedProfile.indicators || [];
-    
-    const profileContext = `
-User Profile Summary:
-- Primary Motivation: ${indicators.find((i) => i.key === 'primary_motivation')?.value || 'unknown'}
-- Cognitive Style: ${indicators.find((i) => i.key === 'cognitive_style')?.value || 'analytical'}
-- Risk Profile: ${indicators.find((i) => i.key === 'risk_profile')?.value || 'moderate'}
-- Emotional State: ${indicators.find((i) => i.key === 'emotional_state')?.value || 'neutral'}
-- Energy Level: ${indicators.find((i) => i.key === 'energy_level')?.value || 0.5}
-`;
+    // Fetch HybridUserProfile (primary) — fall back to UserPsychographicProfile
+    const hybridProfiles = await base44.asServiceRole.entities.HybridUserProfile.filter(
+      { user_id }, '-updated_date', 1
+    );
+    const hybrid = hybridProfiles[0];
 
-    const prompt = `You are an expert at generating personalized recommendations based on psychographic profiles.
+    let dimensions;
+    if (hybrid) {
+      dimensions = extractProfileDimensions(hybrid.fused_profile || {});
+    } else {
+      // Fall back to legacy UserPsychographicProfile
+      const legacyProfiles = await base44.asServiceRole.entities.UserPsychographicProfile.filter(
+        { user_id }, '-last_analyzed', 1
+      );
+      const legacy = legacyProfiles[0];
+      if (!legacy) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Profile not found',
+          message: `No psychographic profile found for user_id: ${user_id}`,
+          meta: { requestId, latencyMs: Math.round(performance.now() - startTime) },
+        }), { status: 404, headers: { 'Content-Type': 'application/json' } });
+      }
+      dimensions = extractProfileDimensions(legacy);
+    }
 
-${profileContext}
+    const { cognitiveStyle, topMotivations, riskProfile, emotionalState, energyLevel } = dimensions;
+    const contentPrefs = COGNITIVE_CONTENT_MAP[cognitiveStyle] || COGNITIVE_CONTENT_MAP.analytical;
+    const motivationThemes = topMotivations.flatMap(m => MOTIVATION_THEME_MAP[m] || []);
 
-Generate ${validatedData.count} specific, actionable recommendations for this user. Each recommendation should:
-1. Be personalized to their psychological profile
-2. Have a clear confidence score
-3. Include reasoning for why this recommendation fits
+    // Build catalog context if provided
+    const catalogContext = catalog && Array.isArray(catalog) && catalog.length > 0
+      ? `\n\nContent Catalog to Rank (return only items from this list, using their exact ids):\n${catalog.map((item, i) =>
+          `${i + 1}. id="${item.id}" | title="${item.title}" | description="${item.description}" | tags="${(item.tags || []).join(', ')}"`
+        ).join('\n')}`
+      : '';
 
-Response format (JSON array):
-[
-  {
-    "title": "Brief recommendation title",
-    "description": "Detailed recommendation",
-    "confidence": 0.0-1.0,
-    "reasoning": "Why this recommendation matches their profile"
-  }
-]`;
+    const isCatalogMode = !!catalogContext;
 
-    const llmResponse = await InvokeLLM({
+    const prompt = `You are a psychographic-driven content personalization engine. Your job is to produce a PRIORITIZED list of ${count} ${isCatalogMode ? 'items selected and ranked from the provided catalog' : 'content/product recommendations'} that precisely match this user's psychological profile.
+
+PSYCHOGRAPHIC PROFILE:
+- Cognitive Style: ${cognitiveStyle} → prefers ${contentPrefs.formats.join(', ')} content in a ${contentPrefs.tone} tone
+- Top Motivations (highest to lowest weight): ${topMotivations.join(' > ')}
+- Relevant Content Themes from Motivations: ${motivationThemes.slice(0, 6).join(', ')}
+- Risk Tolerance: ${riskProfile}
+- Current Emotional State: ${emotionalState}
+- Energy Level: ${energyLevel <= 0.33 ? 'low (prefer concise, low-effort content)' : energyLevel <= 0.66 ? 'moderate (balanced depth)' : 'high (receptive to deep, complex content)'}
+${context_hint ? `\nAdditional Context: ${context_hint}` : ''}
+${catalogContext}
+
+SCORING RULES:
+- Assign a priority_score 0.0–1.0 (higher = stronger match)
+- cognitive_match: how well the item format matches the cognitive style (0.0–1.0)
+- motivation_match: how well the item addresses top motivations (0.0–1.0)
+- Items should be sorted by priority_score DESCENDING in your response
+
+Return exactly ${count} items.`;
+
+    const llmResponse = await base44.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
         type: 'object',
@@ -77,28 +133,44 @@ Response format (JSON array):
             items: {
               type: 'object',
               properties: {
+                ...(isCatalogMode ? { catalog_item_id: { type: 'string' } } : {}),
                 title: { type: 'string' },
                 description: { type: 'string' },
-                confidence: { type: 'number', minimum: 0, maximum: 1 },
-                reasoning: { type: 'string' }
+                content_type: { type: 'string' },
+                priority_score: { type: 'number', minimum: 0, maximum: 1 },
+                cognitive_match: { type: 'number', minimum: 0, maximum: 1 },
+                motivation_match: { type: 'number', minimum: 0, maximum: 1 },
+                reasoning: { type: 'string' },
               },
-              required: ['title', 'description', 'confidence', 'reasoning']
-            }
-          }
+              required: ['title', 'description', 'priority_score', 'cognitive_match', 'motivation_match', 'reasoning'],
+            },
+          },
         },
-        required: ['recommendations']
-      }
+        required: ['recommendations'],
+      },
     });
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      data: llmResponse,
-      meta: { 
-        requestId, 
-        tenantId, 
+    // Sort by priority_score descending (LLM should already do this, but enforce it)
+    const sorted = (llmResponse.recommendations || []).sort((a, b) => b.priority_score - a.priority_score);
+
+    return new Response(JSON.stringify({
+      success: true,
+      data: {
+        recommendations: sorted,
+        profile_summary: {
+          cognitive_style: cognitiveStyle,
+          top_motivations: topMotivations,
+          emotional_state: emotionalState,
+          energy_level: energyLevel,
+        },
+      },
+      meta: {
+        requestId,
         latencyMs: Math.round(performance.now() - startTime),
-        profile_version: profile.version || 1
-      } 
+        profile_source: hybrid ? 'hybrid' : 'legacy',
+        catalog_mode: isCatalogMode,
+        count_returned: sorted.length,
+      },
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -106,27 +178,11 @@ Response format (JSON array):
 
   } catch (error) {
     console.error(`[${requestId}] Recommendations endpoint error:`, error);
-    
-    if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Validation error', 
-        details: error.errors,
-        meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Internal Server Error', 
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Internal Server Error',
       details: error.message,
-      meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+      meta: { requestId, latencyMs: Math.round(performance.now() - startTime) },
+    }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 });
