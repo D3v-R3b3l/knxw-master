@@ -1,119 +1,101 @@
-import { z } from 'https://deno.land/x/zod@v3.23.0/mod.ts';
-import { ProfileGetSchema } from '../utils/zodSchemas.js';
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function getIndicator(indicators = [], key) {
+  return indicators.find((item) => item.key === key);
+}
+
+async function resolveClientApp(base44, req, body) {
+  const apiKey = body?.apiKey || body?.api_key || req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
+  if (!apiKey) return null;
+  const matches = await base44.asServiceRole.entities.ClientApp.filter({ api_key: apiKey, status: 'active' }, null, 1);
+  return matches?.[0] || null;
+}
 
 Deno.serve(async (req) => {
   const startTime = performance.now();
-  const tenantId = req.tenantId || 'anonymous';
-  const apiKey = req.apiKey || null;
   const requestId = req.headers.get('X-Request-ID') || crypto.randomUUID();
   const base44 = createClientFromRequest(req);
 
   try {
-    if (req.method !== 'GET') {
-      return new Response(JSON.stringify({ success: false, error: 'Method not allowed. Use GET.' }), { 
-        status: 405, 
-        headers: { 'Content-Type': 'application/json', 'Allow': 'GET' } 
-      });
+    if (!['GET', 'POST'].includes(req.method)) {
+      return json({ success: false, error: 'Method not allowed. Use GET or POST.' }, 405);
     }
 
+    const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
     const url = new URL(req.url);
-    const pathParts = url.pathname.split('/');
-    const userId = pathParts[pathParts.length - 1];
+    const userId = String(body?.user_id || url.searchParams.get('user_id') || '').trim();
 
-    if (!userId || userId.length === 0) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'User ID is required in the path: /api/v1/profiles/:user_id',
-        meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (!userId) {
+      return json({ success: false, error: 'user_id is required' }, 400);
     }
 
-    ProfileGetSchema.parse({ user_id: userId });
-
-    const profiles = await base44.asServiceRole.entities.HybridUserProfile.filter({ user_id: userId }, '-updated_date', 1);
-    const profile = profiles[0];
+    const clientApp = await resolveClientApp(base44, req, body);
+    const appId = body?.app_id || clientApp?.id || null;
+    const hybridFilter = appId ? { user_id: userId, app_id: appId } : { user_id: userId };
+    const profiles = await base44.asServiceRole.entities.HybridUserProfile.filter(hybridFilter, '-updated_date', 1);
+    const profile = profiles?.[0] || null;
 
     if (!profile) {
-      return new Response(JSON.stringify({ 
-        success: false, 
+      return json({
+        success: false,
         error: 'Profile not found',
         message: `No profile exists for user_id: ${userId}`,
-        meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-      }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+        meta: { requestId, latencyMs: Math.round(performance.now() - startTime) }
+      }, 404);
     }
 
+    const legacyProfiles = await base44.asServiceRole.entities.UserPsychographicProfile.filter({ user_id: userId }, '-last_analyzed', 1).catch(() => []);
+    const legacy = legacyProfiles?.[0] || null;
     const fusedProfile = profile.fused_profile || {};
     const indicators = fusedProfile.indicators || [];
-    
+
     const profileData = {
       user_id: profile.user_id,
+      app_id: profile.app_id || appId,
       motivations: {
-        primary: indicators.find((i) => i.key === 'primary_motivation')?.value || 'unknown',
-        secondary: indicators.find((i) => i.key === 'secondary_motivation')?.value || 'unknown',
-        confidence: indicators.find((i) => i.key === 'motivation_confidence')?.confidence || 0.5
+        primary: fusedProfile.primary_motivation || getIndicator(indicators, 'primary_motivation')?.value || legacy?.motivation_labels?.[0] || 'unknown',
+        labels: fusedProfile.motivation_labels || legacy?.motivation_labels || [],
+        confidence: getIndicator(indicators, 'primary_motivation')?.confidence || legacy?.motivation_confidence_score || fusedProfile.confidence || 0.5
       },
-      personality: {
-        openness: indicators.find((i) => i.key === 'personality.openness')?.value || 0.5,
-        conscientiousness: indicators.find((i) => i.key === 'personality.conscientiousness')?.value || 0.5,
-        extraversion: indicators.find((i) => i.key === 'personality.extraversion')?.value || 0.5,
-        agreeableness: indicators.find((i) => i.key === 'personality.agreeableness')?.value || 0.5,
-        neuroticism: indicators.find((i) => i.key === 'personality.neuroticism')?.value || 0.5
-      },
+      personality: legacy?.personality_traits || {},
       emotions: {
-        current_state: indicators.find((i) => i.key === 'emotional_state')?.value || 'neutral',
-        energy: indicators.find((i) => i.key === 'energy_level')?.value || 0.5,
-        mood: indicators.find((i) => i.key === 'mood')?.value || 'neutral'
+        current_state: fusedProfile.emotional_state?.mood || getIndicator(indicators, 'emotional_state.mood')?.value || legacy?.emotional_state?.mood || 'neutral',
+        energy: fusedProfile.emotional_state?.energy_level || getIndicator(indicators, 'energy_level')?.value || legacy?.emotional_state?.energy_level || 'medium',
+        confidence: fusedProfile.emotional_state?.confidence_score || getIndicator(indicators, 'emotional_state.mood')?.confidence || legacy?.emotional_state?.confidence_score || 0.5
       },
-      cognitive_style: indicators.find((i) => i.key === 'cognitive_style')?.value || 'analytical',
-      risk_profile: indicators.find((i) => i.key === 'risk_profile')?.value || 'moderate',
-      reasoning: profile.evidence || 'Profile generated from behavioral analysis.',
+      cognitive_style: fusedProfile.cognitive_style || getIndicator(indicators, 'cognitive_style')?.value || legacy?.cognitive_style || 'analytical',
+      risk_profile: fusedProfile.risk_profile || getIndicator(indicators, 'risk_profile')?.value || legacy?.risk_profile || 'moderate',
+      reasoning: profile.evidence || 'Profile generated from live behavioral analysis.',
+      source: 'hybrid_live_profile',
       last_updated: profile.updated_date,
       version: profile.version || 1
     };
 
-    return new Response(JSON.stringify({ 
-      success: true, 
+    return json({
+      success: true,
       data: profileData,
-      meta: { 
-        requestId, 
-        tenantId, 
-        latencyMs: Math.round(performance.now() - startTime) 
-      } 
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      meta: {
+        requestId,
+        latencyMs: Math.round(performance.now() - startTime)
+      }
     });
-
   } catch (error) {
     console.error(`[${requestId}] Profiles endpoint error:`, error);
-    
-    if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Validation error', 
-        details: error.errors,
-        meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Internal Server Error', 
+    return json({
+      success: false,
+      error: 'Internal Server Error',
       details: error.message,
-      meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+      meta: {
+        requestId,
+        latencyMs: Math.round(performance.now() - startTime)
+      }
+    }, 500);
   }
 });

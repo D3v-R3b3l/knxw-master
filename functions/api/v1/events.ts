@@ -1,80 +1,90 @@
-import { z } from 'https://deno.land/x/zod@v3.23.0/mod.ts';
-import { EventIngestSchema } from '../utils/zodSchemas.js';
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+
+const VALID_EVENT_TYPES = new Set([
+  'page_view',
+  'click',
+  'form_submit',
+  'form_focus',
+  'scroll',
+  'hover',
+  'exit_intent',
+  'time_on_page',
+  'page_exit',
+  'purchase',
+  'signup',
+  'feature_usage',
+  'product_view',
+  'pricing_view',
+  'add_to_cart',
+  'checkout_start',
+  'checkout_complete'
+]);
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
 
 Deno.serve(async (req) => {
   const startTime = performance.now();
-  const tenantId = req.tenantId || 'anonymous';
-  const apiKey = req.apiKey || null;
   const requestId = req.headers.get('X-Request-ID') || crypto.randomUUID();
   const base44 = createClientFromRequest(req);
 
   try {
     if (req.method !== 'POST') {
-      return new Response(JSON.stringify({ success: false, error: 'Method not allowed. Use POST.' }), { 
-        status: 405, 
-        headers: { 'Content-Type': 'application/json', 'Allow': 'POST' } 
-      });
+      return json({ success: false, error: 'Method not allowed. Use POST.' }, 405);
     }
 
-    const body = await req.json();
-    const validatedData = EventIngestSchema.parse(body);
+    const body = await req.json().catch(() => ({}));
+    const userId = String(body?.user_id || '').trim();
+    const eventType = String(body?.event_type || '').trim();
 
-    const ingestResult = await base44.functions.invoke('captureEvent', {
-      user_id: validatedData.user_id,
-      event_type: validatedData.event_type,
-      event_payload: validatedData.event_payload,
-      session_id: validatedData.session_id,
-      timestamp: validatedData.timestamp,
-      tenant_id: tenantId,
-      api_key_id: apiKey?.id
+    if (!userId || !eventType) {
+      return json({ success: false, error: 'user_id and event_type are required' }, 400);
+    }
+
+    if (!VALID_EVENT_TYPES.has(eventType)) {
+      return json({ success: false, error: `Unsupported event_type: ${eventType}` }, 400);
+    }
+
+    const ingestResponse = await base44.functions.invoke('captureEvent', {
+      apiKey: body?.apiKey || body?.api_key || null,
+      app_id: body?.app_id || null,
+      user_id: userId,
+      event_type: eventType,
+      event_payload: body?.event_payload || {},
+      session_id: body?.session_id || null,
+      device_info: body?.device_info || {},
+      timestamp: body?.timestamp || new Date().toISOString()
     });
 
-    base44.functions.invoke('liveProfileProcessor', { 
-      action: 'process_live_events', 
-      user_id: validatedData.user_id 
-    }).catch(err => console.warn(`Profile refresh failed for user ${validatedData.user_id}:`, err));
+    const ingestData = ingestResponse?.data || {};
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      data: { 
-        event_id: ingestResult?.event_id || crypto.randomUUID(),
+    return json({
+      success: true,
+      data: {
+        event_id: ingestData.event_id || null,
+        client_app_id: ingestData.client_app_id || body?.app_id || null,
         status: 'accepted',
         message: 'Event ingested successfully. Profile analysis queued.'
-      }, 
-      meta: { 
-        requestId, 
-        tenantId, 
-        latencyMs: Math.round(performance.now() - startTime) 
-      } 
-    }), {
-      status: 202,
-      headers: { 'Content-Type': 'application/json' },
-    });
-
+      },
+      meta: {
+        requestId,
+        latencyMs: Math.round(performance.now() - startTime)
+      }
+    }, 202);
   } catch (error) {
     console.error(`[${requestId}] Events endpoint error:`, error);
-    
-    if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Validation error', 
-        details: error.errors,
-        meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Internal Server Error', 
+    return json({
+      success: false,
+      error: 'Internal Server Error',
       details: error.message,
-      meta: { requestId, tenantId, latencyMs: Math.round(performance.now() - startTime) }
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+      meta: {
+        requestId,
+        latencyMs: Math.round(performance.now() - startTime)
+      }
+    }, 500);
   }
 });

@@ -153,7 +153,9 @@ Deno.serve(async (req) => {
   async function track(eventType, payload = {}, options = {}) {
     ensureUser();
     updateActivity();
-    return post('captureEvent', {
+    return post('api/v1/events', {
+      apiKey: STATE.apiKey,
+      app_id: STATE.appId,
       user_id: STATE.userId,
       session_id: STATE.sessionId,
       event_type: eventType,
@@ -167,25 +169,7 @@ Deno.serve(async (req) => {
       timestamp: options.timestamp || new Date().toISOString()
     });
   }
-
-  function bindListeners() {
-    if (STATE.listenersBound) return;
-    STATE.listenersBound = true;
-
-    document.addEventListener('click', (event) => {
-      const target = event.target?.closest?.('button, a, [data-knxw-track], input, select, textarea') || event.target;
-      if (!target) return;
-      track('click', { element: textForElement(target) }).catch(() => {});
-    }, true);
-
-    document.addEventListener('submit', (event) => {
-      const target = event.target;
-      track('form_submit', { element: textForElement(target) }).catch(() => {});
-    }, true);
-
-    window.addEventListener('mousemove', updateActivity, { passive: true });
-    window.addEventListener('keydown', updateActivity, { passive: true });
-    window.addEventListener('scroll', updateActivity, { passive: true });
+...
     window.addEventListener('pagehide', () => {
       track('page_exit', { url: window.location.href }).catch(() => {});
     });

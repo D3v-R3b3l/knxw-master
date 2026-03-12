@@ -58,6 +58,27 @@ function isAuthorizedOrigin(req, clientApp) {
   return allowed.some((domain) => normalizeOrigin(domain) === origin);
 }
 
+async function resolveClientApp(svc, data, req) {
+  const directAppId = data?.app_id || data?.client_app_id || data?.event_payload?.client_app_id || null;
+  const directApiKeyId = data?.apiKeyId || data?.api_key_id || null;
+  const apiKey = data?.apiKey || data?.api_key || req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
+
+  if (directAppId) {
+    const app = await svc.entities.ClientApp.get(directAppId).catch(() => null);
+    if (app?.status === 'active') return app;
+  }
+
+  if (directApiKeyId) {
+    const app = await svc.entities.ClientApp.get(directApiKeyId).catch(() => null);
+    if (app?.status === 'active') return app;
+  }
+
+  if (!apiKey) return null;
+
+  const clientApps = await svc.entities.ClientApp.filter({ api_key: apiKey, status: 'active' }, null, 1);
+  return clientApps?.[0] || null;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders() });
@@ -68,19 +89,17 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const apiKey = req.headers.get('X-API-Key') || req.headers.get('Authorization')?.replace('Bearer ', '');
-    if (!apiKey) {
-      return json({ error: 'Missing API key. Include X-API-Key header or Authorization: Bearer header.' }, 401);
+    const data = await req.json().catch(() => ({}));
+    if (!data?.user_id || !data?.event_type) {
+      return json({ error: 'Missing required fields: user_id, event_type' }, 400);
     }
 
     const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole;
-
-    const clientApps = await svc.entities.ClientApp.filter({ api_key: apiKey, status: 'active' }, null, 1);
-    const clientApp = clientApps?.[0] || null;
+    const clientApp = await resolveClientApp(svc, data, req);
 
     if (!clientApp) {
-      return json({ error: 'Invalid API key' }, 401);
+      return json({ error: 'Invalid API key or client app' }, 401);
     }
 
     if (!isAuthorizedOrigin(req, clientApp)) {
@@ -98,12 +117,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const data = await req.json();
-    if (!data?.user_id || !data?.event_type) {
-      return json({ error: 'Missing required fields: user_id, event_type' }, 400);
-    }
-
     const eventRecord = {
+      app_id: clientApp.id,
       user_id: String(data.user_id),
       session_id: data.session_id || crypto.randomUUID(),
       event_type: String(data.event_type),
@@ -121,7 +136,8 @@ Deno.serve(async (req) => {
 
     svc.functions.invoke('liveProfileProcessor', {
       action: 'process_live_events',
-      user_id: String(data.user_id)
+      user_id: String(data.user_id),
+      app_id: clientApp.id
     }).catch((error) => {
       console.warn('captureEvent: liveProfileProcessor failed after save:', error.message);
     });
@@ -129,7 +145,8 @@ Deno.serve(async (req) => {
     return json({
       success: true,
       event_id: savedEvent.id,
-      client_app_id: clientApp.id
+      client_app_id: clientApp.id,
+      app_id: clientApp.id
     });
   } catch (error) {
     console.error('captureEvent error:', error);
