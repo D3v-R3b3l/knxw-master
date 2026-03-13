@@ -12,7 +12,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ChurnAnalytics from './pages/ChurnAnalytics';
 
 const { Pages, Layout, mainPage } = pagesConfig;
-const mainPageKey = mainPage ?? Object.keys(Pages)[0];
+const mainPageKey = 'Dashboard';
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
