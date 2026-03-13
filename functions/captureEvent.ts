@@ -135,10 +135,15 @@ Deno.serve(async (req) => {
 
     const savedEvent = await svc.entities.CapturedEvent.create(eventRecord);
 
-    svc.functions.invoke('liveProfileProcessor', {
-      action: 'process_live_events',
-      user_id: String(data.user_id),
-      app_id: clientApp.id
+    const processorUrl = `${new URL(req.url).origin}/functions/liveProfileProcessor`;
+    fetch(processorUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'process_live_events',
+        user_id: String(data.user_id),
+        app_id: clientApp.id
+      })
     }).catch((error) => {
       console.warn('captureEvent: liveProfileProcessor failed after save:', error.message);
     });
