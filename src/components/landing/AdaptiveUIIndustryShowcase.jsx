@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Gamepad2, Rocket, TrendingUp, Zap, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ShoppingCart, Rocket, GraduationCap, TrendingUp, Zap, ChevronRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function AdaptiveUIIndustryShowcase() {
@@ -12,9 +11,9 @@ export default function AdaptiveUIIndustryShowcase() {
       title: 'E-commerce',
       tagline: 'Personalize every touchpoint',
       stats: [
-      { value: '+47%', label: 'Conversion Rate' },
-      { value: '+62%', label: 'Cart Completion' },
-      { value: '-34%', label: 'Return Rate' }],
+      { value: 'Higher', label: 'Conversion quality' },
+      { value: 'Better', label: 'Checkout completion' },
+      { value: 'Lower', label: 'Decision friction' }],
 
       examples: [
       {
@@ -32,27 +31,27 @@ export default function AdaptiveUIIndustryShowcase() {
 
       gradient: 'from-[#10b981] to-[#00d4ff]'
     },
-    gaming: {
-      icon: Gamepad2,
-      title: 'Gaming',
-      tagline: 'Adaptive player experiences',
+    learning: {
+      icon: GraduationCap,
+      title: 'Adaptive Learning',
+      tagline: 'Support different decision styles',
       stats: [
-      { value: '+58%', label: 'Engagement' },
-      { value: '+73%', label: 'IAP Conversion' },
-      { value: '-41%', label: 'Day 7 Churn' }],
+      { value: 'Faster', label: 'Time to clarity' },
+      { value: 'Better', label: 'Completion quality' },
+      { value: 'Lower', label: 'Drop-off friction' }],
 
       examples: [
       {
-        title: 'Reward Systems',
-        description: 'Mastery players see skill achievements, social players see team milestones'
+        title: 'Onboarding Guidance',
+        description: 'Analytical users can see more structured explanation, while intuitive users get faster guided progress.'
       },
       {
-        title: 'Difficulty Prompts',
-        description: 'Conservative: "Find comfort zone", Aggressive: "Maximum challenge mode"'
+        title: 'Confidence Cues',
+        description: 'Hesitant learners can receive reassurance and pacing support at high-friction steps.'
       },
       {
-        title: 'IAP Offers',
-        description: 'Achievement: "Join Elite 5%", Social: "Exclusive team features"'
+        title: 'Progress Messaging',
+        description: 'Motivation-aware prompts can shift from mastery framing to momentum framing based on observed behavior.'
       }],
 
       gradient: 'from-[#8b5cf6] to-[#ec4899]'
@@ -62,9 +61,9 @@ export default function AdaptiveUIIndustryShowcase() {
       title: 'SaaS',
       tagline: 'Intelligent onboarding',
       stats: [
-      { value: '+67%', label: 'Activation' },
-      { value: '+84%', label: 'Feature Adoption' },
-      { value: '-52%', label: 'Time to Value' }],
+      { value: 'Stronger', label: 'Activation quality' },
+      { value: 'Better', label: 'Feature discovery' },
+      { value: 'Faster', label: 'Time to value' }],
 
       examples: [
       {
@@ -102,10 +101,10 @@ export default function AdaptiveUIIndustryShowcase() {
             </span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
-            Adaptive UI Across <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Every Industry</span>
+            UI That <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Understands</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Real-world examples of psychographic intelligence driving measurable business impact
+            Concrete examples of how copy, pacing, prompts, trust cues, and interface emphasis adapt to user context.
           </p>
         </div>
 

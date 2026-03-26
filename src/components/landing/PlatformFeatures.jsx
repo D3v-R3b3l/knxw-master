@@ -1,5 +1,5 @@
 import React from 'react';
-import { Brain, Gamepad2, TrendingUp, Code, FileText, Bot, Cpu, Route, UserCheck, RefreshCcw, BarChart3, Store, Users, Sparkles, Activity, Layers } from 'lucide-react';
+import { Brain, Code, Route, UserCheck, BarChart3, Store, Users, Sparkles, Bot } from 'lucide-react';
 
 const FeatureCard = ({ icon: Icon, color, title, description, badge, badgeColor, large }) => {
   const colorMap = {
@@ -53,54 +53,21 @@ export default function PlatformFeatures() {
           <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
             Platform
           </span>
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">Complete Intelligence Platform</h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">From tracking to activation, everything you need for psychographic intelligence</p>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">Core Platform Capabilities</h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">A focused product architecture for teams deploying runtime psychographic intelligence inside digital products.</p>
         </div>
 
-        {/* Row 1: Two hero cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-          <FeatureCard large icon={Brain} color="blue" title="Psychographic Profiling" description="Automatically generate psychological profiles revealing motivations, cognitive styles, and personality traits from behavioral signals." badge="ALL PLANS" />
-          <FeatureCard large icon={Sparkles} color="cyan" title="Adaptive UI SDK" description="Lightweight JavaScript SDK for live event capture plus adaptive modals, tooltips, and notifications driven by engagement rules." badge="ALL PLANS" badgeColor="bg-cyan-500/15 text-cyan-300 border-cyan-500/30" />
+          <FeatureCard large icon={Brain} color="blue" title="Inference Engine" description="Continuously interprets behavioral signals into psychographic state and decision context." badge="CORE" />
+          <FeatureCard large icon={Sparkles} color="cyan" title="Adaptive UI SDK" description="Deploy runtime interface behavior that adapts messaging, prompts, pacing, and emphasis without rebuilding the full application stack." badge="CORE" badgeColor="bg-cyan-500/15 text-cyan-300 border-cyan-500/30" />
         </div>
 
-        {/* Row 2: Three equal cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          <FeatureCard icon={Gamepad2} color="purple" title="GameDev Intelligence" description="Player motivation, adaptive difficulty, and churn prediction tailored for gaming experiences." badge="GROWTH+" badgeColor="bg-purple-500/10 text-purple-400 border-purple-500/20" />
-          <FeatureCard icon={TrendingUp} color="emerald" title="Market Intelligence" description="Analyze competitors and market trends through a psychographic lens to sharpen positioning." badge="PRO" badgeColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20" />
-          <FeatureCard icon={Code} color="orange" title="Developer APIs" description="RESTful APIs, webhooks, and a developer playground for rapid, flexible integration." badge="FREE TIER" badgeColor="bg-orange-500/10 text-orange-400 border-orange-500/20" />
+          <FeatureCard icon={Route} color="fuchsia" title="Decisioning and Orchestration" description="Coordinate when and how experiences should adapt based on live user context." badge="CORE" badgeColor="bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20" />
+          <FeatureCard icon={UserCheck} color="teal" title="Explainability and Governance" description="Provide reasoning visibility, intervention traceability, and safeguards for responsible adaptation." badge="CORE" badgeColor="bg-teal-500/10 text-teal-400 border-teal-500/20" />
+          <FeatureCard icon={Code} color="orange" title="Enterprise Integration" description="Connect with product stacks, APIs, instrumentation, and operational workflows for real deployment." badge="CORE" badgeColor="bg-orange-500/10 text-orange-400 border-orange-500/20" />
         </div>
 
-        {/* Row 3: Three equal cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          <FeatureCard icon={Cpu} color="violet" title="AI Inference Studio" description="Fine-tune psychographic models with custom weights and confidence thresholds." badge="GROWTH+" badgeColor="bg-violet-500/10 text-violet-400 border-violet-500/20" />
-          <FeatureCard icon={Route} color="fuchsia" title="AI Journey Orchestrator" description="Proactive AI suggestions for journey optimization based on behavioral patterns." badge="PRO" badgeColor="bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20" />
-          <FeatureCard icon={UserCheck} color="teal" title="User Data Portal" description="End-user transparency and full control over their psychographic data." badge="ALL PLANS" badgeColor="bg-teal-500/10 text-teal-400 border-teal-500/20" />
-        </div>
-
-        {/* Row 4: Four compact cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-5">
-          <FeatureCard icon={FileText} color="cyan" title="Content Engine" description="Prioritize content using cognitive style and motivation signals from psychographic profiles." />
-          <FeatureCard icon={Bot} color="pink" title="AI Automation" description="Deploy intelligent agents for personalized, timely engagements." />
-          <FeatureCard icon={Activity} color="rose" title="Emotional Shift Tracking" description="Monitor subtle emotional changes with volatility analysis." />
-          <FeatureCard icon={Layers} color="indigo" title="Custom Dimensions" description="Define industry-specific psychographic traits and metrics." />
-        </div>
-
-        {/* Row 5: Full-width feedback loop */}
-        <div className="bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-amber-500/30 transition-all duration-500 relative overflow-hidden group mb-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/8 rounded-full blur-[150px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-600/30 to-amber-600/10 flex items-center justify-center flex-shrink-0 border border-amber-500/20">
-              <RefreshCcw className="w-7 h-7 text-amber-400" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-2xl md:text-3xl font-bold mb-2">Self-Learning AI Feedback Loop</h3>
-              <p className="text-gray-400 text-base max-w-3xl leading-relaxed">Engagement outcomes continuously train and improve psychographic predictions. Every interaction makes the AI smarter — automatically adjusting confidence thresholds and refining inference models based on real-world performance.</p>
-            </div>
-            <span className="text-xs font-mono bg-gradient-to-r from-amber-500/20 to-orange-500/20 px-5 py-2.5 rounded-full text-amber-300 border border-amber-500/30 whitespace-nowrap flex-shrink-0">🧠 AUTONOMOUS OPTIMIZATION</span>
-          </div>
-        </div>
-
-        {/* Row 6: Integrations */}
         <div className="bg-gradient-to-br from-[#0a0a0a] to-[#111] rounded-2xl p-8 md:p-10 border border-white/5 hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-500/8 rounded-full blur-[150px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           <div className="relative z-10">

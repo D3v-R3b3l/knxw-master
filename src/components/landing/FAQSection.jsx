@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 
 export default function FAQSection() {
@@ -6,16 +6,28 @@ export default function FAQSection() {
 
   const faqs = [
     {
-      question: "How hard is setup?",
-      answer: "One script install. Insights flow instantly. We provide SDKs for React, standard JS, and game engines."
+      question: "How does knXw infer psychographic state?",
+      answer: "knXw interprets behavioral signals such as navigation patterns, hesitation, completion behavior, and interaction sequences to estimate motivation, cognitive style, and decision friction. The goal is runtime decision context, not a static personality label."
     },
     {
-      question: "Is data private?",
-      answer: "We take data privacy seriously. All data is encrypted in transit and at rest. We are GDPR-ready and do not sell or share your data with third parties. You maintain full control and ownership of your data, with the ability to export or delete it at any time."
+      question: "What data does knXw use?",
+      answer: "knXw uses product interaction and behavioral telemetry captured through instrumentation. Teams control what they send, how it is mapped, and where it is activated."
     },
     {
-      question: "When do I see ROI?",
-      answer: "Most customers see measurable lift within 30 days through improved engagement and conversion rates."
+      question: "How difficult is integration?",
+      answer: "Teams can start with instrumentation and APIs, then add adaptive UI behaviors through the SDK. Integration effort depends on how deeply you want experience changes wired into your product, but the initial path is designed to be incremental."
+    },
+    {
+      question: "What is explainable versus AI-generated?",
+      answer: "knXw is designed to expose the logic behind interventions, including the behavioral context and reasoning signals that led to a change. Teams can review and govern how adaptations are triggered."
+    },
+    {
+      question: "How is privacy handled?",
+      answer: "The platform includes encrypted data handling, privacy controls, and product-level governance patterns. Teams remain responsible for configuring data collection and usage to match their legal and operational requirements."
+    },
+    {
+      question: "How quickly can teams measure value?",
+      answer: "Time-to-value depends on traffic, instrumentation quality, and how many adaptive flows are activated. Most teams should expect an initial learning period before they can evaluate which interventions improve product outcomes."
     }
   ];
 

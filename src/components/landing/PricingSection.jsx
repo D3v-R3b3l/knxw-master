@@ -105,10 +105,10 @@ export default function PricingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-16 md:mb-24">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Pricing by Economic Posture
+            Pricing
           </h2>
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Choose based on how behavior intelligence affects your business outcomes
+            Straightforward plans for teams adopting runtime psychographic intelligence.
           </p>
         </div>
 

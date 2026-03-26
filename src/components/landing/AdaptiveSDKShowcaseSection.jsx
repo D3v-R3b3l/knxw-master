@@ -16,14 +16,14 @@ export default function AdaptiveSDKShowcaseSection() {
           <div className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="w-6 h-6 text-cyan-400" />
             <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20">
-              NEW: Adaptive UI SDK
+              Adaptive UI SDK
             </span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
-            UI That <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Understands</span>
+            Deploy adaptive product behavior <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">through a runtime SDK</span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Build React components that automatically adapt to user psychology—no complex logic, just intelligent components.
+          <p className="text-xl text-gray-400 max-w-4xl mx-auto">
+            Turn behavioral telemetry into psychographic inference and psychographic inference into explainable experience changes using React components, instrumentation, and developer APIs.
           </p>
         </div>
 

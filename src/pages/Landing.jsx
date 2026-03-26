@@ -4,13 +4,10 @@ import HeroShader from '@/components/landing/HeroShader';
 import SEOHead from '@/components/system/SEOHead';
 import BrainVisualization from '@/components/landing/BrainVisualization';
 import { ArrowDown } from 'lucide-react';
-import PhilosophySection from '@/components/landing/PhilosophySection';
 import AnimatedPaths from '@/components/landing/AnimatedPaths';
 import ArchitecturalBuildAnimation from '@/components/landing/ArchitecturalBuildAnimation';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
-import IntegrationsMarquee from '@/components/landing/IntegrationsMarquee';
 import UseCasesGrid from '@/components/landing/UseCasesGrid';
-import AnimatedStats from '@/components/landing/AnimatedStats';
 import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import FooterSection from '@/components/landing/FooterSection';
@@ -26,6 +23,9 @@ import Lenis from '@studio-freight/lenis';
 import { HelmetProvider } from 'react-helmet-async';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import AdaptiveUIIndustryShowcase from '@/components/landing/AdaptiveUIIndustryShowcase';
+import LandingExplainerSection from '@/components/landing/LandingExplainerSection';
+import LandingHowItWorksSection from '@/components/landing/LandingHowItWorksSection';
+import LandingBusinessImpactSection from '@/components/landing/LandingBusinessImpactSection';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -95,9 +95,9 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 1.2, ease: "easeOut" }}
       >
         <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
-          The Universal <br />
+          Runtime Psychographic <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
-            Intelligence Layer
+            Intelligence
           </span>
         </h1>
       </motion.div>
@@ -109,8 +109,8 @@ function HeroContent({ heroRef }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
       >
-        <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-light leading-relaxed mb-12">
-          Psychographic intelligence that understands <span className="text-white font-medium">why</span> users do what they do—across web, mobile, games, and any digital environment.
+        <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto font-light leading-relaxed mb-12">
+          knXw helps product teams adapt digital experiences in real time based on behavioral signals, motivation, cognitive style, and decision context, improving activation, retention, and conversion quality.
         </p>
       </motion.div>
 
@@ -146,10 +146,10 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 1, delay: 0.9 }}
         className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest"
       >
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Web & Mobile</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Game Engines</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>REST API</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Any Platform</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Behavioral signals</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Adaptive UI SDK</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Developer APIs</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Explainability</span>
       </motion.div>
     </div>
   );
@@ -187,8 +187,7 @@ export default function LandingPage() {
 
     // Section snap functionality
     const snapSections = [
-      'hero', 'philosophy', 'features', 'platform', 'enterprise', 
-      'integrations', 'demo-section', 'use-cases', 'stats', 'pricing', 'faq', 'cta'
+      'hero', 'explainer', 'sdk', 'how-it-works', 'platform', 'use-cases', 'ui-examples', 'outcomes', 'enterprise', 'pricing', 'faq', 'cta'
     ];
 
     let isSnapping = false;
@@ -336,9 +335,9 @@ export default function LandingPage() {
     <HelmetProvider>
       <ConsentProvider>
         <SEOHead 
-        title="knXw - Universal Intelligence Layer for Digital Environments"
-        description="Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment. Real-time behavioral analysis powered by AI."
-        keywords="psychographic intelligence, user analytics, behavioral analysis, AI insights, customer intelligence, user profiling, adaptive experiences"
+        title="knXw - Runtime Psychographic Intelligence for Digital Products"
+        description="knXw helps product teams adapt digital experiences in real time based on behavioral signals, motivation, cognitive style, and decision context."
+        keywords="runtime psychographic intelligence, adaptive UI, behavioral signals, cognitive style, product instrumentation, explainable personalization"
       />
       
       {/* Noscript fallback for search engines and no-JS browsers */}
@@ -433,56 +432,34 @@ export default function LandingPage() {
           {/* Content sections container - sits above the fixed shader */}
           <div className="relative bg-black" style={{ zIndex: 10 }}>
 
-          <div id="philosophy" data-scroll-section>
-            <PhilosophySection />
+          <div id="explainer" data-scroll-section>
+            <LandingExplainerSection />
           </div>
 
-          {/* Infrastructure Section - Enhanced */}
-          <div data-scroll-section>
-          <section id="features" className="py-16 md:py-20 bg-[#050505] border-b border-white/5 overflow-hidden relative">
-             {/* Parallax Background */}
-             <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
-               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.06),transparent_60%)]" />
-               <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-[120px]" />
-               <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-[100px]" />
-             </div>
-             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100px_100px]" />
-             
-             <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="mb-16 text-center">
-                   <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
-                      Architecture
-                   </span>
-                   <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Built as Universal Infrastructure</h2>
-                   <p className="text-xl text-gray-400 max-w-2xl mx-auto">Foundational cognitive layer for human understanding across every digital touchpoint</p>
-                </div>
-                <div className="grid md:grid-cols-4 gap-6">
-                   {[
-                     { title: "Event Ingestion", desc: "Real-time data capture from any source with sub-100ms latency.", num: "01" },
-                     { title: "AI Intelligence", desc: "Multi-layer inference engine for psychographic profiling.", num: "02" },
-                     { title: "Developer APIs", desc: "RESTful APIs and SDKs for seamless integration.", num: "03" },
-                     { title: "Activation", desc: "Turn insights into adaptive experiences instantly.", num: "04" }
-                   ].map((item, i) => (
-                      <div 
-                         key={i} 
-                         className="group relative p-6 rounded-xl bg-gradient-to-br from-[#0a0a0a] to-[#111] border border-white/5 hover:border-cyan-500/30 transition-all duration-500"
-                      >
-                         <div className="absolute top-4 right-4 text-4xl font-bold text-white/5 group-hover:text-cyan-500/10 transition-colors">{item.num}</div>
-                         <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-transparent rounded-full mb-4" />
-                         <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                         <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
-                      </div>
-                   ))}
-                </div>
-             </div>
-          </section>
+          <div id="sdk" data-scroll-section>
+            <AdaptiveSDKShowcaseSection />
           </div>
 
-          <div data-scroll-section>
+          <div id="how-it-works" data-scroll-section>
+            <LandingHowItWorksSection />
+          </div>
+
+          <div id="platform" data-scroll-section>
             <PlatformFeatures />
           </div>
           
-          {/* Enterprise Section - Enhanced */}
+          <div id="use-cases" data-scroll-section>
+            <UseCasesGrid />
+          </div>
+
+          <div id="ui-examples" data-scroll-section>
+            <AdaptiveUIIndustryShowcase />
+          </div>
+
+          <div id="outcomes" data-scroll-section>
+            <LandingBusinessImpactSection />
+          </div>
+          
           <div id="enterprise" data-scroll-section>
           <section className="py-24 md:py-32 bg-black border-y border-white/10 overflow-hidden relative">
             {/* Parallax Background */}
@@ -534,99 +511,11 @@ export default function LandingPage() {
           </section>
           </div>
 
-          <div id="integrations" data-scroll-section>
-            <IntegrationsMarquee />
-          </div>
 
-          {/* Interactive Demo Teaser - Enhanced */}
-          <div data-scroll-section>
-          <section id="demo-section" className="py-24 md:py-32 bg-[#080808] text-center overflow-hidden relative">
-          {/* Animated Paths Background */}
-          <div className="absolute inset-0 pointer-events-none">
-            <AnimatedPaths />
-          </div>
-
-          <div className="max-w-5xl mx-auto px-6 relative z-10">
-             <div>
-                <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
-                   Experience
-                </span>
-                <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">Intuitive Intelligence</h2>
-                <p className="text-xl text-gray-400 mb-16 max-w-2xl mx-auto">Build adaptive UIs that automatically personalize to user psychology</p>
-             </div>
-
-             <div className="grid md:grid-cols-2 gap-6 mb-16 text-left">
-                {[
-                   { title: "Adaptive UI SDK", desc: "React components that automatically adapt to user motivations and psychology.", gradient: "from-cyan-500/20 to-blue-500/20" },
-                   { title: "Real-Time Insights", desc: "Live psychographic analysis with explainable AI reasoning.", gradient: "from-purple-500/20 to-pink-500/20" }
-                ].map((item, i) => (
-                   <div 
-                      key={i}
-                      className={`group bg-gradient-to-br ${item.gradient} p-8 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-500 relative overflow-hidden`}
-                   >
-                      <div className="absolute inset-0 bg-[#111] opacity-80 group-hover:opacity-70 transition-opacity" />
-                      <div className="relative z-10">
-                         <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                         <p className="text-gray-400">{item.desc}</p>
-                      </div>
-                   </div>
-                ))}
-             </div>
-
-                <button
-                  onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
-                  className="group relative overflow-hidden px-10 py-5 font-bold text-xl text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97]"
-                  style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 40px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}
-                >
-                  Try Interactive Demo
-                  <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                  <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
-                </button>
-             </div>
-          </section>
-          </div>
-
-          <div id="use-cases" data-scroll-section>
-            <UseCasesGrid />
-          </div>
-          
-          {/* Adaptive UI SDK Showcase */}
-          <div data-scroll-section>
-            <AdaptiveSDKShowcaseSection />
-          </div>
-          
-          {/* Adaptive UI Industry Use Cases */}
-          <div data-scroll-section>
-            <AdaptiveUIIndustryShowcase />
-          </div>
-          
-          <div id="stats" data-scroll-section>
-            <AnimatedStats />
-          </div>
           <div data-scroll-section>
             <PricingSection />
           </div>
           
-          {/* Vision Text - Enhanced */}
-          <div data-scroll-section>
-          <section className="py-24 md:py-32 bg-black text-center px-6 overflow-hidden relative">
-             <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
-               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.05),transparent_50%)]" />
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/3 rounded-full blur-[150px]" />
-             </div>
-             <div className="relative z-10">
-                <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto mb-12" />
-                <p data-parallax="slow" className="text-2xl md:text-4xl lg:text-5xl font-light text-gray-400 max-w-5xl mx-auto leading-relaxed">
-                  "knXw is not just another analytics tool or AI assistant; it is the framework for a more{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-400">
-                     connected, intelligent, and human-centered
-                  </span>{' '}
-                  digital world."
-                </p>
-                <div className="w-16 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent mx-auto mt-12" />
-             </div>
-          </section>
-          </div>
 
           <div id="faq" data-scroll-section>
             <FAQSection />
@@ -648,10 +537,9 @@ export default function LandingPage() {
              <div className="max-w-5xl mx-auto px-6 relative z-10">
                 <div>
                    <h2 data-parallax="slow" className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight">
-                      Start Building{' '}
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Today</span>
+                      Make your product more responsive to how users actually decide
                    </h2>
-                   <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-2xl mx-auto">Join developers deploying psychographic intelligence at scale</p>
+                   <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-3xl mx-auto">See how knXw helps teams turn behavioral signals into adaptive experiences that are more relevant, more measurable, and more trustworthy.</p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-5 justify-center mb-14">
