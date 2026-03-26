@@ -54,7 +54,7 @@ export default function PlatformFeatures() {
             Platform
           </span>
           <h2 className="text-4xl md:text-6xl font-bold mb-6">Core Platform Capabilities</h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">A focused product architecture for teams deploying runtime psychographic intelligence inside digital products.</p>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">Not a feature bundle. A compressed infrastructure stack for sensing, interpreting, and acting on human signal.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">

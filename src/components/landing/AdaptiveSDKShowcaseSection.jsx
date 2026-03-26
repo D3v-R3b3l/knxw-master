@@ -20,10 +20,10 @@ export default function AdaptiveSDKShowcaseSection() {
             </span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
-            Deploy adaptive product behavior <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">through a runtime SDK</span>
+            Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">real systems</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-4xl mx-auto">
-            Turn behavioral telemetry into psychographic inference and psychographic inference into explainable experience changes using React components, instrumentation, and developer APIs.
+            Adaptive UI SDK, runtime inference, instrumentation, and developer APIs make knXw deployable inside actual products, not just presentable in concept copy.
           </p>
         </div>
 
@@ -92,9 +92,9 @@ function Hero() {
         {/* Key Benefits */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {[
-          { icon: Zap, title: "Zero Complexity", desc: "No state management or API calls. Just declarative components." },
-          { icon: Sparkles, title: "Real-Time Adaptation", desc: "Components update instantly as user psychology is analyzed." },
-          { icon: Code2, title: "Type-Safe", desc: "Full TypeScript support with intelligent autocomplete." }].
+          { icon: Zap, title: "Runtime Adaptation", desc: "Turn live signal into immediate interface behavior and system response." },
+          { icon: Sparkles, title: "Inference to Activation", desc: "Move from behavioral telemetry to explainable experience changes in one runtime layer." },
+          { icon: Code2, title: "Developer Ergonomics", desc: "Use components, APIs, and instrumentation patterns designed for production implementation." }].
           map((item, i) =>
           <div key={i} className="bg-[#111] rounded-xl p-6 border border-white/10 hover:border-cyan-500/30 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4 border border-cyan-500/20">

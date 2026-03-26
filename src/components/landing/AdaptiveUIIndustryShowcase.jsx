@@ -97,14 +97,14 @@ export default function AdaptiveUIIndustryShowcase() {
           <div className="inline-flex items-center gap-2 mb-4">
             <Zap className="w-5 h-5 text-[#fbbf24]" />
             <span className="text-xs font-mono text-[#fbbf24] uppercase tracking-[0.3em] bg-[#fbbf24]/10 px-4 py-2 rounded-full border border-[#fbbf24]/20">
-              Industry Applications
+              Product Manifestations
             </span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
-            UI That <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Understands</span>
+            One layer. <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Many manifestations.</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Concrete examples of how copy, pacing, prompts, trust cues, and interface emphasis adapt to user context.
+            These are not separate products. They are different expressions of the same core capability operating across different decision environments.
           </p>
         </div>
 

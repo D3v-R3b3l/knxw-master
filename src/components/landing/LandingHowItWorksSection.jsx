@@ -2,20 +2,20 @@ import React from 'react';
 
 const steps = [
   {
-    title: 'Observe',
-    description: 'Capture behavioral signals across product interactions, decision points, and engagement patterns.'
+    title: 'Sense',
+    description: 'Capture behavioral, contextual, and interaction signal across digital environments.'
   },
   {
     title: 'Infer',
-    description: 'Translate those signals into psychographic indicators such as motivation, cognitive style, hesitation, and decision friction.'
+    description: 'Model psychographic state, cognitive style, decision posture, and human context in real time.'
   },
   {
     title: 'Adapt',
-    description: 'Trigger real-time changes to messaging, pacing, prompts, trust cues, and interface emphasis.'
+    description: 'Adjust system behavior, interface logic, messaging, pacing, and flow based on live inference.'
   },
   {
-    title: 'Measure',
-    description: 'Track product outcomes, explain intervention logic, and monitor governance and user-quality signals.'
+    title: 'Govern',
+    description: 'Constrain adaptation through explainability, traceability, and ethical control.'
   }
 ];
 
@@ -28,9 +28,9 @@ export default function LandingHowItWorksSection() {
           <span className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6">
             How It Works
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">A simple operating model for adaptive products</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">How knXw works</h2>
           <p className="text-lg text-gray-400">
-            Lead with mechanism before outcomes: knXw observes behavior, infers context, activates changes, and helps teams measure what happened.
+            One mechanism makes universal application coherent: signal intake, inference, adaptation, and governance.
           </p>
         </div>
 

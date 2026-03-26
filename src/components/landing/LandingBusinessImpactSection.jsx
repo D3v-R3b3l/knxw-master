@@ -17,11 +17,11 @@ export default function LandingBusinessImpactSection() {
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
-            Business Impact
+            System Consequences
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Outcomes framed for serious buyers</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">What this changes</h2>
           <p className="text-lg text-gray-400 leading-relaxed">
-            knXw is designed to improve the quality of user decisions and the quality of product outcomes. Results depend on implementation, traffic, and context, but teams typically target gains in activation, retention, completion, feature discovery, and reduced decision friction.
+            knXw is built to improve the quality of system response and the quality of user outcomes. Teams typically aim to improve activation quality, retention, completion, trust, conversion quality, and reduced friction across key journeys.
           </p>
           <p className="text-sm text-gray-500 mt-4">
             Outcome areas are directional and depend on implementation context. This section does not present audited customer proof.

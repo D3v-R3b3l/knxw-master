@@ -23,8 +23,11 @@ import Lenis from '@studio-freight/lenis';
 import { HelmetProvider } from 'react-helmet-async';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import AdaptiveUIIndustryShowcase from '@/components/landing/AdaptiveUIIndustryShowcase';
+import LandingBlindSpotSection from '@/components/landing/LandingBlindSpotSection';
 import LandingExplainerSection from '@/components/landing/LandingExplainerSection';
 import LandingHowItWorksSection from '@/components/landing/LandingHowItWorksSection';
+import LandingPossibilitySection from '@/components/landing/LandingPossibilitySection';
+import LandingGovernanceSection from '@/components/landing/LandingGovernanceSection';
 import LandingBusinessImpactSection from '@/components/landing/LandingBusinessImpactSection';
 
 function HeroContent({ heroRef }) {
@@ -95,9 +98,9 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 1.2, ease: "easeOut" }}
       >
         <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
-          Runtime Psychographic <br />
+          The Missing <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
-            Intelligence
+            Intelligence Layer
           </span>
         </h1>
       </motion.div>
@@ -110,7 +113,7 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
       >
         <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto font-light leading-relaxed mb-12">
-          knXw helps product teams adapt digital experiences in real time based on behavioral signals, motivation, cognitive style, and decision context, improving activation, retention, and conversion quality.
+          knXw gives digital systems a new perceptual and adaptive capability, turning behavioral, contextual, and psychographic signal into explainable, governed, real-time system behavior.
         </p>
       </motion.div>
 
@@ -187,7 +190,7 @@ export default function LandingPage() {
 
     // Section snap functionality
     const snapSections = [
-      'hero', 'explainer', 'sdk', 'how-it-works', 'platform', 'use-cases', 'ui-examples', 'outcomes', 'enterprise', 'pricing', 'faq', 'cta'
+      'hero', 'blind-spot', 'missing-layer', 'mechanism', 'possibility', 'sdk', 'governance', 'outcomes', 'enterprise', 'pricing', 'faq', 'cta'
     ];
 
     let isSnapping = false;
@@ -335,9 +338,9 @@ export default function LandingPage() {
     <HelmetProvider>
       <ConsentProvider>
         <SEOHead 
-        title="knXw - Runtime Psychographic Intelligence for Digital Products"
-        description="knXw helps product teams adapt digital experiences in real time based on behavioral signals, motivation, cognitive style, and decision context."
-        keywords="runtime psychographic intelligence, adaptive UI, behavioral signals, cognitive style, product instrumentation, explainable personalization"
+        title="knXw - The Missing Intelligence Layer in Modern Software"
+        description="knXw is the infrastructure layer that turns human signal into real-time, explainable system adaptation."
+        keywords="human-aware software, runtime intelligence layer, psychographic inference, adaptive systems infrastructure, explainable adaptation"
       />
       
       {/* Noscript fallback for search engines and no-JS browsers */}
@@ -432,24 +435,32 @@ export default function LandingPage() {
           {/* Content sections container - sits above the fixed shader */}
           <div className="relative bg-black" style={{ zIndex: 10 }}>
 
-          <div id="explainer" data-scroll-section>
+          <div id="blind-spot" data-scroll-section>
+            <LandingBlindSpotSection />
+          </div>
+
+          <div id="missing-layer" data-scroll-section>
             <LandingExplainerSection />
+          </div>
+
+          <div id="mechanism" data-scroll-section>
+            <LandingHowItWorksSection />
+          </div>
+
+          <div id="possibility" data-scroll-section>
+            <LandingPossibilitySection />
           </div>
 
           <div id="sdk" data-scroll-section>
             <AdaptiveSDKShowcaseSection />
           </div>
 
-          <div id="how-it-works" data-scroll-section>
-            <LandingHowItWorksSection />
-          </div>
-
           <div id="platform" data-scroll-section>
             <PlatformFeatures />
           </div>
           
-          <div id="use-cases" data-scroll-section>
-            <UseCasesGrid />
+          <div id="governance" data-scroll-section>
+            <LandingGovernanceSection />
           </div>
 
           <div id="ui-examples" data-scroll-section>
@@ -474,8 +485,8 @@ export default function LandingPage() {
                   <span data-parallax="slow" className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6">
                      Enterprise
                   </span>
-                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Enterprise-Grade Infrastructure</h2>
-                  <p className="text-xl text-gray-400 mb-10">Security, reliability, and compliance built for mission-critical deployments</p>
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Enterprise readiness</h2>
+                  <p className="text-xl text-gray-400 mb-10">Security posture, integration reality, observability, privacy controls, and auditability for serious deployment environments.</p>
                   
                   <div className="space-y-6">
                     {[
@@ -537,9 +548,9 @@ export default function LandingPage() {
              <div className="max-w-5xl mx-auto px-6 relative z-10">
                 <div>
                    <h2 data-parallax="slow" className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight">
-                      Make your product more responsive to how users actually decide
+                      Add the missing intelligence layer
                    </h2>
-                   <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-3xl mx-auto">See how knXw helps teams turn behavioral signals into adaptive experiences that are more relevant, more measurable, and more trustworthy.</p>
+                   <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-3xl mx-auto">Turn human signal into governed, real-time system adaptation.</p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-5 justify-center mb-14">

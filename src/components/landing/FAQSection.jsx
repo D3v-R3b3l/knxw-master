@@ -14,12 +14,16 @@ export default function FAQSection() {
       answer: "knXw uses product interaction and behavioral telemetry captured through instrumentation. Teams control what they send, how it is mapped, and where it is activated."
     },
     {
-      question: "How difficult is integration?",
-      answer: "Teams can start with instrumentation and APIs, then add adaptive UI behaviors through the SDK. Integration effort depends on how deeply you want experience changes wired into your product, but the initial path is designed to be incremental."
+      question: "How is adaptation governed?",
+      answer: "knXw is designed so adaptation remains visible, reviewable, and constrainable. Teams can inspect intervention logic, trace why changes were made, and define acceptable operational boundaries."
     },
     {
-      question: "What is explainable versus AI-generated?",
-      answer: "knXw is designed to expose the logic behind interventions, including the behavioral context and reasoning signals that led to a change. Teams can review and govern how adaptations are triggered."
+      question: "What is deterministic versus AI-driven?",
+      answer: "Some system behavior can be rule-driven and explicitly configured, while some inference layers use probabilistic or AI-assisted interpretation. The platform is intended to make that distinction visible rather than opaque."
+    },
+    {
+      question: "How difficult is integration?",
+      answer: "Teams can start with instrumentation and APIs, then add adaptive UI behaviors through the SDK. Integration effort depends on how deeply you want experience changes wired into your product, but the initial path is designed to be incremental."
     },
     {
       question: "How is privacy handled?",
