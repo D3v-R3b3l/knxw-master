@@ -146,10 +146,6 @@ export default function Dashboard() {
     }
   }, [apps, selectedAppId, setSelectedAppId]);
 
-  useEffect(() => {
-    loadUserAndCheckForApps();
-  }, [loadUserAndCheckForApps]);
-
   const handleRefresh = useCallback(() => {
     refreshData(true);
     toast({
@@ -210,7 +206,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadUserAndCheckForApps();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
+  useEffect(() => {
     const timer = setTimeout(() => {
 
       // handleTriggerCheckin();
@@ -256,7 +255,7 @@ export default function Dashboard() {
       window.removeEventListener('knxw-demo-data-cleared', onDemoCleared);
       window.removeEventListener('knxw-demo-data-seeded', onDemoSeeded);
     };
-  }, [loadUserAndCheckForApps, refreshData]);
+  }, [refreshData]);
 
   // Show welcome screen ONLY when user has no apps at all AND the store has finished loading
   if (!isInitialSetupLoading && !storeIsLoading && !hasClientApp && apps.length === 0) {
