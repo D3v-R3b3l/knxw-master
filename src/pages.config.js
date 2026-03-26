@@ -212,7 +212,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "SimulationMode",
+    mainPage: "Dashboard",
     Pages: PAGES,
     Layout: __Layout,
 };
