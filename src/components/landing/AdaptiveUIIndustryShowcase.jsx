@@ -72,11 +72,11 @@ export default function AdaptiveUIIndustryShowcase() {
       },
       {
         title: 'Feature Nudges',
-        description: 'Achievement: "Boost productivity 3x", Autonomy: "Maintain full control"'
+        description: 'Achievement-driven users can see momentum framing, while autonomy-oriented users can see control-preserving guidance.'
       },
       {
         title: 'Upgrade Prompts',
-        description: 'Conservative: "30-day money-back", Aggressive: "Unlock all - limited offer"'
+        description: 'Risk-sensitive users can see reassurance-first prompts, while urgency-responsive users can see faster commitment framing.'
       }],
 
       gradient: 'from-[#00d4ff] to-[#0ea5e9]'

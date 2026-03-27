@@ -1,6 +1,5 @@
 import React from 'react';
 import { Sparkles, Code2, Zap } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 
 export default function AdaptiveSDKShowcaseSection() {

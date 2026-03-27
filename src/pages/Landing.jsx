@@ -4,10 +4,8 @@ import HeroShader from '@/components/landing/HeroShader';
 import SEOHead from '@/components/system/SEOHead';
 import BrainVisualization from '@/components/landing/BrainVisualization';
 import { ArrowDown } from 'lucide-react';
-import AnimatedPaths from '@/components/landing/AnimatedPaths';
 import ArchitecturalBuildAnimation from '@/components/landing/ArchitecturalBuildAnimation';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
-import UseCasesGrid from '@/components/landing/UseCasesGrid';
 import PricingSection from '@/components/landing/PricingSection';
 import FAQSection from '@/components/landing/FAQSection';
 import FooterSection from '@/components/landing/FooterSection';
@@ -130,7 +128,7 @@ function HeroContent({ heroRef }) {
           className="group relative overflow-hidden px-8 py-4 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
           style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}
         >
-          Get Started
+          Start Building
           <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
         </button>
         <button
@@ -149,10 +147,10 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 1, delay: 0.9 }}
         className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest"
       >
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Behavioral signals</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Adaptive UI SDK</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Developer APIs</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Explainability</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Instrumentation</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Runtime inference</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Adaptive UI SDK</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>Governed adaptation</span>
       </motion.div>
     </div>
   );
@@ -347,9 +345,9 @@ export default function LandingPage() {
       <noscript>
         <div style={{ backgroundColor: '#000', color: '#fff', padding: '40px 20px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
           <header style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '20px' }}>knXw - The Universal Intelligence Layer</h1>
+            <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '20px' }}>knXw - The Missing Intelligence Layer</h1>
             <p style={{ fontSize: '20px', color: '#9ca3af', maxWidth: '800px', margin: '0 auto 40px' }}>
-              Psychographic intelligence that understands why users do what they do—across web, mobile, games, and any digital environment.
+              knXw turns human signal into live system intelligence, helping software interpret decision dynamics and adapt in real time.
             </p>
             <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <a href="/Dashboard" style={{ padding: '16px 32px', backgroundColor: '#fff', color: '#000', borderRadius: '9999px', fontWeight: 'bold', textDecoration: 'none' }}>Get Started</a>
@@ -358,9 +356,9 @@ export default function LandingPage() {
           </header>
           
           <section style={{ maxWidth: '1200px', margin: '0 auto 80px' }}>
-            <h2 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>From Data to Understanding</h2>
+            <h2 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>What current software still misses</h2>
             <p style={{ fontSize: '18px', color: '#9ca3af', marginBottom: '20px' }}>
-              Redefine engagement across every domain: marketing becomes intuitive, education adapts to every learner, communication grows more empathetic, and decision-making becomes informed by understanding rather than assumption.
+              Existing systems record actions. They do not understand the human logic producing them. knXw adds that missing layer.
             </p>
           </section>
           
