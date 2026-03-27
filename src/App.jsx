@@ -10,6 +10,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ChurnAnalytics from './pages/ChurnAnalytics';
+import AdaptationRules from './pages/AdaptationRules';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -66,6 +67,14 @@ const AuthenticatedApp = () => {
         element={
           <LayoutWrapper currentPageName="ChurnAnalytics">
             <ChurnAnalytics />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/AdaptationRules"
+        element={
+          <LayoutWrapper currentPageName="AdaptationRules">
+            <AdaptationRules />
           </LayoutWrapper>
         }
       />

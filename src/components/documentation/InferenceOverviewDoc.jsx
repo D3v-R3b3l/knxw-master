@@ -10,13 +10,11 @@ export default function InferenceOverviewDoc() {
     <div className="space-y-8">
       <Section title="Inference Architecture Overview" icon={Brain}>
         <p className="text-[#a3a3a3] mb-4">
-          knXw employs a sophisticated multi-layered inference system that combines heuristic analysis, 
-          machine learning models, and large language models (LLMs) to generate comprehensive psychographic profiles.
+          knXw implements a multi-layered inference architecture that combines heuristic analysis, model-driven scoring, and LLM-assisted reasoning to generate psychographic profiles.
         </p>
 
         <Callout type="info" title="Hybrid Approach">
-          Our three-layer architecture ensures both speed and accuracy: heuristics provide instant baseline 
-          inferences, ML models add statistical rigor, and LLMs contribute nuanced psychological understanding.
+          The architecture combines fast heuristic inference, model-driven refinement, and LLM-assisted contextual reasoning. Exact accuracy and performance depend on configuration, data quality, and deployment context.
         </Callout>
 
         <div className="grid md:grid-cols-3 gap-6 mt-6">
@@ -29,8 +27,7 @@ export default function InferenceOverviewDoc() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-[#a3a3a3]">
-                Fast, rule-based inference from behavioral patterns. Provides instant baseline profile 
-                with 60-70% confidence.
+                Fast, rule-based inference from behavioral patterns that establishes an initial baseline profile.
               </p>
             </CardContent>
           </Card>
@@ -44,8 +41,7 @@ export default function InferenceOverviewDoc() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-[#a3a3a3]">
-                Statistical classification using trained models. Refines profile with 75-85% confidence 
-                based on historical patterns.
+                Model-driven classification that refines the profile using learned behavioral patterns.
               </p>
             </CardContent>
           </Card>
@@ -59,8 +55,7 @@ export default function InferenceOverviewDoc() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-[#a3a3a3]">
-                Deep contextual analysis using GPT-4. Adds nuanced reasoning and achieves 85-95% 
-                confidence with full explanations.
+                LLM-assisted contextual analysis that adds nuance and reasoning detail to the final profile.
               </p>
             </CardContent>
           </Card>

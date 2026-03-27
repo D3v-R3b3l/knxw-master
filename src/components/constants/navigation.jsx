@@ -3,7 +3,7 @@ import {
   GitBranch as AttributionIcon, TrendingUp, BookOpen, Bot, HeartPulse, 
   FlaskConical, Database as DatabaseIcon, Megaphone, BarChart3 as GoogleDataIcon, 
   Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, Sparkles,
-  Sliders, Store, Plug, Route, Cpu, UserCheck, TrendingDown
+  Sliders, Store, Plug, Route, Cpu, UserCheck, TrendingDown, SlidersHorizontal
 } from "lucide-react";
 
 export const navigationSections = [
@@ -52,6 +52,7 @@ export const navigationSections = [
     title: "Advanced Intelligence",
     items: [
       { title: "Inference Studio", page: "InferenceStudio", icon: Cpu, description: "AI Model Tuning" },
+      { title: "Adaptation Rules", page: "AdaptationRules", icon: SlidersHorizontal, description: "Rule Builder & Simulator" },
       { title: "Journey Orchestrator", page: "AIJourneyOrchestrator", icon: Route, description: "AI-Powered Journeys" },
       { title: "Custom Dimensions", page: "CustomDimensions", icon: Sliders, description: "Industry-Specific Traits" },
       { title: "Marketing Platforms", page: "MarketingIntegrations", icon: Plug, description: "CDP & Automation" },
