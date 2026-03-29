@@ -1,0 +1,85 @@
+{
+  "name": "GameUsageEvent",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Tenant/org ID"
+    },
+    "api_key_id": {
+      "type": "string",
+      "description": "ApiKey record ID if authenticated"
+    },
+    "endpoint": {
+      "type": "string",
+      "description": "API endpoint called"
+    },
+    "method": {
+      "type": "string",
+      "description": "HTTP method"
+    },
+    "status_code": {
+      "type": "number",
+      "description": "HTTP response status"
+    },
+    "latency_ms": {
+      "type": "number",
+      "description": "Request latency in milliseconds"
+    },
+    "bytes_in": {
+      "type": "number",
+      "description": "Request body size in bytes"
+    },
+    "bytes_out": {
+      "type": "number",
+      "description": "Response body size in bytes"
+    },
+    "game_context": {
+      "type": "object",
+      "description": "Game-specific context (game_id, session_id, platform, etc.)",
+      "default": {}
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "is_rate_limited": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "tenant_id",
+    "endpoint",
+    "method",
+    "status_code",
+    "timestamp"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "tenant_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

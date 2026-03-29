@@ -98,24 +98,24 @@ export default function DeveloperGameDevPage() {
           </Card>
         </div>
 
-        {/* Performance Stats */}
+        {/* Platform Characteristics */}
         <Card className="bg-gradient-to-r from-[#111111] to-[#1a1a1a] border-[#262626] mb-12">
           <CardContent className="p-8">
             <div className="grid md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-3xl font-bold text-[#00d4ff] mb-2">&lt;150ms</div>
-                <div className="text-sm text-[#a3a3a3]">p95 Latency</div>
-                <div className="text-xs text-[#666666] mt-1">Edge-optimized</div>
+                <div className="text-3xl font-bold text-[#00d4ff] mb-2">REST</div>
+                <div className="text-sm text-[#a3a3a3]">API Protocol</div>
+                <div className="text-xs text-[#666666] mt-1">JSON over HTTPS</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#10b981] mb-2">1000</div>
-                <div className="text-sm text-[#a3a3a3]">Requests/min</div>
-                <div className="text-xs text-[#666666] mt-1">Per API key</div>
+                <div className="text-3xl font-bold text-[#10b981] mb-2">4</div>
+                <div className="text-sm text-[#a3a3a3]">GameDev Endpoints</div>
+                <div className="text-xs text-[#666666] mt-1">motivation, difficulty, reward, churn</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#ec4899] mb-2">99.9%</div>
-                <div className="text-sm text-[#a3a3a3]">Uptime SLA</div>
-                <div className="text-xs text-[#666666] mt-1">Enterprise tier</div>
+                <div className="text-3xl font-bold text-[#ec4899] mb-2">Async</div>
+                <div className="text-sm text-[#a3a3a3]">Profile Processing</div>
+                <div className="text-xs text-[#666666] mt-1">Events queued, profiles updated async</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-[#fbbf24] mb-2">HMAC</div>

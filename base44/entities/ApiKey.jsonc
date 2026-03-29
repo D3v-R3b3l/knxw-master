@@ -1,0 +1,96 @@
+{
+  "name": "ApiKey",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Org ID this key belongs to"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable label for this key"
+    },
+    "key_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the full key value"
+    },
+    "key_prefix": {
+      "type": "string",
+      "description": "First 12 chars of key for display"
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Permitted API scopes"
+    },
+    "rate_limit_rpm": {
+      "type": "number",
+      "default": 100,
+      "description": "Requests per minute limit"
+    },
+    "rate_limit_burst": {
+      "type": "number",
+      "default": 200,
+      "description": "Burst allowance"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "revoked"
+      ],
+      "default": "active"
+    },
+    "last_used_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "name",
+    "key_hash",
+    "key_prefix"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "tenant_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

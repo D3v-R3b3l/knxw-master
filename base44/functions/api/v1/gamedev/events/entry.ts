@@ -1,5 +1,5 @@
 import { z } from 'https://deno.land/x/zod@v3.23.0/mod.ts';
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const GameEventSchema = z.object({
   player_id: z.string().min(1).max(256),

@@ -367,7 +367,7 @@ export default function LandingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
               <div style={{ padding: '24px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}>
                 <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px' }}>Event Ingestion</h3>
-                <p style={{ color: '#9ca3af' }}>Real-time data capture from any source with sub-100ms latency.</p>
+                <p style={{ color: '#9ca3af' }}>Real-time data capture from any digital source via REST API and browser SDK.</p>
               </div>
               <div style={{ padding: '24px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}>
                 <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px' }}>AI Intelligence</h3>

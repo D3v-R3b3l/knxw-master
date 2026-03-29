@@ -137,25 +137,25 @@ export default function PlatformFeatureMapDoc() {
         {
           name: 'Ad Platforms (Meta & Google)',
           description: 'Optimize campaigns with psychographic segments and conversion forwarding',
-          capabilities: ['CAPI integration', 'Enhanced conversions', 'Audience sync', '+67% ROAS improvement'],
+          capabilities: ['CAPI integration', 'Enhanced conversions', 'Audience sync', 'Psychographic segment targeting'],
           tier: 'Growth+'
         },
         {
           name: 'HubSpot CRM',
           description: 'Sync psychographic properties with HubSpot contacts for enriched segmentation',
-          capabilities: ['Contact property sync', 'Workflow integration', 'List segmentation', '+52% close rates'],
+          capabilities: ['Contact property sync', 'Workflow integration', 'List segmentation', 'Psychographic enrichment'],
           tier: 'Growth+'
         },
         {
           name: 'Meta Pages',
           description: 'Analyze Facebook/Instagram content with psychographic lens',
-          capabilities: ['Post ingestion', 'Comment analysis', 'Creative guidance', '+38% engagement'],
+          capabilities: ['Post ingestion', 'Comment analysis', 'Creative guidance', 'Psychographic content lens'],
           tier: 'Pro+'
         },
         {
           name: 'Google Analytics 4',
           description: 'Correlate GA4 traffic data with psychographic intelligence',
-          capabilities: ['Property connection', 'Report running', 'Behavioral correlation', '+45% attribution accuracy'],
+          capabilities: ['Property connection', 'Report running', 'Behavioral correlation', 'Psychographic traffic analysis'],
           tier: 'Growth+'
         },
         {
