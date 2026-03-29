@@ -2,7 +2,16 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 /**
  * Returns GameUsageEvent stats scoped to the calling user's owned ClientApps.
- * Non-admin users can only see events for tenant_ids matching their own app IDs.
+ *
+ * IMPORTANT — tenant_id identity:
+ * GameUsageEvent.tenant_id is written as `req.tenantId || 'anonymous'` in
+ * functions/api/v1/gamedev/events.js. That value is the Base44 request-level
+ * tenantId, which is NOT the same as ClientApp.id. There is currently no
+ * reliable per-owner field on GameUsageEvent that can be used to scope reads
+ * for non-admin users. Until the gamedev/events writer is updated to stamp
+ * a stable owner-linked field (e.g. client_app_id), non-admin users will
+ * receive an empty result set here. This is a known gap documented below.
+ *
  * Admin users receive all events for the requested time window.
  */
 Deno.serve(async (req) => {
@@ -28,32 +37,12 @@ Deno.serve(async (req) => {
         2000
       );
     } else {
-      // Non-admins: scope to their own ClientApps (owner_id = user.id)
-      const ownedApps = await base44.asServiceRole.entities.ClientApp.filter(
-        { owner_id: user.id },
-        null,
-        100
-      );
-
-      if (ownedApps.length === 0) {
-        return Response.json({ success: true, data: { events: [], tenant_ids: [] } });
-      }
-
-      const ownedAppIds = ownedApps.map(a => a.id);
-
-      // Fetch events only for owned tenant_ids — enforces tenant isolation server-side
-      const perAppFetches = await Promise.all(
-        ownedAppIds.map(appId =>
-          base44.asServiceRole.entities.GameUsageEvent.filter(
-            { tenant_id: appId, timestamp: { $gte: cutoff } },
-            '-timestamp',
-            500
-          )
-        )
-      );
-
-      events = perAppFetches.flat();
-      events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      // Non-admins: GameUsageEvent.tenant_id is set to req.tenantId (a Base44
+      // platform-level tenant identifier), NOT ClientApp.id. Scoping by
+      // ClientApp.id would produce no matches. Until gamedev/events stamps
+      // a reliable owner-linked field on GameUsageEvent, non-admin reads
+      // return empty to avoid cross-tenant leakage. See known gap comment above.
+      events = [];
     }
 
     return Response.json({ success: true, data: { events } });

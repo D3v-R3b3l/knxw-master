@@ -248,9 +248,17 @@ const OPENAPI_SPEC = {
     '/api/v1/health': {
       get: {
         summary: 'Health Check',
-        description: 'Check API health and get system information',
+        description: 'Check API health. Performs a live database connectivity probe and returns memory diagnostics. Returns HTTP 200 when healthy, 503 when the database is unreachable. No authentication required.',
         tags: ['System'],
         security: [],
+        parameters: [
+          {
+            name: 'detailed',
+            in: 'query',
+            description: 'Pass detailed=true to include raw memory usage breakdown',
+            schema: { type: 'boolean', default: false }
+          }
+        ],
         responses: {
           '200': {
             description: 'API is healthy',
@@ -259,9 +267,45 @@ const OPENAPI_SPEC = {
                 schema: {
                   type: 'object',
                   properties: {
-                    status: { type: 'string', example: 'healthy' },
+                    status: { type: 'string', enum: ['healthy', 'unhealthy'], example: 'healthy' },
                     version: { type: 'string', example: '1.0.0' },
-                    uptime: { type: 'number', example: 123456 },
+                    uptime: { type: 'number', description: 'Seconds since function cold start', example: 12.34 },
+                    timestamp: { type: 'string', format: 'date-time' },
+                    health: {
+                      type: 'object',
+                      properties: {
+                        database: {
+                          type: 'object',
+                          properties: {
+                            status: { type: 'string', enum: ['healthy', 'unhealthy'] },
+                            error: { type: 'string', nullable: true }
+                          }
+                        },
+                        memory: {
+                          type: 'object',
+                          properties: {
+                            status: { type: 'string', enum: ['healthy', 'warning'] },
+                            rss: { type: 'string', example: '45.23 MB' },
+                            heapTotal: { type: 'string', example: '20.00 MB' },
+                            heapUsed: { type: 'string', example: '15.12 MB' }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          '503': {
+            description: 'API is unhealthy — database probe failed',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    status: { type: 'string', example: 'unhealthy' },
+                    error: { type: 'string' },
                     timestamp: { type: 'string', format: 'date-time' }
                   }
                 }

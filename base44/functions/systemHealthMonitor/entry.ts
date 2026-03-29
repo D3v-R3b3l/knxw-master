@@ -3,7 +3,7 @@
  * Provides real-time health status, metrics, and diagnostics
  */
 
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 function getMemoryUsage() {
   if (typeof Deno !== 'undefined' && Deno.memoryUsage) {
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     let dbHealth = 'healthy';
     let dbError = null;
     try {
-      await base44.asServiceRole.entities.Tenant.list('-created_date', 1);
+      await base44.asServiceRole.entities.ClientApp.list('-created_date', 1);
     } catch (error) {
       dbHealth = 'unhealthy';
       dbError = error.message;
