@@ -9,13 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Use service role to fetch apps, then filter by ownership
-    const allApps = await base44.asServiceRole.entities.ClientApp.list('-created_date', 100);
-    
-    // Filter to user's apps (include demo apps so seeded data shows on dashboard)
-    const userApps = user.role === 'admin'
-      ? allApps
-      : allApps.filter(app => app.owner_id === user.id);
+    const userApps = await base44.asServiceRole.entities.ClientApp.filter(
+      { owner_id: user.id },
+      '-created_date',
+      100,
+    );
 
     return Response.json({ apps: userApps });
   } catch (err) {

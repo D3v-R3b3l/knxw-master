@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, Shield } from "lucide-react";
+import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -266,18 +266,11 @@ export default function MyAppsPage() {
               <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight break-words">
                 My Applications
               </h1>
-              {user?.role === 'admin' && (
-                <Badge className="bg-[#8b5cf6] text-white border-none mt-2 inline-flex">
-                  <Shield className="w-3 h-3 mr-1" />
-                  Admin View
-                </Badge>
-              )}
+
             </div>
           </div>
           <p className="text-[#a3a3a3] text-base md:text-lg leading-relaxed">
-            {user?.role === 'admin' 
-              ? 'Viewing all applications in the system. You can manage any application.'
-              : 'Manage your applications, API keys, and authorized domains.'}
+            Manage your applications, API keys, and authorized domains.
           </p>
         </div>
 
@@ -377,11 +370,7 @@ export default function MyAppsPage() {
                                 Demo
                               </Badge>
                             )}
-                            {user?.role === 'admin' && app.owner_id !== user?.id && (
-                              <Badge className="bg-[#6b7280] text-white border-none text-xs">
-                                Other Owner
-                              </Badge>
-                            )}
+
                           </div>
                           <div className="flex flex-wrap items-center gap-2 mt-2">
                             <Badge className={`${app.status === 'active' ? 'bg-[#10b981] text-white' : 'bg-[#6b7280] text-white'} border-none`}>
