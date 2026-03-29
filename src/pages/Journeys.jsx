@@ -13,6 +13,7 @@ import AIJourneyAssistant from "@/components/journeys/AIJourneyAssistant";
 import DynamicJourneyOptimizer from "@/components/journeys/DynamicJourneyOptimizer";
 import RealtimeJourneyInsights from "@/components/journeys/RealtimeJourneyInsights";
 import { useQuery } from "@tanstack/react-query";
+import { SubscriptionGate } from '@/components/billing/SubscriptionGate';
 
 // Journey Templates
 const JOURNEY_TEMPLATES = {
@@ -616,6 +617,7 @@ export default function JourneysPage() {
   };
 
   return (
+    <SubscriptionGate requiredPlan="growth" feature="Journey Builder">
     <div className="h-screen bg-[#000000] text-white flex flex-col">
       {/* Top Toolbar */}
       <div className="bg-[#1a1a1a] border-b border-[#333] px-4 py-3 flex items-center justify-between z-[100] flex-wrap gap-2">
@@ -1182,5 +1184,6 @@ export default function JourneysPage() {
         )}
       </div>
     </div>
+    </SubscriptionGate>
   );
 }
