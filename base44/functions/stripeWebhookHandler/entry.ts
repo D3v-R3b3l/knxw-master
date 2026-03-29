@@ -157,13 +157,19 @@ async function handleInvoiceEvent(svc, eventType, invoice) {
 
 async function handleCheckoutCompleted(svc, session) {
   const userId = session.metadata?.base44_user_id;
-  if (!userId) return null;
+
+  if (!userId) {
+    // Cannot resolve user — log for manual remediation.
+    console.error(`[stripeWebhookHandler] checkout.session.completed missing base44_user_id. Session: ${session.id}, customer: ${session.customer}, subscription: ${session.subscription}. Manual remediation required.`);
+    return null;
+  }
 
   const records = await svc.entities.BillingSubscription.filter({ user_id: userId }, null, 1);
   const record = records?.[0] || null;
+  const planKey = session.metadata?.plan_key || record?.plan_key || 'developer';
   const payload = {
     user_id: userId,
-    plan_key: session.metadata?.plan_key || record?.plan_key || 'developer',
+    plan_key: planKey,
     status: record?.status || 'incomplete',
     stripe_customer_id: session.customer || record?.stripe_customer_id || null,
     stripe_subscription_id: session.subscription || record?.stripe_subscription_id || null,
@@ -172,10 +178,25 @@ async function handleCheckoutCompleted(svc, session) {
     period_end: record?.period_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
   };
 
+  let savedRecord;
   if (record) {
     await svc.entities.BillingSubscription.update(record.id, payload);
-    return record;
+    savedRecord = record;
+  } else {
+    savedRecord = await svc.entities.BillingSubscription.create(payload);
   }
 
-  return await svc.entities.BillingSubscription.create(payload);
+  // Sync User entity immediately so FeatureGate reflects the new plan without
+  // waiting for the subsequent customer.subscription.created webhook.
+  try {
+    await svc.entities.User.update(userId, {
+      current_plan_key: planKey,
+      plan_status: payload.status,
+      subscription_updated_at: new Date().toISOString()
+    });
+  } catch (userUpdateErr) {
+    console.error(`[stripeWebhookHandler] checkout sync to User ${userId} failed:`, userUpdateErr.message);
+  }
+
+  return savedRecord;
 }

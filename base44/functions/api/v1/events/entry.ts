@@ -81,6 +81,25 @@ Deno.serve(async (req) => {
       app_id: clientApp.id
     }).catch((error) => console.warn(`Profile refresh failed for user ${userId}:`, error.message));
 
+    // Write SystemEvent for aggregateMetricsHourly pipeline.
+    // org_id and workspace_id are not available in this context — use client_app_id as org_id proxy.
+    base44.asServiceRole.entities.SystemEvent.create({
+      org_id: clientApp.id,
+      workspace_id: null,
+      actor_type: 'api',
+      actor_id: apiKey,
+      event_type: 'document_create',
+      severity: 'info',
+      payload: {
+        endpoint: '/api/v1/events',
+        event_type: eventType,
+        total_ms: Math.round(performance.now() - startTime)
+      },
+      trace_id: requestId,
+      timestamp: new Date().toISOString(),
+      is_demo: false
+    }).catch((err) => console.warn(`[${requestId}] SystemEvent write failed:`, err.message));
+
     return json({
       success: true,
       data: {

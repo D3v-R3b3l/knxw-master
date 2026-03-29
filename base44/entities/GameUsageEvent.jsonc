@@ -4,7 +4,15 @@
   "properties": {
     "tenant_id": {
       "type": "string",
-      "description": "Tenant/org ID"
+      "description": "Platform-level tenant identifier (req.tenantId). Not reliable for owner-scoped reads."
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp.id resolved from the authenticated API key. Primary field for owner-scoped reads."
+    },
+    "owner_user_id": {
+      "type": "string",
+      "description": "ClientApp.owner_id at time of event. Denormalized for read performance."
     },
     "api_key_id": {
       "type": "string",
@@ -62,6 +70,26 @@
     {
       "fields": [
         "tenant_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "owner_user_id",
         "timestamp"
       ],
       "order": [

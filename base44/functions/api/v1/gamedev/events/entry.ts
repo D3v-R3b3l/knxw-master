@@ -64,10 +64,33 @@ Deno.serve(async (req) => {
       user_id: validatedData.player_id 
     }).catch(err => console.warn(`Profile refresh failed for player ${validatedData.player_id}:`, err));
 
-    // Log game-specific usage
+    // Resolve ClientApp from API key for owner-scoped usage tracking.
+    // body.apiKey or body.api_key is the raw API key string sent by the client.
+    let resolvedClientAppId = null;
+    let resolvedOwnerUserId = null;
+    const rawApiKey = body?.apiKey || body?.api_key || null;
+    if (rawApiKey) {
+      try {
+        const apps = await base44.asServiceRole.entities.ClientApp.filter(
+          { api_key: rawApiKey, status: 'active' },
+          null,
+          1
+        );
+        if (apps?.[0]) {
+          resolvedClientAppId = apps[0].id;
+          resolvedOwnerUserId = apps[0].owner_id;
+        }
+      } catch (lookupErr) {
+        console.warn(`[${requestId}] ClientApp lookup failed:`, lookupErr.message);
+      }
+    }
+
+    // Log game-specific usage with owner-scoped fields
     const bodyStr = JSON.stringify(body);
     await base44.asServiceRole.entities.GameUsageEvent.create({
       tenant_id: tenantId,
+      client_app_id: resolvedClientAppId,
+      owner_user_id: resolvedOwnerUserId,
       api_key_id: apiKey?.id,
       endpoint: '/api/v1/gamedev/events',
       method: 'POST',

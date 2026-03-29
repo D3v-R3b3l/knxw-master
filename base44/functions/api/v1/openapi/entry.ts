@@ -694,7 +694,7 @@ const OPENAPI_SPEC = {
     '/api/v1/usage': {
       get: {
         summary: 'Get Usage Statistics',
-        description: 'Retrieve API usage metrics including request counts, error rates, latency percentiles, and endpoint-level statistics. Data is scoped to the authenticated tenant. Note: game-specific telemetry written to GameUsageEvent (via /api/v1/gamedev/events) is not included here; that data is accessible via the dashboard for entitled users only.',
+        description: 'Retrieve API usage metrics including request counts, error rates, latency percentiles, and endpoint-level statistics. Reads from the UsageEvent entity scoped by req.tenantId (the caller\'s platform tenant identifier). Query parameter: ?days=N (1–90, default 7). Authentication: Bearer API key. Note: game-specific telemetry is stored in GameUsageEvent (written by /api/v1/gamedev/events) and is NOT included in this endpoint. Game usage is accessible via the getMyUsageStats backend function, scoped by ClientApp.owner_id.',
         tags: ['Usage'],
         parameters: [
           {
@@ -781,7 +781,7 @@ const OPENAPI_SPEC = {
     '/api/v1/webhooks/endpoints': {
       get: {
         summary: 'List Webhook Endpoints',
-        description: 'Get all configured webhook endpoints for your tenant',
+        description: 'Get all configured webhook endpoints for the authenticated tenant. Scoped by req.tenantId — returns only endpoints belonging to the caller.',
         tags: ['Webhooks'],
         responses: {
           '200': {
@@ -797,17 +797,26 @@ const OPENAPI_SPEC = {
                       items: {
                         type: 'object',
                         properties: {
-                          id: { type: 'string', example: 'wh_abc123' },
+                          id: { type: 'string' },
                           name: { type: 'string', example: 'Production Webhook' },
                           url: { type: 'string', example: 'https://example.com/webhooks/knxw' },
                           events: {
                             type: 'array',
-                            items: { type: 'string' },
-                            example: ['profile.updated', 'insight.created']
+                            items: { type: 'string', enum: ['profile.updated', 'insight.created', 'recommendation.generated'] }
                           },
                           status: { type: 'string', enum: ['active', 'paused'], example: 'active' },
-                          created_at: { type: 'string', format: 'date-time' }
+                          tenant_id: { type: 'string' },
+                          failure_count: { type: 'integer', example: 0 },
+                          created_date: { type: 'string', format: 'date-time' }
                         }
+                      }
+                    },
+                    meta: {
+                      type: 'object',
+                      properties: {
+                        requestId: { type: 'string' },
+                        tenantId: { type: 'string' },
+                        latencyMs: { type: 'number' }
                       }
                     }
                   }
@@ -820,7 +829,7 @@ const OPENAPI_SPEC = {
       },
       post: {
         summary: 'Create Webhook Endpoint',
-        description: 'Register a new webhook endpoint to receive real-time events. All webhook payloads are signed with HMAC-SHA256.',
+        description: 'Register a new webhook endpoint. The endpoint is created with status=active and failure_count=0. Supported events: profile.updated, insight.created, recommendation.generated.',
         tags: ['Webhooks'],
         requestBody: {
           required: true,
@@ -830,27 +839,15 @@ const OPENAPI_SPEC = {
                 type: 'object',
                 required: ['name', 'url', 'events'],
                 properties: {
-                  name: { type: 'string', example: 'Production Webhook' },
-                  url: {
-                    type: 'string',
-                    format: 'uri',
-                    description: 'HTTPS URL where events will be sent',
-                    example: 'https://example.com/webhooks/knxw'
-                  },
+                  name: { type: 'string', minLength: 1, maxLength: 256, example: 'Production Webhook' },
+                  url: { type: 'string', format: 'uri', example: 'https://example.com/webhooks/knxw' },
                   events: {
                     type: 'array',
-                    items: {
-                      type: 'string',
-                      enum: ['profile.updated', 'insight.created', 'recommendation.generated']
-                    },
-                    description: 'Event types to subscribe to',
+                    minItems: 1,
+                    items: { type: 'string', enum: ['profile.updated', 'insight.created', 'recommendation.generated'] },
                     example: ['profile.updated', 'insight.created']
                   },
-                  secret: {
-                    type: 'string',
-                    description: 'Optional webhook secret for signature verification. If not provided, one will be generated.',
-                    example: 'whsec_abc123def456'
-                  }
+                  secret: { type: 'string', description: 'Optional webhook signing secret', example: 'whsec_abc123' }
                 }
               }
             }
@@ -868,25 +865,97 @@ const OPENAPI_SPEC = {
                     data: {
                       type: 'object',
                       properties: {
-                        id: { type: 'string', example: 'wh_abc123' },
-                        name: { type: 'string', example: 'Production Webhook' },
-                        url: { type: 'string', example: 'https://example.com/webhooks/knxw' },
-                        events: {
-                          type: 'array',
-                          items: { type: 'string' },
-                          example: ['profile.updated', 'insight.created']
-                        },
-                        secret: { type: 'string', example: 'whsec_abc123def456' },
-                        status: { type: 'string', example: 'active' }
+                        id: { type: 'string' },
+                        tenant_id: { type: 'string' },
+                        name: { type: 'string' },
+                        url: { type: 'string' },
+                        events: { type: 'array', items: { type: 'string' } },
+                        secret: { type: 'string' },
+                        status: { type: 'string', example: 'active' },
+                        failure_count: { type: 'integer', example: 0 }
                       }
                     },
-                    message: { type: 'string', example: 'Webhook endpoint created successfully' }
+                    message: { type: 'string', example: 'Webhook endpoint created successfully' },
+                    meta: { type: 'object', properties: { requestId: { type: 'string' }, tenantId: { type: 'string' }, latencyMs: { type: 'number' } } }
                   }
                 }
               }
             }
           },
           '400': { $ref: '#/components/responses/ValidationError' },
+          '401': { $ref: '#/components/responses/UnauthorizedError' }
+        }
+      }
+    },
+    '/api/v1/webhooks/endpoints/{id}': {
+      put: {
+        summary: 'Update Webhook Endpoint',
+        description: 'Update an existing webhook endpoint by ID.',
+        tags: ['Webhooks'],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' }, description: 'Webhook endpoint ID' }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string', minLength: 1, maxLength: 256 },
+                  url: { type: 'string', format: 'uri' },
+                  events: { type: 'array', minItems: 1, items: { type: 'string', enum: ['profile.updated', 'insight.created', 'recommendation.generated'] } },
+                  status: { type: 'string', enum: ['active', 'paused'] },
+                  secret: { type: 'string' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          '200': {
+            description: 'Webhook endpoint updated successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                    data: { type: 'object' },
+                    message: { type: 'string', example: 'Webhook endpoint updated successfully' },
+                    meta: { type: 'object' }
+                  }
+                }
+              }
+            }
+          },
+          '400': { $ref: '#/components/responses/ValidationError' },
+          '401': { $ref: '#/components/responses/UnauthorizedError' }
+        }
+      },
+      delete: {
+        summary: 'Delete Webhook Endpoint',
+        description: 'Permanently delete a webhook endpoint by ID.',
+        tags: ['Webhooks'],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' }, description: 'Webhook endpoint ID' }
+        ],
+        responses: {
+          '200': {
+            description: 'Webhook endpoint deleted successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                    message: { type: 'string', example: 'Webhook endpoint deleted successfully' },
+                    meta: { type: 'object' }
+                  }
+                }
+              }
+            }
+          },
           '401': { $ref: '#/components/responses/UnauthorizedError' }
         }
       }

@@ -1,6 +1,23 @@
 import { z } from 'https://deno.land/x/zod@v3.23.0/mod.ts';
-import { WebhookCreateSchema, WebhookUpdateSchema, WebhookIdSchema } from '../../utils/zodSchemas.js';
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+
+// Inlined schemas — no local imports allowed in Deno functions
+const WebhookCreateSchema = z.object({
+  name: z.string().min(1).max(256),
+  url: z.string().url(),
+  events: z.array(z.enum(['profile.updated', 'insight.created', 'recommendation.generated'])).min(1),
+  secret: z.string().optional()
+});
+
+const WebhookUpdateSchema = z.object({
+  name: z.string().min(1).max(256).optional(),
+  url: z.string().url().optional(),
+  events: z.array(z.enum(['profile.updated', 'insight.created', 'recommendation.generated'])).min(1).optional(),
+  status: z.enum(['active', 'paused']).optional(),
+  secret: z.string().optional()
+});
+
+const WebhookIdSchema = z.string().min(1);
 
 Deno.serve(async (req) => {
   const startTime = performance.now();

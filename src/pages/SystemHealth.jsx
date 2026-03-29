@@ -5,10 +5,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Loader2, HeartPulse, BarChart, AlertTriangle, ShieldOff } from 'lucide-react';
 import AnimatedLine from '@/components/charts/AnimatedLine';
 
-// Mock chart data for initial render
-const mockData = (name) => Array.from({ length: 12 }, (_, i) => ({
-  time: `${String(i * 2).padStart(2, '0')}:00`,
-  [name]: Math.floor(Math.random() * (i + 1) * 100)
+// Empty placeholder — returns a zeroed 24-point series so the chart renders axes
+// without fabricating values. Real data comes from MetricsHour via aggregateMetricsHourly.
+const emptyChartData = (name) => Array.from({ length: 24 }, (_, i) => ({
+  time: `${String(i).padStart(2, '0')}:00`,
+  [name]: 0
 }));
 
 export default function SystemHealth() {
@@ -76,7 +77,7 @@ export default function SystemHealth() {
       }))
       .sort((a, b) => new Date(`1970-01-01T${a.time}:00Z`) - new Date(`1970-01-01T${b.time}:00Z`));
       
-    return data.length > 0 ? data : mockData(metricName);
+    return data.length > 0 ? data : emptyChartData(metricName);
   };
 
   return (
