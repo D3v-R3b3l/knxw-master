@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import { useDashboardStore } from "../components/dashboard/DashboardStore";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,12 +15,14 @@ import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
 
 export default function InsightsPage() {
   const [selectedInsight, setSelectedInsight] = useState(null);
+  const { selectedAppId } = useDashboardStore();
 
   const { data: insights = [], isLoading, error, refetch, isRefetching } = useQuery({
-    queryKey: ['insights'],
+    queryKey: ['insights', selectedAppId],
     queryFn: async () => {
-      const data = await base44.entities.PsychographicInsight.filter({ is_demo: false }, '-created_date', 50);
-      return data;
+      const filter = { is_demo: false };
+      if (selectedAppId) filter.client_app_id = selectedAppId;
+      return await base44.entities.PsychographicInsight.filter(filter, '-created_date', 50);
     },
   });
 

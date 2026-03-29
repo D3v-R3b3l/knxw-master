@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW_MS = 60_000;

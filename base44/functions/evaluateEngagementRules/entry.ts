@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const PROFILE_FIELD_ALIASES = {
   'emotional_state.confidence': 'emotional_state.confidence_score',
@@ -186,8 +186,16 @@ Deno.serve(async (req) => {
       return json({ error: 'Invalid or inactive API key' }, 403);
     }
 
-    const profiles = await svc.entities.UserPsychographicProfile.filter({ user_id }, '-updated_date', 1);
-    const profile = profiles?.[0] || null;
+    // Use HybridUserProfile as primary source (live fused profile)
+    const hybridProfiles = await svc.entities.HybridUserProfile.filter(
+      { user_id, client_app_id: clientApp.id }, '-updated_date', 1
+    );
+    let profile = hybridProfiles?.[0]?.fused_profile || null;
+    if (!profile) {
+      // Fallback to legacy UserPsychographicProfile
+      const legacyProfiles = await svc.entities.UserPsychographicProfile.filter({ user_id }, '-updated_date', 1);
+      profile = legacyProfiles?.[0] || null;
+    }
     if (!profile) {
       return json({ triggered_engagements: [], unsupported_action_types: [] });
     }

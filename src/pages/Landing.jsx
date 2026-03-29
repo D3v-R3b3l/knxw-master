@@ -521,7 +521,7 @@ export default function LandingPage() {
           </div>
 
 
-          <div data-scroll-section>
+          <div id="pricing" data-scroll-section>
             <PricingSection />
           </div>
           

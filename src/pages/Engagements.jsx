@@ -48,7 +48,8 @@ export default function EngagementsPage() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const appsData = await base44.entities.ClientApp.list('-created_date');
+      const appsResponse = await base44.functions.invoke('getMyClientApps');
+      const appsData = appsResponse?.data?.apps || [];
       
       setClientApps(appsData);
       

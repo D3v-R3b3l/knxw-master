@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
   try {
@@ -27,13 +27,8 @@ Deno.serve(async (req) => {
       app = apps?.[0] || null;
     }
 
-    if (!app && user.role === 'admin') {
-      const res = await base44.functions.invoke('createDefaultClientApp', {}).catch(() => null);
-      app = res?.data?.app || res?.data || null;
-    }
-
     if (!app) {
-      return Response.json({ error: 'No ClientApp found for this user. Please create one first.' }, { status: 404 });
+      return Response.json({ error: 'No ClientApp found. Please provide a valid app id or create one first at /MyApps.' }, { status: 404 });
     }
 
     const origin = new URL(req.url).origin;

@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 function buildNoopScript() {
   return `(() => {
@@ -41,11 +41,6 @@ Deno.serve(async (req) => {
     if (!app && requestedSlug) {
       const matches = await svc.entities.ClientApp.filter({ name: requestedSlug }, null, 1).catch(() => []);
       app = matches?.[0] || null;
-    }
-
-    if (!app) {
-      const list = await svc.entities.ClientApp.list('-created_date', 1).catch(() => []);
-      app = list?.[0] || null;
     }
 
     if (!app) {

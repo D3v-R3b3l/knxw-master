@@ -60,11 +60,7 @@ export default function AudienceBuilder() {
   };
 
   const handleExport = async () => {
-    toast({
-      title: 'Export Started',
-      description: 'Preparing audience data for export...'
-    });
-    // Export logic would go here
+    toast({ title: 'Export', description: 'Segment export is not yet available. Save the segment and use the Data Export page.' });
   };
 
   return (
@@ -125,7 +121,8 @@ export default function AudienceBuilder() {
               <Button
                 onClick={handleExport}
                 variant="outline"
-                className="border-[#262626] hover:bg-[#1a1a1a]"
+                className="border-[#262626] hover:bg-[#1a1a1a] opacity-60"
+                title="Segment export coming soon"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Export

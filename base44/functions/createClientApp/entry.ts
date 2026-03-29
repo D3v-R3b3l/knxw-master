@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -67,15 +67,17 @@ Deno.serve(async (req) => {
     // Create with service role to ensure all fields are set
     const created = await base44.asServiceRole.entities.ClientApp.create(payload);
 
-    // Audit log
+    // Audit log — matches AuditLog entity schema
     try {
       await base44.asServiceRole.entities.AuditLog.create({
-        action: 'app.create',
-        actor_id: user.id,
-        actor_email: user.email,
-        target_type: 'ClientApp',
-        target_id: created.id,
-        details: { name, authorized_domains_count: authorized_domains.length }
+        timestamp: new Date().toISOString(),
+        org_id: user.id, // use user.id as org scope until multi-tenant orgs are implemented
+        user_id: user.id,
+        action: 'create',
+        table_name: 'ClientApp',
+        record_id: created.id,
+        before: {},
+        after: { name, authorized_domains_count: authorized_domains.length }
       });
     } catch (_) { /* non-blocking */ }
 

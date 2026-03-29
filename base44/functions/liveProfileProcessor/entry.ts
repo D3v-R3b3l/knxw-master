@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 function compactEventsForEvidence(events) {
   return events.slice(0, 20).map((event) => ({
@@ -271,15 +271,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    const recentEvents = await svc.entities.CapturedEvent.list('-timestamp', 200).catch(() => []);
-    const scopedEvents = recentEvents.filter((event) => (
-      event.user_id === user_id &&
-      event.is_demo === false &&
-      (!app_id || event.client_app_id === app_id || event.event_payload?.client_app_id === app_id)
-    ));
-    const events = scopedEvents.length > 0
-      ? scopedEvents
-      : recentEvents.filter((event) => event.user_id === user_id && event.is_demo === false);
+    const eventFilter = app_id
+      ? { user_id, client_app_id: app_id, is_demo: false }
+      : { user_id, is_demo: false };
+    const events = await svc.entities.CapturedEvent.filter(eventFilter, '-timestamp', 50).catch(() => []);
 
     if (!Array.isArray(events) || events.length === 0) {
       return Response.json({ message: 'No events for user', processed: 0 });

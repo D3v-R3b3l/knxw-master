@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 // Cognitive style → preferred content format mapping
 const COGNITIVE_CONTENT_MAP = {

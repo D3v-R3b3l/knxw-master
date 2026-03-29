@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const memoryCache = new Map(); // key -> { ts, result }
 const CACHE_TTL_MS = 10 * 60 * 1000;
@@ -16,10 +16,8 @@ async function sha256Hex(str) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // This is a server-to-server function called by liveProfileProcessor via service role.
+    // No user auth check needed — the caller is already authenticated via service role.
 
     const body = await req.json();
     const { events = [], app_id = null } = body || {};

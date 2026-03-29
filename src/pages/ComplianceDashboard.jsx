@@ -454,13 +454,15 @@ export default function ComplianceDashboardPage() {
         {showReviewDialog && selectedAlert && (
           <ConfirmationDialog
             open={showReviewDialog}
-            onClose={() => {
-              setShowReviewDialog(false);
-              setSelectedAlert(null);
-              setReviewNotes('');
+            onOpenChange={(open) => {
+              if (!open) {
+                setShowReviewDialog(false);
+                setSelectedAlert(null);
+                setReviewNotes('');
+              }
             }}
             title="Review Behavioral Integrity Alert"
-            message={
+            description={
               <div className="space-y-4">
                 <div>
                   <p className="text-white font-semibold mb-2">Alert Details:</p>

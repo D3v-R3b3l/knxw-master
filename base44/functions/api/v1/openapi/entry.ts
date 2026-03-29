@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const OPENAPI_SPEC = {
   openapi: '3.0.3',
@@ -49,8 +49,18 @@ const OPENAPI_SPEC = {
           event_type: {
             type: 'string',
             description: 'Type of event',
-            enum: ['page_view', 'click', 'form_submit', 'purchase', 'signup', 'feature_usage'],
+            enum: [
+              'page_view', 'click', 'scroll', 'form_submit', 'form_focus', 'hover',
+              'exit_intent', 'time_on_page', 'page_exit', 'purchase', 'signup',
+              'feature_usage', 'product_view', 'pricing_view', 'add_to_cart',
+              'checkout_start', 'checkout_complete'
+            ],
             example: 'page_view'
+          },
+          apiKey: {
+            type: 'string',
+            description: 'Your knXw API key (required)',
+            example: 'knxw_abc123...'
           },
           event_payload: {
             type: 'object',
@@ -340,21 +350,27 @@ const OPENAPI_SPEC = {
         }
       }
     },
-    '/api/v1/profiles/{user_id}': {
-      get: {
+    '/api/v1/profiles': {
+      post: {
         summary: 'Get User Profile',
-        description: 'Retrieve the complete psychographic profile for a user, including motivations, cognitive style, personality traits, and confidence scores.',
+        description: 'Retrieve the complete psychographic profile for a user. Pass user_id (and optionally app_id and api_key) in the JSON body.',
         tags: ['Profiles'],
-        parameters: [
-          {
-            name: 'user_id',
-            in: 'path',
-            required: true,
-            description: 'Unique user identifier',
-            schema: { type: 'string' },
-            example: 'user_123'
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['user_id'],
+                properties: {
+                  user_id: { type: 'string', example: 'user_123' },
+                  app_id: { type: 'string', description: 'Optional client app ID to scope the profile' },
+                  api_key: { type: 'string', description: 'Your knXw API key' }
+                }
+              }
+            }
           }
-        ],
+        },
         responses: {
           '200': {
             description: 'Profile retrieved successfully',
@@ -391,10 +407,10 @@ const OPENAPI_SPEC = {
         }
       }
     },
-    '/api/v1/insights/query': {
+    '/api/v1/insights': {
       post: {
         summary: 'Query Insights',
-        description: 'Get AI-powered behavioral insights and recommendations for one or more users. Supports filtering by insight type and minimum confidence threshold.',
+        description: 'Get AI-powered behavioral insights for a user. Pass user_id (and optionally api_key and app_id) in the JSON body.',
         tags: ['Insights'],
         requestBody: {
           required: true,

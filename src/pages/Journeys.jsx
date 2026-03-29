@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Save, Play, CheckCircle2, Clock, Menu, X, Zap, Settings, Target, Timer, ChevronLeft, ChevronRight, List, Sliders, FileText, Download, ZoomIn, ZoomOut, RotateCcw, Brain, Activity, Sparkles } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { runJourneys } from "@/functions/runJourneys";
+
 import JourneyTestDialog from "@/components/journeys/JourneyTestDialog";
 import AIJourneyAssistant from "@/components/journeys/AIJourneyAssistant";
 import DynamicJourneyOptimizer from "@/components/journeys/DynamicJourneyOptimizer";
@@ -572,8 +572,13 @@ export default function JourneysPage() {
     }
   };
 
+  const [newJourneyName, setNewJourneyName] = useState('');
+  const [showNewJourneyInput, setShowNewJourneyInput] = useState(false);
+
   const newJourney = async () => {
-    const name = prompt("Journey name?");
+    const name = newJourneyName.trim();
+    setNewJourneyName('');
+    setShowNewJourneyInput(false);
     if (!name) return;
     try {
       const j = await base44.entities.Journey.create({ name, description: "" });
@@ -592,7 +597,7 @@ export default function JourneysPage() {
 
   const handleTestRun = async (userId, type) => {
     try {
-      await runJourneys({ user_id: userId, event: { user_id: userId, event_type: type, timestamp: new Date().toISOString() } });
+      await base44.functions.invoke('runJourneys', { user_id: userId, event: { user_id: userId, event_type: type, timestamp: new Date().toISOString() } });
       toast({ title: "Journey executed", description: `Interpreter ran for ${type} event.` });
     } catch (error) {
       console.error('Failed to run journey:', error);
@@ -602,7 +607,7 @@ export default function JourneysPage() {
 
   const processDue = async () => {
     try {
-      await runJourneys({ process_due: true });
+      await base44.functions.invoke('runJourneys', { process_due: true });
       toast({ title: "Processed", description: "Due Journey waits processed." });
     } catch (error) {
       console.error('Failed to process due tasks:', error);
@@ -690,16 +695,35 @@ export default function JourneysPage() {
         {/* Left Sidebar - Minimal and collapsible */}
         {showSidebar && (
           <div className="absolute lg:relative left-0 top-0 h-full w-64 bg-[#1a1a1a] border-r border-[#333] flex flex-col z-[90] lg:z-10">
-            <div className="p-3 border-b border-[#333] flex items-center justify-between">
-              <h2 className="font-semibold text-white text-sm">Journey List</h2>
-              <div className="flex items-center gap-1">
-                <Button onClick={newJourney} size="sm" className="bg-[#00d4ff] text-[#0a0a0a] hover:bg-[#0ea5e9] h-7">
-                  <Plus className="w-3 h-3" />
-                </Button>
+            <div className="p-3 border-b border-[#333] flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <h2 className="font-semibold text-white text-sm">Journey List</h2>
+                <div className="flex items-center gap-1">
+                  <Button onClick={() => setShowNewJourneyInput(true)} size="sm" className="bg-[#00d4ff] text-[#0a0a0a] hover:bg-[#0ea5e9] h-7">
+                    <Plus className="w-3 h-3" />
+                  </Button>
                 <Button size="sm" variant="ghost" onClick={() => setShowSidebar(false)} className="lg:hidden text-white hover:bg-[#333] h-7">
                   <X className="w-3 h-3" />
                 </Button>
-              </div>
+                </div>
+                </div>
+                {showNewJourneyInput && (
+                <div className="flex gap-1">
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="Journey name..."
+                  value={newJourneyName}
+                  onChange={(e) => setNewJourneyName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') newJourney();
+                    if (e.key === 'Escape') { setShowNewJourneyInput(false); setNewJourneyName(''); }
+                  }}
+                  className="flex-1 text-xs bg-[#333] border border-[#555] text-white rounded px-2 py-1 outline-none focus:border-[#00d4ff]"
+                />
+                <Button size="sm" onClick={newJourney} className="bg-[#10b981] text-white h-7 px-2 text-xs">OK</Button>
+                </div>
+                )}
             </div>
 
             <div className="flex-1 p-3 overflow-y-auto">

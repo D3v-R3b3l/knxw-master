@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { abTestManager } from '@/functions/abTestManager';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +28,8 @@ export default function ABTestingPage() {
     const loadData = useCallback(async () => {
         setIsLoading(true);
         try {
-            const appsData = await base44.entities.ClientApp.list('-created_date');
+            const appsResponse = await base44.functions.invoke('getMyClientApps');
+            const appsData = appsResponse?.data?.apps || [];
             setClientApps(appsData);
             
             if (appsData.length > 0 && (!selectedApp || !appsData.some(app => app.id === selectedApp.id))) {
@@ -114,7 +114,7 @@ export default function ABTestingPage() {
 
     const handleStopTest = async (test) => {
         try {
-            const { data } = await abTestManager({
+            const { data } = await base44.functions.invoke('abTestManager', {
                 action: 'stop_test',
                 ab_test_id: test.id
             });
