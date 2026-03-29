@@ -64,25 +64,69 @@ Deno.serve(async (req) => {
       user_id: validatedData.player_id 
     }).catch(err => console.warn(`Profile refresh failed for player ${validatedData.player_id}:`, err));
 
-    // Resolve ClientApp from API key for owner-scoped usage tracking.
-    // body.apiKey or body.api_key is the raw API key string sent by the client.
+    // Resolve ClientApp from API key — supports all auth paths:
+    // 1. req.apiKey platform object (populated by platform middleware from Authorization header)
+    // 2. Authorization: Bearer <key> header (manual parse fallback)
+    // 3. body.apiKey or body.api_key (legacy body-key auth)
     let resolvedClientAppId = null;
     let resolvedOwnerUserId = null;
-    const rawApiKey = body?.apiKey || body?.api_key || null;
-    if (rawApiKey) {
+
+    // Path 1: platform has already resolved req.apiKey as an object with a key_prefix
+    // The platform attaches req.apiKey as an ApiKey entity record. Its tenant_id field
+    // is the ClientApp.id (by convention established in ApiKey schema description).
+    if (apiKey?.tenant_id) {
+      resolvedClientAppId = apiKey.tenant_id;
       try {
         const apps = await base44.asServiceRole.entities.ClientApp.filter(
-          { api_key: rawApiKey, status: 'active' },
-          null,
-          1
+          { id: apiKey.tenant_id, status: 'active' }, null, 1
         );
         if (apps?.[0]) {
-          resolvedClientAppId = apps[0].id;
           resolvedOwnerUserId = apps[0].owner_id;
         }
       } catch (lookupErr) {
-        console.warn(`[${requestId}] ClientApp lookup failed:`, lookupErr.message);
+        console.warn(`[${requestId}] ClientApp owner lookup (path1) failed:`, lookupErr.message);
       }
+    }
+
+    // Path 2 & 3: raw key from Authorization header or request body
+    if (!resolvedClientAppId) {
+      let rawApiKey = body?.apiKey || body?.api_key || null;
+      if (!rawApiKey) {
+        const authHeader = req.headers.get('Authorization') || req.headers.get('authorization') || '';
+        if (authHeader.startsWith('Bearer ')) {
+          rawApiKey = authHeader.slice(7).trim();
+        }
+      }
+      if (rawApiKey) {
+        try {
+          const apps = await base44.asServiceRole.entities.ClientApp.filter(
+            { api_key: rawApiKey, status: 'active' }, null, 1
+          );
+          if (apps?.[0]) {
+            resolvedClientAppId = apps[0].id;
+            resolvedOwnerUserId = apps[0].owner_id;
+          }
+        } catch (lookupErr) {
+          console.warn(`[${requestId}] ClientApp lookup (path2/3) failed:`, lookupErr.message);
+        }
+      }
+    }
+
+    // If we could not resolve any ClientApp, this is effectively an unauthenticated/invalid request.
+    // Write an auth SystemEvent for observability (non-blocking).
+    if (!resolvedClientAppId) {
+      base44.asServiceRole.entities.SystemEvent.create({
+        org_id: tenantId,
+        workspace_id: null,
+        actor_type: 'api',
+        actor_id: tenantId,
+        event_type: 'auth',
+        severity: 'error',
+        payload: { endpoint: '/api/v1/gamedev/events', reason: 'unresolvable_client_app', total_ms: Math.round(performance.now() - startTime) },
+        trace_id: requestId,
+        timestamp: new Date().toISOString(),
+        is_demo: false
+      }).catch(err => console.warn(`[${requestId}] Auth failure SystemEvent write failed:`, err.message));
     }
 
     // Log game-specific usage with owner-scoped fields

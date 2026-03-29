@@ -28,10 +28,16 @@ Deno.serve(async (req) => {
 
   try {
     const url = new URL(req.url);
-    const pathParts = url.pathname.split('/').filter(Boolean);
-    const webhookId = pathParts[pathParts.length - 1];
 
-    if (req.method === 'GET' && !webhookId) {
+    // ID resolution: support both ?id=<webhookId> query param (guaranteed to work with
+    // Base44 function routing) and path suffix (works when platform forwards sub-paths).
+    const queryId = url.searchParams.get('id') || null;
+    const pathParts = url.pathname.split('/').filter(Boolean);
+    const pathId = pathParts[pathParts.length - 1];
+    // Only use pathId if it looks like a record ID and not the function name segment.
+    const webhookId = queryId || (pathId && pathId !== 'endpoints' ? pathId : null);
+
+    if (req.method === 'GET') {
       const webhooks = await base44.asServiceRole.entities.WebhookEndpoint.filter({ tenant_id: tenantId }, '-created_date', 100);
       
       return new Response(JSON.stringify({ 
@@ -69,7 +75,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (req.method === 'PUT' && webhookId) {
+    if (req.method === 'PUT') {
+      if (!webhookId) {
+        return new Response(JSON.stringify({ success: false, error: 'Webhook ID required. Use ?id=<id> query parameter or path suffix.' }), {
+          status: 400, headers: { 'Content-Type': 'application/json' }
+        });
+      }
       WebhookIdSchema.parse(webhookId);
       
       const body = await req.json();
@@ -88,7 +99,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (req.method === 'DELETE' && webhookId) {
+    if (req.method === 'DELETE') {
+      if (!webhookId) {
+        return new Response(JSON.stringify({ success: false, error: 'Webhook ID required. Use ?id=<id> query parameter or path suffix.' }), {
+          status: 400, headers: { 'Content-Type': 'application/json' }
+        });
+      }
       WebhookIdSchema.parse(webhookId);
       
       await base44.asServiceRole.entities.WebhookEndpoint.delete(webhookId);
@@ -103,7 +119,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify({ success: false, error: 'Method not allowed or invalid path' }), { 
+    return new Response(JSON.stringify({ success: false, error: 'Method not allowed' }), { 
       status: 405, 
       headers: { 'Content-Type': 'application/json' } 
     });

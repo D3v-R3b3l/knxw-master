@@ -57,6 +57,19 @@ Deno.serve(async (req) => {
     const clientApps = await base44.asServiceRole.entities.ClientApp.filter({ api_key: apiKey, status: 'active' }, null, 1);
     const clientApp = clientApps?.[0] || null;
     if (!clientApp) {
+      // Write auth failure SystemEvent so aggregateMetricsHourly can count auth_failures.
+      base44.asServiceRole.entities.SystemEvent.create({
+        org_id: 'unknown',
+        workspace_id: null,
+        actor_type: 'api',
+        actor_id: String(apiKey).slice(0, 12) + '...',
+        event_type: 'auth',
+        severity: 'error',
+        payload: { endpoint: '/api/v1/events', reason: 'invalid_api_key', total_ms: Math.round(performance.now() - startTime) },
+        trace_id: requestId,
+        timestamp: new Date().toISOString(),
+        is_demo: false
+      }).catch(err => console.warn(`[${requestId}] Auth failure SystemEvent write failed:`, err.message));
       return json({ success: false, error: 'Invalid or inactive API key' }, 403);
     }
 

@@ -156,21 +156,46 @@ async function handleInvoiceEvent(svc, eventType, invoice) {
 }
 
 async function handleCheckoutCompleted(svc, session) {
-  const userId = session.metadata?.base44_user_id;
+  let userId = session.metadata?.base44_user_id;
+
+  // Fallback 1: resolve via existing BillingSubscription linked to this customer ID.
+  if (!userId && session.customer) {
+    const custRecords = await svc.entities.BillingSubscription.filter(
+      { stripe_customer_id: session.customer }, null, 1
+    );
+    userId = custRecords?.[0]?.user_id || null;
+    if (userId) {
+      console.log(`[stripeWebhookHandler] checkout resolved user ${userId} via stripe_customer_id fallback. Session: ${session.id}`);
+    }
+  }
 
   if (!userId) {
-    // Cannot resolve user — log for manual remediation.
-    console.error(`[stripeWebhookHandler] checkout.session.completed missing base44_user_id. Session: ${session.id}, customer: ${session.customer}, subscription: ${session.subscription}. Manual remediation required.`);
+    // Cannot resolve user via any path — write to remediation entity for admin follow-up.
+    console.error(`[stripeWebhookHandler] checkout.session.completed UNRESOLVABLE. Session: ${session.id}, customer: ${session.customer}, subscription: ${session.subscription}`);
+    await svc.entities.SubscriptionSyncRemediation.create({
+      stripe_session_id: session.id,
+      stripe_customer_id: session.customer || null,
+      stripe_subscription_id: session.subscription || null,
+      reason: 'missing_metadata_base44_user_id',
+      raw_metadata: session.metadata || {},
+      resolution_status: 'pending'
+    }).catch(err => console.error('[stripeWebhookHandler] Failed to write remediation record:', err.message));
     return null;
   }
 
   const records = await svc.entities.BillingSubscription.filter({ user_id: userId }, null, 1);
   const record = records?.[0] || null;
   const planKey = session.metadata?.plan_key || record?.plan_key || 'developer';
+
+  // checkout.session.completed means payment succeeded — status is 'active'.
+  // The subsequent customer.subscription.created will overwrite this but we must
+  // not leave the user in 'incomplete' state between the two events.
+  const checkoutStatus = 'active';
+
   const payload = {
     user_id: userId,
     plan_key: planKey,
-    status: record?.status || 'incomplete',
+    status: checkoutStatus,
     stripe_customer_id: session.customer || record?.stripe_customer_id || null,
     stripe_subscription_id: session.subscription || record?.stripe_subscription_id || null,
     usage_this_period: record?.usage_this_period || emptyUsage(),
@@ -186,12 +211,12 @@ async function handleCheckoutCompleted(svc, session) {
     savedRecord = await svc.entities.BillingSubscription.create(payload);
   }
 
-  // Sync User entity immediately so FeatureGate reflects the new plan without
-  // waiting for the subsequent customer.subscription.created webhook.
+  // Sync User entity immediately so FeatureGate and SubscriptionGate agree
+  // without waiting for the subsequent customer.subscription.created webhook.
   try {
     await svc.entities.User.update(userId, {
       current_plan_key: planKey,
-      plan_status: payload.status,
+      plan_status: checkoutStatus,
       subscription_updated_at: new Date().toISOString()
     });
   } catch (userUpdateErr) {

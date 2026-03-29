@@ -887,13 +887,13 @@ const OPENAPI_SPEC = {
         }
       }
     },
-    '/api/v1/webhooks/endpoints/{id}': {
+    '/api/v1/webhooks/endpoints': {
       put: {
         summary: 'Update Webhook Endpoint',
-        description: 'Update an existing webhook endpoint by ID.',
+        description: 'Update an existing webhook endpoint. The webhook ID must be passed as the `?id=<webhookId>` query parameter. This is the guaranteed-reachable routing on this platform. Example: PUT /api/v1/webhooks/endpoints?id=abc123',
         tags: ['Webhooks'],
         parameters: [
-          { name: 'id', in: 'path', required: true, schema: { type: 'string' }, description: 'Webhook endpoint ID' }
+          { name: 'id', in: 'query', required: true, schema: { type: 'string' }, description: 'Webhook endpoint ID to update' }
         ],
         requestBody: {
           required: true,
@@ -935,10 +935,10 @@ const OPENAPI_SPEC = {
       },
       delete: {
         summary: 'Delete Webhook Endpoint',
-        description: 'Permanently delete a webhook endpoint by ID.',
+        description: 'Permanently delete a webhook endpoint. The webhook ID must be passed as the `?id=<webhookId>` query parameter. Example: DELETE /api/v1/webhooks/endpoints?id=abc123',
         tags: ['Webhooks'],
         parameters: [
-          { name: 'id', in: 'path', required: true, schema: { type: 'string' }, description: 'Webhook endpoint ID' }
+          { name: 'id', in: 'query', required: true, schema: { type: 'string' }, description: 'Webhook endpoint ID to delete' }
         ],
         responses: {
           '200': {

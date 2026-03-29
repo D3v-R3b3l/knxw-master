@@ -1,0 +1,84 @@
+{
+  "name": "SubscriptionSyncRemediation",
+  "type": "object",
+  "properties": {
+    "stripe_session_id": {
+      "type": "string",
+      "description": "Stripe checkout.session.completed session ID"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID from the event"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID from the event"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why the sync failed (e.g. missing_metadata_base44_user_id)"
+    },
+    "raw_metadata": {
+      "type": "object",
+      "description": "Raw Stripe session metadata at time of event",
+      "default": {}
+    },
+    "resolution_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "resolved",
+        "unresolvable"
+      ],
+      "default": "pending",
+      "description": "Admin remediation status"
+    },
+    "resolved_user_id": {
+      "type": "string",
+      "description": "Admin-provided Base44 user ID for manual resolution"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Admin notes"
+    }
+  },
+  "required": [
+    "reason"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "resolution_status",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "stripe_customer_id"
+      ],
+      "order": [
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
