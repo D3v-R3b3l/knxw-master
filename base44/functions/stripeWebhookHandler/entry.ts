@@ -124,6 +124,21 @@ async function handleSubscriptionChange(svc, subscription) {
     record = await svc.entities.BillingSubscription.create(payload);
   }
 
+  // Sync canonical plan key to User entity so FeatureGate reads a consistent value.
+  // This is the single authoritative write path from Stripe into the user record.
+  if (payload.user_id) {
+    try {
+      await svc.entities.User.update(payload.user_id, {
+        current_plan_key: payload.plan_key,
+        plan_status: payload.status,
+        subscription_updated_at: new Date().toISOString()
+      });
+    } catch (userUpdateErr) {
+      // Log but do not fail the webhook — BillingSubscription is still the fallback source.
+      console.error(`[stripeWebhookHandler] Failed to sync current_plan_key to User ${payload.user_id}:`, userUpdateErr.message);
+    }
+  }
+
   return record;
 }
 

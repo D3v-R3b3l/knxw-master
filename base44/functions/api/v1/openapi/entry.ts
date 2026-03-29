@@ -567,10 +567,90 @@ const OPENAPI_SPEC = {
         }
       }
     },
+    '/api/v1/gamedev/events': {
+      post: {
+        summary: 'Ingest Game Event',
+        description: 'Ingest a player behavioral event from a game client. Triggers psychographic profiling via the core event pipeline. Game-specific event types including session lifecycle, level outcomes, social interactions, and purchases are supported.',
+        tags: ['GameDev'],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['player_id', 'event_type'],
+                properties: {
+                  player_id: { type: 'string', minLength: 1, maxLength: 256, description: 'Unique player identifier', example: 'player_abc123' },
+                  event_type: {
+                    type: 'string',
+                    enum: [
+                      'session_start', 'session_end', 'level_complete', 'level_fail',
+                      'purchase', 'achievement_unlock', 'challenge_accept', 'challenge_complete',
+                      'social_interaction', 'tutorial_complete', 'quit_game'
+                    ],
+                    description: 'Game-specific event type',
+                    example: 'level_complete'
+                  },
+                  context: {
+                    type: 'object',
+                    properties: {
+                      game_id: { type: 'string' },
+                      session_id: { type: 'string' },
+                      level: { type: 'string' },
+                      difficulty: { type: 'string' },
+                      platform: { type: 'string' }
+                    }
+                  },
+                  metadata: {
+                    type: 'object',
+                    additionalProperties: true,
+                    description: 'Arbitrary additional event data'
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          '202': {
+            description: 'Event accepted for processing',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                    data: {
+                      type: 'object',
+                      properties: {
+                        event_id: { type: 'string' },
+                        status: { type: 'string', example: 'accepted' },
+                        message: { type: 'string', example: 'Event ingested. Player profile analysis queued.' }
+                      }
+                    },
+                    meta: {
+                      type: 'object',
+                      properties: {
+                        requestId: { type: 'string' },
+                        tenantId: { type: 'string' },
+                        latencyMs: { type: 'number' }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          '400': { $ref: '#/components/responses/ValidationError' },
+          '401': { $ref: '#/components/responses/UnauthorizedError' },
+          '429': { $ref: '#/components/responses/RateLimitError' }
+        }
+      }
+    },
     '/api/v1/usage': {
       get: {
         summary: 'Get Usage Statistics',
-        description: 'Retrieve API usage metrics including request counts, error rates, latency percentiles, and endpoint-level statistics.',
+        description: 'Retrieve API usage metrics including request counts, error rates, latency percentiles, and endpoint-level statistics. Data is scoped to the authenticated tenant. Note: game-specific telemetry written to GameUsageEvent (via /api/v1/gamedev/events) is not included here; that data is accessible via the dashboard for entitled users only.',
         tags: ['Usage'],
         parameters: [
           {
@@ -775,7 +855,8 @@ const OPENAPI_SPEC = {
     { name: 'Insights', description: 'AI-powered behavioral insights' },
     { name: 'Recommendations', description: 'Personalized content recommendations' },
     { name: 'Usage', description: 'API usage and metrics' },
-    { name: 'Webhooks', description: 'Webhook configuration and management' }
+    { name: 'Webhooks', description: 'Webhook configuration and management' },
+    { name: 'GameDev', description: 'Game-specific event ingestion and player psychographic profiling' }
   ]
 };
 

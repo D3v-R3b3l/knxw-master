@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.5.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 // Helper to calculate percentile
 function getPercentile(arr, p) {
@@ -12,8 +12,7 @@ function getPercentile(arr, p) {
 }
 
 Deno.serve(async (req) => {
-  // This function is designed to be called by a scheduler (e.g., cron)
-  // For simplicity, we'll use a service role client
+  // Scheduled function — uses service role for all entity access.
   const base44 = createClientFromRequest(req).asServiceRole;
 
   try {

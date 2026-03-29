@@ -36,15 +36,12 @@ export default function DeveloperUsage() {
   const loadUsageData = async () => {
     setLoading(true);
     try {
-      // Fetch usage events from GameUsageEvent entity
       const hours = timeRange === '1h' ? 1 : timeRange === '24h' ? 24 : timeRange === '7d' ? 168 : 720;
-      const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
-      
-      const events = await base44.entities.GameUsageEvent.filter(
-        { timestamp: { $gte: cutoff } },
-        '-timestamp',
-        1000
-      );
+
+      // Use scoped backend function — enforces tenant isolation server-side.
+      // Direct GameUsageEvent entity access is admin-only via RLS; this path works for all entitled users.
+      const { data: result } = await base44.functions.invoke('getMyUsageStats', { hours });
+      const events = result?.events || [];
 
       // Process usage statistics
       const stats = processUsageStats(events);
