@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,37 +13,22 @@ import PsychographicTrendChart from '../components/psychographic/PsychographicTr
 import CognitiveBiasDetector from '../components/psychographic/CognitiveBiasDetector';
 import EmotionalShiftTimeline from '../components/psychographic/EmotionalShiftTimeline';
 import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
+import { useDashboardStore } from "../components/dashboard/DashboardStore";
 
 export default function ProfilesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRisk, setFilterRisk] = useState("all");
   const [filterCognitive, setFilterCognitive] = useState("all");
   const [selectedProfile, setSelectedProfile] = useState(null);
-
-  const { data: profiles = [], isLoading, error } = useQuery({
-    queryKey: ['profiles', filterRisk, filterCognitive],
-    queryFn: async () => {
-      let filter = { is_demo: false };
-      if (filterRisk !== "all") {
-        filter.risk_profile = filterRisk;
-      }
-      if (filterCognitive !== "all") {
-        filter.cognitive_style = filterCognitive;
-      }
-      
-      const results = await base44.entities.UserPsychographicProfile.filter(
-        filter,
-        '-last_analyzed',
-        100
-      );
-      return results;
-    },
-  });
+  const { profiles = [], isLoading, apps, selectedAppId } = useDashboardStore();
+  const error = null;
 
   const filteredProfiles = profiles.filter(profile => {
     const matchesSearch = !searchTerm || 
       profile.user_id.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    const matchesRisk = filterRisk === "all" || profile.risk_profile === filterRisk;
+    const matchesCognitive = filterCognitive === "all" || profile.cognitive_style === filterCognitive;
+    return matchesSearch && matchesRisk && matchesCognitive;
   });
 
   const getRiskColor = (risk) => {
@@ -129,11 +112,18 @@ export default function ProfilesPage() {
               <p className="text-red-400">Error loading profiles: {error.message}</p>
             </CardContent>
           </Card>
+        ) : !selectedAppId || apps.length === 0 ? (
+          <Card className="bg-[#1a1a1a] border-[#262626]">
+            <CardContent className="py-12 text-center">
+              <User className="w-12 h-12 text-[#a3a3a3] mx-auto mb-4" />
+              <p className="text-[#a3a3a3]">Create an application to start building user profiles</p>
+            </CardContent>
+          </Card>
         ) : filteredProfiles.length === 0 ? (
           <Card className="bg-[#1a1a1a] border-[#262626]">
             <CardContent className="py-12 text-center">
               <User className="w-12 h-12 text-[#a3a3a3] mx-auto mb-4" />
-              <p className="text-[#a3a3a3]">No profiles found</p>
+              <p className="text-[#a3a3a3]">No profiles found for this application</p>
             </CardContent>
           </Card>
         ) : (

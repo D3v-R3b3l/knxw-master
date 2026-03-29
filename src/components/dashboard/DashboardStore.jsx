@@ -25,9 +25,15 @@ function normalizeOrigins(app) {
   });
 }
 
-function eventMatchesApp(event, origins) {
-  // Always show all events — origins filtering is not enforced in the dashboard
-  return true;
+function eventMatchesApp(event, appId, origins) {
+  if (!event) return false;
+  if (appId && event.client_app_id) {
+    return event.client_app_id === appId;
+  }
+  if (!origins?.length) return false;
+  const url = event?.event_payload?.url;
+  if (!url || typeof url !== 'string') return false;
+  return origins.some((origin) => url.startsWith(origin));
 }
 
 const DashboardContext = createContext(null);
@@ -191,12 +197,25 @@ export function DashboardProvider({ children }) {
 
   // Load all data - SINGLE LOAD ONLY, with aggressive deduplication
   const loadDashboardData = useCallback(async (appId, origins) => {
-    // Ultra-aggressive deduplication checks
     const now = Date.now();
-    
-    // Check 1: Already loading globally
+
     if (globalLoadState.isLoading) {
       logger.info("Dashboard load already in progress globally, skipping");
+      return;
+    }
+
+    if (!appId) {
+      setEvents([]);
+      setProfiles([]);
+      setInsights([]);
+      setMetrics({
+        totalUsers: 0,
+        totalEvents: 0,
+        activeUsers: 0,
+        avgEngagement: "0",
+        totalInsights: 0
+      });
+      setIsLoading(false);
       return;
     }
 
@@ -206,48 +225,54 @@ export function DashboardProvider({ children }) {
     try {
       logger.info(`Loading dashboard data for app: ${appId}`);
 
-      // 1. Fetch events (include demo data)
       const fetchedEvents = await callWithRetry(
-        () => base44.entities.CapturedEvent.list("-timestamp", MAX_EVENTS),
+        () => base44.entities.CapturedEvent.filter({ client_app_id: appId }, "-timestamp", MAX_EVENTS),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
 
-      const filteredEvents = fetchedEvents.filter((e) => eventMatchesApp(e, origins));
+      const filteredEvents = fetchedEvents.filter((e) => eventMatchesApp(e, appId, origins));
       setEvents(filteredEvents);
 
-      // 2. Wait before next batch
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 3. Fetch profiles — show ALL profiles (they belong to the same app/account)
       const profilesRaw = await callWithRetry(
-        () => base44.entities.UserPsychographicProfile.list("-last_analyzed", 100),
+        () => base44.entities.UserPsychographicProfile.filter({ is_demo: false }, "-last_analyzed", 100),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
-      setProfiles(profilesRaw);
+      const scopedUserIds = new Set(filteredEvents.map((event) => event.user_id).filter(Boolean));
+      const scopedProfiles = profilesRaw.filter((profile) => scopedUserIds.has(profile.user_id));
+      setProfiles(scopedProfiles);
 
-      // 4. Wait before next batch
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 5. Fetch insights — exclude demo data to match the Insights page
       const insightsRaw = await callWithRetry(
         () => base44.entities.PsychographicInsight.filter({ is_demo: false }, "-created_date", 50),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
-      setInsights(insightsRaw);
+      const scopedInsights = insightsRaw.filter((insight) => scopedUserIds.has(insight.user_id));
+      setInsights(scopedInsights);
 
-      logger.info(`Loaded: ${filteredEvents.length} events, ${profilesRaw.length} profiles, ${insightsRaw.length} insights`);
+      logger.info(`Loaded: ${filteredEvents.length} events, ${scopedProfiles.length} profiles, ${scopedInsights.length} insights`);
 
-      // 6. Compute metrics
-      const computedMetrics = computeMetrics(profilesRaw, filteredEvents, insightsRaw);
+      const computedMetrics = computeMetrics(scopedProfiles, filteredEvents, scopedInsights);
       setMetrics(computedMetrics);
 
-      // Update global state
       globalLoadState.lastLoadedAppId = appId;
       globalLoadState.lastLoadTime = Date.now();
-      
+
       logger.info("Dashboard data loaded successfully");
     } catch (e) {
       logger.error("Failed to load dashboard data:", e);
+      setEvents([]);
+      setProfiles([]);
+      setInsights([]);
+      setMetrics({
+        totalUsers: 0,
+        totalEvents: 0,
+        activeUsers: 0,
+        avgEngagement: "0",
+        totalInsights: 0
+      });
     } finally {
       setIsLoading(false);
       globalLoadState.isLoading = false;
@@ -256,16 +281,26 @@ export function DashboardProvider({ children }) {
 
   // Load on app selection or when returning to dashboard
   useEffect(() => {
-    // Reset global state so returning to dashboard always reloads
     globalLoadState.lastLoadedAppId = null;
     globalLoadState.lastLoadTime = 0;
 
-    if (!selectedAppId || !appOrigins) {
+    if (!selectedAppId) {
+      setEvents([]);
+      setProfiles([]);
+      setInsights([]);
+      setMetrics({
+        totalUsers: 0,
+        totalEvents: 0,
+        activeUsers: 0,
+        avgEngagement: "0",
+        totalInsights: 0
+      });
+      setIsLoading(false);
       return;
     }
 
     loadDashboardData(selectedAppId, appOrigins);
-  }, [selectedAppId, appOrigins]);
+  }, [selectedAppId, appOrigins, loadDashboardData]);
 
   // Manual refresh function
   const refreshData = useCallback(async (force = false) => {

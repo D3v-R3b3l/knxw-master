@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card"; // CardHeader, CardTitle removed as not used in new outline
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,44 +9,27 @@ import { motion } from "framer-motion";
 import { safeFormatDate } from "../components/utils/datetime"; // NEW IMPORT
 import PageHeader from '../components/ui/PageHeader';
 import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
+import { useDashboardStore } from "../components/dashboard/DashboardStore";
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all"); // Renamed from filterEventType
-  const [filterUserId, setFilterUserId] = useState(""); // NEW STATE
-
-  const { data: events = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['events', filterType, filterUserId],
-    queryFn: async () => {
-      let filter = { is_demo: false }; // Added is_demo: false as per original context
-      if (filterType !== "all") {
-        filter.event_type = filterType;
-      }
-      if (filterUserId) {
-        // Assuming user_id filter can be a partial match, using "$ilike"
-        // If exact match is needed, remove "$ilike" and "%"
-        filter.user_id = { "$ilike": `%${filterUserId}%` };
-      }
-      
-      const results = await base44.entities.CapturedEvent.filter(
-        filter,
-        '-timestamp', // Order by timestamp descending
-        100 // Fetch 100 events
-      );
-      return results;
-    },
-    refetchInterval: 10000, // Refetch every 10 seconds
-  });
+  const [filterUserId, setFilterUserId] = useState("");
+  const { events = [], isLoading, refreshData, apps, selectedAppId } = useDashboardStore();
+  const error = null;
+  const refetch = () => refreshData(true);
 
   // This `filteredEvents` is client-side filtering on top of the `useQuery` results
   // The useQuery already filters by filterType and filterUserId
   // This `searchTerm` filtering is *additional* on top of what base44.entities.CapturedEvent.filter does.
   const filteredEvents = events.filter(event => {
+    const matchesType = filterType === "all" || event.event_type === filterType;
+    const matchesUser = !filterUserId || (event.user_id && event.user_id.toLowerCase().includes(filterUserId.toLowerCase()));
     const matchesSearch = !searchTerm || 
       event.event_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (event.user_id && event.user_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (event.event_payload && JSON.stringify(event.event_payload).toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchesSearch;
+    return matchesType && matchesUser && matchesSearch;
   });
 
   const getEventIcon = (eventType) => {
@@ -153,11 +134,18 @@ export default function EventsPage() {
               <p className="text-red-400">Error loading events: {error.message}</p>
             </CardContent>
           </Card>
+        ) : !selectedAppId || apps.length === 0 ? (
+          <Card className="bg-[#1a1a1a] border-[#262626]">
+            <CardContent className="py-12 text-center">
+              <Activity className="w-12 h-12 text-[#a3a3a3] mx-auto mb-4" />
+              <p className="text-[#a3a3a3]">Create an application to start capturing events</p>
+            </CardContent>
+          </Card>
         ) : filteredEvents.length === 0 ? (
           <Card className="bg-[#1a1a1a] border-[#262626]">
             <CardContent className="py-12 text-center">
               <Activity className="w-12 h-12 text-[#a3a3a3] mx-auto mb-4" />
-              <p className="text-[#a3a3a3]">No events captured yet</p>
+              <p className="text-[#a3a3a3]">No events captured yet for this application</p>
             </CardContent>
           </Card>
         ) : (
