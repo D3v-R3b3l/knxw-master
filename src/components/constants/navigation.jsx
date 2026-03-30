@@ -64,7 +64,6 @@ export const navigationSections = [
       { title: "Attribution", page: "AttributionSettings", icon: AttributionIcon, description: "ROI Tracking" },
       { title: "Data Import", page: "DataImport", icon: DatabaseIcon, description: "Bulk Processing" },
       { title: "Demo Data", page: "DemoData", icon: Sparkles, description: "Seed Test Data" },
-      { title: "System Health", page: "SystemHealth", icon: HeartPulse, description: "Performance" },
       { title: "Dashboards", page: "Dashboards", icon: BarChart3, description: "Custom Reports" },
     ]
   },
@@ -80,6 +79,7 @@ export const navigationSections = [
 ];
 
 export const adminNavigationItems = [
+  { title: "System Health", page: "SystemHealth", icon: HeartPulse, description: "Operator Monitoring" },
   { title: "Org Admin", page: "OrgAdmin", icon: Shield, description: "Organization Settings" },
   { title: "Optimization Analytics", page: "OptimizationAnalytics", icon: BarChart3, description: "Template Effectiveness & Governance" },
   { title: "Simulation Mode", page: "SimulationMode", icon: FlaskConical, description: "Test Rulesets Without Real Users" },

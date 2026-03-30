@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, HeartPulse, BarChart, AlertTriangle, ShieldOff } from 'lucide-react';
+import { Loader2, HeartPulse, BarChart, AlertTriangle, ShieldOff, ShieldAlert } from 'lucide-react';
 import AnimatedLine from '@/components/charts/AnimatedLine';
 
 // Empty placeholder — returns a zeroed 24-point series so the chart renders axes
@@ -14,6 +14,7 @@ const emptyChartData = (name) => Array.from({ length: 24 }, (_, i) => ({
 
 export default function SystemHealth() {
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
   const [workspaces, setWorkspaces] = useState([]);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState('all');
   const [metrics, setMetrics] = useState([]);
@@ -22,12 +23,19 @@ export default function SystemHealth() {
     const loadInitialData = async () => {
       setLoading(true);
       try {
-        const currentUser = await base44.auth.me();
-        // MetricsHour uses client_app_id as the canonical access identity.
-        // Load the user's ClientApps and filter metrics by that same identity.
-        const clientApps = await base44.entities.ClientApp.filter({ owner_id: currentUser.id, status: 'active' });
+        const user = await base44.auth.me();
+        setCurrentUser(user);
+
+        if (user?.role !== 'admin') {
+          setWorkspaces([]);
+          setMetrics([]);
+          return;
+        }
+
+        const clientApps = await base44.entities.ClientApp.filter({ status: 'active' });
         setWorkspaces(clientApps);
         if (clientApps.length > 0) {
+          setSelectedWorkspaceId(clientApps[0].id);
           await loadMetrics(clientApps[0].id, 'all');
         } else {
           setMetrics([]);
@@ -78,6 +86,26 @@ export default function SystemHealth() {
       
     return data.length > 0 ? data : emptyChartData(metricName);
   };
+
+  if (!loading && currentUser?.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white p-8">
+        <div className="max-w-3xl mx-auto">
+          <Card className="bg-[#111111] border-[#262626]">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-[#f59e0b]" />
+                Admin access required
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-[#a3a3a3]">System Health is an operator-only view for administrative monitoring.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-8">
