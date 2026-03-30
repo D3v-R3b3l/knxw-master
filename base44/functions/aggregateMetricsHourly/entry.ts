@@ -34,6 +34,7 @@ Deno.serve(async (req) => {
       if (!acc[key]) {
         acc[key] = {
           org_id: event.org_id,
+          client_app_id: event.org_id,
           workspace_id: event.workspace_id,
           events: []
         };
@@ -65,11 +66,11 @@ Deno.serve(async (req) => {
       
       // Add metrics to the creation list
       metricsToCreate.push(
-        { timestamp: hourTimestamp, org_id: group.org_id, workspace_id: group.workspace_id, metric_name: 'requests', value: requestCount },
-        { timestamp: hourTimestamp, org_id: group.org_id, workspace_id: group.workspace_id, metric_name: 'errors', value: errorCount },
-        { timestamp: hourTimestamp, org_id: group.org_id, workspace_id: group.workspace_id, metric_name: 'auth_failures', value: authFailures },
-        { timestamp: hourTimestamp, org_id: group.org_id, workspace_id: group.workspace_id, metric_name: 'latency_p95_ms', value: p95Latency },
-        { timestamp: hourTimestamp, org_id: group.org_id, workspace_id: group.workspace_id, metric_name: 'retrieval_miss_rate', value: missRate }
+        { timestamp: hourTimestamp, org_id: group.org_id, client_app_id: group.client_app_id, workspace_id: group.workspace_id, metric_name: 'requests', value: requestCount },
+        { timestamp: hourTimestamp, org_id: group.org_id, client_app_id: group.client_app_id, workspace_id: group.workspace_id, metric_name: 'errors', value: errorCount },
+        { timestamp: hourTimestamp, org_id: group.org_id, client_app_id: group.client_app_id, workspace_id: group.workspace_id, metric_name: 'auth_failures', value: authFailures },
+        { timestamp: hourTimestamp, org_id: group.org_id, client_app_id: group.client_app_id, workspace_id: group.workspace_id, metric_name: 'latency_p95_ms', value: p95Latency },
+        { timestamp: hourTimestamp, org_id: group.org_id, client_app_id: group.client_app_id, workspace_id: group.workspace_id, metric_name: 'retrieval_miss_rate', value: missRate }
       );
     }
     

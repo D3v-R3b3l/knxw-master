@@ -1,0 +1,106 @@
+{
+  "name": "MetricsHour",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Hour timestamp (rounded down)"
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Legacy grouping identifier retained for compatibility"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "Canonical ClientApp ID used for app-scoped metrics access"
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Workspace ID (optional for app-level metrics)"
+    },
+    "metric_name": {
+      "type": "string",
+      "enum": [
+        "requests",
+        "errors",
+        "latency_p95_ms",
+        "retrieval_miss_rate",
+        "rerank_lift",
+        "auth_failures"
+      ],
+      "description": "Metric name"
+    },
+    "value": {
+      "type": "number",
+      "description": "Metric value"
+    },
+    "dimensions": {
+      "type": "object",
+      "description": "Additional metric dimensions",
+      "default": {}
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "timestamp",
+    "org_id",
+    "client_app_id",
+    "metric_name",
+    "value"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "metric_name",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "client_app_id": {
+            "$in": {
+              "entity": "ClientApp",
+              "field": "id",
+              "where": {
+                "owner_id": "{{user.id}}"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

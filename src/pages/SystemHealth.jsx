@@ -23,8 +23,8 @@ export default function SystemHealth() {
       setLoading(true);
       try {
         const currentUser = await base44.auth.me();
-        // MetricsHour.org_id is populated by api/v1/events.js using clientApp.id.
-        // Resolve the user's ClientApps to get the correct org_id values for filtering.
+        // MetricsHour uses client_app_id as the canonical access identity.
+        // Load the user's ClientApps and filter metrics by that same identity.
         const clientApps = await base44.entities.ClientApp.filter({ owner_id: currentUser.id, status: 'active' });
         setWorkspaces(clientApps);
         if (clientApps.length > 0) {
@@ -41,10 +41,10 @@ export default function SystemHealth() {
     loadInitialData();
   }, []);
 
-  const loadMetrics = async (orgId, workspaceId) => {
+  const loadMetrics = async (clientAppId, workspaceId) => {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const filter = {
-      org_id: orgId,
+      client_app_id: clientAppId,
       timestamp: { '$gte': twentyFourHoursAgo }
     };
     if (workspaceId !== 'all') {
@@ -58,7 +58,7 @@ export default function SystemHealth() {
     setSelectedWorkspaceId(workspaceId);
     setLoading(true);
     try {
-      // workspaceId here is a ClientApp.id (used as org_id in MetricsHour)
+      // workspaceId here is the canonical ClientApp.id used by MetricsHour.client_app_id
       await loadMetrics(workspaceId, 'all');
     } catch (error) {
       console.error("Failed to load metrics for app:", error);
