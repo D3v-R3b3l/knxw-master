@@ -207,26 +207,37 @@ export default function MyAppsPage() {
     
     try {
       await base44.entities.ClientApp.delete(appToDelete.id);
-      
+
       toast({
         title: "Success",
         description: `Application "${appToDelete.name}" deleted successfully`
       });
-      
-      await loadApps();
-      
-      // Broadcast deletion event so Dashboard can refresh
+
       window.dispatchEvent(new CustomEvent('knxw-app-deleted', {
         detail: { app_id: appToDelete.id }
       }));
     } catch (err) {
       console.error("Failed to delete app:", err);
-      toast({
-        title: "Error",
-        description: "Failed to delete application. Please try again.",
-        variant: "destructive"
-      });
+      const isMissingApp = err?.status === 404 || err?.response?.status === 404 || err?.message?.includes('not found');
+
+      if (isMissingApp) {
+        toast({
+          title: "Already removed",
+          description: `Application "${appToDelete.name}" was already removed.`
+        });
+
+        window.dispatchEvent(new CustomEvent('knxw-app-deleted', {
+          detail: { app_id: appToDelete.id }
+        }));
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete application. Please try again.",
+          variant: "destructive"
+        });
+      }
     } finally {
+      await loadApps();
       setDeletingAppId(null);
       setAppToDelete(null);
     }
@@ -398,7 +409,7 @@ export default function MyAppsPage() {
                           size="icon"
                           variant="ghost"
                           onClick={() => handleDeleteClick(app)}
-                          disabled={deletingAppId === app.id}
+                          disabled={deletingAppId === app.id || !!editingApp}
                           className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
                           title="Delete application"
                         >
