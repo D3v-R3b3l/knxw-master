@@ -79,9 +79,19 @@ export default function InsightsPage() {
   };
 
   const deleteInsights = async (ids) => {
-    if (!ids.length) return;
+    if (!ids.length || isDeleting) return;
     setIsDeleting(true);
-    await Promise.all(ids.map((id) => base44.entities.PsychographicInsight.delete(id)));
+
+    for (let i = 0; i < ids.length; i += 5) {
+      const batch = ids.slice(i, i + 5);
+      for (const id of batch) {
+        await base44.entities.PsychographicInsight.delete(id);
+      }
+      if (i + 5 < ids.length) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+    }
+
     setSelectedInsightIds([]);
     if (selectedInsight && ids.includes(selectedInsight.id)) {
       setSelectedInsight(null);
@@ -143,7 +153,7 @@ export default function InsightsPage() {
                 className="gap-2">
                 
                   <Trash2 className="w-4 h-4" />
-                  Delete selected
+                  {isDeleting ? 'Deleting...' : 'Delete selected'}
                 </Button>
               </CardContent>
             </Card>
@@ -265,6 +275,7 @@ export default function InsightsPage() {
                                     <Button
                                 variant="ghost"
                                 className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                disabled={isDeleting}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   deleteInsights([insight.id]);
