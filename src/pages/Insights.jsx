@@ -129,7 +129,7 @@ export default function InsightsPage() {
                   <Button
                     variant="outline"
                     onClick={toggleSelectAll}
-                    className="border-[#262626] text-white hover:bg-[#262626]"
+                    className="border-[#262626] text-white hover:bg-[#262626] hover:text-white"
                   >
                     {selectedCount === insights.length ? 'Clear selection' : 'Select all'}
                   </Button>
