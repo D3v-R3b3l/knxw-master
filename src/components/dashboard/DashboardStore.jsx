@@ -236,7 +236,7 @@ export function DashboardProvider({ children }) {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       const profilesRaw = await callWithRetry(
-        () => base44.entities.UserPsychographicProfile.filter({ is_demo: false }, "-last_analyzed", 100),
+        () => base44.entities.UserPsychographicProfile.list("-last_analyzed", 100),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
       const scopedUserIds = new Set(filteredEvents.map((event) => event.user_id).filter(Boolean));
@@ -246,7 +246,7 @@ export function DashboardProvider({ children }) {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       const insightsRaw = await callWithRetry(
-        () => base44.entities.PsychographicInsight.filter({ is_demo: false }, "-created_date", 50),
+        () => base44.entities.PsychographicInsight.list("-created_date", 50),
         { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
       );
       const scopedInsights = insightsRaw.filter((insight) => scopedUserIds.has(insight.user_id));
