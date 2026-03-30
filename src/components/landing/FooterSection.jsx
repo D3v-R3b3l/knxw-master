@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useConsent } from '@/components/privacy/ConsentManager';
-import { Shield, RotateCcw, Twitter, Linkedin, Github } from 'lucide-react';
+import { Shield, RotateCcw } from 'lucide-react';
 
 export default function FooterSection() {
   const { resetConsent } = useConsent();
@@ -55,20 +55,9 @@ export default function FooterSection() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="pt-8 border-t border-white/10 flex justify-center md:justify-start items-center">
           <div className="text-sm">
             © 2026 knXw • Intelligence Platform
-          </div>
-          <div className="flex gap-6 text-sm">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <Twitter className="w-5 h-5" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <Github className="w-5 h-5" />
-            </a>
           </div>
         </div>
       </div>
