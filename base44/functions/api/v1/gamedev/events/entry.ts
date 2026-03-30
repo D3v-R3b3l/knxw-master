@@ -44,8 +44,11 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const validatedData = GameEventSchema.parse(body);
 
-    // Call core event ingestion
-    const ingestResult = await base44.functions.invoke('captureEvent', {
+    // Fire-and-forget: core event ingestion and profile refresh.
+    // These are non-blocking — GameUsageEvent stamping must always succeed
+    // regardless of whether captureEvent or liveProfileProcessor are reachable.
+    const eventId = crypto.randomUUID();
+    base44.functions.invoke('captureEvent', {
       user_id: validatedData.player_id,
       event_type: validatedData.event_type,
       event_payload: {
@@ -56,9 +59,8 @@ Deno.serve(async (req) => {
       timestamp: new Date().toISOString(),
       tenant_id: tenantId,
       api_key_id: apiKey?.id
-    });
+    }).catch(err => console.warn(`[${requestId}] captureEvent invoke failed (non-blocking):`, err.message));
 
-    // Async profile refresh
     base44.functions.invoke('liveProfileProcessor', { 
       action: 'process_live_events', 
       user_id: validatedData.player_id 
@@ -151,7 +153,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ 
       success: true, 
       data: { 
-        event_id: ingestResult?.event_id || crypto.randomUUID(),
+        event_id: eventId,
         status: 'accepted',
         message: 'Event ingested. Player profile analysis queued.'
       }, 

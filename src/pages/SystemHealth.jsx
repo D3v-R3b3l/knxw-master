@@ -23,12 +23,14 @@ export default function SystemHealth() {
       setLoading(true);
       try {
         const currentUser = await base44.auth.me();
-        const orgUsers = await base44.entities.OrgUser.filter({ user_email: currentUser.email });
-        if (orgUsers.length > 0) {
-          const orgId = orgUsers[0].org_id;
-          const userWorkspaces = await base44.entities.TenantWorkspace.filter({ org_id: orgId });
-          setWorkspaces(userWorkspaces);
-          await loadMetrics(orgId, 'all');
+        // MetricsHour.org_id is populated by api/v1/events.js using clientApp.id.
+        // Resolve the user's ClientApps to get the correct org_id values for filtering.
+        const clientApps = await base44.entities.ClientApp.filter({ owner_id: currentUser.id, status: 'active' });
+        setWorkspaces(clientApps);
+        if (clientApps.length > 0) {
+          await loadMetrics(clientApps[0].id, 'all');
+        } else {
+          setMetrics([]);
         }
       } catch (error) {
         console.error("Failed to load initial data:", error);
@@ -56,13 +58,10 @@ export default function SystemHealth() {
     setSelectedWorkspaceId(workspaceId);
     setLoading(true);
     try {
-      const currentUser = await base44.auth.me();
-      const orgUsers = await base44.entities.OrgUser.filter({ user_email: currentUser.email });
-      if (orgUsers.length > 0) {
-        await loadMetrics(orgUsers[0].org_id, workspaceId);
-      }
+      // workspaceId here is a ClientApp.id (used as org_id in MetricsHour)
+      await loadMetrics(workspaceId, 'all');
     } catch (error) {
-      console.error("Failed to load metrics for workspace:", error);
+      console.error("Failed to load metrics for app:", error);
     } finally {
       setLoading(false);
     }
@@ -96,10 +95,9 @@ export default function SystemHealth() {
           <div className="w-64">
             <Select value={selectedWorkspaceId} onValueChange={handleWorkspaceChange}>
               <SelectTrigger className="bg-[#1a1a1a] border-[#262626] text-white">
-                <SelectValue placeholder="Select workspace..." />
+                <SelectValue placeholder="Select app..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Workspaces</SelectItem>
                 {workspaces.map(ws => (
                   <SelectItem key={ws.id} value={ws.id}>{ws.name}</SelectItem>
                 ))}

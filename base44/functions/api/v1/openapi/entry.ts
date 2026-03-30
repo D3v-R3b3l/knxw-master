@@ -885,9 +885,7 @@ const OPENAPI_SPEC = {
           '400': { $ref: '#/components/responses/ValidationError' },
           '401': { $ref: '#/components/responses/UnauthorizedError' }
         }
-      }
-    },
-    '/api/v1/webhooks/endpoints': {
+      },
       put: {
         summary: 'Update Webhook Endpoint',
         description: 'Update an existing webhook endpoint. The webhook ID must be passed as the `?id=<webhookId>` query parameter. This is the guaranteed-reachable routing on this platform. Example: PUT /api/v1/webhooks/endpoints?id=abc123',
