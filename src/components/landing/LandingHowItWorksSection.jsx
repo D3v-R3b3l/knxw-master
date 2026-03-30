@@ -3,19 +3,19 @@ import React from 'react';
 const steps = [
   {
     title: 'Sense',
-    description: 'Capture behavioral, contextual, and interaction signal across digital environments.'
+    description: 'Capture the behavioral and interaction signal your product already generates, the instrumented trace of how people move through it.'
   },
   {
     title: 'Infer',
-    description: 'Model psychographic state, cognitive style, decision posture, and human context in real time.'
+    description: 'Interpret what that signal means: motivation, hesitation, cognitive load, decision posture, risk orientation. Not what happened, what it indicates.'
   },
   {
     title: 'Adapt',
-    description: 'Adjust system behavior, interface logic, messaging, pacing, and flow based on live inference.'
+    description: 'Enable the system to respond to live decision context, adjusting messaging, pacing, interface logic, and experience flow in real time.'
   },
   {
     title: 'Govern',
-    description: 'Constrain adaptation through explainability, traceability, and ethical control.'
+    description: 'Ensure every adaptation remains visible, explainable, and constrained. Intelligence without accountability is not infrastructure. It is drift.'
   }
 ];
 
@@ -28,9 +28,9 @@ export default function LandingHowItWorksSection() {
           <span className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6">
             How It Works
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">How knXw works</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">How It Works</h2>
           <p className="text-lg text-gray-400">
-            One mechanism makes universal application coherent: signal intake, inference, adaptation, and governance.
+            Sense, infer, adapt, and govern in one runtime layer.
           </p>
         </div>
 

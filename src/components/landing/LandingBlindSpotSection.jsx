@@ -10,10 +10,13 @@ export default function LandingBlindSpotSection() {
             What Software Still Cannot See
           </span>
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Current systems track behavior. They do not understand it.
+            What Software Still Cannot See
           </h2>
-          <p className="text-lg md:text-2xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
-            Clicks, events, sessions, and segments reveal what happened. They do not reveal motive, hesitation, cognitive load, confidence, or decision friction. knXw closes that gap.
+          <p className="text-lg md:text-2xl text-gray-400 leading-relaxed max-w-3xl mx-auto mb-6">
+            Current systems track behavior. They do not understand it.
+          </p>
+          <p className="text-base md:text-xl text-gray-500 leading-relaxed max-w-4xl mx-auto">
+            Clicks, events, sessions, and segments tell you what happened. They tell you nothing about the decision dynamics behind it, hesitation, confidence, cognitive load, friction that shaped the action but never surfaced in the data. That signal exists. It has always existed. No system has been built to read it. Until now.
           </p>
         </div>
       </div>

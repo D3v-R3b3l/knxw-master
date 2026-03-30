@@ -19,7 +19,7 @@ export default function LandingGovernanceSection() {
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Power without drift</h2>
             <p className="text-lg md:text-xl text-gray-400 leading-relaxed max-w-3xl">
-              knXw is designed to increase system intelligence without rewarding manipulative adaptation. Interventions must remain observable, explainable, and governable.
+              Infrastructure requires accountability. Interventions must remain observable, explainable, and governable. Intelligence without accountability is not infrastructure. It is drift.
             </p>
           </div>
 

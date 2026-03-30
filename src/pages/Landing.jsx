@@ -111,7 +111,7 @@ function HeroContent({ heroRef }) {
         transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
       >
         <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto font-light leading-relaxed mb-12">
-          knXw gives digital systems a new perceptual and adaptive capability, turning behavioral, contextual, and psychographic signal into explainable, governed, real-time system behavior.
+          Every digital system responds to what users do. None of them can read the decision dynamics behind it. knXw is the layer that closes that gap.
         </p>
       </motion.div>
 
@@ -132,10 +132,10 @@ function HeroContent({ heroRef }) {
           <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
         </button>
         <button
-          onClick={() => window.location.href = createPageUrl('Documentation')}
+          onClick={() => window.location.href = createPageUrl('InteractiveDemo')}
           className="px-8 py-4 font-bold text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto"
         >
-          API Docs
+          See It In Action
         </button>
       </motion.div>
 
@@ -387,9 +387,9 @@ export default function LandingPage() {
           <section style={{ maxWidth: '1200px', margin: '0 auto 80px' }}>
             <h2 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>Enterprise-Grade Infrastructure</h2>
             <ul style={{ fontSize: '18px', color: '#9ca3af', lineHeight: '2' }}>
-              <li>Encryption at rest & transit, Privacy focused, Data ownership</li>
-              <li>Real-time health checks, Auto-scaling</li>
-              <li>SSO support, Data warehouse sync, SIEM integration</li>
+              <li>Infrastructure requires real deployment conditions and governance controls</li>
+              <li>Observability, privacy posture, and integration reality matter</li>
+              <li>Enterprise readiness depends on actual implementation scope</li>
             </ul>
           </section>
           
@@ -453,6 +453,10 @@ export default function LandingPage() {
             <AdaptiveSDKShowcaseSection />
           </div>
 
+          <div id="outcomes" data-scroll-section>
+            <LandingBusinessImpactSection />
+          </div>
+
           <div id="platform" data-scroll-section>
             <PlatformFeatures />
           </div>
@@ -463,10 +467,6 @@ export default function LandingPage() {
 
           <div id="ui-examples" data-scroll-section>
             <AdaptiveUIIndustryShowcase />
-          </div>
-
-          <div id="outcomes" data-scroll-section>
-            <LandingBusinessImpactSection />
           </div>
           
           <div id="enterprise" data-scroll-section>

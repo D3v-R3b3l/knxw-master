@@ -9,7 +9,7 @@ export default function PricingSection() {
     {
       name: "Developer",
       price: "Free",
-      description: "Get started building with psychographic intelligence",
+      description: "Instrument your first environment. Run real inferences. Understand what the layer actually does before you scale it.",
       outcomes: [
         "Core psychographic profiling",
         "Basic behavioral event tracking",
@@ -27,7 +27,7 @@ export default function PricingSection() {
       name: "Growth",
       price: "$149",
       period: "/mo",
-      description: "Scale personalization with deeper insights and journey automation",
+      description: "The intelligence layer is live in your product. This is where it starts compounding.",
       outcomes: [
         "Advanced psychographic insights",
         "Full journey builder",
@@ -46,7 +46,7 @@ export default function PricingSection() {
       name: "Professional",
       price: "$399",
       period: "/mo",
-      description: "Optimize user lifecycles with predictive intelligence",
+      description: "For teams where understanding the human behind the behavior is a systems-level requirement, not a marketing feature.",
       outcomes: [
         "Advanced predictive analytics & churn prevention",
         "Full market intelligence & trends",
@@ -108,7 +108,7 @@ export default function PricingSection() {
             Pricing
           </h2>
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Straightforward plans for teams adopting runtime psychographic intelligence.
+            Start with the primitive. Scale the intelligence.
           </p>
         </div>
 
@@ -168,10 +168,10 @@ export default function PricingSection() {
 
         <div className="mt-16 p-8 rounded-3xl bg-gradient-to-r from-purple-900/20 to-blue-900/20 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
           <div>
-            <h3 className="text-2xl font-bold text-white mb-2">Enterprise & Custom</h3>
-            <p className="text-gray-400 mb-3">knXw becomes organizational intelligence</p>
+            <h3 className="text-2xl font-bold text-white mb-2">Enterprise</h3>
+            <p className="text-gray-400 mb-3">Dedicated infrastructure, full governance controls, and a deployment partnership built for the scale and complexity of enterprise environments.</p>
             <p className="text-sm text-gray-500">
-              Unlimited profiles • Dedicated infrastructure • Multi-tenant • White-label • 24/7 SLA guarantees
+              Infrastructure requires real deployment conditions, security posture, observability, governance controls, and integration reality.
             </p>
           </div>
           <button

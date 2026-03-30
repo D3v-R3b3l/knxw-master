@@ -19,10 +19,10 @@ export default function AdaptiveSDKShowcaseSection() {
             </span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold mb-6 text-white">
-            Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">real systems</span>
+            The primitive, made deployable.
           </h2>
           <p className="text-xl text-gray-400 max-w-4xl mx-auto">
-            Adaptive UI SDK, runtime inference, instrumentation, and developer APIs make knXw deployable inside actual products, not just presentable in concept copy.
+            The intelligence layer is only as valuable as its ability to reach production. The Adaptive UI SDK, runtime inference engine, and developer APIs are built for real systems, not demos.
           </p>
         </div>
 
@@ -104,6 +104,10 @@ function Hero() {
             </div>
           )}
         </div>
+
+        <p className="text-center text-lg text-gray-400 max-w-4xl mx-auto mb-12">
+          The same component. Behavior that reads decision context in real time. No conditional logic spiral. No separate experimentation system. One layer, added once.
+        </p>
 
         {/* CTA */}
         <div className="text-center">

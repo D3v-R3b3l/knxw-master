@@ -3,15 +3,15 @@ import React from 'react';
 const blocks = [
   {
     title: 'Where knXw sits',
-    description: 'knXw sits between user behavior and product experience. It watches live product signals, interprets decision context, and gives applications a runtime layer for adaptation.'
+    description: 'knXw sits between what your users do and what that behavior indicates.'
   },
   {
-    title: 'What it interprets',
-    description: 'The platform turns behavioral telemetry into psychographic indicators such as motivation, cognitive style, hesitation, and decision friction.'
+    title: 'What it reads',
+    description: 'It reads live behavioral input, not what was clicked, but what that click signals about decision state.'
   },
   {
-    title: 'What it changes',
-    description: 'Teams can adapt copy, pacing, prompts, trust cues, feature emphasis, and journey logic in real time instead of serving the same experience to every user.'
+    title: 'What it enables',
+    description: 'Applications can act on that interpretation through messaging, pacing, interface logic, and experience flow.'
   }
 ];
 
@@ -25,10 +25,13 @@ export default function LandingExplainerSection() {
             The Missing Layer
           </span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            A new systems capability
+            The Missing Layer
           </h2>
-          <p className="text-lg md:text-xl text-gray-400 leading-relaxed">
-            knXw sits between human signal and software response. It interprets the deeper logic behind user behavior, then enables systems to adapt accordingly. This is not another dashboard. It is infrastructure.
+          <p className="text-lg md:text-xl text-gray-400 leading-relaxed mb-4">
+            knXw sits between what your users do and what that behavior indicates. It reads live behavioral input, not what was clicked, but what that click signals about decision state, and gives applications a runtime layer to act on that interpretation.
+          </p>
+          <p className="text-lg md:text-xl text-white leading-relaxed">
+            This is not a feature. This is not a dashboard. It is a new class of infrastructure.
           </p>
         </div>
 
