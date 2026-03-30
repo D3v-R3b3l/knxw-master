@@ -1,0 +1,175 @@
+{
+  "name": "PsychographicInsight",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User this insight belongs to"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp ID this insight belongs to"
+    },
+    "source_app_name": {
+      "type": "string",
+      "description": "App name at the time the insight was created"
+    },
+    "source_event_count": {
+      "type": "number",
+      "description": "Number of events used to derive this insight"
+    },
+    "insight_type": {
+      "type": "string",
+      "enum": [
+        "behavioral_pattern",
+        "emotional_trigger",
+        "motivation_shift",
+        "engagement_optimization",
+        "risk_assessment"
+      ],
+      "description": "Category of insight"
+    },
+    "title": {
+      "type": "string",
+      "description": "Brief title of the insight"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed explanation of the insight"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "AI confidence in this insight"
+    },
+    "actionable_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specific actions to take based on this insight"
+    },
+    "supporting_events": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Event IDs that support this insight"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "insight_reasoning": {
+      "type": "object",
+      "description": "AI's explicit reasoning for this insight",
+      "properties": {
+        "pattern_detection_logic": {
+          "type": "string",
+          "description": "How the AI detected this pattern"
+        },
+        "supporting_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific behavioral evidence supporting this insight"
+        },
+        "confidence_calculation": {
+          "type": "string",
+          "description": "How the confidence score was determined"
+        },
+        "temporal_factors": {
+          "type": "string",
+          "description": "How time-decay influenced this insight"
+        },
+        "alternative_interpretations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Other possible explanations considered"
+        }
+      }
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is demo/sample data"
+    }
+  },
+  "required": [
+    "user_id",
+    "insight_type",
+    "title",
+    "description",
+    "confidence_score"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "is_demo",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "user_id",
+        "priority",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

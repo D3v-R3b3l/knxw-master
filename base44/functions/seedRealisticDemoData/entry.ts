@@ -111,7 +111,7 @@ const generateRealisticEvents = (userId, scenario, count = 10) => {
   }));
 };
 
-const generateRealisticInsights = (userId, profile) => {
+const generateRealisticInsights = (userId, profile, clientAppId, appName, sourceEventCount = 8) => {
   return [
     {
       user_id: userId,
@@ -126,6 +126,9 @@ const generateRealisticInsights = (userId, profile) => {
       ],
       supporting_events: [],
       priority: faker.helpers.arrayElement(['medium', 'high', 'critical']),
+      client_app_id: clientAppId,
+      source_app_name: appName,
+      source_event_count: sourceEventCount,
       is_demo: true
     },
     {
@@ -137,6 +140,9 @@ const generateRealisticInsights = (userId, profile) => {
       actionable_recommendations: [`Tailor messaging to emphasize ${profile.motivation_labels[0]}`],
       supporting_events: [],
       priority: 'high',
+      client_app_id: clientAppId,
+      source_app_name: appName,
+      source_event_count: sourceEventCount,
       is_demo: true
     }
   ];
@@ -186,8 +192,11 @@ Deno.serve(async (req) => {
       const userId = generateUserId();
       const profile = generatePsychographicProfile(userId, scenario);
       allProfiles.push(profile);
-      allEvents.push(...generateRealisticEvents(userId, scenario, 8));
-      allInsights.push(...generateRealisticInsights(userId, profile));
+      allEvents.push(...generateRealisticEvents(userId, scenario, 8).map((event) => ({
+        ...event,
+        client_app_id: demoApp.id
+      })));
+      allInsights.push(...generateRealisticInsights(userId, profile, demoApp.id, demoApp.name, 8));
     }
 
     // Bulk create all at once in parallel

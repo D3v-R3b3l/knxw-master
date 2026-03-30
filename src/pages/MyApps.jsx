@@ -206,6 +206,8 @@ export default function MyAppsPage() {
     setShowDeleteDialog(false);
     
     try {
+      const linkedInsights = await base44.entities.PsychographicInsight.filter({ client_app_id: appToDelete.id }, '-created_date', 200);
+      await Promise.all(linkedInsights.map((insight) => base44.entities.PsychographicInsight.delete(insight.id)));
       await base44.entities.ClientApp.delete(appToDelete.id);
 
       toast({
