@@ -82,14 +82,24 @@ export default function InsightsPage() {
     if (!ids.length || isDeleting) return;
     setIsDeleting(true);
 
-    for (let i = 0; i < ids.length; i += 5) {
-      const batch = ids.slice(i, i + 5);
-      for (const id of batch) {
-        await base44.entities.PsychographicInsight.delete(id);
+    for (const id of ids) {
+      let deleted = false;
+
+      for (let attempt = 0; attempt < 4 && !deleted; attempt += 1) {
+        try {
+          await base44.entities.PsychographicInsight.delete(id);
+          deleted = true;
+        } catch (error) {
+          const isRateLimit = error?.message?.includes('Rate limit exceeded');
+          if (!isRateLimit || attempt === 3) {
+            setIsDeleting(false);
+            throw error;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+        }
       }
-      if (i + 5 < ids.length) {
-        await new Promise((resolve) => setTimeout(resolve, 250));
-      }
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
 
     setSelectedInsightIds([]);
@@ -153,7 +163,7 @@ export default function InsightsPage() {
                 className="gap-2">
                 
                   <Trash2 className="w-4 h-4" />
-                  {isDeleting ? 'Deleting...' : 'Delete selected'}
+                  {isDeleting ? 'Deleting slowly...' : 'Delete selected'}
                 </Button>
               </CardContent>
             </Card>
