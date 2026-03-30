@@ -24,12 +24,12 @@ export default function InsightsPage() {
   const { data: insights = [], isLoading, error, refetch, isRefetching } = useQuery({
     queryKey: ['insights', selectedAppId],
     queryFn: async () => {
-      const rawInsights = selectedAppId
-        ? await base44.entities.PsychographicInsight.filter({ client_app_id: selectedAppId }, '-created_date', 200)
-        : await base44.entities.PsychographicInsight.list('-created_date', 200);
+      const rawInsights = selectedAppId ?
+      await base44.entities.PsychographicInsight.filter({ client_app_id: selectedAppId }, '-created_date', 200) :
+      await base44.entities.PsychographicInsight.list('-created_date', 200);
       const appMap = new Map((apps || []).map((app) => [app.id, app]));
       return rawInsights.filter((insight) => !insight.client_app_id || appMap.has(insight.client_app_id));
-    },
+    }
   });
 
   const getInsightIcon = (type) => {
@@ -66,15 +66,15 @@ export default function InsightsPage() {
 
   const toggleInsightSelection = (insightId) => {
     setSelectedInsightIds((current) =>
-      current.includes(insightId)
-        ? current.filter((id) => id !== insightId)
-        : [...current, insightId]
+    current.includes(insightId) ?
+    current.filter((id) => id !== insightId) :
+    [...current, insightId]
     );
   };
 
   const toggleSelectAll = () => {
     setSelectedInsightIds((current) =>
-      current.length === insights.length ? [] : insights.map((insight) => insight.id)
+    current.length === insights.length ? [] : insights.map((insight) => insight.id)
     );
   };
 
@@ -110,57 +110,57 @@ export default function InsightsPage() {
           icon={Brain}
           docSection="ai-inference"
           actions={
-            <Button
-              onClick={() => refetch()}
-              variant="ghost"
-              className="border border-[#262626] bg-[#1a1a1a] text-white hover:bg-[#262626] hover:text-white"
-            >
+          <Button
+            onClick={() => refetch()}
+            variant="ghost"
+            className="border border-[#262626] bg-[#1a1a1a] text-white hover:bg-[#262626] hover:text-white">
+            
               <RefreshCw className={`w-4 h-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-          }
-        />
+          } />
+        
 
         <div className="max-w-7xl mx-auto">
-          {!isLoading && insights.length > 0 && (
-            <Card className="bg-[#1a1a1a] border-[#262626] mb-6">
+          {!isLoading && insights.length > 0 &&
+          <Card className="bg-[#1a1a1a] border-[#262626] mb-6">
               <CardContent className="py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex flex-wrap items-center gap-3 text-sm text-[#a3a3a3]">
                   <Button
-                    variant="outline"
-                    onClick={toggleSelectAll}
-                    className="border-[#262626] text-white hover:bg-[#262626] hover:text-white"
-                  >
+                  variant="outline"
+                  onClick={toggleSelectAll} className="bg-background text-[hsl(var(--foreground))] px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm h-9 border-[#262626] hover:bg-[#262626] hover:text-white">
+
+                  
                     {selectedCount === insights.length ? 'Clear selection' : 'Select all'}
                   </Button>
                   <span>{insights.length} visible insights</span>
                   <span>{selectedCount} selected</span>
                 </div>
                 <Button
-                  onClick={() => deleteInsights(selectedInsightIds)}
-                  disabled={selectedCount === 0 || isDeleting}
-                  variant="destructive"
-                  className="gap-2"
-                >
+                onClick={() => deleteInsights(selectedInsightIds)}
+                disabled={selectedCount === 0 || isDeleting}
+                variant="destructive"
+                className="gap-2">
+                
                   <Trash2 className="w-4 h-4" />
                   Delete selected
                 </Button>
               </CardContent>
             </Card>
-          )}
-          {isLoading ? (
-            <div className="text-center py-12">
+          }
+          {isLoading ?
+          <div className="text-center py-12">
               <Brain className="w-8 h-8 text-[#00d4ff] animate-spin mx-auto mb-4" />
               <p className="text-[#a3a3a3]">Analyzing insights...</p>
-            </div>
-          ) : error ? (
-            <Card className="bg-[#1a1a1a] border-[#262626]">
+            </div> :
+          error ?
+          <Card className="bg-[#1a1a1a] border-[#262626]">
               <CardContent className="py-12 text-center">
                 <p className="text-red-400">Error loading insights: {error.message}</p>
               </CardContent>
-            </Card>
-          ) : insights.length === 0 ? (
-            <Card className="bg-[#1a1a1a] border-[#262626]">
+            </Card> :
+          insights.length === 0 ?
+          <Card className="bg-[#1a1a1a] border-[#262626]">
               <CardContent className="py-12 text-center">
                 <Lightbulb className="w-12 h-12 text-[#a3a3a3] mx-auto mb-4" />
                 <p className="text-[#a3a3a3]">No insights generated yet</p>
@@ -168,13 +168,13 @@ export default function InsightsPage() {
                   Insights will appear as we analyze user behavior patterns
                 </p>
               </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-6">
+            </Card> :
+
+          <div className="space-y-6">
               {Object.entries(groupedInsights).map(([type, typeInsights]) => {
-                const IconComponent = getInsightIcon(type);
-                return (
-                  <div key={type}>
+              const IconComponent = getInsightIcon(type);
+              return (
+                <div key={type}>
                     <div className="flex items-center gap-3 mb-4">
                       <IconComponent className="w-6 h-6 text-[#00d4ff]" />
                       <h2 className="text-xl font-bold text-white capitalize">
@@ -186,23 +186,23 @@ export default function InsightsPage() {
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">
-                      {typeInsights.map((insight, index) => (
-                        <motion.div
-                          key={insight.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                        >
+                      {typeInsights.map((insight, index) =>
+                    <motion.div
+                      key={insight.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}>
+                      
                           <Card className="bg-[#1a1a1a] border-[#262626] hover:border-[#00d4ff]/30 transition-colors cursor-pointer"
-                                onClick={() => setSelectedInsight(insight)}>
+                      onClick={() => setSelectedInsight(insight)}>
                             <CardHeader>
                               <div className="flex items-start justify-between gap-3">
                                 <div className="flex items-start gap-3 min-w-0">
                                   <div onClick={(e) => e.stopPropagation()} className="pt-1">
                                     <Checkbox
-                                      checked={selectedInsightIds.includes(insight.id)}
-                                      onCheckedChange={() => toggleInsightSelection(insight.id)}
-                                    />
+                                  checked={selectedInsightIds.includes(insight.id)}
+                                  onCheckedChange={() => toggleInsightSelection(insight.id)} />
+                                
                                   </div>
                                   <div className="min-w-0">
                                     <CardTitle className="text-white text-lg">{insight.title || 'Untitled Insight'}</CardTitle>
@@ -238,63 +238,63 @@ export default function InsightsPage() {
                                 </span>
                               </div>
 
-                              {insight.actionable_recommendations && insight.actionable_recommendations.length > 0 && (
-                                <div className="mt-4 pt-4 border-t border-[#262626]">
+                              {insight.actionable_recommendations && insight.actionable_recommendations.length > 0 &&
+                          <div className="mt-4 pt-4 border-t border-[#262626]">
                                   <p className="text-xs text-[#a3a3a3] mb-2">Recommendations:</p>
                                   <ul className="space-y-1">
-                                    {insight.actionable_recommendations.slice(0, 2).map((rec, idx) => (
-                                      <li key={idx} className="text-sm text-white flex items-start gap-2">
+                                    {insight.actionable_recommendations.slice(0, 2).map((rec, idx) =>
+                              <li key={idx} className="text-sm text-white flex items-start gap-2">
                                         <CheckCircle className="w-3 h-3 text-[#10b981] mt-0.5 flex-shrink-0" />
                                         <span>{rec}</span>
                                       </li>
-                                    ))}
+                              )}
                                   </ul>
                                   <div className="flex items-center justify-between gap-3 mt-3">
-                                    {insight.actionable_recommendations.length > 2 ? (
-                                      <Button
-                                        variant="link"
-                                        className="text-[#00d4ff] p-0 h-auto"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setSelectedInsight(insight);
-                                        }}
-                                      >
+                                    {insight.actionable_recommendations.length > 2 ?
+                              <Button
+                                variant="link"
+                                className="text-[#00d4ff] p-0 h-auto"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedInsight(insight);
+                                }}>
+                                
                                         View all {insight.actionable_recommendations.length} recommendations
-                                      </Button>
-                                    ) : <span />}
+                                      </Button> :
+                              <span />}
                                     <Button
-                                      variant="ghost"
-                                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        deleteInsights([insight.id]);
-                                      }}
-                                    >
+                                variant="ghost"
+                                className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteInsights([insight.id]);
+                                }}>
+                                
                                       <Trash2 className="w-4 h-4 mr-2" />
                                       Delete
                                     </Button>
                                   </div>
                                 </div>
-                              )}
+                          }
                             </CardContent>
                           </Card>
                         </motion.div>
-                      ))}
+                    )}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  </div>);
 
-          {selectedInsight && (
-            <ExplainabilityView
-              insight={selectedInsight}
-              onClose={() => setSelectedInsight(null)}
-            />
-          )}
+            })}
+            </div>
+          }
+
+          {selectedInsight &&
+          <ExplainabilityView
+            insight={selectedInsight}
+            onClose={() => setSelectedInsight(null)} />
+
+          }
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
