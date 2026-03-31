@@ -7,15 +7,28 @@ import { Textarea } from "@/components/ui/textarea";
 // Merged lucide-react imports:
 import {
   Bot, Shield, Activity, PlayCircle, Send, Sparkles, Square, AlertCircle, FlaskConical, LifeBuoy, Rocket, Globe2, Trash2,
-  MessageSquare, Plus, Zap, Play, Clock, CheckCircle, AlertTriangle, Brain, Users, TrendingUp, FileText, Target } from
-"lucide-react";
+  MessageSquare, Plus, Zap, Play, Clock, CheckCircle, AlertTriangle, Brain, Users, TrendingUp, FileText, Target, ClipboardCheck } from
+  "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import MessageBubble from "@/components/agents/MessageBubble";
 import { SubscriptionGate } from '@/components/billing/SubscriptionGate'; // New import
 
 // Suggested commands per agent
 const AGENTS = [
-{
+  {
+    name: "internal_audit_agent",
+    title: "Internal Audit Agent",
+    description: "Reviews UI-facing flows and underlying data health, then returns an internal audit report in chat.",
+    icon: ClipboardCheck,
+    suggested: [
+      "Run a full internal audit of the app and give me an executive summary with the top risks.",
+      "Audit onboarding, core analytics, and engagement workflows for likely user-facing issues.",
+      "Review the current data health and identify gaps that would weaken reporting accuracy.",
+      "Audit A/B testing and engagement setup for broken dependencies or missing evidence.",
+      "Give me a prioritized audit report with passed checks, risks, and next actions."
+    ]
+  },
+  {
   name: "growth_orchestrator",
   title: "Growth Orchestrator",
   description: "Turns insights into targeted rules, templates, and actions.",
@@ -159,7 +172,7 @@ const AGENTS = [
 
 
 export default function AgentsPage() {
-  const [selectedAgent, setSelectedAgent] = useState(AGENTS[0]);
+  const [selectedAgent, setSelectedAgent] = useState(AGENTS.find((agent) => agent.name === "internal_audit_agent") || AGENTS[0]);
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [prompt, setPrompt] = useState("");
