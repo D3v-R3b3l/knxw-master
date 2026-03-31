@@ -1,10 +1,8 @@
 import React from 'react';
-import ShaderRainDivider from '@/components/landing/ShaderRainDivider';
 
 export default function LandingBlindSpotSection() {
   return (
     <section className="py-20 md:py-24 bg-black border-b border-white/5 relative overflow-hidden">
-      <ShaderRainDivider />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.05),transparent_55%)]" />
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
