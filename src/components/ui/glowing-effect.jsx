@@ -77,6 +77,8 @@ export function GlowingEffect({
     [mouseX, mouseY],
     () => (isHovered ? 1 : 0)
   );
+  const glowX = useTransform(mouseX, (v) => v - spread);
+  const glowY = useTransform(mouseY, (v) => v - spread);
 
   if (disabled) return null;
 
@@ -94,8 +96,8 @@ export function GlowingEffect({
         style={{
           width: spread * 2,
           height: spread * 2,
-          x: useTransform(mouseX, (v) => v - spread),
-          y: useTransform(mouseY, (v) => v - spread),
+          x: glowX,
+          y: glowY,
           background: glow
             ? `radial-gradient(circle, ${colors[0]}40 0%, ${colors[1]}20 40%, transparent 70%)`
             : 'transparent',

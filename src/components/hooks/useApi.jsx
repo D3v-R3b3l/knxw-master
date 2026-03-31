@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { handleApiError, withRetry, AppError, ERROR_TYPES } from '../system/errorHandler';
+import { handleApiError, parseError, withRetry, AppError, ERROR_TYPES } from '../system/errorHandler';
 
 // Centralized API hook with error handling, loading states, and retry logic
 export function useApi() {
