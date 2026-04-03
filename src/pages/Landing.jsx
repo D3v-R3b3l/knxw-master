@@ -290,23 +290,21 @@ export default function LandingPage() {
                 <div className="absolute bottom-0 left-0 right-0 h-72 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none" />
               </div>
               <div className="relative flex min-h-screen items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
-                <div className="absolute inset-x-4 bottom-24 mx-auto hidden max-w-6xl lg:block" style={{ zIndex: 4 }}>
-                  <div className="grid grid-cols-3 gap-4 opacity-90">
-                    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
-                      <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Signal</div>
-                      <div className="mt-3 text-sm leading-6 text-white/72">Read behavior as it forms, not after it gets reduced to a chart.</div>
-                    </div>
-                    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
-                      <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Inference</div>
-                      <div className="mt-3 text-sm leading-6 text-white/72">Interpret hesitation, confidence, urgency, and intent in-session.</div>
-                    </div>
-                    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
-                      <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Execution</div>
-                      <div className="mt-3 text-sm leading-6 text-white/72">Feed that understanding back into the product while there is still time to act.</div>
-                    </div>
-                  </div>
-                </div>
                 <HeroContent heroRef={heroSectionRef} />
+              </div>
+              <div className="absolute bottom-16 inset-x-6 hidden max-w-6xl mx-auto lg:grid grid-cols-3 gap-4 opacity-90" style={{ zIndex: 6 }}>
+                <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Signal</div>
+                  <div className="mt-3 text-sm leading-6 text-white/72">Read behavior as it forms, not after it gets reduced to a chart.</div>
+                </div>
+                <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Inference</div>
+                  <div className="mt-3 text-sm leading-6 text-white/72">Interpret hesitation, confidence, urgency, and intent in-session.</div>
+                </div>
+                <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
+                  <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Execution</div>
+                  <div className="mt-3 text-sm leading-6 text-white/72">Feed that understanding back into the product while there is still time to act.</div>
+                </div>
               </div>
               <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/42" style={{ zIndex: 6 }} animate={{ y: [0, 8, 0] }} transition={{ duration: 2.2, repeat: Infinity }}>
                 <ArrowDown className="w-5 h-5" />
