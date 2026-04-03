@@ -290,7 +290,7 @@ export default function LandingPage() {
                 <div className="absolute bottom-0 left-0 right-0 h-72 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none" />
               </div>
               <div className="relative flex min-h-screen items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
-                <div className="absolute inset-x-4 top-28 mx-auto hidden max-w-6xl lg:block">
+                <div className="absolute inset-x-4 bottom-24 mx-auto hidden max-w-6xl lg:block" style={{ zIndex: 4 }}>
                   <div className="grid grid-cols-3 gap-4 opacity-90">
                     <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
                       <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Signal</div>
