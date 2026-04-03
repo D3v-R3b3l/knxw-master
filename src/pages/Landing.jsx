@@ -20,6 +20,9 @@ import LandingExplainerSection from '@/components/landing/LandingExplainerSectio
 import LandingHowItWorksSection from '@/components/landing/LandingHowItWorksSection';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import LandingBusinessImpactSection from '@/components/landing/LandingBusinessImpactSection';
+import PlatformSection from '@/components/landing/PlatformSection';
+import UseCasesGrid from '@/components/landing/UseCasesGrid';
+import PricingSection from '@/components/landing/PricingSection';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -168,7 +171,7 @@ export default function LandingPage() {
       console.warn('Lenis init failed:', e);
     }
 
-    const snapSections = ['hero', 'blind-spot', 'missing-layer', 'mechanism', 'sdk', 'outcomes', 'closing'];
+    const snapSections = ['hero', 'blind-spot', 'missing-layer', 'mechanism', 'sdk', 'outcomes', 'platform', 'use-cases', 'pricing', 'closing'];
     let isSnapping = false;
     let snapTimeout;
 
@@ -326,6 +329,15 @@ export default function LandingPage() {
               </div>
               <div id="outcomes" data-scroll-section>
                 <LandingBusinessImpactSection />
+              </div>
+              <div id="platform" data-scroll-section>
+                <PlatformSection />
+              </div>
+              <div id="use-cases" data-scroll-section>
+                <UseCasesGrid />
+              </div>
+              <div id="pricing" data-scroll-section>
+                <PricingSection />
               </div>
               <div id="closing" data-scroll-section>
                 <ClosingSection />
