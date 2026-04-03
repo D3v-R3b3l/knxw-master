@@ -55,18 +55,7 @@ function HeroContent({ heroRef }) {
 
   return (
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto w-full">
-      <motion.div
-        data-parallax-layer="1"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
-        className="mb-6"
-      >
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white/70 backdrop-blur-xl">
-          <span className="h-2 w-2 rounded-full bg-white/70" />
-          Runtime Intelligence Layer
-        </div>
-      </motion.div>
+
 
       <motion.div data-parallax-layer="1" initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: 'easeOut' }}>
         <h1 className="mx-auto mt-10 mb-8 max-w-5xl text-balance text-[clamp(3rem,9vw,7.5rem)] font-semibold tracking-[-0.06em] leading-[0.95] text-white">
@@ -97,12 +86,7 @@ function HeroContent({ heroRef }) {
         </button>
       </motion.div>
 
-      <motion.div data-parallax-layer="4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.6 }} className="mt-12 flex flex-wrap justify-center gap-3 text-sm text-white/48">
-        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">Not analytics</span>
-        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">Not personalization</span>
-        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">Runtime interpretation</span>
-        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">System execution</span>
-      </motion.div>
+
     </div>
   );
 }
