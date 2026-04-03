@@ -69,7 +69,7 @@ function Hero() {
             </div>
             <pre className="text-xs text-gray-300 bg-black/50 rounded-lg p-4 overflow-x-auto border border-cyan-500/20">
               {`// Automatically adapts
-import { AdaptiveButton } from '@knxw/sdk';
+import { AdaptiveButton } from '@/components/sdk/KnxwSDK';
 
 function Hero() {
   return (
@@ -91,18 +91,18 @@ function Hero() {
         {/* Key Benefits */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {[
-          { icon: Zap, title: "Runtime Adaptation", desc: "Use interpreted behavior as live input for interface and flow execution." },
-          { icon: Sparkles, title: "Interpretation to Action", desc: "Move directly from behavioral meaning to explainable product response." },
-          { icon: Code2, title: "Production Integration", desc: "Deploy the runtime layer through components and APIs built for real application systems." }].
-          map((item, i) =>
-          <div key={i} className="bg-[#111] rounded-xl p-6 border border-white/10 hover:border-cyan-500/30 transition-colors">
+            { icon: Zap, title: "Runtime Adaptation", desc: "Use interpreted behavior as live input for interface and flow execution." },
+            { icon: Sparkles, title: "Interpretation to Action", desc: "Move directly from behavioral meaning to explainable product response." },
+            { icon: Code2, title: "Production Integration", desc: "Deploy the runtime layer through components and APIs built for real application systems." }
+          ].map((item, i) => (
+            <div key={i} className="bg-[#111] rounded-xl p-6 border border-white/10 hover:border-cyan-500/30 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4 border border-cyan-500/20">
                 <item.icon className="w-5 h-5 text-cyan-400" />
               </div>
               <h4 className="font-semibold text-white mb-2">{item.title}</h4>
               <p className="text-sm text-gray-400">{item.desc}</p>
             </div>
-          )}
+          ))}
         </div>
 
         <p className="text-center text-lg text-gray-400 max-w-4xl mx-auto mb-12">

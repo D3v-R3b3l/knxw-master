@@ -30,7 +30,7 @@ export default function AdaptiveUISDKDoc() {
       <div className="prose prose-invert max-w-none">
         <h2 className="text-2xl font-semibold text-white mb-4">Overview</h2>
         <p className="text-gray-400 mb-6">
-          The Adaptive UI SDK provides React components and patterns for adapting content and interface behavior using psychographic and behavioral context available in the app. It supports runtime adaptation flows, but teams should validate their own logic, mappings, and rollout behavior in implementation.
+          The Adaptive UI SDK provides React components and patterns for adapting content and interface behavior using psychographic and behavioral context available in this app. It supports runtime adaptation flows, but teams should validate their own logic, mappings, and rollout behavior in implementation.
         </p>
 
         <h2 className="text-2xl font-semibold text-white mb-4 mt-8">Installation</h2>
@@ -394,7 +394,7 @@ function CustomAdaptiveComponent() {
               <h3 className="text-lg font-semibold text-white mb-2">Try the Interactive Demo</h3>
               <p className="text-gray-400 mb-4">
                 See the Adaptive UI SDK in action in our <a href="/InteractiveDemo" className="text-cyan-400 hover:underline">Interactive Demo</a>. 
-                Toggle between different user profiles to watch components adapt in real-time.
+                Toggle between different user profiles to watch the React components adapt in real-time.
               </p>
             </div>
           </div>
