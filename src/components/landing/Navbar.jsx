@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Menu, X, ChevronRight } from 'lucide-react';
@@ -6,11 +6,11 @@ import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
+  const [user, setUser] = React.useState(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     base44.auth.me().then(setUser).catch(() => {});
@@ -27,13 +27,10 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'py-4' : 'py-6'}`}>
-      <div className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between rounded-full border transition-all duration-500 ${scrolled ? 'border-white/12 bg-black/55 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)]' : 'border-transparent bg-transparent'} px-5 md:px-6`}>
-        <Link to="/" className="relative z-50 inline-flex items-center gap-3 text-white tracking-tight">
-          <span className="flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]">
-            <span className="text-sm font-semibold">k</span>
-          </span>
-          <span className="text-xl font-semibold">knXw</span>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-md border-b border-white/10 py-4' : 'bg-transparent py-6'}`}>
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <Link to="/" className="text-2xl font-bold text-white tracking-tighter relative z-50">
+          knXw
         </Link>
 
         {/* Desktop Nav */}
@@ -42,7 +39,7 @@ export default function Navbar() {
             <a 
               key={link.name} 
               href={link.href}
-              className="text-sm font-medium text-white/70 hover:text-white transition-colors duration-300"
+              className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
             >
               {link.name}
             </a>
@@ -56,10 +53,10 @@ export default function Navbar() {
             </Link>
           ) : (
             <>
-              <button onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} className="text-sm font-medium text-white/80 hover:text-white transition-colors">
+              <button onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} className="text-sm font-bold text-white hover:text-cyan-400 transition-colors">
                 Sign In
               </button>
-              <button onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} className="rounded-full border border-white/15 bg-white/12 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] transition-all duration-300 hover:bg-white/18 hover:border-white/25">
+              <button onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))} className="px-5 py-2.5 bg-white text-black text-sm font-bold rounded-full hover:scale-105 transition-transform">
                 Get Started
               </button>
             </>

@@ -21,25 +21,25 @@ const steps = [
 
 export default function LandingHowItWorksSection() {
   return (
-    <section className="relative overflow-hidden border-y border-white/5 bg-[#050505] py-24 md:py-28">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05),transparent_56%)]" />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <div className="mx-auto mb-14 max-w-3xl text-center">
-          <span className="mb-6 inline-block rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-white/62">
+    <section className="py-24 md:py-28 bg-[#050505] border-y border-white/5 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.06),transparent_55%)]" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          <span className="text-xs font-mono text-purple-400 uppercase tracking-[0.3em] bg-purple-500/10 px-4 py-2 rounded-full border border-purple-500/20 inline-block mb-6">
             Runtime Loop
           </span>
-          <h2 className="mb-6 text-4xl font-semibold tracking-[-0.05em] text-white md:text-5xl">From behavioral signal to system action.</h2>
-          <p className="text-lg leading-8 text-white/62">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">From behavioral signal to system action.</h2>
+          <p className="text-lg text-gray-400">
             knXw turns live user behavior into interpretable runtime input your product can execute against.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid md:grid-cols-4 gap-6">
           {steps.map((step, index) => (
-            <div key={step.title} className="rounded-[28px] border border-white/10 bg-white/[0.035] p-7 backdrop-blur-xl shadow-[0_16px_50px_rgba(0,0,0,0.24)]">
-              <div className="mb-4 text-sm font-medium tracking-[0.2em] text-white/42">0{index + 1}</div>
-              <h3 className="mb-3 text-2xl font-semibold tracking-[-0.03em] text-white">{step.title}</h3>
-              <p className="leading-7 text-white/56">{step.description}</p>
+            <div key={step.title} className="rounded-2xl border border-white/10 bg-black/40 p-6">
+              <div className="text-sm font-mono text-cyan-400 mb-4">0{index + 1}</div>
+              <h3 className="text-2xl font-semibold text-white mb-3">{step.title}</h3>
+              <p className="text-gray-400 leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>
