@@ -2,16 +2,16 @@ import React from 'react';
 
 const blocks = [
   {
-    title: 'Where knXw sits',
-    description: 'knXw sits between what your users do and what that behavior indicates.'
+    title: 'Interpretation layer',
+    description: 'knXw sits between raw behavior and system response, turning observed activity into usable runtime meaning.'
   },
   {
-    title: 'What it reads',
-    description: 'It reads live behavioral input, not what was clicked, but what that click signals about decision state.'
+    title: 'Live behavioral reading',
+    description: 'It reads behavioral signal as decision context, not just as events to store or chart later.'
   },
   {
-    title: 'What it enables',
-    description: 'Applications can act on that interpretation through messaging, pacing, interface logic, and experience flow.'
+    title: 'System adaptation',
+    description: 'Your product can use that interpretation to change messaging, pacing, flows, and interface behavior in real time.'
   }
 ];
 
@@ -22,16 +22,16 @@ export default function LandingExplainerSection() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="max-w-3xl mb-12 md:mb-16">
           <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">
-            The Missing Layer
+            Runtime Positioning
           </span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            The Missing Layer
+            knXw is the layer between behavior and execution.
           </h2>
           <p className="text-lg md:text-xl text-gray-400 leading-relaxed mb-4">
-            knXw sits between what your users do and what that behavior indicates. It reads live behavioral input, not what was clicked, but what that click signals about decision state, and gives applications a runtime layer to act on that interpretation.
+            It takes the behavioral signal your product already generates, interprets what that signal means about the user’s decision state, and returns that understanding to the system while there is still time to act on it.
           </p>
           <p className="text-lg md:text-xl text-white leading-relaxed">
-            This is not a feature. This is not a dashboard. It is a new class of infrastructure.
+            Not analytics. Not segmentation. Not post-hoc personalization. A runtime intelligence layer for live system adaptation.
           </p>
         </div>
 

@@ -73,14 +73,14 @@ function HeroContent({ heroRef }) {
           className="group relative overflow-hidden px-8 py-4 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
           style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}
         >
-          Explore the Platform
+          See How It Executes
           <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
         </button>
         <button
           onClick={() => window.location.href = createPageUrl('Documentation')}
           className="px-8 py-4 font-bold text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto"
         >
-          View SDK
+          Read the SDK
         </button>
       </motion.div>
 
