@@ -9,7 +9,6 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ChurnAnalytics from './pages/ChurnAnalytics';
-import ABTesting from './pages/ABTesting';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -51,14 +50,6 @@ const AuthenticatedApp = () => {
           element={
             <LayoutWrapper currentPageName="ChurnAnalytics">
               <ChurnAnalytics />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/ABTesting"
-          element={
-            <LayoutWrapper currentPageName="ABTesting">
-              <ABTesting />
             </LayoutWrapper>
           }
         />
@@ -109,14 +100,6 @@ const AuthenticatedApp = () => {
         element={
           <LayoutWrapper currentPageName="ChurnAnalytics">
             <ChurnAnalytics />
-          </LayoutWrapper>
-        }
-      />
-      <Route
-        path="/ABTesting"
-        element={
-          <LayoutWrapper currentPageName="ABTesting">
-            <ABTesting />
           </LayoutWrapper>
         }
       />
