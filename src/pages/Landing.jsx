@@ -53,7 +53,7 @@ function HeroContent({ heroRef }) {
   return (
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto w-full">
       <motion.div data-parallax-layer="1" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }}>
-        <h1 className="text-white mt-24 mb-8 text-5xl font-bold tracking-tighter leading-tight md:text-8xl lg:text-9xl mix-blend-difference md:leading-none break-words">Finally, your product
+        <h1 className="text-white mt-24 mb-8 text-4xl font-bold tracking-tighter leading-tight md:text-8xl lg:text-9xl mix-blend-difference md:leading-none break-words">Finally, your product
 understands why.
 
 
