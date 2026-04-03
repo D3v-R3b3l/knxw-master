@@ -8,7 +8,7 @@ import SectionNavDots from '@/components/landing/SectionNavDots';
 import CustomCursor from '@/components/ui/CustomCursor';
 import { ConsentProvider } from '@/components/privacy/ConsentManager';
 import { motion } from 'framer-motion';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, ChevronRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import gsap from 'gsap';
@@ -39,10 +39,10 @@ function HeroContent({ heroRef }) {
         }
       });
 
-      tl.to(content.querySelectorAll('[data-parallax-layer="1"]'), { yPercent: 50, scale: 0.9, opacity: 0, ease: 'none' }, 0);
-      tl.to(content.querySelectorAll('[data-parallax-layer="2"]'), { yPercent: 70, scale: 0.85, opacity: 0, ease: 'none' }, 0);
-      tl.to(content.querySelectorAll('[data-parallax-layer="3"]'), { yPercent: 90, scale: 0.8, opacity: 0, ease: 'none' }, 0);
-      tl.to(content.querySelectorAll('[data-parallax-layer="4"]'), { yPercent: 120, scale: 0.75, opacity: 0, ease: 'none' }, 0);
+      tl.to(content.querySelectorAll('[data-parallax-layer="1"]'), { yPercent: 20, opacity: 0.18, ease: 'none' }, 0);
+      tl.to(content.querySelectorAll('[data-parallax-layer="2"]'), { yPercent: 28, opacity: 0.12, ease: 'none' }, 0);
+      tl.to(content.querySelectorAll('[data-parallax-layer="3"]'), { yPercent: 36, opacity: 0, ease: 'none' }, 0);
+      tl.to(content.querySelectorAll('[data-parallax-layer="4"]'), { yPercent: 44, opacity: 0, ease: 'none' }, 0);
     }
 
     return () => {
@@ -52,46 +52,56 @@ function HeroContent({ heroRef }) {
 
   return (
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto w-full">
-      <motion.div data-parallax-layer="1" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }}>
-        <h1 className="text-white mt-24 mb-8 text-4xl font-bold tracking-tighter leading-tight md:text-8xl lg:text-9xl mix-blend-difference md:leading-none break-words">Finally, your product
-understands why.
+      <motion.div
+        data-parallax-layer="1"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: 'easeOut' }}
+        className="mb-6"
+      >
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white/70 backdrop-blur-xl">
+          <span className="h-2 w-2 rounded-full bg-white/70" />
+          Runtime Intelligence Layer
+        </div>
+      </motion.div>
 
-
-
+      <motion.div data-parallax-layer="1" initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: 'easeOut' }}>
+        <h1 className="mx-auto mt-10 mb-8 max-w-5xl text-balance text-[clamp(3rem,9vw,7.5rem)] font-semibold tracking-[-0.06em] leading-[0.95] text-white">
+          Finally, your product
+          <span className="block text-white/72">understands why.</span>
         </h1>
       </motion.div>
 
-      <motion.div data-parallax-layer="2" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}>
-        <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto font-light leading-relaxed mb-12">
+      <motion.div data-parallax-layer="2" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.25, ease: 'easeOut' }}>
+        <p className="mx-auto mb-12 max-w-3xl text-lg font-normal leading-8 text-white/62 md:text-[22px] md:leading-9">
           knXw is a runtime intelligence layer that interprets user behavior and feeds that understanding back into your system so it can adapt what it does in real time.
         </p>
       </motion.div>
 
-      <motion.div data-parallax-layer="3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <motion.div data-parallax-layer="3" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <button
           onClick={() => document.getElementById('sdk')?.scrollIntoView({ behavior: 'smooth' })}
-          className="group relative overflow-hidden px-8 py-4 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
-          style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}>
-          
+          className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-base font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_50px_rgba(255,255,255,0.14)] sm:w-auto"
+        >
           See How It Executes
-          <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
+          <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
         </button>
         <button
           onClick={() => window.location.href = createPageUrl('Documentation')}
-          className="px-8 py-4 font-bold text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto">
-          
+          className="inline-flex w-full items-center justify-center rounded-full border border-white/14 bg-white/[0.06] px-7 py-4 text-base font-semibold text-white/88 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.1] sm:w-auto"
+        >
           Read the SDK
         </button>
       </motion.div>
 
-      <motion.div data-parallax-layer="4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.9 }} className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest">
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Not analytics</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Not personalization</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Runtime interpretation</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>System execution</span>
+      <motion.div data-parallax-layer="4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.6 }} className="mt-12 flex flex-wrap justify-center gap-3 text-sm text-white/48">
+        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">Not analytics</span>
+        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">Not personalization</span>
+        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">Runtime interpretation</span>
+        <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-xl">System execution</span>
       </motion.div>
-    </div>);
-
+    </div>
+  );
 }
 
 function ClosingSection() {
@@ -276,16 +286,34 @@ export default function LandingPage() {
           <SectionNavDots />
 
           <main ref={mainRef} className="relative z-10" id="landing-main">
-            <section id="hero" ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
+            <section id="hero" ref={heroSectionRef} className="relative min-h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
               <div className="fixed inset-0 h-screen w-full" style={{ zIndex: 1 }}>
                 <HeroShader />
-                <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_32%)] pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/55 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-72 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none" />
               </div>
-              <div className="relative h-full flex items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
+              <div className="relative flex min-h-screen items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
+                <div className="absolute inset-x-4 top-28 mx-auto hidden max-w-6xl lg:block">
+                  <div className="grid grid-cols-3 gap-4 opacity-90">
+                    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
+                      <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Signal</div>
+                      <div className="mt-3 text-sm leading-6 text-white/72">Read behavior as it forms, not after it gets reduced to a chart.</div>
+                    </div>
+                    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
+                      <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Inference</div>
+                      <div className="mt-3 text-sm leading-6 text-white/72">Interpret hesitation, confidence, urgency, and intent in-session.</div>
+                    </div>
+                    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.28)]">
+                      <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">Execution</div>
+                      <div className="mt-3 text-sm leading-6 text-white/72">Feed that understanding back into the product while there is still time to act.</div>
+                    </div>
+                  </div>
+                </div>
                 <HeroContent heroRef={heroSectionRef} />
               </div>
-              <motion.div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50" style={{ zIndex: 6 }} animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                <ArrowDown className="w-6 h-6" />
+              <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/42" style={{ zIndex: 6 }} animate={{ y: [0, 8, 0] }} transition={{ duration: 2.2, repeat: Infinity }}>
+                <ArrowDown className="w-5 h-5" />
               </motion.div>
             </section>
 
