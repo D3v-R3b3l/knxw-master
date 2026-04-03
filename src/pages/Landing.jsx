@@ -53,11 +53,11 @@ function HeroContent({ heroRef }) {
   return (
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto w-full">
       <motion.div data-parallax-layer="1" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }}>
-        <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
-          Finally, your product <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
-            understands why.
-          </span>
+        <h1 className="text-white mt-24 mb-8 text-5xl font-bold tracking-tighter leading-tight md:text-8xl lg:text-9xl mix-blend-difference md:leading-none break-words">Finally, your product
+understands why.
+
+
+
         </h1>
       </motion.div>
 
@@ -71,15 +71,15 @@ function HeroContent({ heroRef }) {
         <button
           onClick={() => document.getElementById('sdk')?.scrollIntoView({ behavior: 'smooth' })}
           className="group relative overflow-hidden px-8 py-4 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
-          style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}
-        >
+          style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}>
+          
           See How It Executes
           <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
         </button>
         <button
           onClick={() => window.location.href = createPageUrl('Documentation')}
-          className="px-8 py-4 font-bold text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto"
-        >
+          className="px-8 py-4 font-bold text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto">
+          
           Read the SDK
         </button>
       </motion.div>
@@ -90,8 +90,8 @@ function HeroContent({ heroRef }) {
         <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Runtime interpretation</span>
         <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>System execution</span>
       </motion.div>
-    </div>
-  );
+    </div>);
+
 }
 
 function ClosingSection() {
@@ -116,22 +116,22 @@ function ClosingSection() {
           <button
             onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
             className="group relative overflow-hidden px-12 py-6 font-bold text-xl text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97]"
-            style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 40px rgba(0,212,255,0.4), 0 4px 20px rgba(0,0,0,0.5)' }}
-          >
+            style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 40px rgba(0,212,255,0.4), 0 4px 20px rgba(0,0,0,0.5)' }}>
+            
             Get Started
             <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
             <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
           </button>
           <button
             onClick={() => window.location.href = createPageUrl('Pricing')}
-            className="px-12 py-6 font-bold text-xl text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300"
-          >
+            className="px-12 py-6 font-bold text-xl text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300">
+            
             Request Access
           </button>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
 
 export default function LandingPage() {
@@ -150,7 +150,7 @@ export default function LandingPage() {
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         touchMultiplier: 2,
-        infinite: false,
+        infinite: false
       });
 
       lenis.on('scroll', ScrollTrigger.update);
@@ -186,7 +186,7 @@ export default function LandingPage() {
       if (closestSection && closestDistance > 20) {
         isSnapping = true;
         closestSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(() => { isSnapping = false; }, 800);
+        setTimeout(() => {isSnapping = false;}, 800);
       }
     };
 
@@ -214,7 +214,7 @@ export default function LandingPage() {
             start: 'top 88%',
             end: 'top 45%',
             scrub: 1,
-            invalidateOnRefresh: true,
+            invalidateOnRefresh: true
           }
         });
       });
@@ -230,7 +230,7 @@ export default function LandingPage() {
             start: 'top bottom',
             end: 'bottom top',
             scrub: true,
-            invalidateOnRefresh: true,
+            invalidateOnRefresh: true
           }
         });
       });
@@ -244,7 +244,7 @@ export default function LandingPage() {
             trigger: el,
             start: 'top bottom',
             end: 'bottom top',
-            scrub: true,
+            scrub: true
           }
         });
       });
@@ -267,8 +267,8 @@ export default function LandingPage() {
         <SEOHead
           title="knXw - Runtime Intelligence Layer"
           description="knXw is a runtime intelligence layer that interprets user behavior and feeds that understanding back into your system so it can adapt what it does in real time."
-          keywords="runtime intelligence layer, behavior interpretation, real-time system adaptation, adaptive runtime sdk, execution layer"
-        />
+          keywords="runtime intelligence layer, behavior interpretation, real-time system adaptation, adaptive runtime sdk, execution layer" />
+        
 
         <div className="bg-black min-h-screen text-white cursor-none selection:bg-cyan-500/30">
           <CustomCursor />
@@ -316,6 +316,6 @@ export default function LandingPage() {
           </div>
         </div>
       </ConsentProvider>
-    </HelmetProvider>
-  );
+    </HelmetProvider>);
+
 }
