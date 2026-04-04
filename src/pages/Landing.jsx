@@ -72,7 +72,7 @@ function HeroContent({ heroRef }) {
 
       <motion.div data-parallax-layer="3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <button
-          onClick={() => document.getElementById('sdk')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
           className="group relative overflow-hidden px-6 py-2.5 font-semibold text-sm text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
           style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 24px rgba(0,212,255,0.3), 0 2px 12px rgba(0,0,0,0.4)' }}
         >
@@ -302,7 +302,7 @@ export default function LandingPage() {
               <div id="mechanism" data-scroll-section>
                 <LandingHowItWorksSection />
               </div>
-              <div id="sdk" data-scroll-section>
+              <div id="features" data-scroll-section>
                 <AdaptiveSDKShowcaseSection />
               </div>
               <div id="outcomes" data-scroll-section>

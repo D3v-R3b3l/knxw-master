@@ -1,5 +1,4 @@
-// deno-lint-ignore-file no-undef
-/* eslint-disable no-undef */
+/* global Deno */
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
