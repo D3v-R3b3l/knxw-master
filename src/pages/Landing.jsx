@@ -280,11 +280,11 @@ export default function LandingPage() {
 
           <main ref={mainRef} className="relative z-10" id="landing-main">
             <section id="hero" ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
-              <div className="fixed inset-0 h-screen w-full" style={{ zIndex: 1 }}>
+              <div className="fixed inset-0 h-screen w-full" style={{ zIndex: 0 }}>
                 <HeroShader />
                 <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black to-transparent pointer-events-none" />
               </div>
-              <div className="relative h-full flex items-center justify-center pt-16 md:pt-0" style={{ zIndex: 5 }}>
+              <div className="relative h-full flex items-center justify-center pt-16 md:pt-0" style={{ zIndex: 10 }}>
                 <HeroContent heroRef={heroSectionRef} />
               </div>
               <motion.div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/50" style={{ zIndex: 6 }} animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
