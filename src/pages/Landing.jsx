@@ -20,6 +20,9 @@ import LandingExplainerSection from '@/components/landing/LandingExplainerSectio
 import LandingHowItWorksSection from '@/components/landing/LandingHowItWorksSection';
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import LandingBusinessImpactSection from '@/components/landing/LandingBusinessImpactSection';
+import PlatformFeatures from '@/components/landing/PlatformFeatures';
+import UseCasesGrid from '@/components/landing/UseCasesGrid';
+import PricingSection from '@/components/landing/PricingSection';
 
 function HeroContent({ heroRef }) {
   const contentRef = useRef(null);
@@ -53,32 +56,32 @@ function HeroContent({ heroRef }) {
   return (
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto w-full">
       <motion.div data-parallax-layer="1" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }}>
-        <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 text-white mix-blend-difference leading-tight md:leading-none break-words">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight mb-6 text-white leading-[1.08] break-words">
           Finally, your product <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
             understands why.
           </span>
         </h1>
       </motion.div>
 
       <motion.div data-parallax-layer="2" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}>
-        <p className="text-xl md:text-2xl text-gray-400 max-w-4xl mx-auto font-light leading-relaxed mb-12">
-          knXw is a runtime intelligence layer that interprets user behavior and feeds that understanding back into your system so it can adapt what it does in real time.
+        <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-10">
+          A runtime intelligence layer that interprets user behavior and feeds that understanding back into your system — so it can adapt in real time.
         </p>
       </motion.div>
 
-      <motion.div data-parallax-layer="3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <motion.div data-parallax-layer="3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }} className="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <button
           onClick={() => document.getElementById('sdk')?.scrollIntoView({ behavior: 'smooth' })}
-          className="group relative overflow-hidden px-8 py-4 font-bold text-lg text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
-          style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 30px rgba(0,212,255,0.35), 0 4px 20px rgba(0,0,0,0.5)' }}
+          className="group relative overflow-hidden px-6 py-2.5 font-semibold text-sm text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto"
+          style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 24px rgba(0,212,255,0.3), 0 2px 12px rgba(0,0,0,0.4)' }}
         >
           See How It Executes
           <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
         </button>
         <button
           onClick={() => window.location.href = createPageUrl('Documentation')}
-          className="px-8 py-4 font-bold text-lg text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto"
+          className="px-6 py-2.5 font-semibold text-sm text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 w-full sm:w-auto"
         >
           Read the SDK
         </button>
@@ -115,8 +118,8 @@ function ClosingSection() {
         <div className="flex flex-col sm:flex-row gap-5 justify-center mb-14">
           <button
             onClick={() => base44.auth.redirectToLogin(createPageUrl('Dashboard'))}
-            className="group relative overflow-hidden px-12 py-6 font-bold text-xl text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97]"
-            style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 40px rgba(0,212,255,0.4), 0 4px 20px rgba(0,0,0,0.5)' }}
+            className="group relative overflow-hidden px-7 py-3 font-semibold text-sm text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97]"
+            style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 28px rgba(0,212,255,0.35), 0 3px 14px rgba(0,0,0,0.4)' }}
           >
             Get Started
             <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
@@ -124,7 +127,7 @@ function ClosingSection() {
           </button>
           <button
             onClick={() => window.location.href = createPageUrl('Pricing')}
-            className="px-12 py-6 font-bold text-xl text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300"
+            className="px-7 py-3 font-semibold text-sm text-[#00d4ff] rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/5 hover:bg-[#00d4ff]/15 hover:border-[#00d4ff]/70 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300"
           >
             Request Access
           </button>
@@ -162,7 +165,7 @@ export default function LandingPage() {
       console.warn('Lenis init failed:', e);
     }
 
-    const snapSections = ['hero', 'blind-spot', 'missing-layer', 'mechanism', 'sdk', 'outcomes', 'closing'];
+    const snapSections = ['hero', 'blind-spot', 'missing-layer', 'mechanism', 'sdk', 'outcomes', 'platform', 'use-cases', 'pricing', 'closing'];
     let isSnapping = false;
     let snapTimeout;
 
@@ -304,6 +307,15 @@ export default function LandingPage() {
               </div>
               <div id="outcomes" data-scroll-section>
                 <LandingBusinessImpactSection />
+              </div>
+              <div id="platform" data-scroll-section>
+                <PlatformFeatures />
+              </div>
+              <div id="use-cases" data-scroll-section>
+                <UseCasesGrid />
+              </div>
+              <div id="pricing" data-scroll-section>
+                <PricingSection />
               </div>
               <div id="closing" data-scroll-section>
                 <ClosingSection />
