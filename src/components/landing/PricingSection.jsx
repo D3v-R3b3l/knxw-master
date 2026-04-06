@@ -94,7 +94,7 @@ export default function PricingSection() {
   };
 
   return (
-    <section className="py-20 md:py-24 bg-[#050505] relative overflow-hidden">
+    <section id="pricing" className="py-20 md:py-24 bg-[#050505] relative overflow-hidden">
       {/* Parallax Background */}
       <div data-parallax-bg className="absolute inset-0 h-[130%] -top-[15%]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(139,92,246,0.06),transparent_50%)]" />

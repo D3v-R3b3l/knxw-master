@@ -38,7 +38,7 @@ export default function AdaptiveUIEcommerceDoc() {
       <div className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-6 mb-6 not-prose">
         <h5 className="text-sm font-semibold text-[#00d4ff] mb-4">Implementation Example</h5>
         <pre className="bg-black rounded p-4 text-xs text-[#10b981] overflow-x-auto">
-{`import { AdaptiveText } from '@knxw/sdk';
+{`import { AdaptiveText } from '@/components/sdk/KnxwSDK';
 
 <ProductCard>
   <AdaptiveText
