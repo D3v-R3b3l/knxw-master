@@ -21,6 +21,7 @@ import LandingHowItWorksSection from '@/components/landing/LandingHowItWorksSect
 import AdaptiveSDKShowcaseSection from '@/components/landing/AdaptiveSDKShowcaseSection';
 import LandingBusinessImpactSection from '@/components/landing/LandingBusinessImpactSection';
 import PlatformFeatures from '@/components/landing/PlatformFeatures';
+import FeatureBento from '@/components/landing/FeatureBento';
 import UseCasesGrid from '@/components/landing/UseCasesGrid';
 import PricingSection from '@/components/landing/PricingSection';
 
@@ -308,8 +309,17 @@ export default function LandingPage() {
               <div id="outcomes" data-scroll-section>
                 <LandingBusinessImpactSection />
               </div>
+              <div id="features" data-scroll-section>
+                <section className="py-24 md:py-32 bg-[#050505] text-white overflow-hidden">
+                  <div className="max-w-7xl mx-auto px-6 mb-16 text-center">
+                    <span className="text-xs font-mono text-cyan-400 uppercase tracking-[0.3em] bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20 inline-block mb-6">Features</span>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">Everything you need to understand why</h2>
+                    <p className="text-xl text-gray-400 max-w-3xl mx-auto">A full-stack intelligence layer built for real product teams.</p>
+                  </div>
+                  <FeatureBento />
+                </section>
+              </div>
               <div id="platform" data-scroll-section>
-                <span id="features" />
                 <PlatformFeatures />
               </div>
               <div id="use-cases" data-scroll-section>
