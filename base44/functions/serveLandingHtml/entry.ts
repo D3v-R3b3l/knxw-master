@@ -1,6 +1,6 @@
 // Serve pre-rendered HTML for the root path (/) - for search engines, crawlers, and LLMs
 // This function returns a complete static HTML version of the landing page
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {

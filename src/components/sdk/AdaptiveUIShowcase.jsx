@@ -249,7 +249,7 @@ export default function AdaptiveUIShowcase() {
         </CardHeader>
         <CardContent>
           <pre className="text-sm text-gray-400 overflow-x-auto">
-{`import { PsychographicProvider, AdaptiveButton } from '@/components/sdk/KnxwSDK';
+{`import { PsychographicProvider, AdaptiveButton } from '@knxw/sdk';
 
 function App() {
   return (

@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6a0f87f88_logo.png" type="image/png" />
+    <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6a0f87f88_logo.png" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>knXw Documentation - API Reference, SDKs, and Integrations</title>
     <meta name="description" content="Comprehensive documentation for knXw API, Web SDK, GameDev SDK, Webhooks, and various integrations. Learn how to implement psychographic intelligence into your applications." />

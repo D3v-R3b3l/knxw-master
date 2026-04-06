@@ -30,7 +30,6 @@ import EvidenceViewer from "../components/dashboard/EvidenceViewer";
 import RecommendationsPanel from "../components/dashboard/RecommendationsPanel";
 import FeedbackLoopPanel from "../components/dashboard/FeedbackLoopPanel";
 import MetricForecast from "../components/dashboard/MetricForecast";
-import PsychographicAudienceTrends from "../components/dashboard/PsychographicAudienceTrends";
 import logger from "../components/system/logger";
 import { markOnboardingStep } from '../components/onboarding/OnboardingHelper';
 
@@ -386,72 +385,68 @@ export default function Dashboard() {
         {selectedApp ?
         <>
             {/* Key Metrics */}
-            <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_1fr] gap-6 mb-8 relative z-[2]" data-tour="dashboard-metrics">
-              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-6">
-                {storeIsLoading ?
-              Array(4).fill(0).map((_, i) =>
-              <div key={i} className="bg-[#111111] border border-[#262626] rounded-xl p-6">
-                      <Skeleton className="h-4 w-24 mb-2" />
-                      <Skeleton className="h-8 w-16 mb-2" />
-                      <Skeleton className="h-3 w-20" />
-                    </div>
-              ) :
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-10 relative z-[2]" data-tour="dashboard-metrics">
+              {storeIsLoading ?
+            Array(5).fill(0).map((_, i) =>
+            <div key={i} className="bg-[#111111] border border-[#262626] rounded-xl p-6">
+                    <Skeleton className="h-4 w-24 mb-2" />
+                    <Skeleton className="h-8 w-16 mb-2" />
+                    <Skeleton className="h-3 w-20" />
+                  </div>
+            ) :
 
-              <>
-                    <MetricCard
-                  title="Total Profiles"
-                  value={(metrics.totalUsers || 0).toLocaleString()}
-                  icon={Users}
-                  gradient="from-[#00d4ff] to-[#0ea5e9]"
-                  href={createPageUrl("Profiles")}
-                  aiContext="Explain what Total Profiles represents and how profile growth affects segmentation and engagement accuracy."
-                  resizable />
-                    <MetricCard
-                  title="Active Today"
-                  value={(metrics.activeUsers || 0).toLocaleString()}
-                  icon={Activity}
-                  gradient="from-[#10b981] to-[#059669]"
-                  href={`${createPageUrl("Events")}?type=page_view&minutes=1440`}
-                  aiContext="Show how Active Today is computed and recommend ways to increase daily active users."
-                  resizable />
-                    <MetricCard
-                  title="Engagement Rate"
-                  value={`${metrics.avgEngagement || '0'}%`}
-                  icon={TrendingUp}
-                  gradient="from-[#8b5cf6] to-[#7c3aed]"
-                  href={`${createPageUrl("Events")}?type=click`}
-                  aiContext="Explain engagement rate methodology and suggest experiments to improve it."
-                  resizable />
-                    <MetricCard
-                  title="AI Insights"
-                  value={metrics.totalInsights || 0}
-                  icon={Zap}
-                  gradient="from-[#ec4899] to-[#db2777]"
-                  href={createPageUrl("Insights")}
-                  aiContext="Review current AI insights and propose actions with the highest expected impact."
-                  resizable />
-                  </>
-              }
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="rounded-2xl border border-[#262626] bg-[#111111] p-6">
-                  <div className="text-sm text-[#a3a3a3] mb-2">Signal volume</div>
-                  <div className="text-4xl font-bold text-white mb-2">{(metrics.totalEvents || 0).toLocaleString()}</div>
-                  <p className="text-sm text-[#6b7280]">Recent behavior captured across the selected app.</p>
-                </div>
-                <div className="rounded-2xl border border-[#262626] bg-[#111111] p-6">
-                  <div className="text-sm text-[#a3a3a3] mb-2">First-glance read</div>
-                  <p className="text-base text-white leading-relaxed">
-                    {metrics.activeUsers > 0
-                      ? `Audience activity is live, with ${metrics.activeUsers.toLocaleString()} active users and ${metrics.totalInsights || 0} current AI insights ready for drill-down.`
-                      : "Traffic is still forming; use the panels below to identify where activity starts and which psychographic patterns emerge first."}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <>
+                  <MetricCard
+                title="Total Profiles"
+                value={(metrics.totalUsers || 0).toLocaleString()}
+                icon={Users}
+                gradient="from-[#00d4ff] to-[#0ea5e9]"
+                href={createPageUrl("Profiles")}
+                aiContext="Explain what Total Profiles represents and how profile growth affects segmentation and engagement accuracy."
+                resizable />
 
-            <div className="mb-8 relative z-[2]">
-              <PsychographicAudienceTrends />
+                  
+                  <MetricCard
+                title="Active Today"
+                value={(metrics.activeUsers || 0).toLocaleString()}
+                icon={Activity}
+                gradient="from-[#10b981] to-[#059669]"
+                href={`${createPageUrl("Events")}?type=page_view&minutes=1440`}
+                aiContext="Show how Active Today is computed and recommend ways to increase daily active users."
+                resizable />
+
+                  
+                  <MetricCard
+                title="Recent Events"
+                value={(metrics.totalEvents || 0).toLocaleString()}
+                icon={Eye}
+                gradient="from-[#fbbf24] to-[#f59e0b]"
+                href={`${createPageUrl("Events")}`}
+                aiContext="Summarize the last 100-200 events and highlight anomalies worth investigating."
+                resizable />
+
+                  
+                  <MetricCard
+                title="Engagement Rate"
+                value={`${metrics.avgEngagement || '0'}%`}
+                icon={TrendingUp}
+                gradient="from-[#8b5cf6] to-[#7c3aed]"
+                href={`${createPageUrl("Events")}?type=click`}
+                aiContext="Explain engagement rate methodology and suggest experiments to improve it."
+                resizable />
+
+                  
+                  <MetricCard
+                title="AI Insights"
+                value={metrics.totalInsights || 0}
+                icon={Zap}
+                gradient="from-[#ec4899] to-[#db2777]"
+                href={createPageUrl("Insights")}
+                aiContext="Review current AI insights and propose actions with the highest expected impact."
+                resizable />
+
+                </>
+            }
             </div>
 
             <div className="grid lg:grid-cols-2 gap-8 mb-8 relative z-[2]">

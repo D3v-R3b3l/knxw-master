@@ -7,9 +7,7 @@ export default function AdaptiveUIExamples() {
     {
       title: 'Adaptive Button',
       icon: Layout,
-      code: `import { AdaptiveButton } from '@/components/sdk/KnxwSDK';
-
-<AdaptiveButton
+      code: `<AdaptiveButton
   baseText="Get Started"
   motivationVariants={{
     achievement: "Start Winning Now",
@@ -25,9 +23,7 @@ export default function AdaptiveUIExamples() {
     {
       title: 'Adaptive Text',
       icon: Type,
-      code: `import { AdaptiveText } from '@/components/sdk/KnxwSDK';
-
-<AdaptiveText
+      code: `<AdaptiveText
   baseText="Welcome!"
   motivationVariants={{
     achievement: "Ready to excel?",
@@ -42,9 +38,7 @@ export default function AdaptiveUIExamples() {
     {
       title: 'Conditional Content',
       icon: Code,
-      code: `import { AdaptiveContainer } from '@/components/sdk/KnxwSDK';
-
-<AdaptiveContainer
+      code: `<AdaptiveContainer
   showFor={{
     motivations: ['achievement'],
     riskProfile: 'aggressive'
