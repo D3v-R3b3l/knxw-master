@@ -309,6 +309,7 @@ export default function LandingPage() {
                 <LandingBusinessImpactSection />
               </div>
               <div id="platform" data-scroll-section>
+                <span id="features" />
                 <PlatformFeatures />
               </div>
               <div id="use-cases" data-scroll-section>
