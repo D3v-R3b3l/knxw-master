@@ -280,7 +280,7 @@ export default function LandingPage() {
 
           <main ref={mainRef} className="relative z-10" id="landing-main">
             <section id="hero" ref={heroSectionRef} className="relative h-screen w-full overflow-hidden bg-[#050505] pt-20 md:pt-0">
-              <div className="fixed inset-0 h-screen w-full" style={{ zIndex: 0 }}>
+              <div className="absolute inset-0 h-full w-full bg-black" style={{ zIndex: 0 }}>
                 <HeroShader />
                 <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black to-transparent pointer-events-none" />
               </div>
