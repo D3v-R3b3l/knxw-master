@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { ClientApp } from '@/entities/ClientApp';
-import { User } from '@/entities/User';
-import { RoleTemplate } from '@/entities/RoleTemplate';
 import { UserAppAccess } from '@/entities/UserAppAccess';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,54 +11,61 @@ import { Trash2, Shield, PlusCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AccessControlPanel() {
+    const ROLES = [
+        { name: 'admin', label: 'Admin' },
+        { name: 'user', label: 'User' },
+    ];
+
     const [accessList, setAccessList] = useState([]);
     const [apps, setApps] = useState([]);
-    const [roles, setRoles] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
-    const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
+    const { register, handleSubmit, control, reset } = useForm();
 
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const [accessData, appData, roleData] = await Promise.all([
+            const [accessData, appData] = await Promise.all([
                 UserAppAccess.list('-created_date'),
                 ClientApp.list(),
-                RoleTemplate.list()
             ]);
             setAccessList(accessData);
             setApps(appData);
-            setRoles(roleData);
         } catch (e) {
-            toast({ variant: "destructive", title: "Failed to load data", description: e.message });
+            toast({ variant: 'destructive', title: 'Failed to load data', description: e.message });
         } finally {
             setIsLoading(false);
         }
-    }, [toast]);
+    }, []);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
     const onSubmit = async (data) => {
+        if (!data.application || !data.user_email || !data.role) {
+            toast({ variant: 'destructive', title: 'Missing fields', description: 'Please fill in all fields.' });
+            return;
+        }
         try {
+            // Invite user to the platform
+            await base44.users.inviteUser(data.user_email, data.role);
+
+            // Record app-level access
             const existingRecords = await UserAppAccess.filter({ client_app_id: data.application, user_email: data.user_email }, null, 1);
-            const existing = existingRecords[0] || null;
-            if (existing) {
-                toast({ variant: "destructive", title: "Duplicate Entry", description: "This user already has a role assigned for this application." });
-                return;
+            if (!existingRecords[0]) {
+                await UserAppAccess.create({
+                    client_app_id: data.application,
+                    user_email: data.user_email,
+                    role_name: data.role,
+                    status: 'active'
+                });
             }
-            await UserAppAccess.create({
-                client_app_id: data.application,
-                user_email: data.user_email,
-                role_name: data.role,
-                status: 'active'
-            });
-            toast({ title: "Success", description: "User access has been granted." });
+            toast({ title: 'Invited!', description: `${data.user_email} has been invited as ${data.role}.` });
             reset({ application: '', user_email: '', role: '' });
             fetchData();
         } catch (e) {
-            toast({ variant: "destructive", title: "Failed to grant access", description: e.message });
+            toast({ variant: 'destructive', title: 'Failed to invite user', description: e.message });
         }
     };
     
@@ -115,7 +120,7 @@ export default function AccessControlPanel() {
                              <Select onValueChange={field.onChange} value={field.value}>
                                 <SelectTrigger className="bg-[#0a0a0a] border-[#3a3a3a]"><SelectValue placeholder="Select a role..." /></SelectTrigger>
                                 <SelectContent>
-                                    {roles.map(role => <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>)}
+                                    {ROLES.map(role => <SelectItem key={role.name} value={role.name}>{role.label}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         )}
