@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Terminal, Zap, BarChart2, ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -72,6 +72,46 @@ export default function MyAppsPage() {
 
   const { toast } = useToast();
   const [expandedSnippet, setExpandedSnippet] = useState(null);
+  const [snippetTab, setSnippetTab] = useState({});
+
+  const getSnippetTab = (appId) => snippetTab[appId] || 'html';
+  const setTab = (appId, tab) => setSnippetTab(prev => ({ ...prev, [appId]: tab }));
+
+  const getSnippet = (apiKey, tab) => {
+    if (tab === 'html') return `<!-- Add to your <head> -->
+<script src="https://cdn.knxw.ai/sdk.js"
+  data-api-key="${apiKey}"
+  async>
+</script>`;
+    if (tab === 'react') return `// Install: npm install @knxw/sdk
+// Add once in your root component (e.g. App.jsx / App.tsx)
+import { useEffect } from 'react';
+import { KnxwSDK } from '@knxw/sdk';
+
+export default function App() {
+  useEffect(() => {
+    KnxwSDK.init('${apiKey}');
+  }, []);
+  // ... rest of your app
+}`;
+    if (tab === 'angular') return `// Install: npm install @knxw/sdk
+// In your AppComponent (app.component.ts)
+import { Component, OnInit } from '@angular/core';
+import { KnxwSDK } from '@knxw/sdk';
+
+@Component({ selector: 'app-root', templateUrl: './app.component.html' })
+export class AppComponent implements OnInit {
+  ngOnInit() {
+    KnxwSDK.init('${apiKey}');
+  }
+}`;
+    if (tab === 'js') return `// Install: npm install @knxw/sdk
+// In your main entry file (index.js / main.ts)
+import { KnxwSDK } from '@knxw/sdk';
+
+KnxwSDK.init('${apiKey}');`;
+    return '';
+  };
 
   useEffect(() => {
     loadApps();
@@ -492,21 +532,34 @@ export default function MyAppsPage() {
                         {/* Step 1 */}
                         <div className="flex gap-3">
                           <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
-                          <div>
-                            <p className="text-sm font-medium text-white mb-1">Add the tracking snippet to your site</p>
-                            <p className="text-xs text-[#a3a3a3] mb-2">Paste this into the <code className="text-[#00d4ff]">&lt;head&gt;</code> of your HTML — or install via npm.</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white mb-1">Add the tracking snippet to your app</p>
+                            <p className="text-xs text-[#a3a3a3] mb-3">Pick your stack below and copy the snippet into your project.</p>
                             {expandedSnippet === app.id && (
-                              <div className="relative">
-                                <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-3 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed">{`<script src="https://cdn.knxw.ai/sdk.js"
-  data-api-key="${app.api_key}"
-  async>
-</script>`}</pre>
-                                <button
-                                  onClick={() => copyToClipboard(`<script src="https://cdn.knxw.ai/sdk.js" data-api-key="${app.api_key}" async></script>`, `snippet-${app.id}`)}
-                                  className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors"
-                                >
-                                  <Copy className="w-3 h-3" />
-                                </button>
+                              <div>
+                                {/* Framework tabs */}
+                                <div className="flex gap-1 mb-2 flex-wrap">
+                                  {[['html','HTML'], ['react','React / Next.js'], ['js','JS / TypeScript'], ['angular','Angular']].map(([key, label]) => (
+                                    <button
+                                      key={key}
+                                      onClick={() => setTab(app.id, key)}
+                                      className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+                                        getSnippetTab(app.id) === key
+                                          ? 'bg-[#00d4ff] text-[#0a0a0a]'
+                                          : 'bg-[#1a1a1a] text-[#a3a3a3] hover:text-white border border-[#262626]'
+                                      }`}
+                                    >{label}</button>
+                                  ))}
+                                </div>
+                                <div className="relative">
+                                  <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-3 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(app.api_key, getSnippetTab(app.id))}</pre>
+                                  <button
+                                    onClick={() => copyToClipboard(getSnippet(app.api_key, getSnippetTab(app.id)), `snippet-${app.id}`)}
+                                    className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors"
+                                  >
+                                    <Copy className="w-3 h-3" />
+                                  </button>
+                                </div>
                               </div>
                             )}
                           </div>
