@@ -1,0 +1,122 @@
+{
+  "name": "ApiKeyRequestLog",
+  "type": "object",
+  "properties": {
+    "api_key_id": {
+      "type": "string",
+      "description": "API key used for the request"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "Client app associated with the request"
+    },
+    "owner_user_id": {
+      "type": "string",
+      "description": "Owner of the API key"
+    },
+    "endpoint": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string"
+    },
+    "status_code": {
+      "type": "number"
+    },
+    "latency_ms": {
+      "type": "number"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "is_rate_limited": {
+      "type": "boolean",
+      "default": false
+    },
+    "scope_matched": {
+      "type": "string"
+    },
+    "failure_reason": {
+      "type": "string"
+    },
+    "request_payload_preview": {
+      "type": "object",
+      "default": {}
+    },
+    "response_payload_preview": {
+      "type": "object",
+      "default": {}
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "api_key_id",
+    "client_app_id",
+    "owner_user_id",
+    "endpoint",
+    "method",
+    "status_code",
+    "timestamp"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "api_key_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "owner_user_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

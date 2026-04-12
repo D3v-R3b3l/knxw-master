@@ -1,0 +1,109 @@
+{
+  "name": "WebhookDebugSession",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string"
+    },
+    "owner_user_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "endpoint": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "delivered",
+        "failed"
+      ],
+      "default": "queued"
+    },
+    "simulate_failure": {
+      "type": "boolean",
+      "default": false
+    },
+    "request_payload": {
+      "type": "object",
+      "default": {}
+    },
+    "response_payload": {
+      "type": "object",
+      "default": {}
+    },
+    "failure_reason": {
+      "type": "string"
+    },
+    "delivery_started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "delivery_completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "owner_user_id",
+    "name",
+    "endpoint",
+    "event_type",
+    "request_payload"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "owner_user_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "owner_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
