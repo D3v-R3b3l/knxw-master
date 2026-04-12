@@ -5,6 +5,16 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw, Trash2 } from 'lucide-react';
 
 export default function ApiKeyTable({ apiKeys, onRotate, onRevoke }) {
+  if (!apiKeys.length) {
+    return (
+      <Card className="bg-[#111111] border-[#262626]">
+        <CardContent className="p-6 text-sm text-[#a3a3a3]">
+          No API keys yet. Create your first scoped key to start testing.
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {apiKeys.map((key) => (
@@ -13,7 +23,9 @@ export default function ApiKeyTable({ apiKeys, onRotate, onRevoke }) {
             <div className="space-y-3">
               <div className="flex items-center gap-3 flex-wrap">
                 <h3 className="font-semibold text-white">{key.name}</h3>
-                <Badge className={key.status === 'active' ? 'bg-[#10b981]/20 text-[#10b981]' : 'bg-[#ef4444]/20 text-[#ef4444]'}>{key.status}</Badge>
+                <Badge className={key.status === 'active' ? 'bg-[#10b981]/20 text-[#10b981]' : 'bg-[#ef4444]/20 text-[#ef4444]'}>
+                  {key.status}
+                </Badge>
                 <code className="text-xs text-[#a3a3a3] bg-[#0a0a0a] px-2 py-1 rounded">{key.key_prefix}••••••••</code>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -25,7 +37,6 @@ export default function ApiKeyTable({ apiKeys, onRotate, onRevoke }) {
                 <span>{key.rate_limit_rpm} req/min</span>
                 <span>Burst {key.rate_limit_burst}</span>
                 {key.last_used_at && <span>Last used {new Date(key.last_used_at).toLocaleString()}</span>}
-                {key.last_used_endpoint && <span>{key.last_used_endpoint}</span>}
               </div>
             </div>
             <div className="flex gap-2">

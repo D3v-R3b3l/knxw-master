@@ -29,8 +29,9 @@ Deno.serve(async (req) => {
     const apiKeyId = String(body?.api_key_id || '').trim();
     if (!apiKeyId) return json({ error: 'api_key_id is required' }, 400);
 
-    const existing = await base44.asServiceRole.entities.ApiKey.get(apiKeyId);
-    if (!existing || existing.owner_user_id !== user.id) {
+    const existingList = await base44.asServiceRole.entities.ApiKey.filter({ id: apiKeyId }, null, 1);
+    const existing = existingList?.[0] || null;
+    if (!existing) {
       return json({ error: 'API key not found' }, 404);
     }
 
@@ -44,8 +45,7 @@ Deno.serve(async (req) => {
     const keyPrefix = fullKey.slice(0, 16);
 
     const rotated = await base44.asServiceRole.entities.ApiKey.create({
-      client_app_id: existing.client_app_id,
-      owner_user_id: existing.owner_user_id,
+      tenant_id: existing.tenant_id,
       name: `${existing.name} (rotated)`,
       key_hash: keyHash,
       key_prefix: keyPrefix,

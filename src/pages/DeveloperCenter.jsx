@@ -41,7 +41,7 @@ export default function DeveloperCenter() {
 
     if (defaultAppId) {
       const [keys, requestLogs, debugSessions] = await Promise.all([
-        base44.entities.ApiKey.filter({ client_app_id: defaultAppId }, '-created_date', 100),
+        base44.entities.ApiKey.filter({ tenant_id: defaultAppId }, '-created_date', 100),
         base44.entities.ApiKeyRequestLog.filter({ client_app_id: defaultAppId }, '-timestamp', 100),
         base44.entities.WebhookDebugSession.filter({ client_app_id: defaultAppId }, '-created_date', 50)
       ]);
@@ -63,7 +63,7 @@ export default function DeveloperCenter() {
   useEffect(() => {
     if (!selectedAppId) return;
     Promise.all([
-      base44.entities.ApiKey.filter({ client_app_id: selectedAppId }, '-created_date', 100),
+      base44.entities.ApiKey.filter({ tenant_id: selectedAppId }, '-created_date', 100),
       base44.entities.ApiKeyRequestLog.filter({ client_app_id: selectedAppId }, '-timestamp', 100),
       base44.entities.WebhookDebugSession.filter({ client_app_id: selectedAppId }, '-created_date', 50)
     ]).then(([keys, requestLogs, debugSessions]) => {
@@ -106,10 +106,11 @@ export default function DeveloperCenter() {
 
   const handleRunSandbox = async () => {
     if (!selectedAppId || !selectedAppActiveKey) return toast.error('Create an active key first');
+    if (!newSecret) return toast.error('Use a newly created or rotated key to run the sandbox');
     setRunningSandbox(true);
     await sendSandboxEvent({
       client_app_id: selectedAppId,
-      api_key: newSecret || `${selectedAppActiveKey.key_prefix}`,
+      api_key: newSecret,
       endpoint: '/api/v1/events',
       event_type: sandboxState.event_type,
       user_id: sandboxState.user_id,
@@ -177,6 +178,13 @@ export default function DeveloperCenter() {
           </TabsContent>
 
           <TabsContent value="sandbox" className="space-y-6">
+            {!newSecret && (
+              <Card className="bg-[#f59e0b]/10 border-[#f59e0b]/30">
+                <CardContent className="p-4 text-sm text-[#fcd34d]">
+                  Create or rotate a key first so the sandbox can use the full secret value.
+                </CardContent>
+              </Card>
+            )}
             <SandboxRunner state={sandboxState} setState={setSandboxState} onRun={handleRunSandbox} running={runningSandbox} />
             <Card className="bg-[#111111] border-[#262626]">
               <CardHeader>

@@ -47,8 +47,7 @@ Deno.serve(async (req) => {
     const keyPrefix = fullKey.slice(0, 16);
 
     const created = await base44.asServiceRole.entities.ApiKey.create({
-      client_app_id: clientAppId,
-      owner_user_id: user.id,
+      tenant_id: clientAppId,
       name,
       key_hash: keyHash,
       key_prefix: keyPrefix,
