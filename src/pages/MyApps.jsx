@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain } from "lucide-react";
+import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Terminal, Zap, BarChart2, ChevronDown, ChevronUp, Info } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -71,6 +71,7 @@ export default function MyAppsPage() {
   const [appToDelete, setAppToDelete] = useState(null);
 
   const { toast } = useToast();
+  const [expandedSnippet, setExpandedSnippet] = useState(null);
 
   useEffect(() => {
     loadApps();
@@ -314,16 +315,18 @@ export default function MyAppsPage() {
                   required
                 />
 
-                <Input
-                  placeholder="Authorized Domains (e.g., https://app.com, http://localhost:3000)"
-                  value={newAppDomains}
-                  onChange={(e) => setNewAppDomains(e.target.value)}
-                  className="bg-[#1a1a1a] border-[#262626] text-white"
-                />
-
-                <p className="text-xs text-[#a3a3a3]">
-                  Tip: You can enter comma-separated values. We'll normalize localhost URLs automatically.
-                </p>
+                <div className="space-y-1">
+                  <Input
+                    placeholder="Authorized Domains (e.g., https://mysite.com, http://localhost:3000)"
+                    value={newAppDomains}
+                    onChange={(e) => setNewAppDomains(e.target.value)}
+                    className="bg-[#1a1a1a] border-[#262626] text-white"
+                  />
+                  <p className="text-xs text-[#6b7280] flex items-start gap-1.5">
+                    <Info className="w-3 h-3 mt-0.5 flex-shrink-0 text-[#00d4ff]" />
+                    <span>These are the websites where your knXw tracking snippet will run. Add your production URL and <code className="text-[#00d4ff]">http://localhost:3000</code> for local development. Comma-separate multiple domains.</span>
+                  </p>
+                </div>
                 <Button type="submit" disabled={isCreating || !newAppName.trim()} className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a]">
                   {isCreating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
                   {isCreating ? "Creating..." : "Create Application"}
@@ -426,7 +429,8 @@ export default function MyAppsPage() {
                   </div>
                 </CardHeader>
                 {editingApp !== app.id && (
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-6">
+                    {/* API Key */}
                     <div>
                       <label className="text-sm font-medium text-[#a3a3a3] mb-2 block">API Key</label>
                       <div className="flex items-center gap-2">
@@ -450,6 +454,8 @@ export default function MyAppsPage() {
                         </Button>
                       </div>
                     </div>
+
+                    {/* Authorized Domains */}
                     <div>
                       <label className="text-sm font-medium text-[#a3a3a3] mb-2 block">Authorized Domains</label>
                       <div className="flex flex-wrap gap-2 mt-2">
@@ -465,6 +471,78 @@ export default function MyAppsPage() {
                             <span>No domains configured. Event capture will be restricted.</span>
                           </p>
                         )}
+                      </div>
+                    </div>
+
+                    {/* Next Steps Guide */}
+                    <div className="border border-[#00d4ff]/20 rounded-xl bg-[#00d4ff]/5 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-[#00d4ff]/10 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-[#00d4ff]" />
+                          <span className="text-sm font-semibold text-white">Get Started — 3 Steps</span>
+                        </div>
+                        <button
+                          onClick={() => setExpandedSnippet(expandedSnippet === app.id ? null : app.id)}
+                          className="text-[#a3a3a3] hover:text-white text-xs flex items-center gap-1 transition-colors"
+                        >
+                          {expandedSnippet === app.id ? <><ChevronUp className="w-3 h-3" /> Hide</> : <><ChevronDown className="w-3 h-3" /> Show snippet</>}
+                        </button>
+                      </div>
+                      <div className="p-4 space-y-4">
+                        {/* Step 1 */}
+                        <div className="flex gap-3">
+                          <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
+                          <div>
+                            <p className="text-sm font-medium text-white mb-1">Add the tracking snippet to your site</p>
+                            <p className="text-xs text-[#a3a3a3] mb-2">Paste this into the <code className="text-[#00d4ff]">&lt;head&gt;</code> of your HTML — or install via npm.</p>
+                            {expandedSnippet === app.id && (
+                              <div className="relative">
+                                <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-3 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed">{`<script src="https://cdn.knxw.ai/sdk.js"
+  data-api-key="${app.api_key}"
+  async>
+</script>`}</pre>
+                                <button
+                                  onClick={() => copyToClipboard(`<script src="https://cdn.knxw.ai/sdk.js" data-api-key="${app.api_key}" async></script>`, `snippet-${app.id}`)}
+                                  className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Step 2 */}
+                        <div className="flex gap-3">
+                          <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
+                          <div>
+                            <p className="text-sm font-medium text-white mb-1">knXw starts capturing behavior automatically</p>
+                            <p className="text-xs text-[#a3a3a3]">Page views, clicks, scroll depth, form interactions, and exit intent are captured out of the box — no extra code needed.</p>
+                          </div>
+                        </div>
+
+                        {/* Step 3 */}
+                        <div className="flex gap-3">
+                          <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
+                          <div>
+                            <p className="text-sm font-medium text-white mb-1">Watch psychographic profiles build in real-time</p>
+                            <p className="text-xs text-[#a3a3a3] mb-3">Within minutes of real user traffic, knXw starts inferring motivations, emotional states, and cognitive styles.</p>
+                            <div className="flex flex-wrap gap-2">
+                              <Link to={createPageUrl('Dashboard')} className="inline-flex items-center gap-1.5 text-xs bg-[#00d4ff] text-[#0a0a0a] font-semibold px-3 py-1.5 rounded-lg hover:bg-[#0ea5e9] transition-colors">
+                                <BarChart2 className="w-3 h-3" />
+                                View Dashboard
+                              </Link>
+                              <Link to={createPageUrl('Profiles')} className="inline-flex items-center gap-1.5 text-xs bg-[#1a1a1a] text-white border border-[#262626] px-3 py-1.5 rounded-lg hover:bg-[#262626] transition-colors">
+                                <Brain className="w-3 h-3" />
+                                View Profiles
+                              </Link>
+                              <Link to={createPageUrl('Documentation')} className="inline-flex items-center gap-1.5 text-xs text-[#a3a3a3] hover:text-white transition-colors px-3 py-1.5">
+                                <ArrowRight className="w-3 h-3" />
+                                Full Docs
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
