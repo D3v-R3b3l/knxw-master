@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function AdaptiveTextVue({ baseText = '', as: Component = 'span', className = '' }) {
-  return <Component className={className}>{baseText}</Component>;
+export default function AdaptiveTextVue({ baseText = '', as: Tag = 'span', className = '' }) {
+  return <Tag className={className}>{baseText}</Tag>;
 }

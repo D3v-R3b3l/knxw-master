@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ChurnAnalytics from './pages/ChurnAnalytics';
 import Landing from './pages/Landing';
+import DeveloperCenter from './pages/DeveloperCenter';
 
 const { Pages, Layout } = pagesConfig;
 
@@ -60,6 +61,14 @@ const AuthenticatedApp = () => {
         element={
           <LayoutWrapper currentPageName="ChurnAnalytics">
             <ChurnAnalytics />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/DeveloperCenter"
+        element={
+          <LayoutWrapper currentPageName="DeveloperCenter">
+            <DeveloperCenter />
           </LayoutWrapper>
         }
       />
