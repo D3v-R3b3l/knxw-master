@@ -525,7 +525,7 @@ KnxwSDK.init('${apiKey}');`;
                           onClick={() => setExpandedSnippet(expandedSnippet === app.id ? null : app.id)}
                           className="text-[#a3a3a3] hover:text-white text-xs flex items-center gap-1 transition-colors"
                         >
-                          {expandedSnippet === app.id ? <><ChevronUp className="w-3 h-3" /> Hide</> : <><ChevronDown className="w-3 h-3" /> Show snippet</>}
+                          {expandedSnippet === app.id ? <><ChevronUp className="w-3 h-3" /> Hide</> : <><ChevronDown className="w-3 h-3" /> Show</>}
                         </button>
                       </div>
                       <div className="p-4 space-y-4">
@@ -535,37 +535,35 @@ KnxwSDK.init('${apiKey}');`;
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-white mb-1">Add the tracking snippet to your app</p>
                             <p className="text-xs text-[#a3a3a3] mb-3">Pick your stack below and copy the snippet into your project.</p>
-                            {expandedSnippet === app.id && (
-                              <div>
-                                {/* Framework tabs */}
-                                <div className="flex gap-1 mb-2 flex-wrap">
-                                  {[['html','HTML'], ['react','React / Next.js'], ['js','JS / TypeScript'], ['angular','Angular']].map(([key, label]) => (
-                                    <button
-                                      key={key}
-                                      onClick={() => setTab(app.id, key)}
-                                      className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
-                                        getSnippetTab(app.id) === key
-                                          ? 'bg-[#00d4ff] text-[#0a0a0a]'
-                                          : 'bg-[#1a1a1a] text-[#a3a3a3] hover:text-white border border-[#262626]'
-                                      }`}
-                                    >{label}</button>
-                                  ))}
-                                </div>
-                                <div className="relative">
-                                  <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-3 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(app.api_key, getSnippetTab(app.id))}</pre>
-                                  <button
-                                    onClick={() => copyToClipboard(getSnippet(app.api_key, getSnippetTab(app.id)), `snippet-${app.id}`)}
-                                    className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors"
-                                  >
-                                    <Copy className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                            <div>
+                               {/* Framework tabs */}
+                               <div className="flex gap-1 mb-2 flex-wrap">
+                                 {[['html','HTML'], ['react','React / Next.js'], ['js','JS / TypeScript'], ['angular','Angular']].map(([key, label]) => (
+                                   <button
+                                     key={key}
+                                     onClick={() => setTab(app.id, key)}
+                                     className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+                                       getSnippetTab(app.id) === key
+                                         ? 'bg-[#00d4ff] text-[#0a0a0a]'
+                                         : 'bg-[#1a1a1a] text-[#a3a3a3] hover:text-white border border-[#262626]'
+                                     }`}
+                                   >{label}</button>
+                                 ))}
+                               </div>
+                               <div className="relative">
+                                 <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-3 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(app.api_key, getSnippetTab(app.id))}</pre>
+                                 <button
+                                   onClick={() => copyToClipboard(getSnippet(app.api_key, getSnippetTab(app.id)), `snippet-${app.id}`)}
+                                   className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors"
+                                 >
+                                   <Copy className="w-3 h-3" />
+                                 </button>
+                               </div>
+                             </div>
+                            </div>
+                            </div>
 
-                        {/* Step 2 */}
+                            {/* Step 2 */}
                         <div className="flex gap-3">
                           <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
                           <div>
