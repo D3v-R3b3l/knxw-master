@@ -3,7 +3,7 @@ import {
   GitBranch as AttributionIcon, TrendingUp, BookOpen, Bot, HeartPulse, 
   FlaskConical, Database as DatabaseIcon, Megaphone, BarChart3 as GoogleDataIcon, 
   Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, Sparkles,
-  Sliders, Store, Plug, Route, Cpu, UserCheck, TrendingDown
+  Sliders, Store, Plug, Route, Cpu, UserCheck, TrendingDown, Webhook
 } from "lucide-react";
 
 export const navigationSections = [
@@ -20,6 +20,8 @@ export const navigationSections = [
     title: "Data & Integration",
     items: [
       { title: "My Apps", page: "MyApps", icon: Server, description: "Application Management" },
+      { title: "Developer Center", page: "DeveloperCenter", icon: Webhook, description: "Keys, webhooks, and testing" },
+      { title: "API Usage", page: "DeveloperUsageAnalytics", icon: BarChart3, description: "Usage trends & latency" },
       { title: "Unified Data", page: "UnifiedDataIntegration", icon: LinkIcon, description: "CRM & Finance Integration" },
       { title: "Integrations", page: "IntegrationsManagement", icon: Shield, description: "External Connections" },
       { title: "Meta Data", page: "MetaData", icon: Megaphone, description: "Facebook Insights" },

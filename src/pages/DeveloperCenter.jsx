@@ -13,6 +13,9 @@ import ApiKeyTable from '@/components/developer/ApiKeyTable';
 import RequestLogTable from '@/components/developer/RequestLogTable';
 import LanguageWrappersPanel from '@/components/developer/LanguageWrappersPanel';
 import SandboxRunner from '@/components/developer/SandboxRunner';
+import WebhookEndpointsPanel from '@/components/developer/WebhookEndpointsPanel';
+import WebhookEndpointDialog from '@/components/developer/WebhookEndpointDialog';
+import WebhookEventHistory from '@/components/developer/WebhookEventHistory';
 
 export default function DeveloperCenter() {
   const [apps, setApps] = useState([]);
@@ -27,6 +30,10 @@ export default function DeveloperCenter() {
   const [form, setForm] = useState({ name: '', scopes: ['events:write', 'profiles:read'], rate_limit_rpm: 120, rate_limit_burst: 240 });
   const [sandboxState, setSandboxState] = useState({ event_type: 'page_view', user_id: 'sandbox_user', payload: JSON.stringify({ url: '/pricing', source: 'developer_center' }, null, 2), simulate_failure: false });
   const [runningSandbox, setRunningSandbox] = useState(false);
+  const [webhookDialogOpen, setWebhookDialogOpen] = useState(false);
+  const [editingWebhook, setEditingWebhook] = useState(null);
+  const [webhookSaving, setWebhookSaving] = useState(false);
+  const [webhookForm, setWebhookForm] = useState({ name: '', url: '', event_types: '', description: '' });
 
   const selectedApp = useMemo(() => apps.find((app) => app.id === selectedAppId) || null, [apps, selectedAppId]);
   const selectedAppActiveKey = useMemo(() => apiKeys.find((key) => key.status === 'active') || null, [apiKeys]);
@@ -122,6 +129,77 @@ export default function DeveloperCenter() {
     toast.success('Sandbox event processed');
   };
 
+  const webhookEndpoints = useMemo(() => (
+    sessions
+      .filter((session) => session.endpoint)
+      .reduce((acc, session) => {
+        const existing = acc.find((item) => item.url === session.endpoint);
+        if (existing) return acc;
+        acc.push({
+          id: session.endpoint,
+          name: session.name?.replace(/ sandbox test$/i, '') || 'Webhook endpoint',
+          url: session.endpoint,
+          event_types: [session.event_type].filter(Boolean),
+          description: 'Derived from webhook delivery history',
+          status: 'active'
+        });
+        return acc;
+      }, [])
+  ), [sessions]);
+
+  const resetWebhookForm = () => {
+    setWebhookForm({ name: '', url: '', event_types: '', description: '' });
+    setEditingWebhook(null);
+  };
+
+  const handleOpenCreateWebhook = () => {
+    resetWebhookForm();
+    setWebhookDialogOpen(true);
+  };
+
+  const handleEditWebhook = (endpoint) => {
+    setEditingWebhook(endpoint);
+    setWebhookForm({
+      name: endpoint.name || '',
+      url: endpoint.url || endpoint.endpoint || '',
+      event_types: (endpoint.event_types || []).join(', '),
+      description: endpoint.description || ''
+    });
+    setWebhookDialogOpen(true);
+  };
+
+  const handleSaveWebhook = async () => {
+    setWebhookSaving(true);
+    setTimeout(() => {
+      setWebhookSaving(false);
+      setWebhookDialogOpen(false);
+      toast.success(editingWebhook ? 'Webhook endpoint updated' : 'Webhook endpoint added');
+      resetWebhookForm();
+    }, 300);
+  };
+
+  const triggerWebhookTest = async (endpoint) => {
+    if (!selectedAppId || !selectedAppActiveKey) return toast.error('Create an active key first');
+    if (!newSecret) return toast.error('Use a newly created or rotated key to run a webhook test');
+    await sendSandboxEvent({
+      client_app_id: selectedAppId,
+      api_key: newSecret,
+      endpoint: endpoint.url || endpoint.endpoint,
+      event_type: 'webhook.test',
+      user_id: 'webhook_test_user',
+      payload: { endpoint_name: endpoint.name || 'Webhook endpoint', source: 'developer_center' },
+      simulate_failure: false
+    });
+    await loadData();
+    toast.success('Webhook test fired');
+  };
+
+  const retryWebhookDelivery = async (sessionOrEndpoint) => {
+    const endpoint = sessionOrEndpoint.url || sessionOrEndpoint.endpoint;
+    if (!endpoint) return;
+    await triggerWebhookTest({ url: endpoint, name: sessionOrEndpoint.name || 'Webhook retry' });
+  };
+
   if (loading) {
     return <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">Loading developer center...</div>;
   }
@@ -159,9 +237,10 @@ export default function DeveloperCenter() {
         )}
 
         <Tabs defaultValue="keys" className="space-y-6">
-          <TabsList className="bg-[#111111] border border-[#262626]">
+          <TabsList className="bg-[#111111] border border-[#262626] flex flex-wrap h-auto">
             <TabsTrigger value="keys">Keys</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
+            <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
             <TabsTrigger value="sandbox">Sandbox</TabsTrigger>
             <TabsTrigger value="wrappers">Wrappers</TabsTrigger>
           </TabsList>
@@ -177,6 +256,17 @@ export default function DeveloperCenter() {
             <RequestLogTable logs={logs} />
           </TabsContent>
 
+          <TabsContent value="webhooks" className="space-y-6">
+            <WebhookEndpointsPanel
+              endpoints={webhookEndpoints}
+              onAdd={handleOpenCreateWebhook}
+              onEdit={handleEditWebhook}
+              onTest={triggerWebhookTest}
+              onRetry={retryWebhookDelivery}
+            />
+            <WebhookEventHistory sessions={sessions} onRetry={retryWebhookDelivery} />
+          </TabsContent>
+
           <TabsContent value="sandbox" className="space-y-6">
             {!newSecret && (
               <Card className="bg-[#f59e0b]/10 border-[#f59e0b]/30">
@@ -186,26 +276,7 @@ export default function DeveloperCenter() {
               </Card>
             )}
             <SandboxRunner state={sandboxState} setState={setSandboxState} onRun={handleRunSandbox} running={runningSandbox} />
-            <Card className="bg-[#111111] border-[#262626]">
-              <CardHeader>
-                <CardTitle className="text-white">Delivery history</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {sessions.map((session) => (
-                  <div key={session.id} className="rounded-lg border border-[#262626] bg-[#0a0a0a] p-4">
-                    <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
-                      <div className="text-sm font-medium text-white">{session.name}</div>
-                      <div className="text-xs text-[#a3a3a3]">{session.status}</div>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-3 text-xs">
-                      <pre className="rounded bg-[#111111] p-3 overflow-auto text-[#d4d4d4]">{JSON.stringify(session.request_payload || {}, null, 2)}</pre>
-                      <pre className="rounded bg-[#111111] p-3 overflow-auto text-[#d4d4d4]">{JSON.stringify(session.response_payload || {}, null, 2)}</pre>
-                    </div>
-                    {session.failure_reason && <div className="mt-2 text-xs text-[#ef4444]">{session.failure_reason}</div>}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <WebhookEventHistory sessions={sessions} onRetry={retryWebhookDelivery} />
           </TabsContent>
 
           <TabsContent value="wrappers">
@@ -214,6 +285,15 @@ export default function DeveloperCenter() {
         </Tabs>
 
         <ApiKeyCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} form={form} setForm={setForm} onSubmit={handleCreateKey} loading={saving} />
+        <WebhookEndpointDialog
+          open={webhookDialogOpen}
+          onOpenChange={setWebhookDialogOpen}
+          form={webhookForm}
+          setForm={setWebhookForm}
+          onSubmit={handleSaveWebhook}
+          loading={webhookSaving}
+          editing={!!editingWebhook}
+        />
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ChurnAnalytics from './pages/ChurnAnalytics';
 import Landing from './pages/Landing';
 import DeveloperCenter from './pages/DeveloperCenter';
+import DeveloperUsageAnalytics from './pages/DeveloperUsageAnalytics';
 
 const { Pages, Layout } = pagesConfig;
 
@@ -69,6 +70,14 @@ const AuthenticatedApp = () => {
         element={
           <LayoutWrapper currentPageName="DeveloperCenter">
             <DeveloperCenter />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/DeveloperUsageAnalytics"
+        element={
+          <LayoutWrapper currentPageName="DeveloperUsageAnalytics">
+            <DeveloperUsageAnalytics />
           </LayoutWrapper>
         }
       />
