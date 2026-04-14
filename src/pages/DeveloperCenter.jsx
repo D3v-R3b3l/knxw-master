@@ -19,7 +19,7 @@ import WebhookEventHistory from '@/components/developer/WebhookEventHistory';
 
 export default function DeveloperCenter() {
   const [apps, setApps] = useState([]);
-  const [selectedAppId, setSelectedAppId] = useState('');
+  const [selectedAppId, setSelectedAppId] = useState('all');
   const [apiKeys, setApiKeys] = useState([]);
   const [logs, setLogs] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -43,8 +43,8 @@ export default function DeveloperCenter() {
     const user = await base44.auth.me();
     const clientApps = await base44.entities.ClientApp.filter({ owner_id: user.id }, '-created_date', 100);
     setApps(clientApps);
-    const defaultAppId = selectedAppId || clientApps[0]?.id || '';
-    setSelectedAppId(defaultAppId);
+    const defaultAppId = selectedAppId !== 'all' ? selectedAppId : (clientApps[0]?.id || '');
+    setSelectedAppId(defaultAppId || 'all');
 
     if (defaultAppId) {
       const [keys, requestLogs, debugSessions] = await Promise.all([
@@ -68,7 +68,12 @@ export default function DeveloperCenter() {
   }, []);
 
   useEffect(() => {
-    if (!selectedAppId) return;
+    if (!selectedAppId || selectedAppId === 'all') {
+      setApiKeys([]);
+      setLogs([]);
+      setSessions([]);
+      return;
+    }
     Promise.all([
       base44.entities.ApiKey.filter({ tenant_id: selectedAppId }, '-created_date', 100),
       base44.entities.ApiKeyRequestLog.filter({ client_app_id: selectedAppId }, '-timestamp', 100),
@@ -218,6 +223,7 @@ export default function DeveloperCenter() {
                 <SelectValue placeholder="Select app" />
               </SelectTrigger>
               <SelectContent className="bg-[#111111] border-[#262626] text-white">
+                <SelectItem value="all">Select app</SelectItem>
                 {apps.map((app) => <SelectItem key={app.id} value={app.id}>{app.name}</SelectItem>)}
               </SelectContent>
             </Select>

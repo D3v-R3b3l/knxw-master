@@ -3,7 +3,7 @@ import {
   GitBranch as AttributionIcon, TrendingUp, BookOpen, Bot, HeartPulse, 
   FlaskConical, Database as DatabaseIcon, Megaphone, BarChart3 as GoogleDataIcon, 
   Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, Sparkles,
-  Sliders, Store, Plug, Route, Cpu, UserCheck, TrendingDown, Webhook
+  Sliders, Store, Plug, Route, Cpu, UserCheck, TrendingDown, Webhook, Waypoints
 } from "lucide-react";
 
 export const navigationSections = [
@@ -34,7 +34,7 @@ export const navigationSections = [
       { title: "Audience Builder", page: "AudienceBuilder", icon: Target, description: "Segment Creation" },
       { title: "Predictive AI", page: "PredictivePsychographics", icon: Brain, description: "Behavior Forecasting" },
       { title: "Churn Analytics", page: "ChurnAnalytics", icon: TrendingDown, description: "Risk Cohorts & Heatmaps" },
-      { title: "Journey Builder", page: "Journeys", icon: AttributionIcon, description: "User Paths" },
+      { title: "Journey Builder", page: "Journeys", icon: Waypoints, description: "User Paths" },
       { title: "Batch Analytics", page: "BatchAnalytics", icon: BarChart3, description: "Deep Analysis" },
       { title: "Market Intelligence", page: "MarketIntelligence", icon: TrendingUp, description: "Trends & Insights" },
       { title: "Executive Dashboard", page: "ExecutiveDashboard", icon: Briefcase, description: "Board-Level KPIs" },

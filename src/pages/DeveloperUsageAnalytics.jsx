@@ -30,7 +30,7 @@ function groupLogs(logs, windowLabel) {
 
 export default function DeveloperUsageAnalytics() {
   const [apps, setApps] = useState([]);
-  const [selectedAppId, setSelectedAppId] = useState('');
+  const [selectedAppId, setSelectedAppId] = useState('all');
   const [range, setRange] = useState('24h');
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,16 +40,17 @@ export default function DeveloperUsageAnalytics() {
       const user = await base44.auth.me();
       const clientApps = await base44.entities.ClientApp.filter({ owner_id: user.id }, '-created_date', 100);
       setApps(clientApps);
-      setSelectedAppId(clientApps[0]?.id || '');
+      setSelectedAppId(clientApps[0]?.id || 'all');
     };
     loadApps();
   }, []);
 
   useEffect(() => {
     const loadLogs = async () => {
-      if (!selectedAppId) return;
       setLoading(true);
-      const requestLogs = await base44.entities.ApiKeyRequestLog.filter({ client_app_id: selectedAppId }, '-timestamp', range === '7d' ? 500 : 200);
+      const requestLogs = selectedAppId === 'all'
+        ? await base44.entities.ApiKeyRequestLog.list('-timestamp', range === '7d' ? 500 : 200)
+        : await base44.entities.ApiKeyRequestLog.filter({ client_app_id: selectedAppId }, '-timestamp', range === '7d' ? 500 : 200);
       setLogs(requestLogs);
       setLoading(false);
     };
@@ -83,6 +84,7 @@ export default function DeveloperUsageAnalytics() {
                 <SelectValue placeholder="Select app" />
               </SelectTrigger>
               <SelectContent className="bg-[#111111] border-[#262626] text-white">
+                <SelectItem value="all">All apps</SelectItem>
                 {apps.map((app) => <SelectItem key={app.id} value={app.id}>{app.name}</SelectItem>)}
               </SelectContent>
             </Select>
