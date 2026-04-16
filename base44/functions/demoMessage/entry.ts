@@ -166,12 +166,20 @@ You MUST respond with valid JSON only, no markdown, no prose outside the JSON ob
 
   } catch (error) {
     console.error('Demo message error:', error);
+
+    let assistantMessage = "I'm having a moment — please try again in a few seconds.";
+    if (error?.status === 429 || error?.error?.type === 'insufficient_quota') {
+      assistantMessage = "The demo AI is temporarily unavailable — the OpenAI account linked to this app has run out of credits. Please contact the site administrator.";
+    } else if (error?.status === 401) {
+      assistantMessage = "The demo AI has an authentication issue with its API key. Please contact the site administrator.";
+    }
+
     return new Response(JSON.stringify({
       success: false,
       error: error.message,
-      assistant_message: "I'm having a moment — please try again in a few seconds."
+      assistant_message: assistantMessage
     }), {
-      status: 500,
+      status: error?.status || 500,
       headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
     });
   }
