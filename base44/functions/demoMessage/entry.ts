@@ -1,7 +1,10 @@
-// Demo message handler - calls OpenAI directly
+// Demo message handler - calls OpenRouter
 import OpenAI from 'npm:openai@4';
 
-const openai = new OpenAI({ apiKey: Deno.env.get('OPENAI_API_KEY') });
+const openai = new OpenAI({
+  apiKey: Deno.env.get('OPENROUTER_API_KEY'),
+  baseURL: 'https://openrouter.ai/api/v1',
+});
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -123,7 +126,7 @@ You MUST respond with valid JSON only, no markdown, no prose outside the JSON ob
     const userMessage = `CONVERSATION:\n${historyText}${profileContext}${feedbackContext}`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'google/gemini-2.0-flash-exp:free',
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: systemPrompt },
