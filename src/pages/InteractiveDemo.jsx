@@ -128,10 +128,11 @@ export default function InteractiveDemoPage() {
 
     } catch (error) {
       console.error('Failed to send message:', error);
+      const message = error?.response?.data?.assistant_message || error?.response?.data?.error || 'The demo could not process your message.';
       setMessages(prev => [...prev, { 
         id: `err-${Date.now()}`,
         role: 'assistant', 
-        content: 'I apologize, but I had trouble processing your message. Please check your connection and try again.',
+        content: message,
       }]);
     } finally {
       setLoading(false);

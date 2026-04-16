@@ -278,12 +278,24 @@ RESPONSE TONE:
 
   } catch (error) {
     console.error('Demo message error:', error);
+
+    const status = error?.status || error?.originalError?.response?.status || 500;
+    const reason = error?.data?.extra_data?.reason;
+
+    let assistantMessage = error?.message || 'The demo is temporarily unavailable.';
+
+    if (reason === 'integration_credits_limit_reached' || status === 402) {
+      assistantMessage = 'This live AI demo is temporarily unavailable because the app has hit its monthly AI usage limit.';
+    } else if (status === 401) {
+      assistantMessage = 'This demo hit an authentication issue in the backend and could not process your message.';
+    }
+
     return new Response(JSON.stringify({
       success: false,
-      error: error.message,
-      assistant_message: "I'm having trouble right now. Please try again."
+      error: error?.message || 'Unknown error',
+      assistant_message: assistantMessage
     }), {
-      status: 500,
+      status,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
     });
   }
