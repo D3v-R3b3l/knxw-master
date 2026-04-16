@@ -1,15 +1,17 @@
-// Demo message handler - works for anonymous users
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+// Demo message handler - calls OpenAI directly
+import OpenAI from 'npm:openai@4';
+
+const openai = new OpenAI({ apiKey: Deno.env.get('OPENAI_API_KEY') });
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+};
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-      }
-    });
+    return new Response('ok', { headers: CORS_HEADERS });
   }
 
   try {
@@ -19,12 +21,9 @@ Deno.serve(async (req) => {
     if (!session_id || !content) {
       return new Response(JSON.stringify({ success: false, error: 'Missing session_id or content' }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+        headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
       });
     }
-
-    const base44 = createClientFromRequest(req);
-    const client = base44.asServiceRole || base44;
 
     const historyText = history
       .map(m => {
@@ -45,14 +44,9 @@ Deno.serve(async (req) => {
       ? `\n\nUSER FEEDBACK ON LAST RESPONSE:\n- Profile accuracy: ${feedback.profile_rating}/5\n- UI relevance: ${feedback.ui_rating}/5\n- Comment: "${feedback.comment || 'none'}"\nADJUST your next inference to address this feedback directly.`
       : '';
 
-    const prompt = `You are knXw's psychographic AI conducting a live product demo. Your dual job:
+    const systemPrompt = `You are knXw's psychographic AI conducting a live product demo. Your dual job:
 1. Have a genuinely helpful, specific conversation responding to the user's actual question.
 2. Continuously infer and maintain a complete psychographic profile from their language, concerns, and framing.
-
-CONVERSATION:
-${historyText}
-${profileContext}
-${feedbackContext}
 
 ═══════════════════════════════════════════════
 PSYCHOGRAPHIC INFERENCE RULES (MANDATORY):
@@ -116,151 +110,45 @@ Generate EXACTLY 3-4 adaptive_ui_elements per response. Rules:
 
 6. URGENCY: Derive urgencyLevel from emotional_state.mood: anxious/frustrated→high, excited→medium, confident→low, uncertain→medium.
 
-INDUSTRY VARIANT EXAMPLES (use as reference, not defaults):
-- E-commerce → achievement: "Join Top 10% of Buyers", security: "Risk-Free 30-Day Returns", innovation: "Shop New Arrivals First"
-- Finance → conservative: "FDIC-Insured, Guaranteed Growth", moderate: "Balanced Portfolio Strategy", aggressive: "Maximize Market Exposure"
-- Healthcare → achievement: "Hit Your Health Milestones", security: "Clinically Validated Protocol", innovation: "Cutting-Edge Treatment Options"
-- Real Estate → conservative: "Stable Long-Term Investment", moderate: "Balanced Market Entry", aggressive: "High-Growth Opportunity Zone"
-- Gaming → mastery: "Unlock Elite Tier", social: "Invite Your Squad", exploration: "Discover Hidden Zones"
-- Legal/Professional → analytical: "Review Full Case Precedent", systematic: "Structured Compliance Framework", strategic: "Optimize Regulatory Positioning"
-
 ═══════════════════════════════════════════════
 RESPONSE TONE:
 ═══════════════════════════════════════════════
 - Answer the user's actual question specifically and helpfully. Don't be vague.
 - When industry is unknown, weave in a natural clarifying question ("Are you building for consumers, businesses, or something else?").
 - When user is skeptical, show don't tell — generate elements that directly reflect their stated words.
-- Keep the assistant_response concise (3-5 sentences max). The UI elements do the demonstrating.`;
+- Keep the assistant_response concise (3-5 sentences max). The UI elements do the demonstrating.
 
-    const llmResponse = await client.integrations.Core.InvokeLLM({
-      prompt,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          assistant_response: { type: 'string' },
-          adaptive_ui_elements: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                type: { type: 'string', enum: ['button', 'card', 'container', 'toast', 'modal', 'dashboard_widget', 'ecommerce_item', 'game_hud'] },
-                baseText: { type: 'string' },
-                baseHeadline: { type: 'string' },
-                baseDescription: { type: 'string' },
-                accentColor: { type: 'string' },
-                metrics: {
-                  type: 'object',
-                  properties: { label: { type: 'string' }, value: { type: 'string' }, trend: { type: 'string' } }
-                },
-                productDetails: {
-                  type: 'object',
-                  properties: { price: { type: 'string' }, urgencyTag: { type: 'string' } }
-                },
-                motivationVariants: {
-                  type: 'object',
-                  properties: {
-                    achievement: { type: 'string' }, security: { type: 'string' },
-                    innovation: { type: 'string' }, autonomy: { type: 'string' },
-                    mastery: { type: 'string' }, social: { type: 'string' }
-                  }
-                },
-                riskVariants: {
-                  type: 'object',
-                  properties: { conservative: { type: 'string' }, moderate: { type: 'string' }, aggressive: { type: 'string' } }
-                },
-                cognitiveStyleVariants: {
-                  type: 'object',
-                  properties: { analytical: { type: 'string' }, intuitive: { type: 'string' }, pragmatic: { type: 'string' }, strategic: { type: 'string' } }
-                },
-                showFor: {
-                  type: 'object',
-                  properties: {
-                    motivations: { type: 'array', items: { type: 'string' } },
-                    riskProfile: { type: 'string' },
-                    cognitiveStyle: { type: 'string' }
-                  }
-                },
-                hideFor: {
-                  type: 'object',
-                  properties: {
-                    motivations: { type: 'array', items: { type: 'string' } },
-                    riskProfile: { type: 'string' }
-                  }
-                },
-                industryContext: { type: 'string' },
-                urgencyLevel: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
-                visualStyle: { type: 'string', enum: ['minimal', 'standard', 'bold', 'animated'] },
-                colorScheme: { type: 'string', enum: ['primary', 'success', 'warning', 'info', 'danger'] }
-              }
-            }
-          },
-          motivation_stack: {
-            type: 'array',
-            items: { type: 'object', properties: { label: { type: 'string' }, weight: { type: 'number' } } }
-          },
-          emotional_state: {
-            type: 'object',
-            properties: { mood: { type: 'string' }, confidence: { type: 'number' } }
-          },
-          cognitive_style: {
-            type: 'object',
-            properties: { style: { type: 'string' }, confidence: { type: 'number' } }
-          },
-          risk_profile: {
-            type: 'object',
-            properties: { profile: { type: 'string' }, confidence: { type: 'number' } }
-          },
-          personality_traits: {
-            type: 'object',
-            properties: {
-              openness: { type: 'number' }, conscientiousness: { type: 'number' },
-              extraversion: { type: 'number' }, agreeableness: { type: 'number' },
-              neuroticism: { type: 'number' }
-            }
-          },
-          reasoning: {
-            type: 'array',
-            items: { type: 'object', properties: { trait: { type: 'string' }, inference: { type: 'string' } } }
-          },
-          user_preferences: {
-            type: 'object',
-            properties: {
-              colors_disliked: { type: 'array', items: { type: 'string' } },
-              colors_preferred: { type: 'array', items: { type: 'string' } },
-              ui_style_preferences: { type: 'array', items: { type: 'string' } },
-              industry_context: { type: 'string' }
-            }
-          },
-          overall_confidence: { type: 'number' }
-        },
-        required: ['assistant_response', 'adaptive_ui_elements', 'motivation_stack', 'emotional_state', 'cognitive_style', 'risk_profile', 'personality_traits', 'reasoning', 'overall_confidence']
-      }
+You MUST respond with valid JSON only, no markdown, no prose outside the JSON object.`;
+
+    const userMessage = `CONVERSATION:\n${historyText}${profileContext}${feedbackContext}`;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage }
+      ]
     });
 
-    // Merge with previous profile to ensure continuity — never regress fields to empty
+    const llmResponse = JSON.parse(completion.choices[0].message.content);
+
+    // Merge with previous profile to ensure continuity
     const prevProfile = current_profile || {};
     const updatedProfile = {
       motivation_stack: llmResponse.motivation_stack?.length > 0 ? llmResponse.motivation_stack : (prevProfile.motivation_stack || []),
-      emotional_state: (llmResponse.emotional_state?.mood) ? llmResponse.emotional_state : (prevProfile.emotional_state || {}),
-      cognitive_style: (llmResponse.cognitive_style?.style) ? llmResponse.cognitive_style : (prevProfile.cognitive_style || {}),
-      risk_profile: (llmResponse.risk_profile?.profile) ? llmResponse.risk_profile : (prevProfile.risk_profile || {}),
+      emotional_state: llmResponse.emotional_state?.mood ? llmResponse.emotional_state : (prevProfile.emotional_state || {}),
+      cognitive_style: llmResponse.cognitive_style?.style ? llmResponse.cognitive_style : (prevProfile.cognitive_style || {}),
+      risk_profile: llmResponse.risk_profile?.profile ? llmResponse.risk_profile : (prevProfile.risk_profile || {}),
       personality_traits: (llmResponse.personality_traits && Object.keys(llmResponse.personality_traits).length > 0) ? llmResponse.personality_traits : (prevProfile.personality_traits || {}),
       reasoning: llmResponse.reasoning?.length > 0 ? llmResponse.reasoning : (prevProfile.reasoning || []),
       user_preferences: {
         ...(prevProfile.user_preferences || {}),
         ...(llmResponse.user_preferences || {}),
-        // Preserve industry_context from previous if new one is null/empty
         industry_context: llmResponse.user_preferences?.industry_context || prevProfile.user_preferences?.industry_context || null,
-        // Merge color arrays, don't overwrite with empty
-        colors_disliked: llmResponse.user_preferences?.colors_disliked?.length > 0
-          ? llmResponse.user_preferences.colors_disliked
-          : (prevProfile.user_preferences?.colors_disliked || []),
-        colors_preferred: llmResponse.user_preferences?.colors_preferred?.length > 0
-          ? llmResponse.user_preferences.colors_preferred
-          : (prevProfile.user_preferences?.colors_preferred || []),
-        ui_style_preferences: llmResponse.user_preferences?.ui_style_preferences?.length > 0
-          ? llmResponse.user_preferences.ui_style_preferences
-          : (prevProfile.user_preferences?.ui_style_preferences || []),
+        colors_disliked: llmResponse.user_preferences?.colors_disliked?.length > 0 ? llmResponse.user_preferences.colors_disliked : (prevProfile.user_preferences?.colors_disliked || []),
+        colors_preferred: llmResponse.user_preferences?.colors_preferred?.length > 0 ? llmResponse.user_preferences.colors_preferred : (prevProfile.user_preferences?.colors_preferred || []),
+        ui_style_preferences: llmResponse.user_preferences?.ui_style_preferences?.length > 0 ? llmResponse.user_preferences.ui_style_preferences : (prevProfile.user_preferences?.ui_style_preferences || []),
       },
       overall_confidence: llmResponse.overall_confidence || prevProfile.overall_confidence || 0.3,
       turn_count: (prevProfile.turn_count || 0) + 1
@@ -273,30 +161,18 @@ RESPONSE TONE:
       current_profile: updatedProfile
     }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
     });
 
   } catch (error) {
     console.error('Demo message error:', error);
-
-    const status = error?.status || error?.originalError?.response?.status || 500;
-    const reason = error?.data?.extra_data?.reason;
-
-    let assistantMessage = error?.message || 'The demo is temporarily unavailable.';
-
-    if (reason === 'integration_credits_limit_reached' || status === 402) {
-      assistantMessage = 'This live AI demo is temporarily unavailable because the app has hit its monthly AI usage limit.';
-    } else if (status === 401) {
-      assistantMessage = 'This demo hit an authentication issue in the backend and could not process your message.';
-    }
-
     return new Response(JSON.stringify({
       success: false,
-      error: error?.message || 'Unknown error',
-      assistant_message: assistantMessage
+      error: error.message,
+      assistant_message: "I'm having a moment — please try again in a few seconds."
     }), {
-      status,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      status: 500,
+      headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
     });
   }
 });
