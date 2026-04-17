@@ -1,10 +1,5 @@
-// Demo message handler - calls OpenRouter
-import OpenAI from 'npm:openai@4';
-
-const openai = new OpenAI({
-  apiKey: Deno.env.get('OPENROUTER_API_KEY'),
-  baseURL: 'https://openrouter.ai/api/v1',
-});
+// Demo message handler - uses Base44 InvokeLLM integration
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -18,6 +13,7 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const base44 = createClientFromRequest(req);
     const data = await req.json();
     const { session_id, content, history = [], current_profile = null, feedback = null } = data;
 
@@ -47,7 +43,7 @@ Deno.serve(async (req) => {
       ? `\n\nUSER FEEDBACK ON LAST RESPONSE:\n- Profile accuracy: ${feedback.profile_rating}/5\n- UI relevance: ${feedback.ui_rating}/5\n- Comment: "${feedback.comment || 'none'}"\nADJUST your next inference to address this feedback directly.`
       : '';
 
-    const systemPrompt = `You are knXw's psychographic AI conducting a live product demo. Your dual job:
+    const prompt = `You are knXw's psychographic AI conducting a live product demo. Your dual job:
 1. Have a genuinely helpful, specific conversation responding to the user's actual question.
 2. Continuously infer and maintain a complete psychographic profile from their language, concerns, and framing.
 
@@ -109,7 +105,7 @@ Generate EXACTLY 3-4 adaptive_ui_elements per response. Rules:
 
 4. INDUSTRY FIDELITY: industryContext must match what the user actually said. If unknown, use a plausible neutral context like "General" or ask them.
 
-5. COLOR & STYLE: accentColor must be a valid hex. NEVER use colors in user_preferences.colors_disliked. Derive visual style from cognitive_style: analytical→minimal, creative→bold, systematic→standard, intuitive→animated.
+5. COLOR & STYLE: accentColor must be a valid hex. Derive visual style from cognitive_style: analytical→minimal, creative→bold, systematic→standard, intuitive→animated.
 
 6. URGENCY: Derive urgencyLevel from emotional_state.mood: anxious/frustrated→high, excited→medium, confident→low, uncertain→medium.
 
@@ -121,20 +117,66 @@ RESPONSE TONE:
 - When user is skeptical, show don't tell — generate elements that directly reflect their stated words.
 - Keep the assistant_response concise (3-5 sentences max). The UI elements do the demonstrating.
 
-You MUST respond with valid JSON only, no markdown, no prose outside the JSON object.`;
+CONVERSATION:
+${historyText}${profileContext}${feedbackContext}`;
 
-    const userMessage = `CONVERSATION:\n${historyText}${profileContext}${feedbackContext}`;
+    const responseSchema = {
+      type: "object",
+      properties: {
+        assistant_response: { type: "string" },
+        motivation_stack: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: { label: { type: "string" }, weight: { type: "number" } },
+            required: ["label", "weight"]
+          }
+        },
+        emotional_state: {
+          type: "object",
+          properties: { mood: { type: "string" }, confidence: { type: "number" } }
+        },
+        cognitive_style: {
+          type: "object",
+          properties: { style: { type: "string" }, confidence: { type: "number" } }
+        },
+        risk_profile: {
+          type: "object",
+          properties: { profile: { type: "string" }, confidence: { type: "number" } }
+        },
+        personality_traits: {
+          type: "object",
+          properties: {
+            openness: { type: "number" },
+            conscientiousness: { type: "number" },
+            extraversion: { type: "number" },
+            agreeableness: { type: "number" },
+            neuroticism: { type: "number" }
+          }
+        },
+        overall_confidence: { type: "number" },
+        reasoning: { type: "array", items: { type: "string" } },
+        user_preferences: {
+          type: "object",
+          properties: {
+            industry_context: { type: "string" },
+            colors_preferred: { type: "array", items: { type: "string" } },
+            colors_disliked: { type: "array", items: { type: "string" } },
+            ui_style_preferences: { type: "array", items: { type: "string" } }
+          }
+        },
+        adaptive_ui_elements: {
+          type: "array",
+          items: { type: "object" }
+        }
+      },
+      required: ["assistant_response", "motivation_stack", "emotional_state", "cognitive_style", "risk_profile", "personality_traits", "overall_confidence", "reasoning", "user_preferences", "adaptive_ui_elements"]
+    };
 
-    const completion = await openai.chat.completions.create({
-      model: 'google/gemini-2.0-flash-exp:free',
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage }
-      ]
+    const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt,
+      response_json_schema: responseSchema
     });
-
-    const llmResponse = JSON.parse(completion.choices[0].message.content);
 
     // Merge with previous profile to ensure continuity
     const prevProfile = current_profile || {};
@@ -170,19 +212,12 @@ You MUST respond with valid JSON only, no markdown, no prose outside the JSON ob
   } catch (error) {
     console.error('Demo message error:', error);
 
-    let assistantMessage = "I'm having a moment — please try again in a few seconds.";
-    if (error?.status === 429 || error?.error?.type === 'insufficient_quota') {
-      assistantMessage = "The demo AI is temporarily unavailable — the OpenAI account linked to this app has run out of credits. Please contact the site administrator.";
-    } else if (error?.status === 401) {
-      assistantMessage = "The demo AI has an authentication issue with its API key. Please contact the site administrator.";
-    }
-
     return new Response(JSON.stringify({
       success: false,
       error: error.message,
-      assistant_message: assistantMessage
+      assistant_message: "I'm having a moment — please try again in a few seconds."
     }), {
-      status: error?.status || 500,
+      status: 500,
       headers: { 'Content-Type': 'application/json', ...CORS_HEADERS }
     });
   }
