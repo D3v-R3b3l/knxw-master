@@ -66,6 +66,7 @@ export default function MyAppsPage() {
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [snippetTab, setSnippetTab] = useState('html');
   const [copiedKey, setCopiedKey] = useState(null);
+  const [newlyCreatedApp, setNewlyCreatedApp] = useState(null); // { id, api_key } — shown once
 
   // Create form
   const [newAppName, setNewAppName] = useState("");
