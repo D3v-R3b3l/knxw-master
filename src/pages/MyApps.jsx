@@ -29,10 +29,10 @@ function normalizeDisplayDomain(domain) {
 
 const SNIPPET_TABS = [['html','HTML'], ['react','React / Next.js'], ['js','JS / TypeScript'], ['angular','Angular']];
 
-function getSnippet(apiKey, tab) {
+function getSnippet(tab) {
   if (tab === 'html') return `<!-- Paste into your <head> tag -->
 <script src="https://cdn.knxw.ai/sdk.js"
-  data-api-key="${apiKey}"
+  data-api-key="YOUR_API_KEY"
   async>
 </script>`;
   if (tab === 'react') return `// npm install @knxw/sdk
@@ -41,13 +41,13 @@ import { useEffect } from 'react';
 import { KnxwSDK } from '@knxw/sdk';
 
 export default function App() {
-  useEffect(() => { KnxwSDK.init('${apiKey}'); }, []);
+  useEffect(() => { KnxwSDK.init('YOUR_API_KEY'); }, []);
   // ...rest of your app
 }`;
   if (tab === 'js') return `// npm install @knxw/sdk
 // In your entry file (index.js / main.ts)
 import { KnxwSDK } from '@knxw/sdk';
-KnxwSDK.init('${apiKey}');`;
+KnxwSDK.init('YOUR_API_KEY');`;
   if (tab === 'angular') return `// npm install @knxw/sdk
 // In AppComponent (app.component.ts)
 import { Component, OnInit } from '@angular/core';
@@ -55,7 +55,7 @@ import { KnxwSDK } from '@knxw/sdk';
 
 @Component({ selector: 'app-root', templateUrl: './app.component.html' })
 export class AppComponent implements OnInit {
-  ngOnInit() { KnxwSDK.init('${apiKey}'); }
+  ngOnInit() { KnxwSDK.init('YOUR_API_KEY'); }
 }`;
   return '';
 }
@@ -66,7 +66,7 @@ export default function MyAppsPage() {
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [snippetTab, setSnippetTab] = useState('html');
   const [copiedKey, setCopiedKey] = useState(null);
-  const [newlyCreatedApp, setNewlyCreatedApp] = useState(null); // { id, api_key } — shown once
+  const [revealedKey, setRevealedKey] = useState(null); // { id, api_key } — shown once after creation
 
   // Create form
   const [newAppName, setNewAppName] = useState("");
@@ -115,7 +115,10 @@ export default function MyAppsPage() {
       });
       if (status === 201 || status === 200) {
         setNewAppName(""); setNewAppDomains("");
-        toast({ title: "App created!", description: "Your new application is ready." });
+        if (data?.app?.api_key) {
+          setRevealedKey({ id: data.app.id, api_key: data.app.api_key });
+        }
+        toast({ title: "App created!", description: "Copy your API key now — it won't be shown again." });
         setTimeout(async () => {
           await loadApps();
           if (data?.app?.id) setSelectedAppId(data.app.id);
@@ -295,15 +298,26 @@ export default function MyAppsPage() {
                     )}
                   </div>
 
-                  {/* API Key */}
+                  {/* API Key — one-time reveal banner */}
+                  {revealedKey?.id === selectedApp.id && (
+                    <div className="p-3 rounded-lg border border-amber-500/40 bg-amber-500/10">
+                      <p className="text-xs text-amber-300 font-semibold mb-2">⚠ Copy your API key now — it will not be shown again.</p>
+                      <div className="flex items-center gap-2">
+                        <Input readOnly value={revealedKey.api_key} className="font-mono text-xs bg-[#0a0a0a] border-[#262626] text-[#e5e5e5] flex-1" />
+                        <Button size="icon" variant="outline" onClick={() => { copyToClipboard(revealedKey.api_key, 'apikey'); setRevealedKey(null); }} className="border-[#262626] hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10 flex-shrink-0">
+                          {copiedKey === 'apikey' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* API Key — masked after creation */}
                   <div>
                     <label className="text-sm font-medium text-[#a3a3a3] mb-2 block">API Key</label>
                     <div className="flex items-center gap-2">
-                      <Input readOnly value={selectedApp.api_key} className="font-mono text-xs bg-[#0a0a0a] border-[#262626] text-[#e5e5e5] flex-1" />
-                      <Button size="icon" variant="outline" onClick={() => copyToClipboard(selectedApp.api_key, 'apikey')} className="border-[#262626] hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10 flex-shrink-0">
-                        {copiedKey === 'apikey' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-gray-400" />}
-                      </Button>
+                      <Input readOnly value={selectedApp.api_key ? selectedApp.api_key.slice(0, 12) + '••••••••••••••••••••••••••••••••' : ''} className="font-mono text-xs bg-[#0a0a0a] border-[#262626] text-[#6b7280] flex-1" />
                     </div>
+                    <p className="text-xs text-[#6b7280] mt-1">Key is masked for security. Use the copy button shown once at creation.</p>
                   </div>
 
                   {/* Authorized Domains */}
@@ -334,8 +348,8 @@ export default function MyAppsPage() {
                       ))}
                     </div>
                     <div className="relative">
-                      <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(selectedApp.api_key, snippetTab)}</pre>
-                      <button onClick={() => copyToClipboard(getSnippet(selectedApp.api_key, snippetTab), 'snippet')} className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors">
+                      <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(snippetTab)}</pre>
+                       <button onClick={() => copyToClipboard(getSnippet(snippetTab), 'snippet')} className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors">
                         {copiedKey === 'snippet' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                       </button>
                     </div>
