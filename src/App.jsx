@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ChurnAnalytics from './pages/ChurnAnalytics';
+import ApiKeys from './pages/ApiKeys';
 import Landing from './pages/Landing';
 import DeveloperCenter from './pages/DeveloperCenter';
 import DeveloperUsageAnalytics from './pages/DeveloperUsageAnalytics';
@@ -70,6 +71,14 @@ const AuthenticatedApp = () => {
         element={
           <LayoutWrapper currentPageName="DeveloperCenter">
             <DeveloperCenter />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/ApiKeys"
+        element={
+          <LayoutWrapper currentPageName="ApiKeys">
+            <ApiKeys />
           </LayoutWrapper>
         }
       />

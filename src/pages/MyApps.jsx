@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X } from "lucide-react";
+import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X, Key } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -287,7 +287,10 @@ export default function MyAppsPage() {
                       )}
                     </div>
                     {editingApp !== selectedApp.id && (
-                      <div className="flex gap-2 flex-shrink-0">
+                      <div className="flex gap-2 flex-shrink-0 flex-wrap">
+                        <Link to={createPageUrl('ApiKeys')} className="inline-flex items-center gap-1.5 text-xs bg-[#1a1a1a] border border-[#262626] text-[#a3a3a3] hover:text-white hover:border-[#00d4ff]/40 px-3 py-1.5 rounded-lg transition-colors">
+                          <Key className="w-3 h-3" />API Keys
+                        </Link>
                         <Button size="icon" variant="ghost" onClick={() => { setEditingApp(selectedApp.id); setEditName(selectedApp.name); setEditDomains((selectedApp.authorized_domains||[]).join(', ')); }} className="text-[#a3a3a3] hover:bg-[#262626] hover:text-white" title="Edit">
                           <Pencil className="w-4 h-4" />
                         </Button>
