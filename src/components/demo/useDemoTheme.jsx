@@ -13,8 +13,9 @@ export function deriveTheme(profile) {
   const mood = profile.emotional_state?.mood || 'neutral';
   const topMotivation = profile.motivation_stack?.[0]?.label || 'achievement';
   const confidence = profile.overall_confidence || 0;
+  const preferredColors = profile.user_preferences?.colors_preferred || [];
 
-  // ─── Accent color: driven by top motivation ───────────────────────────────
+  // ─── Accent color: driven by top motivation (or explicit user preference) ──
   const motivationAccent = {
     achievement:  { h: 197, s: 100, l: 50 }, // cyan
     security:     { h: 142, s: 70,  l: 45 }, // green
@@ -27,7 +28,32 @@ export function deriveTheme(profile) {
     impact:       { h: 0,   s: 80,  l: 55 }, // red
     curiosity:    { h: 270, s: 75,  l: 65 }, // lavender
   };
-  const accent = motivationAccent[topMotivation] || motivationAccent.achievement;
+
+  // Direct color-name overrides take precedence when user explicitly states a color
+  const colorNameMap = {
+    purple:    { h: 262, s: 80,  l: 60 },
+    violet:    { h: 270, s: 75,  l: 65 },
+    lavender:  { h: 270, s: 75,  l: 65 },
+    blue:      { h: 217, s: 90,  l: 55 },
+    cyan:      { h: 197, s: 100, l: 50 },
+    teal:      { h: 180, s: 70,  l: 45 },
+    green:     { h: 142, s: 70,  l: 45 },
+    lime:      { h: 90,  s: 75,  l: 50 },
+    yellow:    { h: 50,  s: 95,  l: 55 },
+    gold:      { h: 45,  s: 95,  l: 55 },
+    amber:     { h: 45,  s: 95,  l: 55 },
+    orange:    { h: 25,  s: 95,  l: 55 },
+    red:       { h: 0,   s: 80,  l: 55 },
+    pink:      { h: 330, s: 80,  l: 60 },
+    magenta:   { h: 320, s: 85,  l: 55 },
+    rose:      { h: 345, s: 80,  l: 60 },
+  };
+
+  let accent = motivationAccent[topMotivation] || motivationAccent.achievement;
+  const firstPreferred = preferredColors.find(c => colorNameMap[String(c).toLowerCase().trim()]);
+  if (firstPreferred) {
+    accent = colorNameMap[String(firstPreferred).toLowerCase().trim()];
+  }
   const accentHSL = `hsl(${accent.h}, ${accent.s}%, ${accent.l}%)`;
   const accentHSLMuted = `hsla(${accent.h}, ${accent.s}%, ${accent.l}%, 0.15)`;
   const accentHSLBorder = `hsla(${accent.h}, ${accent.s}%, ${accent.l}%, 0.4)`;
