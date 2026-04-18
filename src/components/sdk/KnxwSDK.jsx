@@ -111,7 +111,7 @@ export function AdaptiveButton({
     return <button className={className} disabled {...props}>{baseText}</button>;
   }
 
-  // Adapt based on motivations
+  // Priority: motivation > risk profile
   let adaptedText = baseText;
   if (profile && motivationVariants) {
     for (const [motivation, text] of Object.entries(motivationVariants)) {
@@ -122,8 +122,8 @@ export function AdaptiveButton({
     }
   }
 
-  // Adapt based on risk profile
-  if (profile && riskVariants) {
+  // Only fall back to risk if no motivation variant matched
+  if (adaptedText === baseText && profile && riskVariants) {
     const risk = getRiskProfile();
     if (riskVariants[risk]) {
       adaptedText = riskVariants[risk];
@@ -140,33 +140,39 @@ export function AdaptiveText({
   baseText, 
   motivationVariants = {},
   moodVariants = {},
+  riskVariants = {},
+  cognitiveStyleVariants = {},
   className = '',
   as: Component = 'span'
 }) {
-  const { profile, loading, hasMotivation, getMood } = usePsychographic();
+  const { profile, loading, hasMotivation, getMood, getRiskProfile, getCognitiveStyle } = usePsychographic();
 
   if (loading) {
     return <Component className={className}>{baseText}</Component>;
   }
 
+  // Priority: motivation > mood > risk > cognitive style
   let adaptedText = baseText;
 
-  // Adapt based on motivations
   if (profile && motivationVariants) {
     for (const [motivation, text] of Object.entries(motivationVariants)) {
-      if (hasMotivation(motivation)) {
-        adaptedText = text;
-        break;
-      }
+      if (hasMotivation(motivation)) { adaptedText = text; break; }
     }
   }
 
-  // Adapt based on mood
-  if (profile && moodVariants) {
+  if (adaptedText === baseText && profile && moodVariants) {
     const mood = getMood();
-    if (moodVariants[mood]) {
-      adaptedText = moodVariants[mood];
-    }
+    if (moodVariants[mood]) adaptedText = moodVariants[mood];
+  }
+
+  if (adaptedText === baseText && profile && riskVariants) {
+    const risk = getRiskProfile();
+    if (riskVariants[risk]) adaptedText = riskVariants[risk];
+  }
+
+  if (adaptedText === baseText && profile && cognitiveStyleVariants) {
+    const style = getCognitiveStyle();
+    if (cognitiveStyleVariants[style]) adaptedText = cognitiveStyleVariants[style];
   }
 
   return <Component className={className}>{adaptedText}</Component>;
