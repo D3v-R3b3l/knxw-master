@@ -189,11 +189,9 @@ export default function InteractiveDemoPage() {
       <div
         className="min-h-screen text-white"
         style={{
-          ...theme.cssVars,
-          background: `linear-gradient(135deg, var(--demo-bg-from), var(--demo-bg-via), var(--demo-bg-to))`,
-          fontWeight: theme.cog.fontWeight,
-          letterSpacing: theme.cog.letterSpacing,
-          transition: `background ${theme.anim.duration} ease`,
+          background: '#0a0a0a',
+          fontWeight: 400,
+          letterSpacing: '0.01em',
         }}
       >
         <DemoThemeIndicator theme={theme} profile={currentProfile} />
@@ -202,10 +200,9 @@ export default function InteractiveDemoPage() {
         <div
           className="border-b sticky top-0 z-50"
           style={{
-            borderColor: 'var(--demo-border)',
+            borderColor: '#262626',
             background: `hsla(0,0%,4%, 0.85)`,
-            backdropFilter: `blur(var(--demo-blur))`,
-            transition: `border-color var(--demo-transition) ease, backdrop-filter var(--demo-transition) ease`,
+            backdropFilter: `blur(12px)`,
           }}
         >
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3">
@@ -215,10 +212,9 @@ export default function InteractiveDemoPage() {
                 <div
                   className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center flex-shrink-0"
                   style={{
-                    background: `linear-gradient(135deg, var(--demo-accent), var(--demo-accent))`,
-                    borderRadius: 'var(--demo-radius)',
-                    boxShadow: `0 0 16px var(--demo-accent-glow)`,
-                    transition: `all var(--demo-transition) ease`,
+                    background: `linear-gradient(135deg, #00d4ff, #0ea5e9)`,
+                    borderRadius: '0.5rem',
+                    boxShadow: `0 0 16px rgba(0,212,255,0.25)`,
                   }}
                 >
                   <Brain className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
@@ -239,9 +235,9 @@ export default function InteractiveDemoPage() {
                       variant="outline"
                       size="sm"
                       style={{
-                        borderColor: 'var(--demo-accent)',
-                        color: 'var(--demo-accent)',
-                        borderRadius: 'var(--demo-radius)',
+                        borderColor: '#00d4ff',
+                        color: '#00d4ff',
+                        borderRadius: '0.5rem',
                       }}
                       className={`lg:hidden px-2 sm:px-3 ${messages.length > 1 && !mobileAnalysisOpen ? 'pulse-glow-animation' : ''}`}>
                       <Brain className="w-4 h-4" />
@@ -251,12 +247,11 @@ export default function InteractiveDemoPage() {
                       onClick={handleGetStarted}
                       size="sm"
                       style={{
-                        background: 'var(--demo-accent)',
+                        background: '#00d4ff',
                         color: '#0a0a0a',
-                        borderRadius: 'var(--demo-radius)',
+                        borderRadius: '0.5rem',
                         fontWeight: 600,
-                        boxShadow: `0 0 20px var(--demo-accent-glow)`,
-                        transition: `all var(--demo-transition) ease`,
+                        boxShadow: `0 0 20px rgba(0,212,255,0.25)`,
                       }}
                       className="hidden sm:flex px-3 text-xs">
                       <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
@@ -385,7 +380,7 @@ export default function InteractiveDemoPage() {
             {/* Main Chat Interface */}
             <div
               className="flex-1 flex flex-col w-full lg:border-r"
-              style={{ borderColor: 'var(--demo-border)', transition: `border-color var(--demo-transition) ease` }}
+              style={{ borderColor: '#262626' }}
             >
               {/* Messages Container */}
               <div className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -403,10 +398,9 @@ export default function InteractiveDemoPage() {
                             <div
                               className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0"
                               style={{
-                                background: `var(--demo-accent)`,
+                                background: '#00d4ff',
                                 borderRadius: '50%',
-                                boxShadow: `0 0 10px var(--demo-accent-glow)`,
-                                transition: `all var(--demo-transition) ease`,
+                                boxShadow: `0 0 10px rgba(0,212,255,0.25)`,
                               }}
                             >
                               <Brain className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
@@ -422,13 +416,12 @@ export default function InteractiveDemoPage() {
                           <div
                             className="max-w-[85%] sm:max-w-[75%] px-3 sm:px-4 py-2 sm:py-3"
                             style={{
-                              background: message.role === 'user' ? 'var(--demo-user-bubble)' : 'var(--demo-surface)',
+                              background: message.role === 'user' ? '#1e293b' : '#111111',
                               border: message.role === 'user'
                                 ? '1px solid transparent'
-                                : `1px solid var(--demo-border)`,
-                              borderRadius: 'var(--demo-radius)',
+                                : `1px solid #262626`,
+                              borderRadius: '0.5rem',
                               color: message.role === 'user' ? '#fff' : '#e5e5e5',
-                              transition: `background var(--demo-transition) ease, border-color var(--demo-transition) ease`,
                             }}
                           >
                            {message.role === 'user' ? (
@@ -447,20 +440,20 @@ export default function InteractiveDemoPage() {
                               />
                             )}
 
-                            {/* Render Adaptive UI Elements - outside bubble, full width below */}
+                            {/* Render Adaptive UI Elements - scoped theme applied here only */}
                             {message.role === 'assistant' && message.adaptiveElements && message.adaptiveElements.length > 0 && (
-                              <div className="mt-4 -mx-3 sm:-mx-4">
-                                <div className="flex items-center gap-1.5 mb-3 px-1">
-                                  <Sparkles className="w-3 h-3" style={{ color: 'var(--demo-accent)' }} />
-                                  <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'var(--demo-accent)' }}>Adaptive UI</span>
-                                  <span className="text-[9px] text-[#4b5563]">· responding to your inferred profile</span>
-                                </div>
-                                <div className="space-y-3">
-                                  {message.adaptiveElements.filter(el => el && el.type).map((element, elIdx) => (
-                                    <AdaptiveElementRenderer key={elIdx} element={element} idx={elIdx} totalCount={message.adaptiveElements.length} />
-                                  ))}
-                                </div>
-                              </div>
+                             <div className="mt-4 -mx-3 sm:-mx-4" style={theme.cssVars}>
+                               <div className="flex items-center gap-1.5 mb-3 px-1">
+                                 <Sparkles className="w-3 h-3" style={{ color: theme.accentHSL }} />
+                                 <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: theme.accentHSL }}>Adaptive UI</span>
+                                 <span className="text-[9px] text-[#4b5563]">· responding to your inferred profile</span>
+                               </div>
+                               <div className="space-y-3">
+                                 {message.adaptiveElements.filter(el => el && el.type).map((element, elIdx) => (
+                                   <AdaptiveElementRenderer key={elIdx} element={element} idx={elIdx} totalCount={message.adaptiveElements.length} />
+                                 ))}
+                               </div>
+                             </div>
                             )}
                           </div>
                         </motion.div>
@@ -476,9 +469,9 @@ export default function InteractiveDemoPage() {
                       <div
                         className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0"
                         style={{
-                          background: 'var(--demo-accent)',
+                          background: '#00d4ff',
                           borderRadius: '50%',
-                          boxShadow: '0 0 10px var(--demo-accent-glow)',
+                          boxShadow: '0 0 10px rgba(0,212,255,0.25)',
                         }}
                       >
                         <Brain className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
@@ -486,9 +479,9 @@ export default function InteractiveDemoPage() {
                       <div
                         className="px-3 sm:px-4 py-2 sm:py-3"
                         style={{
-                          background: 'var(--demo-surface)',
-                          border: '1px solid var(--demo-border)',
-                          borderRadius: 'var(--demo-radius)',
+                          background: '#111111',
+                          border: '1px solid #262626',
+                          borderRadius: '0.5rem',
                         }}
                       >
                         <div className="flex gap-1">
@@ -507,7 +500,7 @@ export default function InteractiveDemoPage() {
               {messages.length <= 1 && (
                 <div
                   className="border-t px-3 sm:px-6 lg:px-8 py-2 sm:py-3"
-                  style={{ borderColor: 'var(--demo-border)', background: 'var(--demo-bg-from)' }}
+                  style={{ borderColor: '#262626', background: '#0a0a0a' }}
                 >
                   <div className="max-w-3xl mx-auto">
                     <p className="text-[10px] sm:text-xs text-[#a3a3a3] mb-2">Try asking about:</p>
@@ -518,18 +511,17 @@ export default function InteractiveDemoPage() {
                           onClick={() => applySuggestion(prompt)}
                           className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 text-[#e5e5e5] transition-all"
                           style={{
-                            border: '1px solid var(--demo-border)',
-                            background: 'var(--demo-surface)',
-                            borderRadius: 'calc(var(--demo-radius) * 2)',
-                            transition: `all var(--demo-transition) ease`,
+                            border: '1px solid #262626',
+                            background: '#111111',
+                            borderRadius: '1rem',
                           }}
                           onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = 'var(--demo-accent-border)';
-                            e.currentTarget.style.background = 'var(--demo-accent-muted)';
+                            e.currentTarget.style.borderColor = 'rgba(0,212,255,0.4)';
+                            e.currentTarget.style.background = 'rgba(0,212,255,0.08)';
                           }}
                           onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = 'var(--demo-border)';
-                            e.currentTarget.style.background = 'var(--demo-surface)';
+                            e.currentTarget.style.borderColor = '#262626';
+                            e.currentTarget.style.background = '#111111';
                           }}
                         >
                           {prompt}
@@ -543,7 +535,7 @@ export default function InteractiveDemoPage() {
               {/* Input Area - Mobile Optimized */}
               <div
                 className="border-t px-3 sm:px-6 lg:px-8 py-3 sm:py-4"
-                style={{ borderColor: 'var(--demo-border)', background: 'var(--demo-bg-from)' }}
+                style={{ borderColor: '#262626', background: '#0a0a0a' }}
               >
                 <div className="max-w-3xl mx-auto flex gap-2 sm:gap-3">
                   <Input
@@ -555,23 +547,21 @@ export default function InteractiveDemoPage() {
                     disabled={loading}
                     className="flex-1 text-white placeholder:text-[#6b7280] text-sm"
                     style={{
-                      background: 'var(--demo-surface)',
-                      border: `1px solid var(--demo-border)`,
-                      borderRadius: 'var(--demo-radius)',
-                      transition: `all var(--demo-transition) ease`,
+                      background: '#111111',
+                      border: `1px solid #262626`,
+                      borderRadius: '0.5rem',
                     }}
-                    onFocus={e => { e.currentTarget.style.borderColor = 'var(--demo-accent-border)'; }}
-                    onBlur={e => { e.currentTarget.style.borderColor = 'var(--demo-border)'; }}
+                    onFocus={e => { e.currentTarget.style.borderColor = 'rgba(0,212,255,0.4)'; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = '#262626'; }}
                   />
                   <Button
                     onClick={sendMessage}
                     disabled={loading || !input.trim()}
                     style={{
-                      background: 'var(--demo-accent)',
+                      background: '#00d4ff',
                       color: '#0a0a0a',
-                      borderRadius: 'var(--demo-radius)',
-                      boxShadow: `0 0 16px var(--demo-accent-glow)`,
-                      transition: `all var(--demo-transition) ease`,
+                      borderRadius: '0.5rem',
+                      boxShadow: `0 0 16px rgba(0,212,255,0.25)`,
                     }}
                     className="flex-shrink-0 px-3 sm:px-4">
                     {loading ? (
@@ -588,18 +578,17 @@ export default function InteractiveDemoPage() {
             <div
               className="w-[400px] flex-shrink-0 flex-col border-l hidden lg:flex"
               style={{
-                background: theme.sidebarGradient,
-                borderColor: 'var(--demo-border)',
-                transition: `all var(--demo-transition) ease`,
+                background: 'linear-gradient(180deg, #111111 0%, rgba(0,212,255,0.04) 100%)',
+                borderColor: '#262626',
               }}
             >
               <div
                 className="px-6 py-4 border-b flex-shrink-0"
-                style={{ borderColor: 'var(--demo-border)' }}
+                style={{ borderColor: '#262626' }}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Brain className="w-5 h-5" style={{ color: 'var(--demo-accent)' }} />
+                    <Brain className="w-5 h-5" style={{ color: '#00d4ff' }} />
                     <h3 className="font-semibold text-white">Live Psychographic Analysis</h3>
                   </div>
                   <button
@@ -639,15 +628,15 @@ export default function InteractiveDemoPage() {
                     transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                     className="lg:hidden fixed right-0 top-0 bottom-0 w-[85vw] max-w-sm border-l z-50 flex flex-col"
                   style={{
-                    background: theme.sidebarGradient,
-                    borderColor: 'var(--demo-border)',
+                    background: 'linear-gradient(180deg, #111111 0%, rgba(0,212,255,0.04) 100%)',
+                    borderColor: '#262626',
                   }}
                   >
                     {/* Mobile Panel Header */}
-                    <div className="px-4 py-3 border-b flex-shrink-0" style={{ borderColor: 'var(--demo-border)' }}>
+                    <div className="px-4 py-3 border-b flex-shrink-0" style={{ borderColor: '#262626' }}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <Brain className="w-5 h-5" style={{ color: 'var(--demo-accent)' }} />
+                          <Brain className="w-5 h-5" style={{ color: '#00d4ff' }} />
                           <h3 className="font-semibold text-white text-sm">Live Analysis</h3>
                         </div>
                         <button
