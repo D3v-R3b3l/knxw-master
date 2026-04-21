@@ -22,10 +22,27 @@ export default class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
     this.setState({ errorInfo });
-    
-    // Optional: Send to error reporting service
-    if (window.Sentry) {
-      window.Sentry.captureException(error, { extra: errorInfo });
+
+    // Report to the backend so Ops can see runtime errors in SystemEvent.
+    // Best-effort — never block rendering.
+    try {
+      fetch('/functions/logError', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: {
+            message: error?.message,
+            stack: error?.stack,
+            componentStack: errorInfo?.componentStack
+          },
+          errorId: `err_${Date.now()}`,
+          url: typeof window !== 'undefined' ? window.location.href : null,
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+          timestamp: new Date().toISOString()
+        })
+      }).catch(() => {});
+    } catch {
+      // No-op — logging must never throw.
     }
   }
 

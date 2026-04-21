@@ -1,0 +1,355 @@
+{
+  "name": "UserPsychographicProfile",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Unique identifier for the tracked user"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp id that owns this profile (required for cross-tenant data isolation)"
+    },
+    "schema_version": {
+      "type": "string",
+      "default": "v1.4.0",
+      "description": "Schema version for migration tracking"
+    },
+    "model_version": {
+      "type": "string",
+      "description": "AI model version used to generate this profile"
+    },
+    "motivation_stack_v2": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "label",
+          "weight"
+        ]
+      },
+      "description": "Primary motivations with normalized weights",
+      "default": []
+    },
+    "motivation_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Derived motivation labels for UI filters",
+      "default": []
+    },
+    "emotional_state": {
+      "type": "object",
+      "properties": {
+        "mood": {
+          "type": "string",
+          "enum": [
+            "positive",
+            "neutral",
+            "negative",
+            "excited",
+            "anxious",
+            "confident",
+            "uncertain"
+          ]
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "energy_level": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      }
+    },
+    "risk_profile": {
+      "type": "string",
+      "enum": [
+        "conservative",
+        "moderate",
+        "aggressive"
+      ],
+      "default": "moderate"
+    },
+    "cognitive_style": {
+      "type": "string",
+      "enum": [
+        "analytical",
+        "intuitive",
+        "systematic",
+        "creative"
+      ],
+      "default": "analytical"
+    },
+    "personality_traits": {
+      "type": "object",
+      "properties": {
+        "openness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "conscientiousness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "extraversion": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "agreeableness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "neuroticism": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "engagement_patterns": {
+      "type": "object",
+      "properties": {
+        "preferred_content_type": {
+          "type": "string",
+          "enum": [
+            "visual",
+            "textual",
+            "interactive",
+            "video"
+          ]
+        },
+        "optimal_engagement_time": {
+          "type": "string"
+        },
+        "attention_span": {
+          "type": "string",
+          "enum": [
+            "short",
+            "medium",
+            "long"
+          ]
+        }
+      }
+    },
+    "motivation_confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "emotional_state_confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "risk_profile_confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "cognitive_style_confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "personality_confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "valid_to": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "staleness_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "ts": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "weight": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "source",
+            "ts",
+            "weight"
+          ]
+        }
+      },
+      "default": {}
+    },
+    "segment_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "cluster_id": {
+      "type": "string"
+    },
+    "profile_reasoning": {
+      "type": "object",
+      "properties": {
+        "personality_explanation": {
+          "type": "string"
+        },
+        "emotional_state_reasoning": {
+          "type": "string"
+        },
+        "cognitive_style_rationale": {
+          "type": "string"
+        },
+        "motivation_basis": {
+          "type": "string"
+        },
+        "confidence_factors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "temporal_decay_applied": {
+          "type": "boolean"
+        },
+        "key_recent_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "last_analyzed": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "user_id",
+    "schema_version"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "is_demo",
+        "last_analyzed"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "user_id",
+        "last_analyzed"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "user_id"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "schema_version",
+        "valid_to"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "staleness_score",
+        "last_analyzed"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

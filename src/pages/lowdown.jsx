@@ -26,8 +26,6 @@ import {
   Target,
   MessageSquare
 } from 'lucide-react';
-import HeadManager from '../components/HeadManager';
-
 const CollapsibleSection = ({ title, icon: Icon, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
@@ -125,12 +123,6 @@ const FunctionCard = ({ name, description, category }) => {
 export default function LowdownPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <HeadManager
-        title="knXw Platform Lowdown"
-        description="The internal grand manifest of the entire knXw platform architecture, systems, and logic."
-        disableIndexing={true}
-      />
-      
       {/* Header */}
       <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 border-b border-[#262626]">
         <div className="max-w-4xl mx-auto text-center">

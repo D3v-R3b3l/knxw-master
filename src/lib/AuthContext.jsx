@@ -37,14 +37,17 @@ export const AuthProvider = ({ children }) => {
         const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
         setAppPublicSettings(publicSettings);
         
-        // If we got the app public settings successfully, check if user is authenticated
+        // If we got the app public settings successfully, check if user is authenticated.
+        // Flip isLoadingPublicSettings AFTER user auth completes so App.jsx shows one
+        // unified spinner rather than flashing guest content mid-transition (C-10).
         if (appParams.token) {
           await checkUserAuth();
+          setIsLoadingPublicSettings(false);
         } else {
           setIsLoadingAuth(false);
           setIsAuthenticated(false);
+          setIsLoadingPublicSettings(false);
         }
-        setIsLoadingPublicSettings(false);
       } catch (appError) {
         console.error('App state check failed:', appError);
         

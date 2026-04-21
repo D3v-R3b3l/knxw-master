@@ -25,7 +25,10 @@ const AuthenticatedApp = () => {
   const location = useLocation();
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
 
-  // Show spinner while determining auth state
+  // Show spinner while EITHER public-settings OR user-auth is still resolving.
+  // This prevents the flash-of-guest-content for authenticated users (C-10):
+  // previously `isLoadingPublicSettings` flipped to false before `isLoadingAuth` did,
+  // briefly rendering the Landing page before the auth redirect to /Dashboard fired.
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-[#0a0a0a]">

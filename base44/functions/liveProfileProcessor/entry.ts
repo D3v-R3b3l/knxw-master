@@ -339,8 +339,14 @@ Deno.serve(async (req) => {
       reason: disagree ? 'Disagreement between heuristics and ML' : (highValue(events) ? 'High value activity' : 'Routine update')
     });
 
-    const legacy = await svc.entities.UserPsychographicProfile.filter({ user_id }, null, 1).catch(() => []);
+    // SECURITY (H-2): Scope legacy profile lookup/write by client_app_id so that users
+    // tracked under multiple ClientApps don't overwrite each other's legacy profile.
+    const legacyFilter = resolvedAppId
+      ? { user_id, client_app_id: resolvedAppId }
+      : { user_id };
+    const legacy = await svc.entities.UserPsychographicProfile.filter(legacyFilter, null, 1).catch(() => []);
     const legacyPatch = {
+      client_app_id: resolvedAppId,
       emotional_state: fused.emotional_state,
       risk_profile: fused.risk_profile,
       cognitive_style: fused.cognitive_style,
@@ -358,7 +364,11 @@ Deno.serve(async (req) => {
     if (legacy?.[0]) {
       await svc.entities.UserPsychographicProfile.update(legacy[0].id, legacyPatch);
     } else {
-      await svc.entities.UserPsychographicProfile.create({ user_id, ...legacyPatch });
+      await svc.entities.UserPsychographicProfile.create({
+        user_id,
+        schema_version: 'v1.4.0',
+        ...legacyPatch
+      });
     }
 
     const sourceApp = resolvedAppId

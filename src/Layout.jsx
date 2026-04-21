@@ -119,53 +119,61 @@ export default function Layout({ children, currentPageName }) {
       return;
     }
 
+    let cancelled = false;
+    let onboardingTimeoutId = null;
+    let onboardingTriggerHandler = null;
+
     base44.auth.me()
       .then(user => {
+        if (cancelled) return;
         setCurrentUser(user);
         const detectedRole = detectUserRole(user);
         setUserRole(detectedRole);
 
-        base44.functions.invoke('ensureBillingSubscription', { user_id: user.id }).catch(() => null);
+        // Log billing-sync failures instead of swallowing them (C-6). A silent failure here
+        // leaves User.current_plan_key undefined → FeatureGate silently denies access.
+        base44.functions.invoke('ensureBillingSubscription', { user_id: user.id })
+          .catch((err) => {
+            logError(err, { context: 'Layout ensureBillingSubscription', user_id: user.id });
+          });
 
-        // Check backend for onboarding state
-        const onboardingKey = `${detectedRole}_completed`;
-        const dismissedKey = `${detectedRole}_dismissed`;
-
-        // Show interactive onboarding assistant for new users
         const hasCompletedAnyOnboarding = user.onboarding_state?.onboarding_progress > 0;
         const hasSeenAssistant = user.onboarding_state?.assistant_dismissed;
 
         if (!hasCompletedAnyOnboarding && !hasSeenAssistant) {
-          setTimeout(() => {
-            setShowOnboardingAssistant(true);
+          onboardingTimeoutId = setTimeout(() => {
+            if (!cancelled) setShowOnboardingAssistant(true);
           }, 2000);
         }
 
-        // Check for tour state in backend
         if (user.onboarding_state?.tour_requested && !user.onboarding_state?.tour_completed) {
           setShowTour(true);
         }
 
-        // Listen for onboarding trigger from dashboard
-        const handleOnboardingTrigger = () => {
-          setShowOnboardingAssistant(true);
-        };
-        window.addEventListener('knxw-trigger-onboarding', handleOnboardingTrigger);
-
-        return () => {
-          window.removeEventListener('knxw-trigger-onboarding', handleOnboardingTrigger);
-        };
+        onboardingTriggerHandler = () => setShowOnboardingAssistant(true);
+        window.addEventListener('knxw-trigger-onboarding', onboardingTriggerHandler);
       })
       .catch((error) => {
+        if (cancelled) return;
         logError(error, { context: 'Layout authentication' });
         setAuthError(error);
-        // Graceful error - show message instead of immediate redirect
-        setTimeout(() => {
-          navigate(createPageUrl('Landing'));
+        // Graceful error — show message, then redirect after 2s (cleanup-safe).
+        onboardingTimeoutId = setTimeout(() => {
+          if (!cancelled) navigate(createPageUrl('Landing'));
         }, 2000);
       })
-      .finally(() => setIsLoadingUser(false));
-  }, [isLandingPage, isOnboardingPage, isPricingFAQPage, isDocsPublicPage, isBlogPage, isLegalPage, isInteractiveDemoPage]);
+      .finally(() => {
+        if (!cancelled) setIsLoadingUser(false);
+      });
+
+    return () => {
+      cancelled = true;
+      if (onboardingTimeoutId) clearTimeout(onboardingTimeoutId);
+      if (onboardingTriggerHandler) {
+        window.removeEventListener('knxw-trigger-onboarding', onboardingTriggerHandler);
+      }
+    };
+  }, [isLandingPage, isOnboardingPage, isPricingFAQPage, isDocsPublicPage, isBlogPage, isLegalPage, isInteractiveDemoPage, isInfographicPage, navigate]);
 
 
 
