@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {

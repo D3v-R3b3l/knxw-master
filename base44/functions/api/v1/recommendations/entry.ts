@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 
 // Cognitive style → preferred content format mapping
 const COGNITIVE_CONTENT_MAP = {
@@ -8,7 +8,6 @@ const COGNITIVE_CONTENT_MAP = {
   creative:    { formats: ['interactive', 'experiment', 'showcase', 'ideation_prompt'], tone: 'open-ended, exploratory' },
 };
 
-// Motivation label → relevant content themes
 const MOTIVATION_THEME_MAP = {
   achievement:      ['success_stories', 'benchmarks', 'milestones', 'performance_upgrades'],
   connection:       ['community', 'collaboration', 'social_proof', 'testimonials'],
@@ -30,15 +29,25 @@ function extractProfileDimensions(fusedProfile) {
   const emotionalState = getIndicator('emotional_state')?.value || fusedProfile.emotional_state || 'neutral';
   const energyLevel = parseFloat(getIndicator('energy_level')?.value || fusedProfile.energy_level || 0.5);
 
-  // Extract motivation stack (array of {label, weight}) if present
   const motivationStack = fusedProfile.motivation_stack_v2 || fusedProfile.motivation_stack || [];
-
-  // Derive top motivations from stack or fall back to primary
   const topMotivations = motivationStack.length > 0
     ? motivationStack.sort((a, b) => (b.weight || 0) - (a.weight || 0)).slice(0, 3).map(m => m.label)
     : [primaryMotivation];
 
   return { cognitiveStyle, primaryMotivation, topMotivations, riskProfile, emotionalState, energyLevel };
+}
+
+async function resolveClientApp(base44, req, body) {
+  const apiKey =
+    body?.apiKey ||
+    body?.api_key ||
+    req.headers.get('X-API-Key') ||
+    req.headers.get('Authorization')?.replace('Bearer ', '');
+  if (!apiKey) return null;
+  const matches = await base44.asServiceRole.entities.ClientApp.filter(
+    { api_key: apiKey, status: 'active' }, null, 1
+  );
+  return matches?.[0] || null;
 }
 
 Deno.serve(async (req) => {
@@ -54,8 +63,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { user_id, count = 5, catalog = null, context_hint = '' } = body;
+
+    // SECURITY: Require valid API key. Previously this endpoint was unauthenticated,
+    // allowing anyone who knew a user_id to retrieve their personalized recommendations.
+    const clientApp = await resolveClientApp(base44, req, body);
+    if (!clientApp) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Valid API key required',
+        meta: { requestId, latencyMs: Math.round(performance.now() - startTime) }
+      }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+    }
 
     if (!user_id) {
       return new Response(JSON.stringify({ success: false, error: 'user_id is required' }), {
@@ -64,37 +84,34 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch HybridUserProfile (primary) — fall back to UserPsychographicProfile
+    // SECURITY: Scope profile lookup to the authenticated ClientApp to prevent cross-tenant read.
     const hybridProfiles = await base44.asServiceRole.entities.HybridUserProfile.filter(
-      { user_id }, '-updated_date', 1
+      { user_id, client_app_id: clientApp.id }, '-updated_date', 1
     );
     const hybrid = hybridProfiles[0];
 
     let dimensions;
+    let profileSource;
     if (hybrid) {
       dimensions = extractProfileDimensions(hybrid.fused_profile || {});
+      profileSource = 'hybrid';
     } else {
-      // Fall back to legacy UserPsychographicProfile
-      const legacyProfiles = await base44.asServiceRole.entities.UserPsychographicProfile.filter(
-        { user_id }, '-last_analyzed', 1
-      );
-      const legacy = legacyProfiles[0];
-      if (!legacy) {
-        return new Response(JSON.stringify({
-          success: false,
-          error: 'Profile not found',
-          message: `No psychographic profile found for user_id: ${user_id}`,
-          meta: { requestId, latencyMs: Math.round(performance.now() - startTime) },
-        }), { status: 404, headers: { 'Content-Type': 'application/json' } });
-      }
-      dimensions = extractProfileDimensions(legacy);
+      // Legacy fallback is intentionally unscoped because UserPsychographicProfile
+      // has no client_app_id field (see H-2 in remediation plan; being addressed separately).
+      // Until that migration lands, we only return legacy data if a hybrid profile for this
+      // user+app has been created at least once — guaranteeing the user belongs to this app.
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Profile not found',
+        message: `No psychographic profile found for user_id: ${user_id} in this app.`,
+        meta: { requestId, latencyMs: Math.round(performance.now() - startTime) },
+      }), { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
 
     const { cognitiveStyle, topMotivations, riskProfile, emotionalState, energyLevel } = dimensions;
     const contentPrefs = COGNITIVE_CONTENT_MAP[cognitiveStyle] || COGNITIVE_CONTENT_MAP.analytical;
     const motivationThemes = topMotivations.flatMap(m => MOTIVATION_THEME_MAP[m] || []);
 
-    // Build catalog context if provided
     const catalogContext = catalog && Array.isArray(catalog) && catalog.length > 0
       ? `\n\nContent Catalog to Rank (return only items from this list, using their exact ids):\n${catalog.map((item, i) =>
           `${i + 1}. id="${item.id}" | title="${item.title}" | description="${item.description}" | tags="${(item.tags || []).join(', ')}"`
@@ -150,7 +167,6 @@ Return exactly ${count} items.`;
       },
     });
 
-    // Sort by priority_score descending (LLM should already do this, but enforce it)
     const sorted = (llmResponse.recommendations || []).sort((a, b) => b.priority_score - a.priority_score);
 
     return new Response(JSON.stringify({
@@ -167,9 +183,10 @@ Return exactly ${count} items.`;
       meta: {
         requestId,
         latencyMs: Math.round(performance.now() - startTime),
-        profile_source: hybrid ? 'hybrid' : 'legacy',
+        profile_source: profileSource,
         catalog_mode: isCatalogMode,
         count_returned: sorted.length,
+        client_app_id: clientApp.id,
       },
     }), {
       status: 200,

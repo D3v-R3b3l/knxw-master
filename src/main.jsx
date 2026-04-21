@@ -4,9 +4,9 @@ import App from '@/App.jsx'
 import '@/index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
-  <App />
-  // </React.StrictMode>,
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
 )
 
 if (import.meta.hot) {
@@ -17,6 +17,3 @@ if (import.meta.hot) {
     window.parent?.postMessage({ type: 'sandbox:afterUpdate' }, '*');
   });
 }
-
-
-

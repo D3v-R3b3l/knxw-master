@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 
 const VALID_EVENT_TYPES = new Set([
   'page_view',

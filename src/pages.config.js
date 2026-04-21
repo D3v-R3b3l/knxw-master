@@ -121,11 +121,7 @@ import Tests from './pages/Tests';
 import UnifiedDataIntegration from './pages/UnifiedDataIntegration';
 import UserDataPortal from './pages/UserDataPortal';
 import UserSettings from './pages/UserSettings';
-import blog from './pages/blog';
-import documentation from './pages/documentation';
-import landing from './pages/landing';
 import lowdown from './pages/lowdown';
-import settings from './pages/settings';
 import __Layout from './Layout.jsx';
 
 
@@ -204,11 +200,7 @@ export const PAGES = {
     "UnifiedDataIntegration": UnifiedDataIntegration,
     "UserDataPortal": UserDataPortal,
     "UserSettings": UserSettings,
-    "blog": blog,
-    "documentation": documentation,
-    "landing": landing,
     "lowdown": lowdown,
-    "settings": settings,
 }
 
 export const pagesConfig = {

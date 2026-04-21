@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import logger from "./logger";
 
@@ -128,7 +127,15 @@ function getNotificationConfig(errorType) {
       duration: 7000,
       action: {
         label: 'Sign In',
-        onClick: () => window.location.href = '/login'
+        // Use the Base44 SDK login redirect — there is no /login route in this app.
+        onClick: async () => {
+          try {
+            const { base44 } = await import('@/api/base44Client');
+            base44.auth.redirectToLogin(window.location.href);
+          } catch {
+            window.location.reload();
+          }
+        }
       }
     },
     [ERROR_TYPES.AUTHORIZATION]: {

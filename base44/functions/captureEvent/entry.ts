@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -135,15 +135,12 @@ Deno.serve(async (req) => {
 
     const savedEvent = await svc.entities.CapturedEvent.create(eventRecord);
 
-    const processorUrl = `${new URL(req.url).origin}/functions/liveProfileProcessor`;
-    fetch(processorUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'process_live_events',
-        user_id: String(data.user_id),
-        app_id: clientApp.id
-      })
+    // Use SDK invoke instead of raw fetch — resilient to custom domains & CDNs,
+    // and inherits service-role auth uniformly with the rest of the codebase.
+    base44.functions.invoke('liveProfileProcessor', {
+      action: 'process_live_events',
+      user_id: String(data.user_id),
+      app_id: clientApp.id
     }).catch((error) => {
       console.warn('captureEvent: liveProfileProcessor failed after save:', error.message);
     });

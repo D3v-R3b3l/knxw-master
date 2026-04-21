@@ -7,5 +7,10 @@ export const queryClientInstance = new QueryClient({
 			refetchOnWindowFocus: false,
 			retry: 1,
 		},
+		mutations: {
+			// Never auto-retry mutations — would cause duplicate side effects
+			// (double Stripe charges, duplicate entity writes, etc.).
+			retry: 0,
+		},
 	},
 });

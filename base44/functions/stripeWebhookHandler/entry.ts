@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 import Stripe from 'npm:stripe@14.21.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
@@ -27,7 +27,8 @@ function getPlanKeyFromPriceId(priceId) {
   if (priceId === Deno.env.get('STRIPE_PRICE_ID_GROWTH')) return 'growth';
   if (priceId === Deno.env.get('STRIPE_PRICE_ID_PRO')) return 'pro';
   if (priceId === Deno.env.get('STRIPE_PRICE_ID_DEVELOPER')) return 'developer';
-  return 'developer';
+  // Unknown price ID — return null so caller can surface remediation instead of silently downgrading.
+  return null;
 }
 
 Deno.serve(async (req) => {
@@ -99,7 +100,26 @@ async function handleSubscriptionChange(svc, subscription) {
   const userId = subscription.metadata?.base44_user_id || null;
   const billingRecord = await findBillingRecord(svc, subscription, userId);
   const priceId = subscription.items.data[0]?.price?.id;
-  const planKey = getPlanKeyFromPriceId(priceId);
+  const resolvedPlanKey = getPlanKeyFromPriceId(priceId);
+
+  // Fail loud on unknown price IDs rather than silently demoting paying customers to 'developer'.
+  if (!resolvedPlanKey) {
+    console.error(`[stripeWebhookHandler] Unknown Stripe price_id: ${priceId}. Writing remediation record.`);
+    await svc.entities.SubscriptionSyncRemediation.create({
+      stripe_session_id: null,
+      stripe_customer_id: subscription.customer || null,
+      stripe_subscription_id: subscription.id,
+      reason: 'unknown_price_id',
+      raw_metadata: { price_id: priceId, metadata: subscription.metadata || {} },
+      resolution_status: 'pending'
+    }).catch(err => console.error('[stripeWebhookHandler] remediation write failed:', err.message));
+    // Preserve the existing plan_key if we have one, rather than clobbering with a bad guess.
+    if (billingRecord) return billingRecord;
+    // No existing record and unknown price → abort; admin must resolve.
+    return null;
+  }
+
+  const planKey = resolvedPlanKey;
   const periodStart = new Date(subscription.current_period_start * 1000).toISOString();
   const periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
   const usageThisPeriod = billingRecord && billingRecord.period_end !== periodEnd

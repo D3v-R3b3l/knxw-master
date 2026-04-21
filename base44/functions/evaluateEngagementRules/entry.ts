@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 
 const PROFILE_FIELD_ALIASES = {
   'emotional_state.confidence': 'emotional_state.confidence_score',

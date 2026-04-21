@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 
 // Helper to normalize domain
 function normalizeDomain(domain) {
@@ -40,15 +40,15 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get the request origin for authorized_domains
+    // Seed authorized_domains with the request origin only. We no longer default to
+    // http://localhost in production — that was a persistent trust anchor for any
+    // localhost-hosted attacker. The user can add localhost explicitly from settings.
     const origin = req.headers.get('origin') || req.headers.get('referer');
-    let authorizedDomains = ['http://localhost'];
-    
+    let authorizedDomains = [];
+
     if (origin) {
       const normalized = normalizeDomain(origin);
-      if (normalized && normalized !== 'http://localhost') {
-        authorizedDomains.push(normalized);
-      }
+      if (normalized) authorizedDomains.push(normalized);
     }
     authorizedDomains = [...new Set(authorizedDomains)];
 

@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.26';
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -71,11 +71,16 @@ Deno.serve(async (req) => {
     }
 
     const clientApp = await resolveClientApp(base44, req, body);
-    const appId = body?.app_id || clientApp?.id || null;
-
-    const profileFilter = appId
-      ? { user_id: userId, client_app_id: appId }
-      : { user_id: userId };
+    if (!clientApp) {
+      return json({
+        success: false,
+        error: 'Valid API key required',
+        meta: { requestId, latencyMs: Math.round(performance.now() - startTime) }
+      }, 401);
+    }
+    const appId = clientApp.id;
+    // SECURITY: Always scope profile lookup to the authenticated ClientApp.
+    const profileFilter = { user_id: userId, client_app_id: appId };
     const profiles = await base44.asServiceRole.entities.HybridUserProfile.filter(profileFilter, '-updated_date', 1);
     const profile = profiles?.[0] || null;
     if (!profile) {
