@@ -4,19 +4,27 @@
   "properties": {
     "tenant_id": {
       "type": "string",
-      "description": "Org ID this key belongs to"
+      "description": "DEPRECATED \u2014 historical field, kept for backward compatibility. Will be removed after Stage 5. Use org_id instead."
+    },
+    "org_id": {
+      "type": "string",
+      "description": "The Org this key belongs to. Nullable during Stage 1 backfill."
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "The specific ClientApp this key is scoped to. Nullable during Stage 1 backfill \u2014 will be required after Stage 2 backfill completes."
     },
     "name": {
       "type": "string",
-      "description": "Human-readable label for this key"
+      "description": "Human-readable label for this key."
     },
     "key_hash": {
       "type": "string",
-      "description": "SHA-256 hash of the full key value"
+      "description": "SHA-256 hash of the full key value."
     },
     "key_prefix": {
       "type": "string",
-      "description": "First 12 chars of key for display"
+      "description": "First 12 chars of key for display."
     },
     "scopes": {
       "type": "array",
@@ -24,17 +32,17 @@
         "type": "string"
       },
       "default": [],
-      "description": "Permitted API scopes"
+      "description": "Permitted API scopes (e.g. events:write, profiles:read)."
     },
     "rate_limit_rpm": {
       "type": "number",
       "default": 100,
-      "description": "Requests per minute limit"
+      "description": "Requests per minute limit."
     },
     "rate_limit_burst": {
       "type": "number",
       "default": 200,
-      "description": "Burst allowance"
+      "description": "Burst allowance above the per-minute rate limit."
     },
     "status": {
       "type": "string",
@@ -50,12 +58,31 @@
     }
   },
   "required": [
-    "tenant_id",
     "name",
     "key_hash",
     "key_prefix"
   ],
   "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "org_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
     {
       "fields": [
         "tenant_id",
@@ -71,24 +98,24 @@
     "read": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
-        },
-        {
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "created_by": "{{user.email}}"
         }
       ]
     },
     "write": {
       "$or": [
         {
-          "created_by": "{{user.email}}"
-        },
-        {
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "created_by": "{{user.email}}"
         }
       ]
     }
