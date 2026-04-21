@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Lock, Eye, Database, FileText, Mail } from 'lucide-react';
-import HeadManager from '@/components/HeadManager';
+import SEOHead from '@/components/system/SEOHead';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -11,10 +11,9 @@ import { createPageUrl } from '@/utils';
 export default function PrivacyPage() {
   return (
     <>
-      <HeadManager
+      <SEOHead
         title="knXw Privacy Policy - Data Protection, GDPR Compliance & User Rights"
         description="Comprehensive privacy policy for knXw psychographic analytics platform. GDPR compliant, privacy-first architecture, PII hashing, consent management, and data protection practices."
-        keywords="privacy policy, GDPR, data protection, user privacy, consent management, data security"
       />
 
       <div className="min-h-screen bg-[#0a0a0a] text-white">
