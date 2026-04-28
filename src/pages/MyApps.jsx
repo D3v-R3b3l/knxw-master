@@ -29,35 +29,65 @@ function normalizeDisplayDomain(domain) {
 
 const SNIPPET_TABS = [['html','HTML'], ['react','React / Next.js'], ['js','JS / TypeScript'], ['angular','Angular']];
 
-function getSnippet(tab) {
+const SCRIPT_CDN = `${window.location.origin}/functions/serveAnalyticsScript`;
+
+function getSnippet(tab, apiKey = 'YOUR_API_KEY', appId = 'YOUR_APP_ID') {
   if (tab === 'html') return `<!-- Paste into your <head> tag -->
-<script src="https://cdn.knxw.ai/sdk.js"
-  data-api-key="YOUR_API_KEY"
+<script src="${SCRIPT_CDN}?app_id=${appId}"
+  data-api-key="${apiKey}"
   async>
 </script>`;
-  if (tab === 'react') return `// npm install @knxw/sdk
-// Add once in your root component (App.jsx / App.tsx)
+  if (tab === 'react') return `// Add once in your root component (App.jsx / App.tsx)
 import { useEffect } from 'react';
-import { KnxwSDK } from '@knxw/sdk';
 
 export default function App() {
-  useEffect(() => { KnxwSDK.init('YOUR_API_KEY'); }, []);
+  useEffect(() => {
+    const s = document.createElement('script');
+    s.src = '${SCRIPT_CDN}?app_id=${appId}';
+    s.setAttribute('data-api-key', '${apiKey}');
+    s.async = true;
+    s.onload = () => window.knxw?.init();
+    document.head.appendChild(s);
+  }, []);
   // ...rest of your app
 }`;
-  if (tab === 'js') return `// npm install @knxw/sdk
-// In your entry file (index.js / main.ts)
-import { KnxwSDK } from '@knxw/sdk';
-KnxwSDK.init('YOUR_API_KEY');`;
-  if (tab === 'angular') return `// npm install @knxw/sdk
-// In AppComponent (app.component.ts)
+  if (tab === 'js') return `// In your entry file (index.js / main.ts)
+const s = document.createElement('script');
+s.src = '${SCRIPT_CDN}?app_id=${appId}';
+s.setAttribute('data-api-key', '${apiKey}');
+s.async = true;
+s.onload = () => window.knxw?.init();
+document.head.appendChild(s);`;
+  if (tab === 'angular') return `// In AppComponent (app.component.ts)
 import { Component, OnInit } from '@angular/core';
-import { KnxwSDK } from '@knxw/sdk';
 
 @Component({ selector: 'app-root', templateUrl: './app.component.html' })
 export class AppComponent implements OnInit {
-  ngOnInit() { KnxwSDK.init('YOUR_API_KEY'); }
+  ngOnInit() {
+    const s = document.createElement('script');
+    s.src = '${SCRIPT_CDN}?app_id=${appId}';
+    s.setAttribute('data-api-key', '${apiKey}');
+    s.async = true;
+    s.onload = () => (window as any).knxw?.init();
+    document.head.appendChild(s);
+  }
 }`;
   return '';
+}
+
+function getInstallPrompt(apiKey, appId) {
+  const scriptTag = `<script src="${SCRIPT_CDN}?app_id=${appId}" data-api-key="${apiKey}" async></script>`;
+  return `Install the knXw analytics tracking script into this project.
+
+If in a monorepo ensure it's in the web/marketing related project. Add the following script tag to the <head> of every page (or the root layout/template if using a framework):
+
+${scriptTag}
+
+- The script must load on every page
+- Place it in the <head> tag, not the body
+- If this is a React/Next.js/Remix/Astro/Vue/Angular/etc. framework, add it to the root layout or document template
+- Do not wrap it in any conditional logic, it should always load
+- Do not modify the script tag attributes`;
 }
 
 export default function MyAppsPage() {
@@ -342,7 +372,16 @@ export default function MyAppsPage() {
 
                   {/* Snippet */}
                   <div>
-                    <label className="text-sm font-medium text-[#a3a3a3] mb-3 block">Tracking Snippet — copy into your project</label>
+                    <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                      <label className="text-sm font-medium text-[#a3a3a3]">Tracking Snippet — copy into your project</label>
+                      <button
+                        onClick={() => copyToClipboard(getInstallPrompt(selectedApp.api_key, selectedApp.id), 'install_prompt')}
+                        className="inline-flex items-center gap-1.5 text-xs bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] font-semibold px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity"
+                      >
+                        {copiedKey === 'install_prompt' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                        {copiedKey === 'install_prompt' ? 'Copied!' : 'Copy Install Prompt'}
+                      </button>
+                    </div>
                     <div className="flex gap-1 mb-2 flex-wrap">
                       {SNIPPET_TABS.map(([key, label]) => (
                         <button key={key} onClick={() => setSnippetTab(key)}
@@ -351,8 +390,8 @@ export default function MyAppsPage() {
                       ))}
                     </div>
                     <div className="relative">
-                      <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(snippetTab)}</pre>
-                       <button onClick={() => copyToClipboard(getSnippet(snippetTab), 'snippet')} className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors">
+                      <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(snippetTab, selectedApp.api_key, selectedApp.id)}</pre>
+                      <button onClick={() => copyToClipboard(getSnippet(snippetTab, selectedApp.api_key, selectedApp.id), 'snippet')} className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors">
                         {copiedKey === 'snippet' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                       </button>
                     </div>
