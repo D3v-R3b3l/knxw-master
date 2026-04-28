@@ -52,8 +52,10 @@ export default function Dashboard() {
 
   const [user, setUser] = useState(null);
   const [isInitialSetupLoading, setIsInitialSetupLoading] = useState(true);
-  const [hasClientApp, setHasClientApp] = useState(false);
   const [checkInData, setCheckInData] = useState(null);
+
+  // Derive from store — never from a stale snapshot
+  const hasClientApp = apps.length > 0;
 
   const originalData = useRef(null);
   const { toast } = useToast();
@@ -119,25 +121,6 @@ export default function Dashboard() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       await markOnboardingStep('view_dashboard');
-
-      const userApps = apps || [];
-
-      if (userApps && userApps.length > 0) {
-        setHasClientApp(true);
-
-        if (!selectedAppId && userApps[0]?.id) {
-          if (typeof setSelectedAppId === 'function') {
-            setSelectedAppId(userApps[0].id);
-          }
-        }
-      } else {
-        setHasClientApp(false);
-        // Trigger role-based onboarding when no apps exist
-        setTimeout(() => {
-          const event = new CustomEvent('knxw-trigger-onboarding');
-          window.dispatchEvent(event);
-        }, 500);
-      }
     }
     catch (error) {
       logger.error('Error loading initial dashboard data (user/apps):', error);
@@ -145,7 +128,7 @@ export default function Dashboard() {
     } finally {
       setIsInitialSetupLoading(false);
     }
-  }, [apps, selectedAppId, setSelectedAppId]);
+  }, []);
 
   useEffect(() => {
     loadUserAndCheckForApps();
@@ -209,6 +192,15 @@ export default function Dashboard() {
     }
   }, [profiles]);
 
+  // Trigger onboarding when store confirms no apps
+  useEffect(() => {
+    if (!storeIsLoading && apps.length === 0) {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('knxw-trigger-onboarding'));
+      }, 500);
+    }
+  }, [storeIsLoading, apps.length]);
+
   useEffect(() => {
     loadUserAndCheckForApps();
 
@@ -259,8 +251,8 @@ export default function Dashboard() {
     };
   }, [loadUserAndCheckForApps, refreshData]);
 
-  // Show welcome screen ONLY when user has no apps at all AND the store has finished loading
-  if (!isInitialSetupLoading && !storeIsLoading && !hasClientApp && apps.length === 0) {
+  // Show welcome screen ONLY when user has no apps at all AND both loading states are done
+  if (!isInitialSetupLoading && !storeIsLoading && apps.length === 0) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a1a] via-[#0a0a0a] to-[#0a0a0a] text-white flex items-center justify-center p-4">
         <div className="w-full max-w-5xl">
