@@ -57,16 +57,16 @@ function HeroContent({ heroRef }) {
     <div ref={contentRef} className="relative z-10 text-center px-4 sm:px-6 max-w-6xl mx-auto w-full">
       <motion.div data-parallax-layer="1" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }}>
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight mb-6 text-white leading-[1.08] break-words">
-          Finally, your product <br />
+          The same traffic. <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-            understands why.
+            Less waste. Better fit.
           </span>
         </h1>
       </motion.div>
 
       <motion.div data-parallax-layer="2" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}>
         <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto font-light leading-relaxed mb-10">
-          A runtime intelligence layer that interprets user behavior and feeds that understanding back into your system — so it can adapt in real time.
+          knXw is a runtime intelligence layer. One API call. It reads who is ready, who is stuck, and what to do next — and feeds that back into your system so it can act on it.
         </p>
       </motion.div>
 
@@ -88,10 +88,10 @@ function HeroContent({ heroRef }) {
       </motion.div>
 
       <motion.div data-parallax-layer="4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.9 }} className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-mono uppercase tracking-widest">
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Not analytics</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Not personalization</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Runtime interpretation</span>
-        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>System execution</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>Reduce wasted attention</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>Improve user fit</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Data stays yours</span>
+        <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>One SDK call</span>
       </motion.div>
     </div>
   );
@@ -109,10 +109,10 @@ function ClosingSection() {
 
       <div className="max-w-5xl mx-auto px-6 relative z-10">
         <h2 data-parallax="slow" className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight">
-          Understanding is only useful if it changes behavior.
+          Stop optimizing noise. Start delivering fit.
         </h2>
         <p className="text-xl md:text-2xl text-gray-400 mb-14 max-w-3xl mx-auto">
-          knXw connects interpretation to execution so your system can act with context, not just data.
+          knXw cuts what doesn't work, surfaces what does, and keeps your users' data where it belongs — with them.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-5 justify-center mb-14">
@@ -121,7 +121,7 @@ function ClosingSection() {
             className="group relative overflow-hidden px-7 py-3 font-semibold text-sm text-white rounded-lg transition-all duration-300 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97]"
             style={{ background: 'linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%)', boxShadow: '0 0 28px rgba(0,212,255,0.35), 0 3px 14px rgba(0,0,0,0.4)' }}
           >
-            Get Started
+            Connect Your First App
             <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
             <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300" />
           </button>
