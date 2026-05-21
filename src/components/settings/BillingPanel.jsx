@@ -15,13 +15,14 @@ const plans = [
         key: 'growth',
         name: 'Growth',
         price: '$149/mo',
+
         features: ['Up to 25,000 Active User Profiles', 'Full journey builder & A/B testing', 'Real-time engagement engine', 'Priority support (12-hr SLA)'],
     },
     {
         key: 'pro',
         name: 'Professional',
-        price: '$399/mo',
-        features: ['Up to 100,000 Active User Profiles', 'Predictive analytics & churn prevention', 'Full API access & market intelligence', 'Premium support (6-hr SLA)'],
+        price: '$499/mo',
+        features: ['Up to 100,000 Active User Profiles', 'Predictive analytics & churn prevention', 'Full API access & market intelligence', 'Priority support'],
     }
 ];
 

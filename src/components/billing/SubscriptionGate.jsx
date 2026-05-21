@@ -12,13 +12,6 @@ const PLAN_HIERARCHY = {
   enterprise: 3
 };
 
-// Stripe Price IDs - synced with actual Stripe catalog
-const STRIPE_PRICES = {
-  developer: 'price_1RxOiNPXI4AuHlkXnpgSAkdv', // $0/mo
-  growth: 'price_1RxOkgPXI4AuHlkXhuWHXY42',    // $99/mo
-  pro: 'price_1RxOlFPXI4AuHlkXQQHyZAPp'        // $499/mo
-};
-
 const PLAN_DETAILS = {
   developer: {
     name: "Developer",
@@ -26,7 +19,6 @@ const PLAN_DETAILS = {
     period: "forever",
     icon: Code,
     gradient: "from-[#6b7280] to-[#4b5563]",
-    stripePriceId: STRIPE_PRICES.developer,
     features: [
       "1,000 monthly psychographic credits",
       "Basic psychographic profiling", 
@@ -53,11 +45,10 @@ const PLAN_DETAILS = {
   },
   growth: {
     name: "Growth",
-    price: "$99",
+    price: "$149",
     period: "per month", 
     icon: Zap,
     gradient: "from-[#10b981] to-[#059669]",
-    stripePriceId: STRIPE_PRICES.growth,
     features: [
       "10,000-50,000 monthly credits",
       "Advanced psychographic profiling",
@@ -87,7 +78,6 @@ const PLAN_DETAILS = {
     period: "per month",
     icon: Crown,
     gradient: "from-[#00d4ff] to-[#0ea5e9]",
-    stripePriceId: STRIPE_PRICES.pro,
     features: [
       "100,000-500,000 monthly credits",
       "Unlimited Adaptive Engagement",
