@@ -1,4 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import Stripe from 'npm:stripe@14.21.0';
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -12,18 +13,38 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return json({ error: 'Unauthorized' }, 401);
+    if (user.role !== 'admin') return json({ error: 'Forbidden' }, 403);
+
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), { apiVersion: '2023-10-16' });
 
     const body = req.method === 'GET' ? {} : await req.json().catch(() => ({}));
     const action = body.action || 'noop';
 
     if (action === 'sync_customers') {
-      return json({ status: 'success', system: 'stripe', customers_synced: 543, subscriptions_synced: 324, invoices_synced: 1876, errors: 0, ts: new Date().toISOString() });
+      let customers_synced = 0;
+      let errors = 0;
+      for await (const customer of stripe.customers.list({ limit: 100 })) {
+        customers_synced++;
+      }
+      return json({ status: 'success', system: 'stripe', customers_synced, errors, ts: new Date().toISOString() });
     }
+
     if (action === 'sync_subscriptions') {
-      return json({ status: 'success', system: 'stripe', subscriptions_synced: 324, errors: 0, ts: new Date().toISOString() });
+      let subscriptions_synced = 0;
+      let errors = 0;
+      for await (const sub of stripe.subscriptions.list({ limit: 100, status: 'all' })) {
+        subscriptions_synced++;
+      }
+      return json({ status: 'success', system: 'stripe', subscriptions_synced, errors, ts: new Date().toISOString() });
     }
+
     if (action === 'sync_invoices') {
-      return json({ status: 'success', system: 'stripe', invoices_synced: 1876, errors: 0, ts: new Date().toISOString() });
+      let invoices_synced = 0;
+      let errors = 0;
+      for await (const invoice of stripe.invoices.list({ limit: 100 })) {
+        invoices_synced++;
+      }
+      return json({ status: 'success', system: 'stripe', invoices_synced, errors, ts: new Date().toISOString() });
     }
 
     return json({ error: 'Unsupported action' }, 400);
