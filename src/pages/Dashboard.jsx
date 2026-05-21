@@ -261,11 +261,11 @@ export default function Dashboard() {
               <Brain className="w-12 h-12 text-[#00d4ff]" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-6">
-              Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9]">knXw</span>
+              Connect your first app to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9]">knXw</span>
             </h1>
             <p className="text-xl text-[#a3a3a3] max-w-2xl mx-auto leading-relaxed font-light">
-              Your journey to true psychographic intelligence starts here. 
-              Connect your first application to reveal the "why" behind user behavior.
+              One API call. The same traffic performs better. The same team moves faster. 
+              The system learns who is ready — and stops wasting attention on who isn't.
             </p>
           </div>
 
@@ -351,8 +351,8 @@ export default function Dashboard() {
         {/* Header - Title + Refresh Button */}
         <div className="mb-6 md:mb-8 relative z-[2]" data-tour="dashboard-header">
           <PageHeader
-            title="Analytics Dashboard"
-            description="Real-time psychographic insights and user behavior analytics"
+            title="Intelligence Hub"
+            description="What the system knows right now — who is ready, what is wasted, and where to act."
             icon={BarChart3}
             docSection="introduction"
             actions={
@@ -391,52 +391,52 @@ export default function Dashboard() {
 
               <>
                     <MetricCard
-                  title="Total Profiles"
+                  title="Known Users"
                   value={(metrics.totalUsers || 0).toLocaleString()}
                   icon={Users}
                   gradient="from-[#00d4ff] to-[#0ea5e9]"
                   href={createPageUrl("Profiles")}
-                  aiContext="Explain what Total Profiles represents and how profile growth affects segmentation and engagement accuracy."
+                  aiContext="Explain what Known Users represents and how profile growth affects fit and timing accuracy."
                   resizable />
                     <MetricCard
-                  title="Active Today"
+                  title="Active Now"
                   value={(metrics.activeUsers || 0).toLocaleString()}
                   icon={Activity}
                   gradient="from-[#10b981] to-[#059669]"
                   href={`${createPageUrl("Events")}?type=page_view&minutes=1440`}
-                  aiContext="Show how Active Today is computed and recommend ways to increase daily active users."
+                  aiContext="Show who is active right now and what signals suggest readiness to act."
                   resizable />
                     <MetricCard
-                  title="Engagement Rate"
+                  title="Fit Rate"
                   value={`${metrics.avgEngagement || '0'}%`}
                   icon={TrendingUp}
                   gradient="from-[#8b5cf6] to-[#7c3aed]"
                   href={`${createPageUrl("Events")}?type=click`}
-                  aiContext="Explain engagement rate methodology and suggest experiments to improve it."
+                  aiContext="Explain fit rate: how often the system delivered the right context at the right moment."
                   resizable />
                     <MetricCard
-                  title="AI Insights"
+                  title="System Insights"
                   value={metrics.totalInsights || 0}
                   icon={Zap}
                   gradient="from-[#ec4899] to-[#db2777]"
                   href={createPageUrl("Insights")}
-                  aiContext="Review current AI insights and propose actions with the highest expected impact."
+                  aiContext="Review current system insights and propose actions with the highest expected impact on fit and retention."
                   resizable />
                   </>
               }
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="rounded-2xl border border-[#262626] bg-[#111111] p-6">
-                  <div className="text-sm text-[#a3a3a3] mb-2">Signal volume</div>
+                  <div className="text-sm text-[#a3a3a3] mb-2">Behavior signals captured</div>
                   <div className="text-4xl font-bold text-white mb-2">{(metrics.totalEvents || 0).toLocaleString()}</div>
-                  <p className="text-sm text-[#6b7280]">Recent behavior captured across the selected app.</p>
+                  <p className="text-sm text-[#6b7280]">Each signal is an opportunity to reduce waste or improve fit.</p>
                 </div>
                 <div className="rounded-2xl border border-[#262626] bg-[#111111] p-6">
-                  <div className="text-sm text-[#a3a3a3] mb-2">First-glance read</div>
+                  <div className="text-sm text-[#a3a3a3] mb-2">System read</div>
                   <p className="text-base text-white leading-relaxed">
                     {metrics.activeUsers > 0
-                      ? `Audience activity is live, with ${metrics.activeUsers.toLocaleString()} active users and ${metrics.totalInsights || 0} current AI insights ready for drill-down.`
-                      : "Traffic is still forming; use the panels below to identify where activity starts and which psychographic patterns emerge first."}
+                      ? `${metrics.activeUsers.toLocaleString()} people active now. ${metrics.totalInsights || 0} AI insights surfaced. The system is routing attention away from noise.`
+                      : "Signals are forming. Once behavior flows in, the system will identify who is ready to act, who is stuck, and what to do about it."}
                   </p>
                 </div>
               </div>

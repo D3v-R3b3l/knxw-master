@@ -1,81 +1,63 @@
-import { 
-  BarChart3, Users, Activity, Settings, Brain, Zap, Shield, 
-  GitBranch as AttributionIcon, TrendingUp, BookOpen, Bot, HeartPulse, 
-  FlaskConical, Database as DatabaseIcon, Megaphone, BarChart3 as GoogleDataIcon, 
-  Target, Briefcase, Search, Server, Link as LinkIcon, Rocket, MousePointerClick, Sparkles,
-  Sliders, Store, Plug, Route, Cpu, UserCheck, TrendingDown, Webhook, Waypoints, Key
+import {
+  Zap, Users, Activity, Settings, Brain, Shield,
+  GitBranch as AttributionIcon, TrendingUp, BookOpen, Bot, HeartPulse,
+  FlaskConical, Server, UserCheck, TrendingDown, Webhook, Waypoints, Key,
+  BarChart3, Target, Briefcase, Cpu, Route, Plug, Sliders,
+  Link as LinkIcon, Megaphone, Database as DatabaseIcon, Sparkles, MousePointerClick,
+  Store
 } from "lucide-react";
 
 export const navigationSections = [
   {
-    title: "Core Intelligence",
+    title: "Signal",
     items: [
-      { title: "Dashboard", page: "Dashboard", icon: BarChart3, description: "Analytics Overview" },
-      { title: "AI Insights", page: "Insights", icon: Brain, description: "Psychographic Intelligence" },
-      { title: "User Profiles", page: "Profiles", icon: Users, description: "Behavioral Analysis" },
-      { title: "Event Stream", page: "Events", icon: Activity, description: "Real-time Tracking" },
+      { title: "Intelligence Hub", page: "Dashboard", icon: Zap, description: "What the system knows right now" },
+      { title: "User Signals", page: "Events", icon: Activity, description: "Live behavior stream" },
+      { title: "Profiles", page: "Profiles", icon: Users, description: "Who is ready, hesitating, or leaving" },
+      { title: "AI Insights", page: "Insights", icon: Brain, description: "Patterns the system has surfaced" },
     ]
   },
   {
-    title: "Data & Integration",
+    title: "Performance",
     items: [
-      { title: "My Apps", page: "MyApps", icon: Server, description: "Application Management" },
-      { title: "API Keys", page: "ApiKeys", icon: Key, description: "Manage API keys & permissions" },
-      { title: "Developer Center", page: "DeveloperCenter", icon: Webhook, description: "Keys, webhooks, and testing" },
-      { title: "API Usage", page: "DeveloperUsageAnalytics", icon: BarChart3, description: "Usage trends & latency" },
-      { title: "Unified Data", page: "UnifiedDataIntegration", icon: LinkIcon, description: "CRM & Finance Integration" },
-      { title: "Integrations", page: "IntegrationsManagement", icon: Shield, description: "External Connections" },
-      { title: "Meta Data", page: "MetaData", icon: Megaphone, description: "Facebook Insights" },
-      { title: "Google Data", page: "GoogleData", icon: GoogleDataIcon, description: "GA4 Analytics" },
+      { title: "Retention Risk", page: "ChurnAnalytics", icon: TrendingDown, description: "Where you are losing people" },
+      { title: "Predictive AI", page: "PredictivePsychographics", icon: TrendingUp, description: "What happens next" },
+      { title: "Audience Segments", page: "AudienceBuilder", icon: Target, description: "Who needs what, right now" },
+      { title: "Executive View", page: "ExecutiveDashboard", icon: Briefcase, description: "P&L-level signal" },
     ]
   },
   {
-    title: "Advanced Analytics",
+    title: "Adaptation",
     items: [
-      { title: "Audience Builder", page: "AudienceBuilder", icon: Target, description: "Segment Creation" },
-      { title: "Predictive AI", page: "PredictivePsychographics", icon: Brain, description: "Behavior Forecasting" },
-      { title: "Churn Analytics", page: "ChurnAnalytics", icon: TrendingDown, description: "Risk Cohorts & Heatmaps" },
-      { title: "Journey Builder", page: "Journeys", icon: Waypoints, description: "User Paths" },
-      { title: "Batch Analytics", page: "BatchAnalytics", icon: BarChart3, description: "Deep Analysis" },
-      { title: "Market Intelligence", page: "MarketIntelligence", icon: TrendingUp, description: "Trends & Insights" },
-      { title: "Executive Dashboard", page: "ExecutiveDashboard", icon: Briefcase, description: "Board-Level KPIs" },
+      { title: "Engagements", page: "Engagements", icon: Zap, description: "System responses to user state" },
+      { title: "Journey Builder", page: "Journeys", icon: Waypoints, description: "Path logic that adapts" },
+      { title: "A/B Testing", page: "ABTestingStudio", icon: FlaskConical, description: "Test what works" },
+      { title: "AI Agents", page: "Agents", icon: Bot, description: "Autonomous response loops" },
     ]
   },
   {
-    title: "Automation & AI",
+    title: "Sovereignty",
     items: [
-      { title: "AI Agents", page: "Agents", icon: Bot, description: "Intelligent Automation" },
-      { title: "Engagements", page: "Engagements", icon: Zap, description: "Adaptive Experience" },
-      { title: "Marketplace", page: "EngagementMarketplace", icon: Store, description: "Template Library" },
-      { title: "A/B Testing", page: "ABTestingStudio", icon: FlaskConical, description: "Experiments" },
-      { title: "Robotics", page: "Robotics", icon: Rocket, description: "Process Orchestration" },
+      { title: "User Data Portal", page: "UserDataPortal", icon: UserCheck, description: "User-controlled context & consent" },
+      { title: "Integrations", page: "IntegrationsManagement", icon: Shield, description: "What connects and why" },
+      { title: "Attribution", page: "AttributionSettings", icon: AttributionIcon, description: "Where value actually comes from" },
     ]
   },
   {
-    title: "Advanced Intelligence",
+    title: "Infrastructure",
     items: [
-      { title: "Inference Studio", page: "InferenceStudio", icon: Cpu, description: "AI Model Tuning" },
-      { title: "Journey Orchestrator", page: "AIJourneyOrchestrator", icon: Route, description: "AI-Powered Journeys" },
-      { title: "Custom Dimensions", page: "CustomDimensions", icon: Sliders, description: "Industry-Specific Traits" },
-      { title: "Marketing Platforms", page: "MarketingIntegrations", icon: Plug, description: "CDP & Automation" },
-      { title: "User Data Portal", page: "UserDataPortal", icon: UserCheck, description: "Transparency & Control" },
-    ]
-  },
-  {
-    title: "System & Tools",
-    items: [
-      { title: "Attribution", page: "AttributionSettings", icon: AttributionIcon, description: "ROI Tracking" },
-      { title: "Data Import", page: "DataImport", icon: DatabaseIcon, description: "Bulk Processing" },
-      { title: "Demo Data", page: "DemoData", icon: Sparkles, description: "Seed Test Data" },
-      { title: "Dashboards", page: "Dashboards", icon: BarChart3, description: "Custom Reports" },
+      { title: "My Apps", page: "MyApps", icon: Server, description: "Connected applications" },
+      { title: "API Keys", page: "ApiKeys", icon: Key, description: "Access credentials" },
+      { title: "Developer Center", page: "DeveloperCenter", icon: Webhook, description: "Keys, webhooks, sandbox" },
+      { title: "API Usage", page: "DeveloperUsageAnalytics", icon: BarChart3, description: "Load & latency" },
+      { title: "Data Import", page: "DataImport", icon: DatabaseIcon, description: "Bulk ingestion" },
+      { title: "Demo Data", page: "DemoData", icon: Sparkles, description: "Seed test data" },
     ]
   },
   {
     title: "Resources",
     items: [
-      { title: "Documentation", page: "Documentation", icon: BookOpen, description: "API & Guides" },
-      { title: "Blog", page: "Blog", icon: BookOpen, description: "Insights & Updates" },
-      { title: "Interactive Demo", page: "InteractiveDemo", icon: MousePointerClick, description: "Live Experience" },
+      { title: "Documentation", page: "Documentation", icon: BookOpen, description: "SDK & API guides" },
       { title: "Settings", page: "Settings", icon: Settings, description: "Configuration" },
     ]
   }
