@@ -31,20 +31,22 @@ const SNIPPET_TABS = [['html','HTML'], ['react','React / Next.js'], ['js','JS / 
 
 const SCRIPT_CDN = `${window.location.origin}/functions/serveAnalyticsScript`;
 
-function getSnippet(tab, apiKey = 'YOUR_API_KEY', appId = 'YOUR_APP_ID') {
+function getSnippet(tab, appId = 'YOUR_APP_ID') {
   if (tab === 'html') return `<!-- Paste into your <head> tag -->
+<!-- Store your API key as an environment variable: KNXW_API_KEY -->
 <script src="${SCRIPT_CDN}?app_id=${appId}"
-  data-api-key="${apiKey}"
+  data-api-key="YOUR_KNXW_API_KEY"
   async>
 </script>`;
   if (tab === 'react') return `// Add once in your root component (App.jsx / App.tsx)
+// Store your key in .env: NEXT_PUBLIC_KNXW_API_KEY=your_key_here
 import { useEffect } from 'react';
 
 export default function App() {
   useEffect(() => {
     const s = document.createElement('script');
     s.src = '${SCRIPT_CDN}?app_id=${appId}';
-    s.setAttribute('data-api-key', '${apiKey}');
+    s.setAttribute('data-api-key', process.env.NEXT_PUBLIC_KNXW_API_KEY);
     s.async = true;
     s.onload = () => window.knxw?.init();
     document.head.appendChild(s);
@@ -52,21 +54,24 @@ export default function App() {
   // ...rest of your app
 }`;
   if (tab === 'js') return `// In your entry file (index.js / main.ts)
+// Store your key in .env: VITE_KNXW_API_KEY=your_key_here
 const s = document.createElement('script');
 s.src = '${SCRIPT_CDN}?app_id=${appId}';
-s.setAttribute('data-api-key', '${apiKey}');
+s.setAttribute('data-api-key', import.meta.env.VITE_KNXW_API_KEY);
 s.async = true;
 s.onload = () => window.knxw?.init();
 document.head.appendChild(s);`;
   if (tab === 'angular') return `// In AppComponent (app.component.ts)
+// Store your key in environment.ts: knxwApiKey: 'your_key_here'
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../environments/environment';
 
 @Component({ selector: 'app-root', templateUrl: './app.component.html' })
 export class AppComponent implements OnInit {
   ngOnInit() {
     const s = document.createElement('script');
     s.src = '${SCRIPT_CDN}?app_id=${appId}';
-    s.setAttribute('data-api-key', '${apiKey}');
+    s.setAttribute('data-api-key', environment.knxwApiKey);
     s.async = true;
     s.onload = () => (window as any).knxw?.init();
     document.head.appendChild(s);
@@ -75,19 +80,24 @@ export class AppComponent implements OnInit {
   return '';
 }
 
-function getInstallPrompt(apiKey, appId) {
-  const scriptTag = `<script src="${SCRIPT_CDN}?app_id=${appId}" data-api-key="${apiKey}" async></script>`;
+function getInstallPrompt(appId) {
+  const scriptTag = `<script src="${SCRIPT_CDN}?app_id=${appId}" data-api-key="YOUR_KNXW_API_KEY" async></script>`;
   return `Install the knXw analytics tracking script into this project.
 
 If in a monorepo ensure it's in the web/marketing related project. Add the following script tag to the <head> of every page (or the root layout/template if using a framework):
 
 ${scriptTag}
 
+IMPORTANT: Replace YOUR_KNXW_API_KEY with your actual key stored as an environment variable:
+- Next.js / React: NEXT_PUBLIC_KNXW_API_KEY in .env.local
+- Vite: VITE_KNXW_API_KEY in .env
+- Angular: environment.knxwApiKey in environment.ts
+- Never hardcode the key directly in source code
+
 - The script must load on every page
 - Place it in the <head> tag, not the body
 - If this is a React/Next.js/Remix/Astro/Vue/Angular/etc. framework, add it to the root layout or document template
-- Do not wrap it in any conditional logic, it should always load
-- Do not modify the script tag attributes`;
+- Do not wrap it in any conditional logic, it should always load`;
 }
 
 export default function MyAppsPage() {
@@ -346,11 +356,16 @@ export default function MyAppsPage() {
 
                   {/* API Key — masked after creation */}
                   <div>
-                    <label className="text-sm font-medium text-[#a3a3a3] mb-2 block">API Key</label>
+                    <label className="text-sm font-medium text-[#a3a3a3] mb-2 block">Public API Key</label>
                     <div className="flex items-center gap-2">
                       <Input readOnly value={selectedApp.api_key ? selectedApp.api_key.slice(0, 12) + '••••••••••••••••••••••••••••••••' : ''} className="font-mono text-xs bg-[#0a0a0a] border-[#262626] text-[#6b7280] flex-1" />
                     </div>
-                    <p className="text-xs text-[#6b7280] mt-1">Key is masked for security. Use the copy button shown once at creation.</p>
+                    <div className="mt-2 p-2.5 rounded-lg bg-[#1a1a1a] border border-[#262626]">
+                      <p className="text-xs text-[#a3a3a3]">
+                        <span className="text-amber-400 font-semibold">⚠ Never hardcode this key in source code.</span>{' '}
+                        Store it as an environment variable (e.g. <code className="text-[#00d4ff]">NEXT_PUBLIC_KNXW_API_KEY</code> or <code className="text-[#00d4ff]">VITE_KNXW_API_KEY</code>) and reference it in the snippet. Your full key was shown once at creation — rotate it from API Keys if needed.
+                      </p>
+                    </div>
                   </div>
 
                   {/* Authorized Domains */}
@@ -375,7 +390,7 @@ export default function MyAppsPage() {
                     <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
                       <label className="text-sm font-medium text-[#a3a3a3]">Tracking Snippet — copy into your project</label>
                       <button
-                        onClick={() => copyToClipboard(getInstallPrompt(selectedApp.api_key, selectedApp.id), 'install_prompt')}
+                        onClick={() => copyToClipboard(getInstallPrompt(selectedApp.id), 'install_prompt')}
                         className="inline-flex items-center gap-1.5 text-xs bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] font-semibold px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity"
                       >
                         {copiedKey === 'install_prompt' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -390,8 +405,8 @@ export default function MyAppsPage() {
                       ))}
                     </div>
                     <div className="relative">
-                      <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(snippetTab, selectedApp.api_key, selectedApp.id)}</pre>
-                      <button onClick={() => copyToClipboard(getSnippet(snippetTab, selectedApp.api_key, selectedApp.id), 'snippet')} className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors">
+                      <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre">{getSnippet(snippetTab, selectedApp.id)}</pre>
+                       <button onClick={() => copyToClipboard(getSnippet(snippetTab, selectedApp.id), 'snippet')} className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors">
                         {copiedKey === 'snippet' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                       </button>
                     </div>
