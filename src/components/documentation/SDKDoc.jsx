@@ -18,10 +18,17 @@ export default function SDKDoc() {
           Embed Script
         </h4>
         <pre className="bg-[#0a0a0a] border border-[#262626] rounded p-4 text-sm text-[#10b981] overflow-x-auto">
-{`<script src="https://your-app.base44.app/functions/serveAnalyticsScript?id=CLIENT_APP_ID" defer></script>
+{`<!-- Store your key as an env var: NEXT_PUBLIC_KNXW_API_KEY / VITE_KNXW_API_KEY -->
+<script
+  src="https://knxw.app/functions/serveAnalyticsScript?app_id=YOUR_APP_ID"
+  data-api-key="YOUR_KNXW_API_KEY"
+  async>
+<\/script>
+
+<!-- Or initialize manually after load -->
 <script>
   window.addEventListener('load', function () {
-    window.knxw.init({
+    window.knxw?.init({
       userId: 'user_123',
       autoTrack: true,
       engagements: { pollInterval: 15000 }
@@ -82,8 +89,7 @@ window.knxw.onEngagement((engagement) => {
           Delivery model
         </div>
         <p className="text-sm text-[#a3a3a3] mb-0">
-          The current SDK is browser-first and uses polling for engagement delivery.
-          It does not require an npm package to get started.
+          The SDK is browser-first and uses polling for engagement delivery. No npm package required — embed the script tag from <strong>Infrastructure → My Apps</strong>. Store your API key as an environment variable (<code>NEXT_PUBLIC_KNXW_API_KEY</code>, <code>VITE_KNXW_API_KEY</code>, etc.) and never hardcode it in source.
         </p>
       </div>
     </div>

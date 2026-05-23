@@ -74,7 +74,7 @@ const RESTAPIDoc = () => (
     <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg p-6 mb-6">
       <h4 className="text-lg font-semibold text-[#00d4ff] mb-3">Base URL</h4>
       <code className="text-sm text-[#10b981] bg-[#0a0a0a] px-3 py-1 rounded">
-        https://your-app.base44.com/functions/api/v1
+        https://knxw.app/functions/api/v1
       </code>
     </div>
 
@@ -108,17 +108,17 @@ const RESTAPIDoc = () => (
         All API requests require authentication using your API key in the Authorization header:
       </p>
       <pre className="bg-[#0a0a0a] border border-[#262626] rounded p-4 text-sm text-[#10b981] overflow-x-auto">
-{`curl -X POST https://your-app.base44.com/functions/api/v1/events \\
+{`curl -X POST https://knxw.app/functions/api/v1/events \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"user_id": "user_123", "event_type": "page_view"}'`}
       </pre>
     </div>
 
-    <Link to={createPageUrl("Developers")}>
+    <Link to={createPageUrl("DeveloperCenter")}>
       <Button className="bg-[#00d4ff] hover:bg-[#0ea5e9] text-[#0a0a0a]">
         <Code className="w-4 h-4 mr-2" />
-        View Interactive API Playground
+        Open Developer Center
       </Button>
     </Link>
   </div>
@@ -190,10 +190,10 @@ POST /api/v1/gamedev/difficulty
       </pre>
     </div>
 
-    <Link to={createPageUrl("DeveloperGameDev")}>
+    <Link to={createPageUrl("DeveloperCenter")}>
       <Button className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white">
         <Gamepad2 className="w-4 h-4 mr-2" />
-        Explore GameDev SDK & Examples
+        Open Developer Center
       </Button>
     </Link>
   </div>
@@ -275,7 +275,7 @@ X-knXw-Signature: sha256=abc123...`}
       </ul>
     </div>
 
-    <Link to={createPageUrl("Developers")}>
+    <Link to={createPageUrl("DeveloperCenter")}>
       <Button className="bg-[#10b981] hover:bg-[#059669] text-white">
         <Webhook className="w-4 h-4 mr-2" />
         Configure Webhooks
@@ -315,59 +315,74 @@ const ABTestingDoc = () => (
   </div>
 );
 
+// ── Navigation mirrors the app sidebar: Signal › Performance › Adaptation › Sovereignty › Infrastructure › Resources ──
 const documentationSections = [
-  { id: 'platform-feature-map', title: 'Platform Feature Map', icon: Map, component: PlatformFeatureMapDoc },
-  { id: 'introduction', title: 'Introduction', icon: Sparkles, component: IntroductionDoc },
-  { id: 'ai-inference', title: 'AI Inference & Explainability', icon: Brain, component: InferenceOverviewDoc },
-  { id: 'inference-studio', title: 'AI Inference Studio', icon: Cpu, component: InferenceStudioDoc },
-  { id: 'journey-orchestrator', title: 'AI Journey Orchestrator', icon: Route, component: AIJourneyOrchestratorDoc },
-  { id: 'feedback-loop', title: 'Self-Learning Feedback Loop', icon: RefreshCcw, component: FeedbackLoopDoc },
-  { id: 'user-data-portal', title: 'User Data Transparency', icon: UserCheck, component: UserDataPortalDoc },
-  { id: 'advanced-psychographics', title: 'Advanced Psychographics', icon: Brain, component: AdvancedPsychographicsDoc },
-  { id: 'training-validation', title: 'Training & Validation', icon: Target, component: TrainingValidationDoc },
-  { id: 'demo-data-studio', title: 'Demo Data Studio', icon: Database, component: DemoDataStudioDoc },
-  { id: 'javascript-sdk', title: 'JavaScript SDK', icon: Code, component: SDKDoc },
-  { id: 'adaptive-ui-sdk', title: 'Adaptive UI SDK', icon: Sparkles, component: AdaptiveUISDKDoc },
-  { id: 'adaptive-ui-ecommerce', title: 'E-commerce Use Cases', icon: Store, component: AdaptiveUIEcommerceDoc },
-  { id: 'adaptive-ui-gaming', title: 'Gaming Use Cases', icon: Gamepad2, component: AdaptiveUIGamingDoc },
-  { id: 'adaptive-ui-saas', title: 'SaaS Use Cases', icon: Rocket, component: AdaptiveUISaaSDoc },
-  { id: 'data-structures', title: 'Data Structures', icon: Layers, component: DataStructureDoc },
-  { id: 'rest-api', title: 'REST API', icon: Code, component: RESTAPIDoc },
-  { id: 'gamedev-api', title: 'GameDev API', icon: Gamepad2, component: GameDevAPIDoc },
-  { id: 'gamedev-sdk', title: 'GameDev SDK', icon: Gamepad2, component: GameDevSDKDoc },
-  { id: 'webhooks', title: 'Webhooks', icon: Webhook, component: WebhooksDoc },
-  { id: 'audience-builder', title: 'Audience Builder', icon: Users, component: AudienceBuilderDoc },
-  { id: 'predictive-analytics', title: 'Predictive Analytics', icon: TrendingUp, component: PredictivePsychographicsDoc },
-  { id: 'predictive-psychographics', title: 'Predictive Psychographics', icon: Brain, component: PredictivePsychographicsDoc },
-  { id: 'market-intelligence', title: 'Market Intelligence', icon: TrendingUp, component: MarketIntelligenceDoc },
-  { id: 'custom-dashboards', title: 'Custom Dashboards', icon: BarChart3, component: CustomDashboardsDoc },
-  { id: 'engagement-marketplace', title: 'Engagement Marketplace', icon: Store, component: EngagementMarketplaceDoc },
-  { id: 'robotics', title: 'Robotics Control', icon: Rocket, component: RoboticsDoc },
-  { id: 'data-quality', title: 'Data Quality', icon: ShieldCheck, component: DataQualityDoc },
-  { id: 'collaboration', title: 'Team Collaboration', icon: Users, component: CollaborationDoc },
-  { id: 'user-settings', title: 'User Settings', icon: User, component: UserSettingsDoc },
-  { id: 'ab-testing', title: 'A/B Testing', icon: FlaskConical, component: ABTestingDoc },
-  { id: 'executive-dashboard', title: 'Executive Dashboard', icon: Briefcase, component: ExecutiveDashboardDoc },
-  { id: 'integrations-overview', title: 'Integrations Overview', icon: Zap, component: IntegrationsDoc },
-  { id: 'marketing-integrations', title: 'Marketing Platforms', icon: Plug, component: MarketingIntegrationsDoc },
-  { id: 'integration-playbooks', title: 'Integration Playbooks', icon: BookOpen, component: IntegrationPlaybooks },
-  { id: 'core-integrations', title: 'Core Integrations', icon: Layers, component: CoreIntegrationsDoc },
-  { id: 'aws-s3', title: 'AWS S3', icon: Database, component: AwsS3IntegrationDoc },
-  { id: 'azure-blob', title: 'Azure Blob Storage', icon: Database, component: AzureBlobIntegrationDoc },
-  { id: 'eventbridge', title: 'AWS EventBridge', icon: Zap, component: EventBridgeIntegrationDoc },
-  { id: 'hubspot', title: 'HubSpot', icon: Users, component: HubSpotIntegrationDoc },
-  { id: 'zoho-crm', title: 'Zoho CRM', icon: Users, component: ZohoCRMIntegrationDoc },
-  { id: 'pipedrive', title: 'Pipedrive', icon: Users, component: PipedriveIntegrationDoc },
-  { id: 'magento', title: 'Magento', icon: Store, component: MagentoIntegrationDoc },
-  { id: 'bi-export', title: 'BI Data Export', icon: BarChart3, component: BIExportDoc },
-  { id: 'ad-platforms', title: 'Ad Platforms', icon: TrendingUp, component: AdPlatformsIntegrationDoc },
-  { id: 'stripe', title: 'Stripe', icon: BarChart3, component: StripeIntegrationDoc },
-  { id: 'meta-pages', title: 'Meta Pages', icon: Megaphone, component: MetaPagesIntegrationDoc },
-  { id: 'ga4', title: 'Google Analytics 4', icon: BarChart3, component: Ga4IntegrationDoc },
-  { id: 'attribution', title: 'Attribution Setup', icon: TrendingUp, component: AttributionDoc },
-  { id: 'roi-strategy', title: 'ROI Strategy', icon: TrendingUp, component: RoiAttributionStrategyDoc },
-  { id: 'enterprise-security', title: 'Enterprise Security', icon: Shield, component: EnterpriseSecurityDoc },
-  { id: 'system-monitoring', title: 'System Monitoring', icon: Activity, component: SystemMonitoringDoc }
+  // ── Getting Started ──────────────────────────────────────────────────────────
+  { id: 'platform-feature-map', title: 'Platform Feature Map', icon: Map, group: 'Getting Started', component: PlatformFeatureMapDoc },
+  { id: 'introduction', title: 'Introduction', icon: Sparkles, group: 'Getting Started', component: IntroductionDoc },
+  { id: 'javascript-sdk', title: 'JavaScript SDK', icon: Code, group: 'Getting Started', component: SDKDoc },
+  { id: 'demo-data-studio', title: 'Demo Data', icon: Database, group: 'Getting Started', component: DemoDataStudioDoc },
+
+  // ── Signal ───────────────────────────────────────────────────────────────────
+  { id: 'ai-inference', title: 'AI Inference & Explainability', icon: Brain, group: 'Signal', component: InferenceOverviewDoc },
+  { id: 'advanced-psychographics', title: 'Advanced Psychographics', icon: Brain, group: 'Signal', component: AdvancedPsychographicsDoc },
+  { id: 'data-structures', title: 'Data Structures', icon: Layers, group: 'Signal', component: DataStructureDoc },
+  { id: 'user-data-portal', title: 'User Data Portal', icon: UserCheck, group: 'Signal', component: UserDataPortalDoc },
+
+  // ── Performance ──────────────────────────────────────────────────────────────
+  { id: 'predictive-psychographics', title: 'Predictive AI', icon: TrendingUp, group: 'Performance', component: PredictivePsychographicsDoc },
+  { id: 'audience-builder', title: 'Audience Segments', icon: Users, group: 'Performance', component: AudienceBuilderDoc },
+  { id: 'executive-dashboard', title: 'Executive View', icon: Briefcase, group: 'Performance', component: ExecutiveDashboardDoc },
+  { id: 'market-intelligence', title: 'Market Intelligence', icon: TrendingUp, group: 'Performance', component: MarketIntelligenceDoc },
+  { id: 'custom-dashboards', title: 'Custom Dashboards', icon: BarChart3, group: 'Performance', component: CustomDashboardsDoc },
+
+  // ── Adaptation ───────────────────────────────────────────────────────────────
+  { id: 'engagement-marketplace', title: 'Engagements', icon: Zap, group: 'Adaptation', component: EngagementMarketplaceDoc },
+  { id: 'journey-orchestrator', title: 'Journey Builder', icon: Route, group: 'Adaptation', component: AIJourneyOrchestratorDoc },
+  { id: 'ab-testing', title: 'A/B Testing', icon: FlaskConical, group: 'Adaptation', component: ABTestingDoc },
+  { id: 'feedback-loop', title: 'Self-Learning Feedback Loop', icon: RefreshCcw, group: 'Adaptation', component: FeedbackLoopDoc },
+  { id: 'adaptive-ui-sdk', title: 'Adaptive UI SDK', icon: Sparkles, group: 'Adaptation', component: AdaptiveUISDKDoc },
+  { id: 'adaptive-ui-ecommerce', title: 'Adaptive UI — E-commerce', icon: Store, group: 'Adaptation', component: AdaptiveUIEcommerceDoc },
+  { id: 'adaptive-ui-gaming', title: 'Adaptive UI — Gaming', icon: Gamepad2, group: 'Adaptation', component: AdaptiveUIGamingDoc },
+  { id: 'adaptive-ui-saas', title: 'Adaptive UI — SaaS', icon: Rocket, group: 'Adaptation', component: AdaptiveUISaaSDoc },
+
+  // ── Sovereignty ──────────────────────────────────────────────────────────────
+  { id: 'attribution', title: 'Attribution', icon: TrendingUp, group: 'Sovereignty', component: AttributionDoc },
+  { id: 'roi-strategy', title: 'ROI Strategy', icon: TrendingUp, group: 'Sovereignty', component: RoiAttributionStrategyDoc },
+  { id: 'enterprise-security', title: 'Enterprise Security', icon: Shield, group: 'Sovereignty', component: EnterpriseSecurityDoc },
+  { id: 'data-quality', title: 'Data Quality', icon: ShieldCheck, group: 'Sovereignty', component: DataQualityDoc },
+  { id: 'user-settings', title: 'User Settings', icon: User, group: 'Sovereignty', component: UserSettingsDoc },
+
+  // ── Infrastructure ───────────────────────────────────────────────────────────
+  { id: 'rest-api', title: 'REST API', icon: Code, group: 'Infrastructure', component: RESTAPIDoc },
+  { id: 'webhooks', title: 'Webhooks', icon: Webhook, group: 'Infrastructure', component: WebhooksDoc },
+  { id: 'gamedev-api', title: 'GameDev API', icon: Gamepad2, group: 'Infrastructure', component: GameDevAPIDoc },
+  { id: 'gamedev-sdk', title: 'GameDev SDK', icon: Gamepad2, group: 'Infrastructure', component: GameDevSDKDoc },
+  { id: 'inference-studio', title: 'AI Inference Studio', icon: Cpu, group: 'Infrastructure', component: InferenceStudioDoc },
+  { id: 'training-validation', title: 'Training & Validation', icon: Target, group: 'Infrastructure', component: TrainingValidationDoc },
+  { id: 'system-monitoring', title: 'System Monitoring', icon: Activity, group: 'Infrastructure', component: SystemMonitoringDoc },
+  { id: 'robotics', title: 'Robotics Control', icon: Rocket, group: 'Infrastructure', component: RoboticsDoc },
+
+  // ── Integrations ─────────────────────────────────────────────────────────────
+  { id: 'integrations-overview', title: 'Integrations Overview', icon: Zap, group: 'Integrations', component: IntegrationsDoc },
+  { id: 'integration-playbooks', title: 'Integration Playbooks', icon: BookOpen, group: 'Integrations', component: IntegrationPlaybooks },
+  { id: 'core-integrations', title: 'Core Integrations', icon: Layers, group: 'Integrations', component: CoreIntegrationsDoc },
+  { id: 'marketing-integrations', title: 'Marketing Platforms', icon: Plug, group: 'Integrations', component: MarketingIntegrationsDoc },
+  { id: 'hubspot', title: 'HubSpot', icon: Users, group: 'Integrations', component: HubSpotIntegrationDoc },
+  { id: 'zoho-crm', title: 'Zoho CRM', icon: Users, group: 'Integrations', component: ZohoCRMIntegrationDoc },
+  { id: 'pipedrive', title: 'Pipedrive', icon: Users, group: 'Integrations', component: PipedriveIntegrationDoc },
+  { id: 'ad-platforms', title: 'Ad Platforms', icon: TrendingUp, group: 'Integrations', component: AdPlatformsIntegrationDoc },
+  { id: 'meta-pages', title: 'Meta Pages', icon: Megaphone, group: 'Integrations', component: MetaPagesIntegrationDoc },
+  { id: 'ga4', title: 'Google Analytics 4', icon: BarChart3, group: 'Integrations', component: Ga4IntegrationDoc },
+  { id: 'stripe', title: 'Stripe', icon: BarChart3, group: 'Integrations', component: StripeIntegrationDoc },
+  { id: 'aws-s3', title: 'AWS S3', icon: Database, group: 'Integrations', component: AwsS3IntegrationDoc },
+  { id: 'azure-blob', title: 'Azure Blob Storage', icon: Database, group: 'Integrations', component: AzureBlobIntegrationDoc },
+  { id: 'eventbridge', title: 'AWS EventBridge', icon: Zap, group: 'Integrations', component: EventBridgeIntegrationDoc },
+  { id: 'magento', title: 'Magento', icon: Store, group: 'Integrations', component: MagentoIntegrationDoc },
+  { id: 'bi-export', title: 'BI Data Export', icon: BarChart3, group: 'Integrations', component: BIExportDoc },
+
+  // ── Resources ────────────────────────────────────────────────────────────────
+  { id: 'collaboration', title: 'Team Collaboration', icon: Users, group: 'Resources', component: CollaborationDoc },
 ];
 
 export default function DocumentationPage() {
@@ -457,7 +472,7 @@ export default function DocumentationPage() {
                 </span>
               </h1>
               <p className="text-xs text-gray-500 hidden sm:block truncate">
-                Complete documentation for psychographic intelligence
+                Platform documentation, SDK guides & API reference
               </p>
             </div>
           </div>
@@ -488,9 +503,9 @@ export default function DocumentationPage() {
                 </Button>
               </Link>
             )}
-            <Link to={createPageUrl("Developers")}>
+            <Link to={createPageUrl("DeveloperCenter")}>
               <Button size="sm" className="bg-[#00d4ff] hover:bg-[#00b4d8] text-black">
-                Get Started
+                Developer Center
               </Button>
             </Link>
           </div>
@@ -520,100 +535,122 @@ export default function DocumentationPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto docs-sidebar-scroll p-4">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-                Contents
-              </h3>
-              <nav className="space-y-1">
-                {filteredSections.map((section) => {
-                  const isActive = activeSection === section.id;
-                  return (
-                    <button
-                      key={section.id}
-                      onClick={() => handleSectionClick(section.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-3 text-sm ${
-                        isActive
-                          ? 'bg-[#00d4ff]/10 text-[#00d4ff] font-medium'
-                          : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
-                      }`}
-                    >
-                      <section.icon className="w-4 h-4 flex-shrink-0" />
-                      <span className="truncate flex-1">{section.title}</span>
-                      {isActive && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
-                    </button>
-                  );
-                })}
-              </nav>
+              {searchTerm ? (
+                <nav className="space-y-1">
+                  {filteredSections.map((section) => {
+                    const isActive = activeSection === section.id;
+                    return (
+                      <button key={section.id} onClick={() => handleSectionClick(section.id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-3 text-sm ${isActive ? 'bg-[#00d4ff]/10 text-[#00d4ff] font-medium' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'}`}
+                      >
+                        <section.icon className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate flex-1">{section.title}</span>
+                        {isActive && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </nav>
+              ) : (
+                Object.entries(
+                  documentationSections.reduce((acc, s) => {
+                    (acc[s.group] = acc[s.group] || []).push(s);
+                    return acc;
+                  }, {})
+                ).map(([group, sections]) => (
+                  <div key={group} className="mb-5">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">{group}</h3>
+                    <nav className="space-y-0.5">
+                      {sections.map((section) => {
+                        const isActive = activeSection === section.id;
+                        return (
+                          <button key={section.id} onClick={() => handleSectionClick(section.id)}
+                            className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-3 text-sm ${isActive ? 'bg-[#00d4ff]/10 text-[#00d4ff] font-medium' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'}`}
+                          >
+                            <section.icon className="w-4 h-4 flex-shrink-0" />
+                            <span className="truncate flex-1">{section.title}</span>
+                            {isActive && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </nav>
+                  </div>
+                ))
+              )}
             </div>
 
             <div className="flex-shrink-0 p-4 border-t border-[#1a1a1a] space-y-2">
               {returnTo ? (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-400 hover:text-white w-full"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    navigate(returnTo);
-                  }}
+                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white w-full"
+                  onClick={() => { setMobileMenuOpen(false); navigate(returnTo); }}
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Page
+                  <ArrowLeft className="w-4 h-4 mr-2" />Back to Page
                 </Button>
               ) : (
                 <Link to={createPageUrl("Landing")} className="block" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white w-full">
-                    ← Back to Home
-                  </Button>
+                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white w-full">← Back to Home</Button>
                 </Link>
               )}
-              <Link to={createPageUrl("Developers")} className="block" onClick={() => setMobileMenuOpen(false)}>
-                <Button size="sm" className="bg-[#00d4ff] hover:bg-[#00b4d8] text-black w-full">
-                  Get Started
-                </Button>
+              <Link to={createPageUrl("DeveloperCenter")} className="block" onClick={() => setMobileMenuOpen(false)}>
+                <Button size="sm" className="bg-[#00d4ff] hover:bg-[#00b4d8] text-black w-full">Developer Center</Button>
               </Link>
-            </div>
           </div>
         </div>
+      </div>
       )}
 
       <div className="pt-16 sm:pt-20 flex h-screen">
         <div className="hidden lg:flex flex-col w-[280px] border-r border-[#1a1a1a] bg-[#0a0a0a] fixed left-0 bottom-0" style={{ top: '80px' }}>
           <div className="flex-shrink-0 p-4 border-b border-[#1a1a1a]">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-              <Input
-                placeholder="Search docs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-black border-[#1a1a1a] text-white placeholder:text-gray-600 focus:border-[#00d4ff] w-full"
-              />
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <Input placeholder="Search docs..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-black border-[#1a1a1a] text-white placeholder:text-gray-600 focus:border-[#00d4ff] w-full"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="flex-1 overflow-y-auto docs-sidebar-scroll p-4">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-              Contents
-            </h3>
-            <nav className="space-y-1">
-              {filteredSections.map((section) => {
-                const isActive = activeSection === section.id;
-                return (
-                  <button
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-3 text-sm ${
-                      isActive
-                        ? 'bg-[#00d4ff]/10 text-[#00d4ff] font-medium'
-                        : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
-                    }`}
-                  >
-                    <section.icon className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate flex-1">{section.title}</span>
-                    {isActive && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
-                  </button>
-                );
-              })}
-            </nav>
+            <div className="flex-1 overflow-y-auto docs-sidebar-scroll p-4">
+              {searchTerm ? (
+                <nav className="space-y-1">
+                  {filteredSections.map((section) => {
+                    const isActive = activeSection === section.id;
+                    return (
+                      <button key={section.id} onClick={() => setActiveSection(section.id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-3 text-sm ${isActive ? 'bg-[#00d4ff]/10 text-[#00d4ff] font-medium' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'}`}
+                      >
+                        <section.icon className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate flex-1">{section.title}</span>
+                        {isActive && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </nav>
+              ) : (
+                Object.entries(
+                  documentationSections.reduce((acc, s) => {
+                    (acc[s.group] = acc[s.group] || []).push(s);
+                    return acc;
+                  }, {})
+                ).map(([group, sections]) => (
+                  <div key={group} className="mb-5">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">{group}</h3>
+                    <nav className="space-y-0.5">
+                      {sections.map((section) => {
+                        const isActive = activeSection === section.id;
+                        return (
+                          <button key={section.id} onClick={() => setActiveSection(section.id)}
+                            className={`w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center gap-3 text-sm ${isActive ? 'bg-[#00d4ff]/10 text-[#00d4ff] font-medium' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'}`}
+                          >
+                            <section.icon className="w-4 h-4 flex-shrink-0" />
+                            <span className="truncate flex-1">{section.title}</span>
+                            {isActive && <ChevronRight className="w-3 h-3 flex-shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </nav>
+                  </div>
+                ))
+              )}
           </div>
         </div>
 
