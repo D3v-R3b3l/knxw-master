@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X, Key } from "lucide-react";
+import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X, Key, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -80,6 +80,179 @@ export class AppComponent implements OnInit {
   return '';
 }
 
+const ADAPTIVE_TABS = [['react','React / Next.js'], ['html','HTML / Vanilla'], ['vue','Vue'], ['angular','Angular']];
+
+function getAdaptiveSnippet(tab, appId = 'YOUR_APP_ID') {
+  if (tab === 'react') return `// 1. Install (no package needed — uses the global window.knxw from your tracking snippet)
+// 2. Create a component that reads the live psychographic profile and adapts your UI
+
+import { useState, useEffect } from 'react';
+
+// Hook: subscribe to live profile updates from the knXw SDK
+function useKnxwProfile() {
+  const [profile, setProfile] = useState(window.knxw?.getProfile?.() || null);
+  useEffect(() => {
+    const unsub = window.knxw?.onProfileUpdate?.(setProfile);
+    return () => unsub?.();
+  }, []);
+  return profile;
+}
+
+// Example: adaptive CTA button
+export function AdaptiveCTA({ defaultLabel = 'Get Started' }) {
+  const profile = useKnxwProfile();
+  const motivation = profile?.motivation_stack_v2?.[0]?.label;
+  const risk = profile?.risk_profile;
+
+  const label = motivation === 'growth'   ? 'Accelerate Your Growth' :
+                motivation === 'security' ? 'See How It Works First' :
+                risk === 'conservative'   ? 'Start Free — No Credit Card' :
+                risk === 'aggressive'     ? 'Get Started Now →' :
+                defaultLabel;
+
+  const handleClick = () => {
+    window.knxw?.track('cta_clicked', { label, motivation, risk });
+  };
+
+  return <button onClick={handleClick}>{label}</button>;
+}`;
+
+  if (tab === 'html') return `<!-- After your tracking snippet, add adaptive logic in plain JS -->
+<!-- The knXw SDK exposes window.knxw with profile data -->
+
+<script>
+  // Wait for the SDK to be ready
+  document.addEventListener('knxw:ready', () => {
+    const profile = window.knxw.getProfile();
+    adaptUI(profile);
+  });
+
+  // Or poll if profile updates later
+  window.knxw?.onProfileUpdate?.((profile) => adaptUI(profile));
+
+  function adaptUI(profile) {
+    if (!profile) return;
+    const motivation = profile.motivation_stack_v2?.[0]?.label;
+    const risk = profile.risk_profile;
+
+    // Adapt your CTA
+    const cta = document.querySelector('#main-cta');
+    if (!cta) return;
+
+    if (motivation === 'growth')        cta.textContent = 'Accelerate Your Growth';
+    else if (risk === 'conservative')   cta.textContent = 'Start Free — No Credit Card';
+    else if (risk === 'aggressive')     cta.textContent = 'Get Started Now →';
+
+    // Track the adaptation
+    window.knxw.track('ui_adapted', { motivation, risk, element: 'main-cta' });
+  }
+</script>`;
+
+  if (tab === 'vue') return `<!-- composables/useKnxwProfile.js -->
+import { ref, onMounted, onUnmounted } from 'vue';
+
+export function useKnxwProfile() {
+  const profile = ref(window.knxw?.getProfile?.() || null);
+  let unsub;
+  onMounted(() => {
+    unsub = window.knxw?.onProfileUpdate?.((p) => { profile.value = p; });
+  });
+  onUnmounted(() => unsub?.());
+  return profile;
+}
+
+<!-- AdaptiveCTA.vue -->
+<template>
+  <button @click="track">{{ label }}</button>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import { useKnxwProfile } from '@/composables/useKnxwProfile';
+
+const props = defineProps({ defaultLabel: { type: String, default: 'Get Started' } });
+const profile = useKnxwProfile();
+
+const label = computed(() => {
+  const motivation = profile.value?.motivation_stack_v2?.[0]?.label;
+  const risk = profile.value?.risk_profile;
+  if (motivation === 'growth')     return 'Accelerate Your Growth';
+  if (risk === 'conservative')     return 'Start Free — No Credit Card';
+  if (risk === 'aggressive')       return 'Get Started Now →';
+  return props.defaultLabel;
+});
+
+const track = () => window.knxw?.track('cta_clicked', { label: label.value });
+</script>`;
+
+  if (tab === 'angular') return `// profile.service.ts — inject the knXw profile as an Observable
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class KnxwProfileService {
+  private _profile = new BehaviorSubject<any>(
+    (window as any).knxw?.getProfile?.() || null
+  );
+  profile$ = this._profile.asObservable();
+
+  constructor() {
+    (window as any).knxw?.onProfileUpdate?.((p: any) => this._profile.next(p));
+  }
+}
+
+// adaptive-cta.component.ts
+import { Component } from '@angular/core';
+import { KnxwProfileService } from './profile.service';
+import { map } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-adaptive-cta',
+  template: \`<button (click)="track()">{{ label$ | async }}</button>\`
+})
+export class AdaptiveCTAComponent {
+  label$ = this.profile.profile$.pipe(
+    map(p => {
+      const motivation = p?.motivation_stack_v2?.[0]?.label;
+      const risk = p?.risk_profile;
+      if (motivation === 'growth')   return 'Accelerate Your Growth';
+      if (risk === 'conservative')   return 'Start Free — No Credit Card';
+      if (risk === 'aggressive')     return 'Get Started Now →';
+      return 'Get Started';
+    })
+  );
+  constructor(private profile: KnxwProfileService) {}
+  track() { (window as any).knxw?.track('cta_clicked'); }
+}`;
+  return '';
+}
+
+function getAdaptiveInstallPrompt(appId) {
+  return `Install the knXw Adaptive SDK pattern into this project (App ID: ${appId}).
+
+The knXw tracking snippet is already installed. Now add adaptive UI logic that reads the live psychographic profile and dynamically changes text, CTAs, and UI elements based on each user's motivation, risk profile, and cognitive style.
+
+The global window.knxw object is available after the script loads. Key APIs:
+- window.knxw.getProfile() — returns current psychographic profile snapshot
+- window.knxw.onProfileUpdate(callback) — subscribe to real-time profile updates, returns unsubscribe fn
+- window.knxw.track(eventName, payload) — send custom events
+
+Profile shape:
+{
+  motivation_stack_v2: [{ label: string, weight: number }],  // e.g. 'growth', 'security', 'status'
+  risk_profile: 'conservative' | 'moderate' | 'aggressive',
+  cognitive_style: 'analytical' | 'intuitive' | 'systematic' | 'creative',
+  emotional_state: { mood: string, confidence_score: number }
+}
+
+Adaptation pattern:
+1. Subscribe to onProfileUpdate() in your root component / service / composable
+2. Derive variant labels/content from profile fields using simple if/else or lookup maps
+3. Track adaptations with window.knxw.track() so the feedback loop improves future profiles
+
+Apply this to CTAs, hero headlines, pricing messaging, onboarding flows, and any high-value conversion elements. Keep fallback defaults for users with no profile yet.`;
+}
+
 function getInstallPrompt(appId) {
   const scriptTag = `<script src="${SCRIPT_CDN}?app_id=${appId}" data-api-key="YOUR_KNXW_API_KEY" async></script>`;
   return `Install the knXw analytics tracking script into this project.
@@ -105,6 +278,8 @@ export default function MyAppsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [snippetTab, setSnippetTab] = useState('html');
+  const [adaptiveTab, setAdaptiveTab] = useState('react');
+  const [adaptiveExpanded, setAdaptiveExpanded] = useState(false);
   const [copiedKey, setCopiedKey] = useState(null);
   const [revealedKey, setRevealedKey] = useState(null); // { id, api_key } — shown once after creation
 
@@ -417,11 +592,83 @@ export default function MyAppsPage() {
           </div>
         )}
 
-        {/* STEP 3 — Watch it work */}
+        {/* STEP 3 — Adaptive SDK */}
         {apps.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center">3</div>
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#a855f7] text-[#0a0a0a] text-xs font-bold flex items-center justify-center">3</div>
+              <h2 className="text-base font-semibold text-white">Make Your UI Adaptive</h2>
+              <Badge className="bg-[#a855f7]/20 text-[#c084fc] border border-[#a855f7]/30 text-xs">Adaptive SDK</Badge>
+            </div>
+            <Card className="bg-[#111111] border-[#262626]">
+              <CardContent className="pt-5 space-y-4">
+                <p className="text-sm text-[#a3a3a3]">
+                  The tracking snippet collects signals. The Adaptive SDK is how you <strong className="text-white">act on them</strong> — dynamically changing CTAs, headlines, and flows based on each user's live psychographic profile. No backend changes needed.
+                </p>
+
+                {/* How it works — 3 steps */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { n: '①', title: 'Profile builds', desc: 'knXw infers motivation, risk & cognitive style from behavioral signals in real time.' },
+                    { n: '②', title: 'Your UI reads it', desc: 'Subscribe to window.knxw.onProfileUpdate() and derive content variants from profile fields.' },
+                    { n: '③', title: 'Track & improve', desc: 'Call window.knxw.track() on adaptations so the feedback loop sharpens future profiles.' },
+                  ].map(({ n, title, desc }) => (
+                    <div key={n} className="p-3 rounded-lg bg-[#1a1a1a] border border-[#262626]">
+                      <div className="text-lg mb-1">{n}</div>
+                      <div className="text-sm font-semibold text-white mb-1">{title}</div>
+                      <div className="text-xs text-[#6b7280]">{desc}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Expand / collapse code */}
+                <button
+                  onClick={() => setAdaptiveExpanded(v => !v)}
+                  className="flex items-center gap-2 text-sm text-[#00d4ff] hover:text-[#38bdf8] transition-colors font-medium"
+                >
+                  {adaptiveExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {adaptiveExpanded ? 'Hide code examples' : 'Show code examples'}
+                </button>
+
+                {adaptiveExpanded && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div className="flex gap-1 flex-wrap">
+                        {ADAPTIVE_TABS.map(([key, label]) => (
+                          <button key={key} onClick={() => setAdaptiveTab(key)}
+                            className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${adaptiveTab === key ? 'bg-[#a855f7] text-white' : 'bg-[#1a1a1a] text-[#a3a3a3] hover:text-white border border-[#262626]'}`}
+                          >{label}</button>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => copyToClipboard(getAdaptiveInstallPrompt(selectedApp?.id), 'adaptive_prompt')}
+                        className="inline-flex items-center gap-1.5 text-xs bg-gradient-to-r from-[#a855f7] to-[#7c3aed] text-white font-semibold px-3 py-1.5 rounded-lg hover:opacity-90 transition-opacity"
+                      >
+                        {copiedKey === 'adaptive_prompt' ? <Check className="w-3 h-3" /> : <Sparkles className="w-3 h-3" />}
+                        {copiedKey === 'adaptive_prompt' ? 'Copied!' : 'Copy AI Prompt'}
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <pre className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 text-xs text-[#e5e5e5] overflow-x-auto font-mono leading-relaxed whitespace-pre max-h-80">{getAdaptiveSnippet(adaptiveTab, selectedApp?.id)}</pre>
+                      <button onClick={() => copyToClipboard(getAdaptiveSnippet(adaptiveTab, selectedApp?.id), 'adaptive_snippet')} className="absolute top-2 right-2 p-1.5 rounded bg-[#262626] hover:bg-[#333] text-[#a3a3a3] hover:text-white transition-colors">
+                        {copiedKey === 'adaptive_snippet' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      </button>
+                    </div>
+                    <p className="text-xs text-[#6b7280]">
+                      No npm install needed — <code className="text-[#a855f7]">window.knxw</code> is injected by your tracking snippet. See <Link to={createPageUrl('Documentation')} className="text-[#00d4ff] hover:underline">Adaptive UI docs</Link> for the full API reference.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* STEP 4 — Watch it work */}
+        {apps.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center">4</div>
               <h2 className="text-base font-semibold text-white">Watch Profiles Build in Real-Time</h2>
             </div>
             <Card className="bg-[#111111] border-[#262626]">
