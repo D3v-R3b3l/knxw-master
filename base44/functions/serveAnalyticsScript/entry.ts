@@ -374,6 +374,14 @@ Deno.serve(async (req) => {
 
   window.knxw = api;
   window.knXw = api;
+
+  // Auto-initialize: the app ID and API key are already baked in via serveAnalyticsScript,
+  // so we can safely call init() immediately without requiring the user to call it manually.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => api.init());
+  } else {
+    api.init();
+  }
 })();`;
 
     return new Response(script, {
