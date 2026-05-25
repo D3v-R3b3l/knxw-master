@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X, Key, Sparkles, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Activity } from "lucide-react";
+import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X, Key, Sparkles, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Activity, Users } from "lucide-react";
+import UserImportPanel from "@/components/apps/UserImportPanel";
 import { format } from "date-fns";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -725,11 +726,30 @@ export default function MyAppsPage() {
           </div>
         )}
 
-        {/* STEP 4 — Watch it work */}
-        {apps.length > 0 && (
+        {/* STEP 4 — Import Existing Users */}
+        {apps.length > 0 && selectedApp && (
           <div>
             <div className="flex items-center gap-2 mb-3">
               <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center">4</div>
+              <h2 className="text-base font-semibold text-white">Import Existing Users</h2>
+              <Badge className="bg-[#10b981]/20 text-[#34d399] border border-[#10b981]/30 text-xs">Optional</Badge>
+            </div>
+            <Card className="bg-[#111111] border-[#262626]">
+              <CardContent className="pt-5">
+                <p className="text-sm text-[#a3a3a3] mb-4">
+                  Already have users? Upload your user list so knXw can start tracking them the moment they visit — no waiting for organic discovery.
+                </p>
+                <UserImportPanel appId={selectedApp.id} appName={selectedApp.name} />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* STEP 5 — Watch it work */}
+        {apps.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-6 h-6 rounded-full bg-[#00d4ff] text-[#0a0a0a] text-xs font-bold flex items-center justify-center">5</div>
               <h2 className="text-base font-semibold text-white">Watch Profiles Build in Real-Time</h2>
             </div>
             <Card className="bg-[#111111] border-[#262626]">

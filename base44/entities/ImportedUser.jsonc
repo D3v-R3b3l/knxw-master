@@ -1,0 +1,101 @@
+{
+  "name": "ImportedUser",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this user belongs to"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "The stable user identifier (email or ID) used to match when they log in"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address for matching"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Full name or display name"
+    },
+    "traits": {
+      "type": "object",
+      "description": "Any extra metadata columns from the imported file",
+      "default": {}
+    },
+    "import_batch_id": {
+      "type": "string",
+      "description": "Batch identifier for this import run"
+    },
+    "tracking_started": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a seed event has been created for this user"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time this user was seen via the tracking snippet"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "user_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "user_id"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "email"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "import_batch_id"
+      ],
+      "order": [
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    }
+  }
+}
