@@ -233,28 +233,26 @@ export function DashboardProvider({ children }) {
       const filteredEvents = fetchedEvents.filter((e) => eventMatchesApp(e, appId, origins));
       setEvents(filteredEvents);
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const profilesRaw = await callWithRetry(
-        () => base44.entities.UserPsychographicProfile.list("-last_analyzed", 100),
-        { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
-      );
+      // Fetch profiles and insights directly by client_app_id — no cross-referencing needed
       const scopedUserIds = new Set(filteredEvents.map((event) => event.user_id).filter(Boolean));
-      const scopedProfiles = profilesRaw.filter((profile) => scopedUserIds.has(profile.user_id));
-      setProfiles(scopedProfiles);
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const [profilesRaw, insightsRaw] = await Promise.all([
+        callWithRetry(
+          () => base44.entities.UserPsychographicProfile.filter({ client_app_id: appId }, "-last_analyzed", 500),
+          { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
+        ),
+        callWithRetry(
+          () => base44.entities.PsychographicInsight.filter({ client_app_id: appId }, "-created_date", 200),
+          { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
+        )
+      ]);
 
-      const insightsRaw = await callWithRetry(
-        () => base44.entities.PsychographicInsight.list("-created_date", 50),
-        { retries: 2, baseDelayMs: 1000, maxDelayMs: 5000, retryOnStatus: [429, 502, 503, 504] }
-      );
-      const scopedInsights = insightsRaw.filter((insight) => scopedUserIds.has(insight.user_id));
-      setInsights(scopedInsights);
+      setProfiles(profilesRaw);
+      setInsights(insightsRaw);
 
-      logger.info(`Loaded: ${filteredEvents.length} events, ${scopedProfiles.length} profiles, ${scopedInsights.length} insights`);
+      logger.info(`Loaded: ${filteredEvents.length} events, ${profilesRaw.length} profiles, ${insightsRaw.length} insights`);
 
-      const computedMetrics = computeMetrics(scopedProfiles, filteredEvents, scopedInsights);
+      const computedMetrics = computeMetrics(profilesRaw, filteredEvents, insightsRaw);
       setMetrics(computedMetrics);
 
       globalLoadState.lastLoadedAppId = appId;
