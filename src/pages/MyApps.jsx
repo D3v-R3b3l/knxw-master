@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X, Key, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { Server, Copy, Check, Trash2, Loader2, Plus, Globe, ExternalLink, Code, Brain, ArrowRight, Zap, BarChart2, Info, Pencil, X, Key, Sparkles, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Activity } from "lucide-react";
 import { format } from "date-fns";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -282,6 +282,8 @@ export default function MyAppsPage() {
   const [adaptiveExpanded, setAdaptiveExpanded] = useState(false);
   const [copiedKey, setCopiedKey] = useState(null);
   const [revealedKey, setRevealedKey] = useState(null); // { id, api_key } — shown once after creation
+  const [appEventCounts, setAppEventCounts] = useState({}); // appId -> event count
+  const [verifying, setVerifying] = useState(false);
 
   // Create form
   const [newAppName, setNewAppName] = useState("");
@@ -310,11 +312,39 @@ export default function MyAppsPage() {
       const loaded = response.data?.apps || [];
       setApps(loaded);
       if (loaded.length > 0) setSelectedAppId(prev => prev || loaded[0].id);
+      // Load event counts for all apps
+      const counts = {};
+      await Promise.all(loaded.map(async (app) => {
+        try {
+          const events = await base44.entities.CapturedEvent.filter({ client_app_id: app.id }, '-created_date', 1);
+          counts[app.id] = events.length > 0 ? events[0] : null;
+        } catch { counts[app.id] = null; }
+      }));
+      setAppEventCounts(counts);
     } catch {
       toast({ title: "Error", description: "Failed to load applications", variant: "destructive" });
       setApps([]);
     }
     setLoading(false);
+  };
+
+  const handleVerifyConnection = async () => {
+    if (!selectedApp) return;
+    setVerifying(true);
+    try {
+      const events = await base44.entities.CapturedEvent.filter({ client_app_id: selectedApp.id }, '-created_date', 1);
+      if (events.length > 0) {
+        const latest = events[0];
+        const when = latest.timestamp ? format(new Date(latest.timestamp), 'MMM d, h:mm a') : 'recently';
+        toast({ title: "✅ Connection verified!", description: `Last event received ${when}` });
+        setAppEventCounts(prev => ({ ...prev, [selectedApp.id]: latest }));
+      } else {
+        toast({ title: "No events yet", description: "No events received from this app yet. Make sure your snippet is installed and your domain is authorized.", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Error", description: "Failed to check connection.", variant: "destructive" });
+    }
+    setVerifying(false);
   };
 
   const handleCreateApp = async (e) => {
@@ -515,6 +545,37 @@ export default function MyAppsPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Connection status banner */}
+                  {(() => {
+                    const lastEvent = appEventCounts[selectedApp.id];
+                    return lastEvent ? (
+                      <div className="flex items-center justify-between gap-3 p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10">
+                        <div className="flex items-center gap-2">
+                          <Activity className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                          <span className="text-xs text-emerald-300 font-medium">
+                            Connected · last event {lastEvent.timestamp ? format(new Date(lastEvent.timestamp), 'MMM d, h:mm a') : 'recently'}
+                          </span>
+                        </div>
+                        <Button size="sm" variant="ghost" onClick={handleVerifyConnection} disabled={verifying} className="text-xs text-emerald-400 hover:text-emerald-300 h-7 px-2">
+                          {verifying ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between gap-3 p-3 rounded-lg border border-amber-500/30 bg-amber-500/10">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-xs text-amber-300 font-medium">No events received yet</p>
+                            <p className="text-xs text-amber-400/70 mt-0.5">knXw only tracks users from the moment the snippet is installed. Historical visits before installation are not captured.</p>
+                          </div>
+                        </div>
+                        <Button size="sm" variant="ghost" onClick={handleVerifyConnection} disabled={verifying} className="text-xs text-amber-400 hover:text-amber-300 h-7 px-2 flex-shrink-0">
+                          {verifying ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Check'}
+                        </Button>
+                      </div>
+                    );
+                  })()}
 
                   {/* API Key — one-time reveal banner */}
                   {revealedKey?.id === selectedApp.id && (
