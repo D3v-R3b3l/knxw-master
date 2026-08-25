@@ -1,0 +1,133 @@
+{
+  "name": "MarketingIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this integration applies to"
+    },
+    "integration_type": {
+      "type": "string",
+      "enum": [
+        "marketo",
+        "pardot",
+        "segment",
+        "salesforce_marketing_cloud",
+        "adobe_analytics",
+        "google_tag_manager"
+      ],
+      "description": "Marketing platform type"
+    },
+    "credentials": {
+      "type": "object",
+      "description": "Encrypted credentials for this integration",
+      "properties": {
+        "api_key": {
+          "type": "string"
+        },
+        "api_secret": {
+          "type": "string"
+        },
+        "endpoint_url": {
+          "type": "string"
+        },
+        "account_id": {
+          "type": "string"
+        }
+      }
+    },
+    "sync_settings": {
+      "type": "object",
+      "description": "Configuration for data synchronization",
+      "properties": {
+        "sync_frequency": {
+          "type": "string",
+          "enum": [
+            "realtime",
+            "hourly",
+            "daily",
+            "weekly"
+          ],
+          "default": "hourly"
+        },
+        "sync_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Which psychographic fields to sync"
+        },
+        "field_mapping": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Map knXw fields to platform fields"
+        }
+      }
+    },
+    "webhook_config": {
+      "type": "object",
+      "description": "Webhook configuration for real-time updates",
+      "properties": {
+        "webhook_url": {
+          "type": "string"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secret": {
+          "type": "string"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "error"
+      ],
+      "default": "active"
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_error": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "integration_type",
+    "credentials"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

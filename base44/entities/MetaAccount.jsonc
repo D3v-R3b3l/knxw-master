@@ -1,0 +1,69 @@
+{
+  "name": "MetaAccount",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Base44 user id owner of this connection"
+    },
+    "fb_user_id": {
+      "type": "string",
+      "description": "Facebook user id"
+    },
+    "fb_user_name": {
+      "type": "string",
+      "description": "Facebook user name"
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "access_token_encrypted": {
+      "type": "string",
+      "description": "AES-GCM encrypted access token"
+    },
+    "token_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the long-lived token expires (if provided by Meta)"
+    },
+    "is_long_lived": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "user_id",
+    "fb_user_id",
+    "access_token_encrypted"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

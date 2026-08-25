@@ -1,0 +1,105 @@
+{
+  "name": "HybridUserProfile",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "App/workspace id (legacy denormalized field)"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp id used for app-scoped querying"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Tracked user id"
+    },
+    "heuristic_inference": {
+      "type": "object",
+      "description": "InferenceLayer from heuristics",
+      "default": {}
+    },
+    "ml_inference": {
+      "type": "object",
+      "description": "InferenceLayer from ML",
+      "default": {}
+    },
+    "llm_inference": {
+      "type": "object",
+      "description": "InferenceLayer from LLM",
+      "default": {}
+    },
+    "fused_profile": {
+      "type": "object",
+      "description": "Fused profile from all layers",
+      "default": {}
+    },
+    "evidence": {
+      "type": "string",
+      "description": "Human-readable evidence and reasoning"
+    },
+    "event_window": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Recent events used for this profile"
+    },
+    "version": {
+      "type": "number",
+      "default": 1,
+      "description": "Schema/version number"
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "user_id",
+        "updated_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "user_id"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

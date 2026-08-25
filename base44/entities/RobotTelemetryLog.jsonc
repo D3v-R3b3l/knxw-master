@@ -1,0 +1,55 @@
+{
+  "name": "RobotTelemetryLog",
+  "type": "object",
+  "properties": {
+    "robot_id": {
+      "type": "string",
+      "description": "The ID of the robot sending telemetry."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "The telemetry data payload."
+    },
+    "trace_id": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": [
+    "robot_id",
+    "timestamp",
+    "payload",
+    "trace_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "name": "ABTestVariant",
+  "type": "object",
+  "properties": {
+    "ab_test_id": {
+      "type": "string",
+      "description": "Parent test ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Variant name (e.g., Control, Variant A)"
+    },
+    "description": {
+      "type": "string"
+    },
+    "is_control": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is the control variant"
+    },
+    "traffic_weight": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.5,
+      "description": "Traffic split for this variant"
+    },
+    "engagement_template_id": {
+      "type": "string",
+      "description": "EngagementTemplate to use for this variant"
+    },
+    "configuration": {
+      "type": "object",
+      "description": "Variant-specific configuration payload",
+      "default": {}
+    },
+    "adaptive_ui_config": {
+      "type": "object",
+      "description": "Optional adaptive UI config returned to clients",
+      "default": {}
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Performance metrics",
+      "properties": {
+        "impressions": {
+          "type": "number",
+          "default": 0
+        },
+        "conversions": {
+          "type": "number",
+          "default": 0
+        },
+        "conversion_rate": {
+          "type": "number",
+          "default": 0
+        },
+        "avg_engagement_score": {
+          "type": "number",
+          "default": 0
+        }
+      },
+      "default": {}
+    }
+  },
+  "required": [
+    "ab_test_id",
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

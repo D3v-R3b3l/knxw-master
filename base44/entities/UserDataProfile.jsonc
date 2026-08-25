@@ -1,0 +1,254 @@
+{
+  "name": "UserDataProfile",
+  "type": "object",
+  "description": "End-user facing data transparency profile - allows users to see and control their psychographic data",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "The tracked user's identifier"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "Which app this profile belongs to"
+    },
+    "consent_status": {
+      "type": "object",
+      "description": "User's consent preferences",
+      "properties": {
+        "psychographic_profiling": {
+          "type": "boolean",
+          "default": true
+        },
+        "behavioral_tracking": {
+          "type": "boolean",
+          "default": true
+        },
+        "personalized_engagements": {
+          "type": "boolean",
+          "default": true
+        },
+        "data_sharing_with_integrations": {
+          "type": "boolean",
+          "default": false
+        },
+        "ai_inference": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "visible_profile": {
+      "type": "object",
+      "description": "User-visible summary of their psychographic profile",
+      "properties": {
+        "top_motivations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Plain language motivation labels"
+        },
+        "communication_style": {
+          "type": "string",
+          "description": "How the user prefers to receive information"
+        },
+        "content_preferences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "engagement_preferences": {
+          "type": "object",
+          "properties": {
+            "preferred_frequency": {
+              "type": "string",
+              "enum": [
+                "minimal",
+                "moderate",
+                "frequent"
+              ]
+            },
+            "preferred_channels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "quiet_hours": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "start_time": {
+                  "type": "string"
+                },
+                "end_time": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "first_collected": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_updated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data_points_count": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Transparency about where data comes from"
+    },
+    "user_corrections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "ai_inference": {
+            "type": "string"
+          },
+          "user_correction": {
+            "type": "string"
+          },
+          "corrected_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "User-submitted corrections to their profile"
+    },
+    "data_requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "export",
+              "deletion",
+              "correction"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "processing",
+              "completed",
+              "rejected"
+            ]
+          },
+          "requested_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": []
+    },
+    "benefits_received": {
+      "type": "object",
+      "description": "Showing users value they get from data sharing",
+      "properties": {
+        "personalized_experiences_count": {
+          "type": "number",
+          "default": 0
+        },
+        "relevant_recommendations_count": {
+          "type": "number",
+          "default": 0
+        },
+        "time_saved_estimate_minutes": {
+          "type": "number",
+          "default": 0
+        }
+      }
+    },
+    "last_profile_view": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "client_app_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "user_id",
+        "client_app_id"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "last_profile_view"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

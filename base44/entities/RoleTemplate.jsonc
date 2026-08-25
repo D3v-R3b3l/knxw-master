@@ -1,0 +1,72 @@
+{
+  "name": "RoleTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Role name (admin, analyst, viewer, custom...)"
+    },
+    "description": {
+      "type": "string"
+    },
+    "permissions": {
+      "type": "object",
+      "description": "Granular permissions for the role",
+      "properties": {
+        "manage_apps": {
+          "type": "boolean",
+          "default": false
+        },
+        "manage_rbac": {
+          "type": "boolean",
+          "default": false
+        },
+        "view_profiles": {
+          "type": "boolean",
+          "default": true
+        },
+        "manage_engagements": {
+          "type": "boolean",
+          "default": false
+        },
+        "view_insights": {
+          "type": "boolean",
+          "default": true
+        },
+        "manage_billing": {
+          "type": "boolean",
+          "default": false
+        },
+        "manage_compliance": {
+          "type": "boolean",
+          "default": false
+        },
+        "view_audit_logs": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "is_system": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, protected from deletion"
+    }
+  },
+  "required": [
+    "name",
+    "permissions"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

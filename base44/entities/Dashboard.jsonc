@@ -1,0 +1,146 @@
+{
+  "name": "Dashboard",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Workspace ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Dashboard name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Dashboard description"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this dashboard is publicly accessible within the workspace"
+    },
+    "layout_config": {
+      "type": "object",
+      "description": "Grid layout configuration",
+      "properties": {
+        "columns": {
+          "type": "number",
+          "default": 12
+        },
+        "row_height": {
+          "type": "number",
+          "default": 150
+        },
+        "margin": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "default": [
+            10,
+            10
+          ]
+        }
+      },
+      "default": {}
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Dashboard tags for organization",
+      "default": []
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "org_id",
+    "workspace_id",
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "workspace_id": "{{user.current_workspace_id}}"
+            },
+            {
+              "$or": [
+                {
+                  "created_by": "{{user.email}}"
+                },
+                {
+                  "is_public": true
+                },
+                {
+                  "user_condition": {
+                    "role": {
+                      "$in": [
+                        "owner",
+                        "admin"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "workspace_id": "{{user.current_workspace_id}}"
+            },
+            {
+              "$or": [
+                {
+                  "created_by": "{{user.email}}"
+                },
+                {
+                  "user_condition": {
+                    "role": {
+                      "$in": [
+                        "owner",
+                        "admin"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

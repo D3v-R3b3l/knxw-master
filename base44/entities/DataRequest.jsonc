@@ -1,0 +1,74 @@
+{
+  "name": "DataRequest",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "export",
+        "deletion"
+      ],
+      "description": "Request type"
+    },
+    "subject_user_id": {
+      "type": "string",
+      "description": "Tracked user_id (from events)"
+    },
+    "subject_email": {
+      "type": "string",
+      "description": "If mapped, subject email"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "result_url": {
+      "type": "string",
+      "description": "URL to exported file if applicable"
+    },
+    "requested_by_email": {
+      "type": "string"
+    },
+    "processed_by_email": {
+      "type": "string"
+    },
+    "processed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "requested_by_email",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

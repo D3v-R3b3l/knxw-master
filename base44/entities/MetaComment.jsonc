@@ -1,0 +1,66 @@
+{
+  "name": "MetaComment",
+  "type": "object",
+  "properties": {
+    "fb_comment_id": {
+      "type": "string",
+      "description": "Facebook Comment ID"
+    },
+    "fb_post_id": {
+      "type": "string",
+      "description": "Parent Post ID (Facebook ID)"
+    },
+    "from_id": {
+      "type": "string",
+      "description": "Author user ID (if available)"
+    },
+    "from_name": {
+      "type": "string",
+      "description": "Author display name"
+    },
+    "message": {
+      "type": "string",
+      "description": "Comment text"
+    },
+    "created_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Comment creation time"
+    },
+    "like_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "fb_comment_id",
+    "fb_post_id",
+    "created_time"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

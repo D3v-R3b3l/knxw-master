@@ -1,0 +1,45 @@
+{
+  "name": "GuardianEthicalAssessment",
+  "type": "object",
+  "properties": {
+    "intervention_id": {
+      "type": "string"
+    },
+    "harm_proxy_scores": {
+      "type": "object",
+      "properties": {
+        "regret_score": {
+          "type": "number"
+        },
+        "fatigue_score": {
+          "type": "number"
+        },
+        "coercion_score": {
+          "type": "number"
+        },
+        "gaming_risk_score": {
+          "type": "number"
+        }
+      }
+    },
+    "disparity_metrics": {
+      "type": "object",
+      "properties": {
+        "cohort_regret_delta": {
+          "type": "number"
+        },
+        "cohort_fatigue_delta": {
+          "type": "number"
+        }
+      }
+    },
+    "ethical_penalty": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "intervention_id",
+    "harm_proxy_scores",
+    "ethical_penalty"
+  ]
+}

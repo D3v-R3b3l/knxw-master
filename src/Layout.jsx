@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   Menu, X, User, ArrowUp, ChevronLeft, ChevronRight, Bot,
@@ -13,12 +13,8 @@ import GoogleSiteVerificationMeta from "./components/system/GoogleSiteVerificati
 import { DashboardProvider } from "./components/dashboard/DashboardStore";
 import { HelmetProvider } from 'react-helmet-async';
 import { createPageUrl } from "@/utils";
-import InteractiveTour from "./components/onboarding/InteractiveTour";
 import GlobalAIAssistant from "./components/ai/GlobalAIAssistant";
-import RoleBasedOnboarding, { detectUserRole } from "./components/onboarding/RoleBasedOnboarding";
-import AdaptiveOnboardingEngine from "./components/onboarding/AdaptiveOnboardingEngine";
 import OnboardingAssistant from "./components/onboarding/OnboardingAssistant";
-import OnboardingProgress from "./components/ui/OnboardingProgress";
 import { navigationSections, adminNavigationItems } from "./components/constants/navigation";
 import { ASSETS } from "./components/constants/assets";
 import { logError } from "./components/config/sentry";
@@ -94,12 +90,9 @@ export default function Layout({ children, currentPageName }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showTour, setShowTour] = useState(false);
-      const [showAIAssistant, setShowAIAssistant] = useState(false);
-      const [showRoleOnboarding, setShowRoleOnboarding] = useState(false);
-      const [showOnboardingAssistant, setShowOnboardingAssistant] = useState(false);
-      const [userRole, setUserRole] = useState('marketer');
-      const [authError, setAuthError] = useState(null);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showOnboardingAssistant, setShowOnboardingAssistant] = useState(false);
+  const [authError, setAuthError] = useState(null);
 
 
 
@@ -127,8 +120,6 @@ export default function Layout({ children, currentPageName }) {
       .then(user => {
         if (cancelled) return;
         setCurrentUser(user);
-        const detectedRole = detectUserRole(user);
-        setUserRole(detectedRole);
 
         // Log billing-sync failures instead of swallowing them (C-6). A silent failure here
         // leaves User.current_plan_key undefined → FeatureGate silently denies access.
@@ -144,10 +135,6 @@ export default function Layout({ children, currentPageName }) {
           onboardingTimeoutId = setTimeout(() => {
             if (!cancelled) setShowOnboardingAssistant(true);
           }, 2000);
-        }
-
-        if (user.onboarding_state?.tour_requested && !user.onboarding_state?.tour_completed) {
-          setShowTour(true);
         }
 
         onboardingTriggerHandler = () => setShowOnboardingAssistant(true);
@@ -261,17 +248,7 @@ export default function Layout({ children, currentPageName }) {
           }
         `}</style>
         
-        <AdaptiveOnboardingEngine>
         <div className="h-screen bg-[#0a0a0a] text-gray-100 overflow-hidden">
-          <OnboardingProgress />
-
-          {showTour && (
-            <InteractiveTour
-              onComplete={() => setShowTour(false)}
-              onSkip={() => setShowTour(false)}
-            />
-          )}
-
           <OnboardingAssistant
             isOpen={showOnboardingAssistant}
             onClose={async () => {
@@ -290,27 +267,6 @@ export default function Layout({ children, currentPageName }) {
                 console.error('Failed to save assistant dismissal:', error);
               }
             }}
-          />
-
-          <RoleBasedOnboarding
-            isOpen={showRoleOnboarding}
-            onClose={async () => {
-              setShowRoleOnboarding(false);
-
-              try {
-                const user = await base44.auth.me();
-                await base44.auth.updateMe({
-                  onboarding_state: {
-                    ...user.onboarding_state,
-                    [`${userRole}_dismissed`]: true,
-                    dismissed_at: new Date().toISOString()
-                  }
-                });
-              } catch (error) {
-                console.error('Failed to save onboarding dismissal:', error);
-              }
-            }}
-            userRole={userRole}
           />
 
           {showAIAssistant && (
@@ -484,34 +440,35 @@ export default function Layout({ children, currentPageName }) {
           </main>
 
           {/* Floating Action Buttons */}
-          <div className="fixed bottom-4 right-4 flex flex-col gap-3 z-40">
-            <Button
+          {!showOnboardingAssistant && !showAIAssistant && (
+            <div className="fixed bottom-4 right-4 flex flex-col gap-3 z-40">
+              <Button
                 onClick={() => setShowOnboardingAssistant(true)}
                 className="w-14 h-14 rounded-full bg-gradient-to-br from-[#10b981] to-[#059669] text-white shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]"
                 title="Getting Started"
               >
                 <GraduationCap className="w-6 h-6" />
               </Button>
-            <Button
+              <Button
                 onClick={() => setShowAIAssistant(true)}
                 className={`w-14 h-14 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0ea5e9] text-[#0a0a0a] shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] ${isDataIntegrationPage ? 'animate-pulse shadow-[0_0_30px_rgba(0,212,255,0.8)] border border-white/50' : ''}`}
                 title="AI Assistant"
               >
                 <Bot className="w-6 h-6" />
               </Button>
-            {showBackToTop && (
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="w-14 h-14 rounded-full bg-[#111111] border border-[#262626] text-white shadow-lg hover:border-[#00d4ff]/40 transition-all"
-              >
-                <ArrowUp className="w-5 h-5 mx-auto" />
-              </button>
-            )}
-          </div>
+              {showBackToTop && (
+                <button
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="w-14 h-14 rounded-full bg-[#111111] border border-[#262626] text-white shadow-lg hover:border-[#00d4ff]/40 transition-all"
+                >
+                  <ArrowUp className="w-5 h-5 mx-auto" />
+                </button>
+              )}
+            </div>
+          )}
 
           <Toaster />
         </div>
-      </AdaptiveOnboardingEngine>
     </GlobalErrorBoundary>
     </HelmetProvider>
   );

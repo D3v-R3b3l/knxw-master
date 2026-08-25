@@ -1,0 +1,53 @@
+{
+  "name": "Identity",
+  "type": "object",
+  "properties": {
+    "workspace_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "email_hash": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "fbp": {
+      "type": "string"
+    },
+    "fbc": {
+      "type": "string"
+    },
+    "gclid": {
+      "type": "string"
+    },
+    "gbraid": {
+      "type": "string"
+    },
+    "wbraid": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "workspace_id",
+    "user_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

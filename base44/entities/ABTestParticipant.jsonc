@@ -1,0 +1,132 @@
+{
+  "name": "ABTestParticipant",
+  "type": "object",
+  "properties": {
+    "ab_test_id": {
+      "type": "string",
+      "description": "ID of the A/B test"
+    },
+    "variant_id": {
+      "type": "string",
+      "description": "ID of the variant assigned to this user"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User participating in the test"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp for this test participation"
+    },
+    "assigned_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When user was assigned to this variant"
+    },
+    "first_exposure_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When user first saw the variant"
+    },
+    "last_interaction_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time user interacted with test"
+    },
+    "converted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user converted on primary metric"
+    },
+    "conversion_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metric_name": {
+            "type": "string"
+          },
+          "event_type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "default": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Conversion events for this participant"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional context about participation",
+      "default": {}
+    }
+  },
+  "required": [
+    "ab_test_id",
+    "variant_id",
+    "user_id",
+    "client_app_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "ab_test_id",
+        "user_id"
+      ],
+      "unique": true
+    },
+    {
+      "fields": [
+        "ab_test_id",
+        "variant_id"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "user_id",
+        "assigned_at"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

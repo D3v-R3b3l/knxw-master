@@ -1,0 +1,113 @@
+{
+  "name": "UserAppAccess",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this access record applies to. Required for ClientApp-level grants."
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Org this access record belongs to. Used to scope org-level role grants (e.g. super_admin)."
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Optional. If set, this access record applies to all ClientApps within this Workspace. Reserved for future workspace-level permission grants."
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user being granted access."
+    },
+    "role_name": {
+      "type": "string",
+      "enum": [
+        "owner",
+        "admin",
+        "analyst",
+        "viewer",
+        "super_admin"
+      ],
+      "description": "Role granted to the user. 'owner' = full control + must have at least one per ClientApp. 'super_admin' = org-level elevated role that grants ClientApp visibility across the Org. 'admin'/'analyst'/'viewer' = data-plane roles scoped to the ClientApp."
+    },
+    "custom_permissions": {
+      "type": "object",
+      "description": "Optional field-level overrides on top of the role_name permissions.",
+      "default": {}
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "invited",
+        "revoked"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "user_email",
+    "role_name",
+    "org_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "user_email"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "org_id",
+        "user_email"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "org_id",
+        "role_name"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "workspace_id",
+        "user_email"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_email": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

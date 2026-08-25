@@ -1,0 +1,106 @@
+{
+  "name": "AssistantSession",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique identifier for this assistant session"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user interacting with the assistant"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "demo",
+        "onboarding",
+        "exploration"
+      ],
+      "default": "demo",
+      "description": "Purpose of this session"
+    },
+    "initial_profile": {
+      "type": "object",
+      "description": "Starting psychographic profile (if any)",
+      "default": {}
+    },
+    "final_profile": {
+      "type": "object",
+      "description": "Final psychographic profile after session",
+      "default": {}
+    },
+    "consent_analytics": {
+      "type": "boolean",
+      "default": true,
+      "description": "User consented to analytics tracking"
+    },
+    "consent_personalization": {
+      "type": "boolean",
+      "default": true,
+      "description": "User consented to personalization"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the session started"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the session ended"
+    },
+    "total_turns": {
+      "type": "number",
+      "default": 0,
+      "description": "Total conversation turns"
+    },
+    "questions_asked": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of targeted questions asked by AI"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "ended",
+        "archived"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "session_id",
+    "user_email",
+    "started_at"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "user_email",
+        "started_at"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "session_id"
+      ],
+      "unique": true
+    },
+    {
+      "fields": [
+        "status",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "name": "FeedbackAnalysis",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who provided the feedback"
+    },
+    "feedback_source": {
+      "type": "string",
+      "enum": [
+        "survey",
+        "support_ticket",
+        "review",
+        "interview",
+        "imported_text",
+        "chat"
+      ],
+      "description": "Source of the feedback"
+    },
+    "original_text": {
+      "type": "string",
+      "description": "Original feedback text"
+    },
+    "feedback_metadata": {
+      "type": "object",
+      "description": "Additional context about the feedback",
+      "properties": {
+        "survey_id": {
+          "type": "string"
+        },
+        "ticket_id": {
+          "type": "string"
+        },
+        "rating": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "category": {
+          "type": "string"
+        },
+        "urgency": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        }
+      },
+      "default": {}
+    },
+    "psychographic_analysis": {
+      "type": "object",
+      "description": "AI analysis of the feedback through psychographic lens",
+      "properties": {
+        "detected_emotions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Emotions detected in the feedback"
+        },
+        "motivation_indicators": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "What motivations are driving this feedback"
+        },
+        "cognitive_style_signals": {
+          "type": "string",
+          "enum": [
+            "analytical",
+            "intuitive",
+            "systematic",
+            "creative"
+          ],
+          "description": "Cognitive style evident in how feedback was expressed"
+        },
+        "personality_indicators": {
+          "type": "object",
+          "description": "Personality traits evident in the feedback"
+        },
+        "risk_tolerance_signals": {
+          "type": "string",
+          "enum": [
+            "conservative",
+            "moderate",
+            "aggressive"
+          ],
+          "description": "Risk tolerance indicators in the feedback"
+        },
+        "psychological_needs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Underlying psychological needs expressed"
+        },
+        "communication_style": {
+          "type": "string",
+          "description": "How the user prefers to communicate based on this feedback"
+        }
+      }
+    },
+    "sentiment_analysis": {
+      "type": "object",
+      "description": "Traditional sentiment analysis",
+      "properties": {
+        "overall_sentiment": {
+          "type": "string",
+          "enum": [
+            "very_negative",
+            "negative",
+            "neutral",
+            "positive",
+            "very_positive"
+          ]
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "key_phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "actionable_insights": {
+      "type": "object",
+      "description": "AI-generated insights for action",
+      "properties": {
+        "priority_level": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "recommended_response_style": {
+          "type": "string",
+          "description": "How to respond to this user based on their psychology"
+        },
+        "suggested_solutions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Psychologically-informed solution suggestions"
+        },
+        "followup_strategy": {
+          "type": "string",
+          "description": "Recommended approach for follow-up based on user psychology"
+        },
+        "segment_implications": {
+          "type": "string",
+          "description": "What this feedback suggests about broader user segments"
+        }
+      }
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "AI confidence in the psychographic analysis"
+    },
+    "analyzed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is demo/sample data"
+    }
+  },
+  "required": [
+    "user_id",
+    "feedback_source",
+    "original_text",
+    "psychographic_analysis",
+    "sentiment_analysis"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

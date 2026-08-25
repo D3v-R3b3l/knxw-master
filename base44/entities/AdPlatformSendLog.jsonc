@@ -1,0 +1,62 @@
+{
+  "name": "AdPlatformSendLog",
+  "type": "object",
+  "description": "Logs the status of sending a conversion event to an external ad platform.",
+  "properties": {
+    "workspace_id": {
+      "type": "string"
+    },
+    "conversion_id": {
+      "type": "string",
+      "description": "FK to the Conversion entity."
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "meta_capi",
+        "google_ads_api"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "pending"
+      ]
+    },
+    "request_payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "response_payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "error_message": {
+      "type": "string"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "workspace_id",
+    "conversion_id",
+    "platform",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

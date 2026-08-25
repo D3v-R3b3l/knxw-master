@@ -1,0 +1,80 @@
+{
+  "name": "MetaPost",
+  "type": "object",
+  "properties": {
+    "fb_post_id": {
+      "type": "string",
+      "description": "Facebook Post ID"
+    },
+    "fb_page_id": {
+      "type": "string",
+      "description": "Parent Page ID (Facebook ID)"
+    },
+    "message": {
+      "type": "string",
+      "description": "Post message text"
+    },
+    "created_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Post creation time"
+    },
+    "permalink_url": {
+      "type": "string",
+      "description": "Public permalink"
+    },
+    "shares_count": {
+      "type": "number",
+      "default": 0
+    },
+    "comments_count": {
+      "type": "number",
+      "default": 0
+    },
+    "reactions_total": {
+      "type": "number",
+      "default": 0
+    },
+    "reactions": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {},
+      "description": "Optional per-type reaction counts"
+    },
+    "last_synced": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "fb_post_id",
+    "fb_page_id",
+    "created_time"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

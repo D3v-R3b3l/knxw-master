@@ -1,0 +1,58 @@
+{
+  "name": "MetaPage",
+  "type": "object",
+  "properties": {
+    "fb_page_id": {
+      "type": "string",
+      "description": "Facebook Page ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Page name"
+    },
+    "category": {
+      "type": "string",
+      "description": "Page category"
+    },
+    "followers_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Followers (if available via API)"
+    },
+    "last_synced": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful sync time"
+    }
+  },
+  "required": [
+    "fb_page_id",
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "name": "GoogleAccount",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Base44 user id owner of this connection"
+    },
+    "email": {
+      "type": "string",
+      "description": "Owner's email at connection time"
+    },
+    "google_user_id": {
+      "type": "string",
+      "description": "Google sub (user id)"
+    },
+    "google_email": {
+      "type": "string",
+      "description": "Google account email"
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "access_token_encrypted": {
+      "type": "string",
+      "description": "AES-GCM encrypted access token"
+    },
+    "refresh_token_encrypted": {
+      "type": "string",
+      "description": "AES-GCM encrypted refresh token"
+    },
+    "token_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When access token expires"
+    }
+  },
+  "required": [
+    "user_id",
+    "google_user_id",
+    "access_token_encrypted"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

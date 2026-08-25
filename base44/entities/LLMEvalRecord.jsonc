@@ -1,0 +1,119 @@
+{
+  "name": "LLMEvalRecord",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for this evaluation run"
+    },
+    "dataset": {
+      "type": "string",
+      "description": "Name of the dataset used for evaluation"
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Evaluation metrics results",
+      "properties": {
+        "accuracy": {
+          "type": "number"
+        },
+        "precision": {
+          "type": "number"
+        },
+        "recall": {
+          "type": "number"
+        },
+        "f1_score": {
+          "type": "number"
+        },
+        "latency_ms": {
+          "type": "number"
+        },
+        "cost_usd": {
+          "type": "number"
+        }
+      },
+      "default": {}
+    },
+    "summary": {
+      "type": "string",
+      "description": "Human-readable summary of evaluation results"
+    },
+    "model_version": {
+      "type": "string",
+      "description": "Version of the model being evaluated"
+    },
+    "dataset_size": {
+      "type": "number",
+      "description": "Number of samples in the evaluation dataset",
+      "default": 0
+    },
+    "evaluation_duration_ms": {
+      "type": "number",
+      "description": "Total time taken for evaluation",
+      "default": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this evaluation was completed"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "User who initiated this evaluation"
+    }
+  },
+  "required": [
+    "run_id",
+    "dataset",
+    "metrics",
+    "summary",
+    "created_at",
+    "created_by"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "created_at"
+      ],
+      "order": [
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "dataset",
+        "created_at"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "run_id"
+      ],
+      "unique": true
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "name": "GameWebhookDelivery",
+  "type": "object",
+  "properties": {
+    "webhook_endpoint_id": {
+      "type": "string",
+      "description": "GameWebhookEndpoint ID"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "player.sentiment",
+        "player.flag",
+        "player.churn_risk",
+        "player.motivation_shift"
+      ],
+      "description": "Type of event being delivered"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event payload data",
+      "default": {}
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "delivered",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "Delivery status"
+    },
+    "attempt_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of delivery attempts"
+    },
+    "last_attempt_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last delivery attempt timestamp"
+    },
+    "delivered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Successful delivery timestamp"
+    },
+    "response_code": {
+      "type": "number",
+      "description": "HTTP response code from webhook endpoint"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error message if delivery failed"
+    },
+    "next_retry_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Next scheduled retry timestamp"
+    }
+  },
+  "required": [
+    "webhook_endpoint_id",
+    "event_type",
+    "payload"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "status",
+        "next_retry_at"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "webhook_endpoint_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

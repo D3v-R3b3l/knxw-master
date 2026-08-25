@@ -1,0 +1,65 @@
+{
+  "name": "GovernanceConfig",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "sensor",
+        "governor"
+      ],
+      "default": "governor"
+    },
+    "weights": {
+      "type": "object",
+      "properties": {
+        "w_regret": {
+          "type": "number",
+          "default": 1
+        },
+        "w_fatigue": {
+          "type": "number",
+          "default": 1
+        },
+        "w_coercion": {
+          "type": "number",
+          "default": 1.5
+        },
+        "w_disparity": {
+          "type": "number",
+          "default": 2
+        },
+        "w_gaming": {
+          "type": "number",
+          "default": 1
+        }
+      }
+    }
+  },
+  "required": [
+    "mode",
+    "weights"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

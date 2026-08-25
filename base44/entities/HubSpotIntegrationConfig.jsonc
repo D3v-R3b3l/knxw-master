@@ -1,0 +1,64 @@
+{
+  "name": "HubSpotIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this HubSpot config applies to"
+    },
+    "encrypted_access_token": {
+      "type": "string",
+      "description": "Encrypted HubSpot access token"
+    },
+    "setup_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether initial setup is complete"
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful sync timestamp"
+    },
+    "sync_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether auto-sync is enabled"
+    },
+    "properties_created": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether custom properties were created in HubSpot"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "encrypted_access_token"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

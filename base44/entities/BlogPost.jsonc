@@ -1,0 +1,129 @@
+{
+  "name": "BlogPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Blog post title"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly slug for the post"
+    },
+    "excerpt": {
+      "type": "string",
+      "description": "Brief summary of the post"
+    },
+    "content": {
+      "type": "string",
+      "description": "Full blog post content in markdown"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author name"
+    },
+    "author_bio": {
+      "type": "string",
+      "description": "Author biography"
+    },
+    "author_image": {
+      "type": "string",
+      "description": "Author profile image URL"
+    },
+    "featured_image": {
+      "type": "string",
+      "description": "Featured image URL"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "case-study",
+        "guide",
+        "startup-growth",
+        "product-psychology",
+        "analytics",
+        "conversion-optimization",
+        "user-research",
+        "ai-insights"
+      ],
+      "description": "Post category"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Post tags",
+      "default": []
+    },
+    "reading_time": {
+      "type": "number",
+      "description": "Estimated reading time in minutes"
+    },
+    "published": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the post is published"
+    },
+    "published_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Publication date"
+    },
+    "meta_description": {
+      "type": "string",
+      "description": "SEO meta description"
+    },
+    "meta_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "SEO keywords",
+      "default": []
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to feature this post"
+    },
+    "view_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of views"
+    },
+    "social_shares": {
+      "type": "object",
+      "properties": {
+        "twitter": {
+          "type": "number",
+          "default": 0
+        },
+        "linkedin": {
+          "type": "number",
+          "default": 0
+        },
+        "facebook": {
+          "type": "number",
+          "default": 0
+        }
+      },
+      "default": {}
+    }
+  },
+  "required": [
+    "title",
+    "slug",
+    "content",
+    "author",
+    "category"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

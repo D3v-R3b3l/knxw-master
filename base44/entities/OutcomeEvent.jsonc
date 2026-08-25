@@ -1,0 +1,154 @@
+{
+  "name": "OutcomeEvent",
+  "type": "object",
+  "properties": {
+    "intervention_id": {
+      "type": "string"
+    },
+    "intervention_class": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "psychographic_state_vector": {
+      "type": "object"
+    },
+    "cohort_state_bucket": {
+      "type": "string"
+    },
+    "business_metrics": {
+      "type": "object",
+      "properties": {
+        "conversion": {
+          "type": "number",
+          "default": 0
+        },
+        "retention_proxy": {
+          "type": "number",
+          "default": 0
+        },
+        "completion": {
+          "type": "number",
+          "default": 0
+        }
+      }
+    },
+    "harm_proxies": {
+      "type": "object",
+      "properties": {
+        "regret_score": {
+          "type": "number",
+          "default": 0
+        },
+        "fatigue_score": {
+          "type": "number",
+          "default": 0
+        },
+        "coercion_score": {
+          "type": "number",
+          "default": 0
+        },
+        "gaming_risk_score": {
+          "type": "number",
+          "default": 0
+        }
+      }
+    },
+    "disparity_metrics": {
+      "type": "object",
+      "properties": {
+        "cohort_regret_delta": {
+          "type": "number",
+          "default": 0
+        },
+        "cohort_fatigue_delta": {
+          "type": "number",
+          "default": 0
+        }
+      }
+    },
+    "timestamps": {
+      "type": "object",
+      "properties": {
+        "intervention_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "window_0_end": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "window_1_end": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "window_2_end": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "window_3_end": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "calculated_rewards": {
+      "type": "object",
+      "properties": {
+        "R_business": {
+          "type": "number",
+          "default": 0
+        },
+        "P_ethics": {
+          "type": "number",
+          "default": 0
+        },
+        "R_total": {
+          "type": "number",
+          "default": 0
+        }
+      }
+    },
+    "window_id": {
+      "type": "string",
+      "enum": [
+        "W0",
+        "W1",
+        "W2",
+        "W3"
+      ]
+    }
+  },
+  "required": [
+    "intervention_id",
+    "intervention_class",
+    "user_id",
+    "session_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

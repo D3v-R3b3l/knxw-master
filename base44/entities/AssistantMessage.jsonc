@@ -1,0 +1,95 @@
+{
+  "name": "AssistantMessage",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Foreign key to AssistantSession"
+    },
+    "turn_index": {
+      "type": "number",
+      "description": "Sequential index of this message in the conversation"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "user",
+        "assistant",
+        "system"
+      ],
+      "description": "Who sent this message"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "inference_snapshot_id": {
+      "type": "string",
+      "description": "Link to the inference snapshot created after this turn (if assistant message)"
+    },
+    "processing_time_ms": {
+      "type": "number",
+      "description": "Time taken to generate this response (if assistant message)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this message was sent"
+    }
+  },
+  "required": [
+    "session_id",
+    "turn_index",
+    "role",
+    "content",
+    "timestamp"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "session_id",
+        "turn_index"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "session_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

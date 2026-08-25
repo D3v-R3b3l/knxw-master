@@ -1,0 +1,123 @@
+{
+  "name": "Alert",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Workspace ID (optional for org-level alerts)"
+    },
+    "rule_name": {
+      "type": "string",
+      "description": "Name of the alert rule that fired"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "critical"
+      ],
+      "default": "warning"
+    },
+    "title": {
+      "type": "string",
+      "description": "Alert title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Detailed alert message"
+    },
+    "metric_value": {
+      "type": "number",
+      "description": "The metric value that triggered the alert"
+    },
+    "threshold": {
+      "type": "number",
+      "description": "The threshold that was breached"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "resolved",
+        "acknowledged"
+      ],
+      "default": "active"
+    },
+    "notification_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether notifications were sent for this alert"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert was resolved"
+    }
+  },
+  "required": [
+    "org_id",
+    "rule_name",
+    "title",
+    "message"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "user_condition": {
+                "role": {
+                  "$in": [
+                    "owner",
+                    "admin",
+                    "member"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "user_condition": {
+                "role": {
+                  "$in": [
+                    "owner",
+                    "admin"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

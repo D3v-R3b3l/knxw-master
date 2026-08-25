@@ -1,0 +1,70 @@
+{
+  "name": "CRMRecord",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string",
+      "description": "Unique ID for the person or account"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address if available"
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name if available"
+    },
+    "source": {
+      "type": "string",
+      "description": "CRM source (Salesforce, HubSpot, etc.)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Freeform notes or summary"
+    },
+    "last_contacted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lifecycle_stage": {
+      "type": "string",
+      "description": "lead, mql, sql, customer, churned, etc."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "subject_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

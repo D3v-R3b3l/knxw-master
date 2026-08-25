@@ -1,0 +1,118 @@
+{
+  "name": "CaseStudy",
+  "type": "object",
+  "properties": {
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly identifier for the case study"
+    },
+    "title": {
+      "type": "string",
+      "description": "Case study title"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "E-commerce",
+        "SaaS",
+        "Gaming",
+        "EdTech",
+        "Healthcare",
+        "Marketing",
+        "Customer Service",
+        "Media"
+      ],
+      "description": "Industry category"
+    },
+    "hero_stat": {
+      "type": "string",
+      "description": "Main statistic (e.g., '+45%')"
+    },
+    "hero_stat_label": {
+      "type": "string",
+      "description": "Label for the main stat (e.g., 'increase in AOV')"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Client company name"
+    },
+    "company_description": {
+      "type": "string",
+      "description": "Brief description of the company"
+    },
+    "challenge": {
+      "type": "string",
+      "description": "The problem or challenge faced"
+    },
+    "solution": {
+      "type": "string",
+      "description": "How knXw solved the problem"
+    },
+    "implementation": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of implementation steps or features used"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Detailed results and metrics"
+    },
+    "testimonial": {
+      "type": "object",
+      "properties": {
+        "quote": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "description": "Client testimonial"
+    },
+    "published": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the case study is published"
+    }
+  },
+  "required": [
+    "slug",
+    "title",
+    "category",
+    "hero_stat",
+    "hero_stat_label"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "slug"
+      ],
+      "unique": true
+    },
+    {
+      "fields": [
+        "category",
+        "published"
+      ]
+    }
+  ]
+}

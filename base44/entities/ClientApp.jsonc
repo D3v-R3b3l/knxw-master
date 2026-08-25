@@ -1,0 +1,138 @@
+{
+  "name": "ClientApp",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "A human-readable name for the client's application or project."
+    },
+    "api_key": {
+      "type": "string",
+      "description": "The public-facing API key used in the JS tracking snippet. Must be unique."
+    },
+    "secret_key": {
+      "type": "string",
+      "description": "The secret key for server-to-server API calls. Must be unique and kept private."
+    },
+    "client_event_signing_secret": {
+      "type": "string",
+      "description": "HMAC-SHA256 secret for signing client-side events. Must be unique and kept secure."
+    },
+    "authorized_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A list of domains authorized to send events with this app's API key.",
+      "default": []
+    },
+    "owner_id": {
+      "type": "string",
+      "description": "Historical: the Base44 user ID who originally created this app. Not used for access control. Access is governed by UserAppAccess."
+    },
+    "org_id": {
+      "type": "string",
+      "description": "The Org this ClientApp belongs to. Nullable during Stage 1 backfill."
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "The Workspace (environment/region grouping) this ClientApp belongs to within the Org. Nullable during Stage 1 backfill."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "paused"
+      ],
+      "default": "active",
+      "description": "The operational status of the client application."
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a demo application created during demo data seeding."
+    }
+  },
+  "required": [
+    "name",
+    "api_key",
+    "secret_key",
+    "client_event_signing_secret",
+    "owner_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "api_key"
+      ],
+      "unique": true
+    },
+    {
+      "fields": [
+        "org_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "workspace_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "owner_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "is_demo",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "owner_id": "{{user.id}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "owner_id": "{{user.id}}"
+        }
+      ]
+    }
+  }
+}

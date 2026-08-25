@@ -1,0 +1,250 @@
+{
+  "name": "InferenceModel",
+  "type": "object",
+  "description": "User-customizable AI inference model configurations for psychographic profiling",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Display name for this inference model"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "Associated ClientApp"
+    },
+    "model_type": {
+      "type": "string",
+      "enum": [
+        "motivation",
+        "emotional_state",
+        "cognitive_style",
+        "risk_profile",
+        "personality",
+        "custom"
+      ],
+      "description": "Type of psychographic inference this model handles"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "testing",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "base_weights": {
+      "type": "object",
+      "description": "Weight configuration for different behavioral signals",
+      "properties": {
+        "page_views": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.3
+        },
+        "clicks": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.2
+        },
+        "time_on_page": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.25
+        },
+        "scroll_depth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.15
+        },
+        "exit_intent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.1
+        }
+      }
+    },
+    "temporal_decay": {
+      "type": "object",
+      "description": "How to weight recent vs older events",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "half_life_days": {
+          "type": "number",
+          "default": 7,
+          "description": "Days after which signal strength halves"
+        },
+        "max_age_days": {
+          "type": "number",
+          "default": 90,
+          "description": "Ignore events older than this"
+        }
+      }
+    },
+    "confidence_thresholds": {
+      "type": "object",
+      "description": "Minimum confidence levels for inference outputs",
+      "properties": {
+        "high_confidence": {
+          "type": "number",
+          "default": 0.8
+        },
+        "medium_confidence": {
+          "type": "number",
+          "default": 0.5
+        },
+        "low_confidence": {
+          "type": "number",
+          "default": 0.3
+        }
+      }
+    },
+    "bias_detection_config": {
+      "type": "object",
+      "description": "Configuration for detecting cognitive biases",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "default": "medium"
+        },
+        "bias_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "anchoring",
+            "confirmation",
+            "recency",
+            "loss_aversion"
+          ]
+        }
+      }
+    },
+    "custom_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string",
+            "description": "JSONPath or simple expression"
+          },
+          "output_field": {
+            "type": "string"
+          },
+          "output_value": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      },
+      "default": [],
+      "description": "Custom inference rules defined by user"
+    },
+    "performance_metrics": {
+      "type": "object",
+      "description": "Performance tracking for this model",
+      "properties": {
+        "total_inferences": {
+          "type": "number",
+          "default": 0
+        },
+        "avg_confidence": {
+          "type": "number",
+          "default": 0
+        },
+        "engagement_correlation": {
+          "type": "number",
+          "description": "Correlation between predictions and engagement outcomes"
+        },
+        "last_evaluated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "version": {
+      "type": "number",
+      "default": 1
+    }
+  },
+  "required": [
+    "name",
+    "client_app_id",
+    "model_type"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "model_type"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "status",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

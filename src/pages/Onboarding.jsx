@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Brain, Rocket, ArrowRight, FileText, Shield, Sparkles } from 'lucide-react';
+import { Brain, Rocket, ArrowRight, FileText, Shield } from 'lucide-react';
 
 export default function OnboardingPage() {
+  const navigate = useNavigate();
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [startTour, setStartTour] = useState(false);
 
   const handleStartTrial = async () => {
     if (!termsAccepted) {
@@ -18,21 +19,20 @@ export default function OnboardingPage() {
 
     setIsSubmitting(true);
     try {
-      // Mark onboarding as completed and set tour preference
-      await base44.auth.updateMe({ 
+      const user = await base44.auth.me();
+      await base44.auth.updateMe({
         onboarding_completed: true,
         terms_accepted_at: new Date().toISOString(),
         onboarding_state: {
-          tour_requested: startTour,
-          tour_step: 0,
-          tour_completed: false
+          ...user.onboarding_state,
+          onboarding_progress: 0,
+          assistant_dismissed: false,
+          guided_setup_started_at: new Date().toISOString()
         }
       });
-      window.location.href = createPageUrl('Dashboard') + '?onboarding=true';
+      navigate(`${createPageUrl('Dashboard')}?onboarding=true`);
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
-      // Still redirect even if the update fails
-      window.location.href = createPageUrl('Dashboard') + '?onboarding=true';
     } finally {
       setIsSubmitting(false);
     }
@@ -82,27 +82,6 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        {/* Interactive Tour Option */}
-        <div className="bg-gradient-to-br from-[#00d4ff]/10 to-[#0ea5e9]/10 border border-[#00d4ff]/30 rounded-xl p-6 mb-8">
-          <div className="flex items-start gap-3">
-            <Checkbox 
-              id="tour" 
-              checked={startTour}
-              onCheckedChange={setStartTour}
-              className="mt-1"
-            />
-            <div className="text-left">
-              <label htmlFor="tour" className="text-base text-white font-semibold leading-relaxed cursor-pointer flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-[#00d4ff]" />
-                Start with Interactive Product Tour
-              </label>
-              <p className="text-sm text-[#a3a3a3] mt-1">
-                Get a guided walkthrough of knXw's key features and capabilities (recommended for first-time users)
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Terms Acceptance */}
         <div className="bg-[#111111] border border-[#262626] rounded-xl p-6 mb-8">
           <div className="flex items-start gap-3">
@@ -143,7 +122,7 @@ export default function OnboardingPage() {
           disabled={!termsAccepted || isSubmitting}
           className="bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] hover:from-[#0ea5e9] hover:to-[#0284c7] text-[#0a0a0a] font-bold px-8 py-4 text-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Setting up...' : startTour ? 'Start Tour & Trial' : 'Start Your Free Trial'}
+          {isSubmitting ? 'Setting up...' : 'Start Guided Setup'}
           {!isSubmitting && <ArrowRight className="w-5 h-5 ml-2" />}
         </Button>
 

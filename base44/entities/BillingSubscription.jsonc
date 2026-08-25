@@ -1,0 +1,90 @@
+{
+  "name": "BillingSubscription",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Base44 user ID"
+    },
+    "plan_key": {
+      "type": "string",
+      "enum": [
+        "developer",
+        "growth",
+        "pro",
+        "enterprise"
+      ],
+      "description": "Subscription plan identifier"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "trialing",
+        "active",
+        "past_due",
+        "canceled",
+        "incomplete"
+      ],
+      "default": "active"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "usage_this_period": {
+      "type": "object",
+      "description": "Usage tracking for current billing period",
+      "properties": {
+        "psychographic_credits": {
+          "type": "number",
+          "default": 0
+        },
+        "s3_exports": {
+          "type": "number",
+          "default": 0
+        },
+        "eventbridge_events": {
+          "type": "number",
+          "default": 0
+        },
+        "ses_emails": {
+          "type": "number",
+          "default": 0
+        },
+        "conversions_forwarded": {
+          "type": "number",
+          "default": 0
+        }
+      },
+      "default": {}
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_invoice_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "plan_key",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_id": "{{user.id}}"
+    },
+    "write": {
+      "user_id": "{{user.id}}"
+    }
+  }
+}

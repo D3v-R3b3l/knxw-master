@@ -1,0 +1,249 @@
+{
+  "name": "BehavioralIntegrityAlert",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User this alert pertains to"
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "policy_violation",
+        "dark_pattern_interaction",
+        "suspicious_behavior",
+        "exploitation_attempt",
+        "manipulation_detected",
+        "rate_limit_abuse",
+        "unauthorized_access_attempt",
+        "data_scraping",
+        "account_takeover_risk",
+        "self_harm_signals"
+      ],
+      "description": "Category of behavioral integrity concern"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Severity level of the alert"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "AI confidence in this detection (0-1)"
+    },
+    "detection_reasoning": {
+      "type": "object",
+      "description": "Detailed AI explanation of why this was flagged",
+      "properties": {
+        "behavioral_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific event sequences or patterns that triggered the flag"
+        },
+        "psychographic_context": {
+          "type": "object",
+          "description": "Relevant psychographic traits that informed the detection",
+          "properties": {
+            "risk_profile": {
+              "type": "string"
+            },
+            "motivation_indicators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cognitive_style": {
+              "type": "string"
+            },
+            "behavioral_anomalies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "intent_assessment": {
+          "type": "string",
+          "enum": [
+            "malicious",
+            "exploitative",
+            "confused",
+            "accidental",
+            "unclear"
+          ],
+          "description": "AI assessment of user intent"
+        },
+        "supporting_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of CapturedEvents that support this flag"
+        }
+      }
+    },
+    "policy_violated": {
+      "type": "string",
+      "description": "Name or ID of the policy violated, if applicable"
+    },
+    "recommended_interventions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "warning_message",
+              "educational_nudge",
+              "temporary_rate_limit",
+              "feature_restriction",
+              "account_review",
+              "account_suspension",
+              "legal_review"
+            ]
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "psychographic_alignment": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "AI-recommended interventions based on psychology"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "under_investigation",
+        "dismissed",
+        "confirmed",
+        "intervention_applied",
+        "escalated"
+      ],
+      "default": "pending_review"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "Admin user who reviewed this alert"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "review_notes": {
+      "type": "string",
+      "description": "Admin notes from review process"
+    },
+    "intervention_applied": {
+      "type": "object",
+      "description": "Details of intervention taken, if any",
+      "properties": {
+        "action_type": {
+          "type": "string"
+        },
+        "applied_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "applied_by": {
+          "type": "string"
+        },
+        "details": {
+          "type": "string"
+        }
+      }
+    },
+    "false_positive": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this was determined to be a false positive"
+    },
+    "user_notified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user was notified about this alert"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional context",
+      "default": {}
+    }
+  },
+  "required": [
+    "user_id",
+    "alert_type",
+    "severity",
+    "confidence_score",
+    "detection_reasoning"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "status",
+        "severity",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "user_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "alert_type",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "admin",
+            "compliance_officer"
+          ]
+        }
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "admin",
+            "compliance_officer"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "name": "EngagementRuleTemplate",
+  "type": "object",
+  "properties": {
+    "template_name": {
+      "type": "string",
+      "description": "Name of this engagement rule template"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "onboarding",
+        "retention",
+        "conversion",
+        "support",
+        "upsell",
+        "reactivation"
+      ],
+      "description": "Category of this template"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Target industry (e.g., 'e-commerce', 'SaaS', 'healthcare', 'finance', 'gaming')"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this template does and when to use it"
+    },
+    "rule_config": {
+      "type": "object",
+      "description": "Complete engagement rule configuration that can be cloned"
+    },
+    "engagement_template_config": {
+      "type": "object",
+      "description": "Associated engagement template configuration"
+    },
+    "performance_stats": {
+      "type": "object",
+      "properties": {
+        "avg_conversion_rate": {
+          "type": "number"
+        },
+        "avg_engagement_rate": {
+          "type": "number"
+        },
+        "usage_count": {
+          "type": "number"
+        }
+      },
+      "description": "Performance statistics from users of this template"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for searchability",
+      "default": []
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to feature this in the marketplace"
+    },
+    "is_official": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is an official knXw template"
+    }
+  },
+  "required": [
+    "template_name",
+    "category",
+    "industry",
+    "description",
+    "rule_config"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "industry",
+        "category"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "is_featured"
+      ],
+      "order": [
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "is_official": true
+        },
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

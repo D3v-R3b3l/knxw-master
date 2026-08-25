@@ -1,0 +1,189 @@
+{
+  "name": "EngagementTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this template."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "checkin",
+        "tooltip",
+        "modal",
+        "notification",
+        "redirect"
+      ],
+      "description": "Type of engagement this template creates."
+    },
+    "owner_id": {
+      "type": "string",
+      "description": "Historical: original creator user ID. Not used for access control post-migration."
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Org this template belongs to. Nullable during Stage 1 backfill."
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ID of the ClientApp this template belongs to."
+    },
+    "content": {
+      "type": "object",
+      "description": "Template content structure.",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "dismiss",
+                  "redirect",
+                  "track_event"
+                ]
+              },
+              "action_value": {
+                "type": "string"
+              }
+            }
+          },
+          "default": []
+        },
+        "style": {
+          "type": "object",
+          "properties": {
+            "theme": {
+              "type": "string",
+              "enum": [
+                "light",
+                "dark",
+                "brand"
+              ],
+              "default": "dark"
+            },
+            "position": {
+              "type": "string",
+              "enum": [
+                "bottom-right",
+                "bottom-left",
+                "center",
+                "top-center"
+              ],
+              "default": "bottom-right"
+            },
+            "auto_dismiss_seconds": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "personalization": {
+      "type": "object",
+      "properties": {
+        "use_psychographic_data": {
+          "type": "boolean",
+          "default": false
+        },
+        "dynamic_fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_name": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "profile",
+                  "recent_events",
+                  "ai_generated"
+                ]
+              },
+              "fallback_value": {
+                "type": "string"
+              }
+            }
+          },
+          "default": []
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "owner_id",
+    "client_app_id",
+    "content"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "org_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "owner_id": "{{user.id}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "owner_id": "{{user.id}}"
+        }
+      ]
+    }
+  }
+}

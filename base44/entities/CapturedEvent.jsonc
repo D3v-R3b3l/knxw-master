@@ -1,0 +1,162 @@
+{
+  "name": "CapturedEvent",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp ID for app-scoped event processing"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "ID of the user who triggered the event"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Browser session identifier"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "page_view",
+        "click",
+        "scroll",
+        "form_submit",
+        "form_focus",
+        "hover",
+        "exit_intent",
+        "time_on_page",
+        "page_exit"
+      ],
+      "description": "Type of user interaction"
+    },
+    "event_payload": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "element": {
+          "type": "string"
+        },
+        "coordinates": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            }
+          }
+        },
+        "duration": {
+          "type": "number"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "device_info": {
+      "type": "object",
+      "properties": {
+        "user_agent": {
+          "type": "string"
+        },
+        "screen_resolution": {
+          "type": "string"
+        },
+        "viewport_size": {
+          "type": "string"
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "processed": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is demo/sample data"
+    }
+  },
+  "required": [
+    "user_id",
+    "event_type",
+    "timestamp"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "user_id",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "is_demo",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "processed",
+        "timestamp"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ],
+      "where": "processed = false"
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

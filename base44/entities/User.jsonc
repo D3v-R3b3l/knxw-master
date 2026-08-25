@@ -1,0 +1,45 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "onboarding_completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Flag to track if the user has completed the initial onboarding walkthrough."
+    },
+    "onboarding_state": {
+      "type": "object",
+      "description": "Persistent onboarding progress (current step, completed tasks).",
+      "default": {}
+    },
+    "current_plan_key": {
+      "type": "string",
+      "enum": [
+        "developer",
+        "growth",
+        "pro",
+        "enterprise"
+      ],
+      "default": "developer",
+      "description": "Current subscription plan key, denormalized from BillingSubscription for RLS access control."
+    },
+    "plan_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "trialing",
+        "past_due",
+        "canceled",
+        "incomplete"
+      ],
+      "default": "trialing",
+      "description": "Current subscription status, denormalized from BillingSubscription for RLS access control."
+    },
+    "subscription_updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when subscription fields were last updated."
+    }
+  },
+  "required": []
+}

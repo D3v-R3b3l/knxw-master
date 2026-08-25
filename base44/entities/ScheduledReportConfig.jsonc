@@ -1,0 +1,135 @@
+{
+  "name": "ScheduledReportConfig",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Schedule name"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "weekly"
+      ],
+      "default": "weekly"
+    },
+    "day_of_week": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 6,
+      "default": 1,
+      "description": "0=Sun ... 6=Sat"
+    },
+    "hour_utc": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 23,
+      "default": 9
+    },
+    "minute_utc": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 59,
+      "default": 0
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "pdf",
+        "csv",
+        "both"
+      ],
+      "default": "pdf"
+    },
+    "destination_type": {
+      "type": "string",
+      "enum": [
+        "email",
+        "s3"
+      ],
+      "default": "email"
+    },
+    "email_to": {
+      "type": "string",
+      "description": "Destination email address (if email)"
+    },
+    "s3_bucket": {
+      "type": "string",
+      "description": "S3 bucket (if s3)"
+    },
+    "s3_key_prefix": {
+      "type": "string",
+      "description": "S3 key prefix (if s3)",
+      "default": "reports/executive"
+    },
+    "filters": {
+      "type": "object",
+      "description": "Optional report filters",
+      "default": {}
+    },
+    "last_run_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "frequency",
+    "destination_type"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "enabled",
+        "frequency"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "created_by",
+        "enabled"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

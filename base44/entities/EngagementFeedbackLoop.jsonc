@@ -1,0 +1,206 @@
+{
+  "name": "EngagementFeedbackLoop",
+  "type": "object",
+  "description": "Tracks engagement outcomes to continuously optimize AI inference and engagement strategies",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "Associated ClientApp"
+    },
+    "engagement_rule_id": {
+      "type": "string",
+      "description": "The engagement rule that was triggered"
+    },
+    "engagement_delivery_id": {
+      "type": "string",
+      "description": "Specific delivery instance"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User who received the engagement"
+    },
+    "psychographic_snapshot": {
+      "type": "object",
+      "description": "User's psychographic state at time of engagement",
+      "properties": {
+        "motivation_stack": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "emotional_state": {
+          "type": "object"
+        },
+        "risk_profile": {
+          "type": "string"
+        },
+        "cognitive_style": {
+          "type": "string"
+        },
+        "confidence_scores": {
+          "type": "object"
+        }
+      }
+    },
+    "engagement_content": {
+      "type": "object",
+      "description": "What content was delivered",
+      "properties": {
+        "template_id": {
+          "type": "string"
+        },
+        "rendered_title": {
+          "type": "string"
+        },
+        "rendered_message": {
+          "type": "string"
+        },
+        "personalization_applied": {
+          "type": "boolean"
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "description": "Measured outcome of the engagement",
+      "properties": {
+        "user_action": {
+          "type": "string",
+          "enum": [
+            "dismissed",
+            "engaged",
+            "converted",
+            "ignored",
+            "negative_feedback"
+          ]
+        },
+        "time_to_action_seconds": {
+          "type": "number"
+        },
+        "downstream_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Events that occurred after engagement"
+        },
+        "conversion_value": {
+          "type": "number",
+          "description": "Monetary or score value if conversion occurred"
+        }
+      }
+    },
+    "learning_signals": {
+      "type": "object",
+      "description": "Extracted signals for model improvement",
+      "properties": {
+        "psychographic_accuracy": {
+          "type": "number",
+          "description": "How well the psychographic prediction matched behavior (0-1)"
+        },
+        "content_relevance_score": {
+          "type": "number",
+          "description": "How relevant the content was based on outcome (0-1)"
+        },
+        "timing_effectiveness": {
+          "type": "number",
+          "description": "Whether timing was optimal (0-1)"
+        },
+        "suggested_adjustments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "current_value": {
+                "type": "string"
+              },
+              "suggested_value": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "applied_to_model": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this feedback has been incorporated into model updates"
+    },
+    "applied_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "engagement_rule_id",
+    "user_id",
+    "outcome"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "applied_to_model",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "engagement_rule_id",
+        "outcome.user_action"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "name": "DocumentEmbedding",
+  "type": "object",
+  "properties": {
+    "doc_id": {
+      "type": "string",
+      "description": "Document ID this embedding belongs to"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "openai",
+        "local"
+      ],
+      "description": "Embedding provider"
+    },
+    "dimensions": {
+      "type": "number",
+      "description": "Vector dimensions"
+    },
+    "vector": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Embedding vector"
+    },
+    "chunk_text": {
+      "type": "string",
+      "description": "Text chunk that was embedded"
+    },
+    "chunk_index": {
+      "type": "number",
+      "description": "Index of this chunk within the document"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Chunk metadata",
+      "default": {}
+    }
+  },
+  "required": [
+    "doc_id",
+    "provider",
+    "dimensions",
+    "vector",
+    "chunk_text"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    }
+  }
+}

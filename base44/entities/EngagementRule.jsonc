@@ -1,0 +1,259 @@
+{
+  "name": "EngagementRule",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this engagement rule."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description of what this rule does."
+    },
+    "owner_id": {
+      "type": "string",
+      "description": "Historical: original creator user ID. Not used for access control post-migration."
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Org this rule belongs to. Nullable during Stage 1 backfill."
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ID of the ClientApp this rule belongs to."
+    },
+    "trigger_conditions": {
+      "type": "object",
+      "description": "Conditions that must be met to trigger this engagement.",
+      "properties": {
+        "psychographic_conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "enum": [
+                  "risk_profile",
+                  "cognitive_style",
+                  "emotional_state.mood",
+                  "emotional_state.confidence",
+                  "personality_traits.openness",
+                  "personality_traits.conscientiousness",
+                  "personality_traits.extraversion",
+                  "personality_traits.agreeableness",
+                  "personality_traits.neuroticism"
+                ]
+              },
+              "operator": {
+                "type": "string",
+                "enum": [
+                  "equals",
+                  "not_equals",
+                  "greater_than",
+                  "less_than",
+                  "contains",
+                  "not_contains"
+                ]
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          },
+          "default": []
+        },
+        "behavioral_conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_type": {
+                "type": "string"
+              },
+              "frequency": {
+                "type": "string",
+                "enum": [
+                  "once",
+                  "multiple",
+                  "never"
+                ],
+                "default": "once"
+              },
+              "time_window": {
+                "type": "string",
+                "enum": [
+                  "session",
+                  "last_hour",
+                  "last_day",
+                  "last_week"
+                ],
+                "default": "session"
+              },
+              "event_payload_conditions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "operator": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "default": []
+              }
+            }
+          },
+          "default": []
+        },
+        "timing_conditions": {
+          "type": "object",
+          "properties": {
+            "idle_time_seconds": {
+              "type": "number"
+            },
+            "time_on_page_seconds": {
+              "type": "number"
+            },
+            "session_duration_seconds": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "engagement_action": {
+      "type": "object",
+      "description": "What engagement to deliver when conditions are met.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "checkin",
+            "tooltip",
+            "modal",
+            "notification",
+            "redirect"
+          ]
+        },
+        "template_id": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "default": "medium"
+        },
+        "max_frequency": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "number"
+            },
+            "period": {
+              "type": "string",
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "testing"
+      ],
+      "default": "inactive"
+    },
+    "analytics": {
+      "type": "object",
+      "properties": {
+        "triggered_count": {
+          "type": "number",
+          "default": 0
+        },
+        "conversion_count": {
+          "type": "number",
+          "default": 0
+        },
+        "last_triggered": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "owner_id",
+    "client_app_id",
+    "trigger_conditions",
+    "engagement_action"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "org_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "owner_id": "{{user.id}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "owner_id": "{{user.id}}"
+        }
+      ]
+    }
+  }
+}

@@ -402,12 +402,14 @@ Provide a helpful, concise answer (2-3 sentences max). If the user needs to take
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setIsCollapsed(!isCollapsed)}
+                  aria-label={isCollapsed ? 'Expand guided setup' : 'Collapse guided setup'}
                   className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
                 >
                   {isCollapsed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
                 <button
                   onClick={onClose}
+                  aria-label="Close guided setup"
                   className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
                 >
                   <X className="w-4 h-4" />

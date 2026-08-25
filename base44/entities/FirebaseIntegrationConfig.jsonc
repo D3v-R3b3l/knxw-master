@@ -1,0 +1,125 @@
+{
+  "name": "FirebaseIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this Firebase config applies to"
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Firebase project ID"
+    },
+    "service_account_key": {
+      "type": "string",
+      "description": "Firebase service account JSON (encrypted)"
+    },
+    "features_enabled": {
+      "type": "object",
+      "description": "Which Firebase features to integrate",
+      "properties": {
+        "analytics": {
+          "type": "boolean",
+          "default": true
+        },
+        "remote_config": {
+          "type": "boolean",
+          "default": true
+        },
+        "cloud_messaging": {
+          "type": "boolean",
+          "default": false
+        },
+        "firestore_sync": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "default": {}
+    },
+    "user_property_mapping": {
+      "type": "object",
+      "description": "Map knXw traits to Firebase user properties",
+      "properties": {
+        "cognitive_style": {
+          "type": "string",
+          "default": "knxw_cognitive_style"
+        },
+        "risk_profile": {
+          "type": "string",
+          "default": "knxw_risk_profile"
+        },
+        "primary_motivation": {
+          "type": "string",
+          "default": "knxw_motivation"
+        },
+        "churn_risk_level": {
+          "type": "string",
+          "default": "knxw_churn_risk"
+        }
+      },
+      "default": {}
+    },
+    "remote_config_parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "parameter_key": {
+            "type": "string"
+          },
+          "psychographic_variants": {
+            "type": "object",
+            "description": "Different values for different psychological profiles"
+          }
+        }
+      },
+      "default": [],
+      "description": "Remote config parameters personalized by psychology"
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "error"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "project_id",
+    "service_account_key"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

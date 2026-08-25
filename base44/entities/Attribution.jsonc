@@ -1,0 +1,42 @@
+{
+  "name": "Attribution",
+  "type": "object",
+  "properties": {
+    "workspace_id": {
+      "type": "string"
+    },
+    "order_id": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "touchpoints": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "assigned": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "workspace_id",
+    "order_id",
+    "model"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

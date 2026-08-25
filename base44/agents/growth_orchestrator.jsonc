@@ -1,0 +1,68 @@
+{
+  "description": "Strategic assistant that converts insights and analysis into concrete engagements and campaigns.",
+  "instructions": "You are the Growth Orchestrator. Given a user request, analyze psychographic insights and profiles to propose or create the right engagements, templates, and rules. Focus on measurable lift and fast iteration. Be precise and cite which segments or insights drive each action. When creating rules/templates, keep naming clear and add short descriptions.",
+  "tool_configs": [
+    {
+      "entity_name": "PsychographicInsight",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "BatchAnalysisReport",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "UserPsychographicProfile",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "CapturedEvent",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "EngagementTemplate",
+      "allowed_operations": [
+        "create",
+        "update",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "EngagementRule",
+      "allowed_operations": [
+        "create",
+        "update",
+        "read",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "EngagementDelivery",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ClientApp",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "HubSpotSync",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    }
+  ],
+  "name": "growth_orchestrator"
+}

@@ -1,0 +1,39 @@
+{
+  "name": "churn_prediction_prevention",
+  "description": "Predicts early churn signals and prescribes/initiates targeted interventions to retain users.",
+  "instructions": "Detect pre-churn risk by combining temporal dips in activity with psychographic shifts (e.g., confidence->neutral, anxious spikes). Output segment-specific interventions and optionally propose EngagementRule updates to trigger these at the right time/place. Prioritize actions with the highest expected retention impact and lowest cost. Include a brief rationale and success metric to track.",
+  "tool_configs": [
+    {
+      "entity_name": "UserPsychographicProfile",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "CapturedEvent",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "EngagementRule",
+      "allowed_operations": [
+        "read",
+        "create",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "EngagementDelivery",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "PsychographicInsight",
+      "allowed_operations": [
+        "read"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "name": "MagentoIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this Magento config applies to"
+    },
+    "store_url": {
+      "type": "string",
+      "description": "Magento store base URL (e.g., https://mystore.com)"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "Magento REST API Integration Access Token (encrypted)"
+    },
+    "api_version": {
+      "type": "string",
+      "default": "V1",
+      "description": "Magento API version"
+    },
+    "sync_config": {
+      "type": "object",
+      "properties": {
+        "sync_customers": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_orders": {
+          "type": "boolean",
+          "default": true
+        },
+        "enrich_customer_attributes": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_frequency_hours": {
+          "type": "number",
+          "default": 24
+        }
+      },
+      "default": {}
+    },
+    "custom_attribute_codes": {
+      "type": "object",
+      "description": "Magento custom attribute codes for psychographic data",
+      "properties": {
+        "risk_profile": {
+          "type": "string",
+          "default": "knxw_risk_profile"
+        },
+        "cognitive_style": {
+          "type": "string",
+          "default": "knxw_cognitive_style"
+        },
+        "emotional_mood": {
+          "type": "string",
+          "default": "knxw_emotional_mood"
+        },
+        "motivation": {
+          "type": "string",
+          "default": "knxw_motivation"
+        },
+        "last_analyzed": {
+          "type": "string",
+          "default": "knxw_last_analyzed"
+        }
+      },
+      "default": {}
+    },
+    "webhook_endpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string"
+          },
+          "endpoint_url": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "error"
+      ],
+      "default": "inactive"
+    },
+    "error_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "store_url",
+    "access_token"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

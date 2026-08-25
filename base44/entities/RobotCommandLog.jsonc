@@ -1,0 +1,65 @@
+{
+  "name": "RobotCommandLog",
+  "type": "object",
+  "properties": {
+    "command_id": {
+      "type": "string",
+      "format": "uuid",
+      "is_unique": true
+    },
+    "robot_id": {
+      "type": "string"
+    },
+    "trace_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "verb": {
+      "type": "string"
+    },
+    "args": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "acked_accepted",
+        "acked_rejected",
+        "acked_completed",
+        "acked_failed",
+        "expired",
+        "policy_violation"
+      ],
+      "default": "sent"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ack_received_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ack_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "command_id",
+    "robot_id",
+    "trace_id",
+    "verb",
+    "status",
+    "sent_at"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

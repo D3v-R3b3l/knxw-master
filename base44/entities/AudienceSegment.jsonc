@@ -1,0 +1,144 @@
+{
+  "name": "AudienceSegment",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Segment name"
+    },
+    "description": {
+      "type": "string"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this segment belongs to"
+    },
+    "filters": {
+      "type": "object",
+      "description": "Complex filter criteria",
+      "properties": {
+        "psychographic": {
+          "type": "object",
+          "properties": {
+            "motivation_labels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "risk_profile": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cognitive_style": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "emotional_mood": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "behavioral": {
+          "type": "object",
+          "properties": {
+            "event_types": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "min_events": {
+              "type": "number"
+            },
+            "date_range": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "to": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        },
+        "engagement": {
+          "type": "object",
+          "properties": {
+            "min_engagement_score": {
+              "type": "number"
+            },
+            "churn_risk": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "default": {}
+    },
+    "member_count": {
+      "type": "number",
+      "description": "Cached count of users in segment",
+      "default": 0
+    },
+    "last_computed": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_dynamic": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, membership auto-updates"
+    }
+  },
+  "required": [
+    "name",
+    "client_app_id",
+    "filters"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

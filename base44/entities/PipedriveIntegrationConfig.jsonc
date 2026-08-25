@@ -1,0 +1,113 @@
+{
+  "name": "PipedriveIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this Pipedrive config applies to"
+    },
+    "api_token": {
+      "type": "string",
+      "description": "Pipedrive API Token (encrypted)"
+    },
+    "company_domain": {
+      "type": "string",
+      "description": "Pipedrive company domain (e.g., yourcompany.pipedrive.com)"
+    },
+    "sync_config": {
+      "type": "object",
+      "properties": {
+        "sync_persons": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_deals": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_organizations": {
+          "type": "boolean",
+          "default": false
+        },
+        "enrich_custom_fields": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_frequency_hours": {
+          "type": "number",
+          "default": 24
+        }
+      },
+      "default": {}
+    },
+    "custom_field_keys": {
+      "type": "object",
+      "description": "Pipedrive custom field keys for psychographic data",
+      "properties": {
+        "risk_profile_key": {
+          "type": "string"
+        },
+        "cognitive_style_key": {
+          "type": "string"
+        },
+        "emotional_mood_key": {
+          "type": "string"
+        },
+        "motivation_key": {
+          "type": "string"
+        },
+        "last_analyzed_key": {
+          "type": "string"
+        }
+      },
+      "default": {}
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "error"
+      ],
+      "default": "inactive"
+    },
+    "error_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "api_token",
+    "company_domain"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

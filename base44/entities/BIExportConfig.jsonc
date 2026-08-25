@@ -1,0 +1,145 @@
+{
+  "name": "BIExportConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this BI export config applies to"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name for this export configuration"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "tableau",
+        "powerbi",
+        "looker",
+        "metabase",
+        "generic"
+      ],
+      "description": "Target BI platform"
+    },
+    "export_format": {
+      "type": "string",
+      "enum": [
+        "json",
+        "csv",
+        "parquet"
+      ],
+      "default": "csv"
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "psychographic_profiles",
+          "events",
+          "insights",
+          "engagements",
+          "attributions"
+        ]
+      },
+      "default": [
+        "psychographic_profiles"
+      ]
+    },
+    "filters": {
+      "type": "object",
+      "description": "Filter criteria for exported data",
+      "properties": {
+        "date_range_days": {
+          "type": "number",
+          "default": 30
+        },
+        "include_demo_data": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "default": {}
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "hourly",
+            "daily",
+            "weekly"
+          ],
+          "default": "daily"
+        },
+        "delivery_method": {
+          "type": "string",
+          "enum": [
+            "download",
+            "s3",
+            "azure_blob",
+            "webhook"
+          ],
+          "default": "download"
+        },
+        "delivery_config": {
+          "type": "object",
+          "default": {}
+        }
+      },
+      "default": {}
+    },
+    "last_export": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_export_records": {
+      "type": "number",
+      "description": "Number of records in last export"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "name",
+    "platform"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "market_trend_analysis",
+  "description": "Surfaces external market and psychographic trends, maps them to your users, and finds new segments to target.",
+  "instructions": "Use web_search and summarize competitive moves, emerging psychographic themes, and messaging patterns. Connect those to internal UserPsychographicProfile and PsychographicInsight distributions. Output 3-5 specific market opportunities with estimated impact and suggested experiments. Provide links/citations where possible.",
+  "tool_configs": [
+    {
+      "entity_name": "UserPsychographicProfile",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "PsychographicInsight",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "ClientApp",
+      "allowed_operations": [
+        "read"
+      ]
+    }
+  ]
+}

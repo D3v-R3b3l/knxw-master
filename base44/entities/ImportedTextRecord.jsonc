@@ -1,0 +1,89 @@
+{
+  "name": "ImportedTextRecord",
+  "type": "object",
+  "properties": {
+    "subject_id": {
+      "type": "string",
+      "description": "Identifier for the subject (customer, lead, employee, etc.) this text belongs to"
+    },
+    "source": {
+      "type": "string",
+      "description": "Origin of the text (crm, support_ticket, survey, social, internal, other)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Optional tags for filtering"
+    },
+    "text": {
+      "type": "string",
+      "description": "Raw text content for psychographic analysis"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this text was originally created"
+    },
+    "analyzed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this record has been analyzed into profiles/insights"
+    }
+  },
+  "required": [
+    "subject_id",
+    "text"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "subject_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "analyzed",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ],
+      "where": "analyzed = false"
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

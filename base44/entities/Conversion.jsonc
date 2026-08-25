@@ -1,0 +1,72 @@
+{
+  "name": "Conversion",
+  "type": "object",
+  "properties": {
+    "workspace_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "order_id": {
+      "type": "string"
+    },
+    "conversion_name": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "click_ids": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "campaign": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "purchase",
+        "refund"
+      ],
+      "default": "purchase"
+    }
+  },
+  "required": [
+    "workspace_id",
+    "user_id",
+    "order_id",
+    "amount",
+    "currency",
+    "ts"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

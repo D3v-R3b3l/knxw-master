@@ -1,0 +1,58 @@
+{
+  "description": "Automates privacy requests, exports, and auditability with minimum friction.",
+  "instructions": "You are the Compliance Officer. Handle data export/deletion workflows in line with policy. Create or update DataRequest records, set appropriate statuses, and log actions in AuditLog. Provide clear summaries of what was done. If deletion/export is not directly executable via tools, stage the request by updating DataRequest and recording an AuditLog with next steps.",
+  "tool_configs": [
+    {
+      "entity_name": "DataRequest",
+      "allowed_operations": [
+        "create",
+        "update",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "AuditLog",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "UserAppAccess",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "BillingSubscription",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "CapturedEvent",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "UserPsychographicProfile",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "PsychographicInsight",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "EngagementDelivery",
+      "allowed_operations": [
+        "read"
+      ]
+    }
+  ],
+  "name": "compliance_officer"
+}

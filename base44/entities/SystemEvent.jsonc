@@ -1,0 +1,111 @@
+{
+  "name": "SystemEvent",
+  "type": "object",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Workspace ID (optional for org-level events)"
+    },
+    "actor_type": {
+      "type": "string",
+      "enum": [
+        "user",
+        "system",
+        "api"
+      ],
+      "description": "Type of actor that triggered the event"
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "ID of the actor (user email, system process, etc.)"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "auth",
+        "document_create",
+        "document_update",
+        "search",
+        "error",
+        "admin_action"
+      ],
+      "description": "Type of event"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "warning",
+        "error",
+        "critical"
+      ],
+      "default": "info"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-specific data",
+      "default": {}
+    },
+    "trace_id": {
+      "type": "string",
+      "description": "Trace ID for request correlation"
+    },
+    "span_id": {
+      "type": "string",
+      "description": "Span ID for request correlation"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp"
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "org_id",
+    "actor_type",
+    "actor_id",
+    "event_type",
+    "timestamp"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "user_condition": {
+                "role": {
+                  "$in": [
+                    "owner",
+                    "admin"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

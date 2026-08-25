@@ -1,0 +1,106 @@
+{
+  "name": "GameWebhookEndpoint",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Tenant ID this webhook endpoint belongs to"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the webhook endpoint"
+    },
+    "url": {
+      "type": "string",
+      "description": "Target URL for webhook deliveries"
+    },
+    "signing_secret": {
+      "type": "string",
+      "description": "Secret used for HMAC signature generation"
+    },
+    "event_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "player.sentiment",
+          "player.flag",
+          "player.churn_risk",
+          "player.motivation_shift"
+        ]
+      },
+      "description": "Event types this endpoint subscribes to",
+      "default": []
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "failed"
+      ],
+      "default": "active",
+      "description": "Webhook endpoint status"
+    },
+    "last_delivery_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful delivery timestamp"
+    },
+    "failure_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Consecutive failure count"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "default": {}
+    }
+  },
+  "required": [
+    "tenant_id",
+    "name",
+    "url",
+    "signing_secret",
+    "event_types"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "tenant_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

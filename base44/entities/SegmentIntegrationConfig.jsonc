@@ -1,0 +1,93 @@
+{
+  "name": "SegmentIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this Segment config applies to"
+    },
+    "workspace_slug": {
+      "type": "string",
+      "description": "Segment workspace slug"
+    },
+    "write_key": {
+      "type": "string",
+      "description": "Segment write key (encrypted)"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "Segment source ID"
+    },
+    "sync_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to sync psychographic traits to Segment"
+    },
+    "trait_mapping": {
+      "type": "object",
+      "description": "Map knXw traits to Segment trait names",
+      "properties": {
+        "cognitive_style": {
+          "type": "string",
+          "default": "knxw_cognitive_style"
+        },
+        "risk_profile": {
+          "type": "string",
+          "default": "knxw_risk_profile"
+        },
+        "primary_motivation": {
+          "type": "string",
+          "default": "knxw_primary_motivation"
+        },
+        "churn_risk": {
+          "type": "string",
+          "default": "knxw_churn_risk"
+        }
+      },
+      "default": {}
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "error"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "write_key"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

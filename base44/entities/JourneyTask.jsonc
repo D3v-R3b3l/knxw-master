@@ -1,0 +1,100 @@
+{
+  "name": "JourneyTask",
+  "type": "object",
+  "properties": {
+    "journey_id": {
+      "type": "string",
+      "description": "Journey this task belongs to"
+    },
+    "version": {
+      "type": "number",
+      "description": "Journey version when task was created"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User to whom the journey applies"
+    },
+    "resume_node_id": {
+      "type": "string",
+      "description": "Node to resume from (typically after a Wait)"
+    },
+    "context": {
+      "type": "object",
+      "description": "Arbitrary execution context",
+      "default": {}
+    },
+    "run_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When to run this task"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed",
+        "canceled"
+      ],
+      "default": "pending"
+    },
+    "last_error": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "journey_id",
+    "version",
+    "user_id",
+    "resume_node_id",
+    "run_at"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "status",
+        "run_at"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "user_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

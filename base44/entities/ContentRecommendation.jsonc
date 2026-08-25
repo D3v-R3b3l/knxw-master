@@ -1,0 +1,142 @@
+{
+  "name": "ContentRecommendation",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User this recommendation is for"
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "blog_post",
+        "documentation",
+        "help_article",
+        "feature_guide",
+        "tutorial"
+      ],
+      "description": "Type of recommended content"
+    },
+    "content_id": {
+      "type": "string",
+      "description": "ID of the recommended content item"
+    },
+    "content_title": {
+      "type": "string",
+      "description": "Title of the recommended content"
+    },
+    "content_url": {
+      "type": "string",
+      "description": "URL or path to the content"
+    },
+    "psychographic_match": {
+      "type": "object",
+      "description": "Why this content matches the user's psychology",
+      "properties": {
+        "motivation_alignment": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "User motivations this content addresses"
+        },
+        "cognitive_style_match": {
+          "type": "string",
+          "enum": [
+            "analytical",
+            "intuitive",
+            "systematic",
+            "creative"
+          ],
+          "description": "How content matches user's cognitive style"
+        },
+        "emotional_state_consideration": {
+          "type": "string",
+          "description": "How content considers user's current emotional state"
+        },
+        "match_reasoning": {
+          "type": "string",
+          "description": "AI explanation for why this content was recommended"
+        }
+      }
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "AI confidence in this recommendation (0-1)"
+    },
+    "interaction_data": {
+      "type": "object",
+      "description": "User interaction with this recommendation",
+      "properties": {
+        "viewed": {
+          "type": "boolean",
+          "default": false
+        },
+        "clicked": {
+          "type": "boolean",
+          "default": false
+        },
+        "time_spent": {
+          "type": "number",
+          "description": "Seconds spent on content"
+        },
+        "completed": {
+          "type": "boolean",
+          "default": false
+        },
+        "feedback_rating": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        }
+      },
+      "default": {}
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this recommendation was generated"
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is demo/sample data"
+    }
+  },
+  "required": [
+    "user_id",
+    "content_type",
+    "content_id",
+    "content_title",
+    "psychographic_match",
+    "confidence_score"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

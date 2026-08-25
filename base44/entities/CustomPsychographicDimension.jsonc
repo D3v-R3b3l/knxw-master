@@ -1,0 +1,91 @@
+{
+  "name": "CustomPsychographicDimension",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "Which application this custom dimension belongs to"
+    },
+    "dimension_name": {
+      "type": "string",
+      "description": "Name of the custom psychographic dimension (e.g., 'Brand Affinity', 'Price Sensitivity')"
+    },
+    "dimension_type": {
+      "type": "string",
+      "enum": [
+        "numeric",
+        "categorical",
+        "boolean"
+      ],
+      "description": "Data type of this dimension"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Industry this dimension is relevant to (e.g., 'e-commerce', 'healthcare', 'gaming')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what this dimension measures"
+    },
+    "calculation_logic": {
+      "type": "object",
+      "description": "Logic for calculating this dimension from behavioral data",
+      "properties": {
+        "input_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Event types that contribute to this dimension"
+        },
+        "weighting_formula": {
+          "type": "string",
+          "description": "Formula for weighting different inputs"
+        },
+        "min_value": {
+          "type": "number"
+        },
+        "max_value": {
+          "type": "number"
+        }
+      }
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this dimension is currently being calculated"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "dimension_name",
+    "dimension_type",
+    "description"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

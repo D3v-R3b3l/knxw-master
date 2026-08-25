@@ -1,0 +1,106 @@
+{
+  "name": "AccessLog",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Access timestamp"
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Workspace ID (if applicable)"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User identifier (email)"
+    },
+    "action": {
+      "type": "string",
+      "description": "Action performed (GET, POST, etc.)"
+    },
+    "resource": {
+      "type": "string",
+      "description": "Resource accessed"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether the action was successful"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "Client IP address"
+    },
+    "user_agent": {
+      "type": "string",
+      "description": "Client user agent"
+    },
+    "auth_method": {
+      "type": "string",
+      "enum": [
+        "session",
+        "api_key",
+        "oauth"
+      ],
+      "description": "Authentication method used"
+    },
+    "request_id": {
+      "type": "string",
+      "description": "Unique request identifier"
+    },
+    "response_code": {
+      "type": "number",
+      "description": "HTTP response code"
+    },
+    "extra": {
+      "type": "object",
+      "description": "Additional log data",
+      "default": {}
+    }
+  },
+  "required": [
+    "timestamp",
+    "org_id",
+    "user_id",
+    "action",
+    "resource",
+    "success"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "user_condition": {
+                "role": {
+                  "$in": [
+                    "owner",
+                    "admin"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

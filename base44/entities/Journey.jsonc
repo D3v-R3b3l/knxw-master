@@ -1,0 +1,102 @@
+{
+  "name": "Journey",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Journey display name."
+    },
+    "description": {
+      "type": "string",
+      "description": "Journey description."
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Org this journey belongs to. Nullable during Stage 1 backfill."
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this journey is scoped to. Nullable during Stage 1 backfill."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "archived"
+      ],
+      "default": "active"
+    },
+    "published_version": {
+      "type": "number",
+      "description": "Currently live version number."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "status",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "org_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    }
+  }
+}

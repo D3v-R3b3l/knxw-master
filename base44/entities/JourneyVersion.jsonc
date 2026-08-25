@@ -1,0 +1,161 @@
+{
+  "name": "JourneyVersion",
+  "type": "object",
+  "properties": {
+    "journey_id": {
+      "type": "string",
+      "description": "FK to Journey"
+    },
+    "version": {
+      "type": "number",
+      "description": "Version number starting at 1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "published",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "schema": {
+      "type": "object",
+      "description": "JSON schema containing nodes and edges",
+      "properties": {
+        "journey_id": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "trigger",
+                  "condition",
+                  "action",
+                  "wait",
+                  "goal"
+                ]
+              },
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              },
+              "data": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "x",
+              "y"
+            ]
+          },
+          "default": []
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "source",
+              "target"
+            ]
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "journey_id",
+        "nodes",
+        "edges"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "journey_id",
+    "version",
+    "schema"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "journey_id",
+        "version"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "status",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

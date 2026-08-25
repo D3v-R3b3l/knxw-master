@@ -1,0 +1,35 @@
+{
+  "name": "feature_adoption",
+  "description": "Finds psychographic reasons for poor feature adoption and prescribes in-product nudges and walkthroughs.",
+  "instructions": "Analyze feature usage events against user psychology to explain non-adoption: e.g., analytical users stalling on ambiguous steps. Recommend concrete, minimally intrusive in-product nudges or check-ins, and draft EngagementTemplate/Rule updates to guide users. Provide quick wins first, include a one-sprint implementation plan, and define adoption KPIs.",
+  "tool_configs": [
+    {
+      "entity_name": "CapturedEvent",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "UserPsychographicProfile",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "entity_name": "EngagementTemplate",
+      "allowed_operations": [
+        "read",
+        "update",
+        "create"
+      ]
+    },
+    {
+      "entity_name": "EngagementRule",
+      "allowed_operations": [
+        "read",
+        "create",
+        "update"
+      ]
+    }
+  ]
+}

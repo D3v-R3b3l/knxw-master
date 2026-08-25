@@ -1,0 +1,76 @@
+{
+  "name": "HubSpotSync",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "The user whose profile was synced"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address used to identify the HubSpot contact"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "Which client app initiated this sync"
+    },
+    "hubspot_contact_id": {
+      "type": "string",
+      "description": "The HubSpot contact ID that was created/updated"
+    },
+    "sync_data": {
+      "type": "object",
+      "description": "The psychographic data that was synced to HubSpot"
+    },
+    "sync_status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "partial"
+      ],
+      "description": "Status of the sync operation"
+    },
+    "error_details": {
+      "type": "string",
+      "description": "Error message if sync failed"
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the sync was performed"
+    }
+  },
+  "required": [
+    "user_id",
+    "email",
+    "sync_status",
+    "synced_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

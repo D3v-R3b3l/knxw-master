@@ -1,0 +1,211 @@
+{
+  "name": "AIJourneySuggestion",
+  "type": "object",
+  "description": "AI-generated journey orchestration suggestions based on psychographic patterns",
+  "properties": {
+    "client_app_id": {
+      "type": "string"
+    },
+    "suggestion_type": {
+      "type": "string",
+      "enum": [
+        "new_journey",
+        "journey_optimization",
+        "segment_opportunity",
+        "timing_adjustment",
+        "content_personalization"
+      ],
+      "description": "Type of suggestion"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed explanation of the suggestion"
+    },
+    "ai_reasoning": {
+      "type": "object",
+      "description": "Explainable AI reasoning",
+      "properties": {
+        "pattern_detected": {
+          "type": "string"
+        },
+        "supporting_data_points": {
+          "type": "number"
+        },
+        "confidence_score": {
+          "type": "number"
+        },
+        "time_period_analyzed": {
+          "type": "string"
+        },
+        "key_user_segments_affected": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expected_impact": {
+          "type": "object",
+          "properties": {
+            "metric": {
+              "type": "string"
+            },
+            "predicted_improvement_percent": {
+              "type": "number"
+            },
+            "confidence_range": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "suggested_journey_config": {
+      "type": "object",
+      "description": "Pre-configured journey that can be deployed",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "target_segment": {
+          "type": "object"
+        },
+        "estimated_reach": {
+          "type": "number"
+        }
+      }
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "accepted",
+        "rejected",
+        "implemented"
+      ],
+      "default": "pending"
+    },
+    "user_feedback": {
+      "type": "object",
+      "properties": {
+        "rating": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "feedback_text": {
+          "type": "string"
+        },
+        "reason_if_rejected": {
+          "type": "string"
+        }
+      }
+    },
+    "implementation_results": {
+      "type": "object",
+      "properties": {
+        "implemented_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "journey_id": {
+          "type": "string"
+        },
+        "actual_performance": {
+          "type": "object"
+        }
+      }
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Suggestions may become stale"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "suggestion_type",
+    "title",
+    "description",
+    "ai_reasoning"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "status",
+        "priority"
+      ],
+      "order": [
+        "asc",
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "suggestion_type",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

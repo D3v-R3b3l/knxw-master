@@ -1,0 +1,69 @@
+{
+  "name": "RawEvent",
+  "type": "object",
+  "properties": {
+    "workspace_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "event": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "url": {
+      "type": "string"
+    },
+    "referrer": {
+      "type": "string"
+    },
+    "ua": {
+      "type": "string"
+    },
+    "ip": {
+      "type": "string"
+    },
+    "click_ids": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "campaign": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "props": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "workspace_id",
+    "user_id",
+    "session_id",
+    "event",
+    "ts"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

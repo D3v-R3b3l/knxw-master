@@ -1,0 +1,144 @@
+{
+  "name": "InterventionTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "intervention_type": {
+      "type": "string",
+      "enum": [
+        "warning_message",
+        "educational_nudge",
+        "clarification_prompt",
+        "temporary_restriction",
+        "account_review_notice"
+      ]
+    },
+    "target_intent": {
+      "type": "string",
+      "enum": [
+        "malicious",
+        "exploitative",
+        "confused",
+        "accidental"
+      ],
+      "description": "Which user intent this template is designed for"
+    },
+    "psychographic_adaptation": {
+      "type": "object",
+      "description": "How to adapt message based on user psychology",
+      "properties": {
+        "analytical_style": {
+          "type": "string",
+          "description": "Message variant for analytical users"
+        },
+        "intuitive_style": {
+          "type": "string",
+          "description": "Message variant for intuitive users"
+        },
+        "conservative_risk": {
+          "type": "string",
+          "description": "Message variant for conservative users"
+        },
+        "aggressive_risk": {
+          "type": "string",
+          "description": "Message variant for aggressive users"
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "tone": {
+          "type": "string",
+          "enum": [
+            "educational",
+            "firm",
+            "empathetic",
+            "neutral"
+          ]
+        },
+        "call_to_action": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+    "delivery_channel": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "in_app_modal",
+          "email",
+          "sms",
+          "dashboard_notice"
+        ]
+      },
+      "default": [
+        "in_app_modal"
+      ]
+    },
+    "effectiveness_metrics": {
+      "type": "object",
+      "description": "Track how effective this template is",
+      "properties": {
+        "times_used": {
+          "type": "number",
+          "default": 0
+        },
+        "behavioral_improvement_rate": {
+          "type": "number"
+        },
+        "user_satisfaction_score": {
+          "type": "number"
+        }
+      },
+      "default": {}
+    }
+  },
+  "required": [
+    "name",
+    "intervention_type",
+    "content"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "admin",
+            "compliance_officer"
+          ]
+        }
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

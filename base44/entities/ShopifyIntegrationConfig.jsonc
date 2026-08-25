@@ -1,0 +1,111 @@
+{
+  "name": "ShopifyIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this Shopify config applies to"
+    },
+    "shop_domain": {
+      "type": "string",
+      "description": "Shopify store domain (e.g., mystore.myshopify.com)"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "Shopify Admin API access token (encrypted)"
+    },
+    "api_version": {
+      "type": "string",
+      "default": "2024-01",
+      "description": "Shopify API version"
+    },
+    "sync_config": {
+      "type": "object",
+      "description": "Synchronization settings",
+      "properties": {
+        "sync_customer_profiles": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_order_data": {
+          "type": "boolean",
+          "default": true
+        },
+        "enrich_metafields": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_frequency_hours": {
+          "type": "number",
+          "default": 24
+        }
+      },
+      "default": {}
+    },
+    "metafield_namespace": {
+      "type": "string",
+      "default": "knxw",
+      "description": "Namespace for custom metafields"
+    },
+    "webhook_endpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "topic": {
+            "type": "string"
+          },
+          "endpoint_id": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Registered Shopify webhooks"
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "error"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "shop_domain",
+    "access_token"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

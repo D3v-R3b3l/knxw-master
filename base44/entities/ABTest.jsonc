@@ -1,0 +1,146 @@
+{
+  "name": "ABTest",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Test name."
+    },
+    "description": {
+      "type": "string"
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Org this test belongs to. Nullable during Stage 1 backfill."
+    },
+    "client_app_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "running",
+        "completed",
+        "paused",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "test_type": {
+      "type": "string",
+      "enum": [
+        "engagement_template",
+        "engagement_rule",
+        "journey_step",
+        "content_variant"
+      ],
+      "default": "engagement_template"
+    },
+    "traffic_allocation": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 1,
+      "description": "Percentage of traffic to include (0-1)."
+    },
+    "psychographic_targeting": {
+      "type": "object",
+      "description": "Optional psychographic filters for test participants.",
+      "default": {}
+    },
+    "statistical_settings": {
+      "type": "object",
+      "properties": {
+        "confidence_level": {
+          "type": "number",
+          "default": 0.95
+        },
+        "minimum_sample_size": {
+          "type": "number",
+          "default": 100
+        },
+        "minimum_duration_hours": {
+          "type": "number",
+          "default": 24
+        },
+        "maximum_duration_days": {
+          "type": "number",
+          "default": 30
+        },
+        "early_stopping_enabled": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "default": {}
+    },
+    "results_summary": {
+      "type": "object",
+      "default": {}
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "winner_variant_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "client_app_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "client_app_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    },
+    {
+      "fields": [
+        "org_id",
+        "status"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    }
+  }
+}

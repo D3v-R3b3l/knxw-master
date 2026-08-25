@@ -1,0 +1,59 @@
+{
+  "name": "SSOProviderConfig",
+  "type": "object",
+  "properties": {
+    "provider": {
+      "type": "string",
+      "enum": [
+        "okta",
+        "azuread",
+        "google"
+      ],
+      "description": "SSO provider"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "metadata_url": {
+      "type": "string",
+      "description": "SAML metadata or OIDC issuer URL"
+    },
+    "client_id": {
+      "type": "string",
+      "description": "OIDC Client ID (if OIDC)"
+    },
+    "active": {
+      "type": "boolean",
+      "default": false
+    },
+    "role_mapping": {
+      "type": "object",
+      "description": "Map IdP groups/claims to RoleTemplate names",
+      "default": {}
+    }
+  },
+  "required": [
+    "provider",
+    "display_name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

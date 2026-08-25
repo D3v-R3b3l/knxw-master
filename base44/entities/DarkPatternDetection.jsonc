@@ -1,0 +1,146 @@
+{
+  "name": "DarkPatternDetection",
+  "type": "object",
+  "properties": {
+    "pattern_type": {
+      "type": "string",
+      "enum": [
+        "roach_motel",
+        "forced_continuity",
+        "hidden_costs",
+        "bait_and_switch",
+        "confirmshaming",
+        "disguised_ads",
+        "trick_questions",
+        "sneak_into_basket",
+        "privacy_zuckering",
+        "price_comparison_prevention",
+        "misdirection"
+      ],
+      "description": "Type of dark pattern detected"
+    },
+    "detected_in_element": {
+      "type": "string",
+      "description": "UI element or page where pattern was detected"
+    },
+    "detection_method": {
+      "type": "string",
+      "enum": [
+        "user_behavior_analysis",
+        "ui_scan",
+        "manual_report",
+        "ai_heuristic"
+      ],
+      "description": "How this pattern was detected"
+    },
+    "affected_users_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of users who interacted with this element"
+    },
+    "manipulation_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "AI-assessed manipulation severity (0-1)"
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "user_confusion_signals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Behavioral indicators of user confusion"
+        },
+        "completion_drop_off_rate": {
+          "type": "number"
+        },
+        "average_time_spent": {
+          "type": "number"
+        },
+        "support_tickets_related": {
+          "type": "number"
+        }
+      }
+    },
+    "recommended_fix": {
+      "type": "string",
+      "description": "AI-generated recommendation for fixing the pattern"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "detected",
+        "under_review",
+        "fix_in_progress",
+        "resolved",
+        "false_positive",
+        "accepted_risk"
+      ],
+      "default": "detected"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Product/UX team member assigned to fix"
+    },
+    "resolution_notes": {
+      "type": "string"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "pattern_type",
+    "detected_in_element",
+    "manipulation_score"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "status",
+        "manipulation_score"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "pattern_type",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "admin",
+            "compliance_officer",
+            "product_team"
+          ]
+        }
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": {
+          "$in": [
+            "admin",
+            "compliance_officer"
+          ]
+        }
+      }
+    }
+  }
+}

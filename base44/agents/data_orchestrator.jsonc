@@ -1,0 +1,59 @@
+{
+  "name": "data_orchestrator",
+  "description": "Intelligent background agent that automatically processes imported data, runs NLP analysis, generates psychographic profiles, creates insights, and orchestrates data flow throughout the entire system.",
+  "instructions": "You are the Data Orchestrator. When data is imported, automatically: 1) Structure unstructured text using NLP, 2) Generate psychographic profiles from structured data, 3) Create actionable insights, 4) Update dashboard metrics, 5) Suggest next steps to users. Route data intelligently based on content type and quality. Always explain your decisions and provide export options for processed outputs.",
+  "tool_configs": [
+    {
+      "entity_name": "ImportedTextRecord",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "CRMRecord",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "EmployeeRecord",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "UserPsychographicProfile",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "PsychographicInsight",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "CapturedEvent",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "BatchAnalysisReport",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "name": "InferenceSnapshot",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Foreign key to AssistantSession"
+    },
+    "turn_index": {
+      "type": "number",
+      "description": "Conversation turn when this snapshot was taken"
+    },
+    "motivation_stack": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "default": [],
+      "description": "Top motivations with weights and confidence"
+    },
+    "emotional_state": {
+      "type": "object",
+      "properties": {
+        "mood": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "energy_level": {
+          "type": "string"
+        }
+      },
+      "default": {}
+    },
+    "cognitive_style": {
+      "type": "object",
+      "properties": {
+        "style": {
+          "type": "string",
+          "enum": [
+            "analytical",
+            "intuitive",
+            "systematic",
+            "creative"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "default": {}
+    },
+    "risk_profile": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": [
+            "conservative",
+            "moderate",
+            "aggressive"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "default": {}
+    },
+    "personality_traits": {
+      "type": "object",
+      "properties": {
+        "openness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "conscientiousness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "extraversion": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "agreeableness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "neuroticism": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "default": {}
+    },
+    "reasoning": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trait": {
+            "type": "string"
+          },
+          "inference": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "AI's reasoning for each inference"
+    },
+    "uncertainty_map": {
+      "type": "object",
+      "properties": {
+        "lowest_confidence_trait": {
+          "type": "string"
+        },
+        "lowest_confidence_score": {
+          "type": "number"
+        },
+        "suggested_question": {
+          "type": "string"
+        }
+      },
+      "default": {},
+      "description": "What the AI is least confident about"
+    },
+    "targeted_question": {
+      "type": "string",
+      "description": "Question the AI asked to reduce uncertainty (if any)"
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Suggested personalization actions based on current profile"
+    },
+    "overall_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Overall confidence in the psychographic profile"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "session_id",
+    "turn_index",
+    "overall_confidence",
+    "timestamp"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "session_id",
+        "turn_index"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

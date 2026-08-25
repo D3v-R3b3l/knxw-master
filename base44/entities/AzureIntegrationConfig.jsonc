@@ -1,0 +1,62 @@
+{
+  "name": "AzureIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this Azure config applies to"
+    },
+    "integration_type": {
+      "type": "string",
+      "enum": [
+        "blob_export",
+        "event_hubs"
+      ],
+      "description": "Azure integration type"
+    },
+    "settings": {
+      "type": "object",
+      "description": "Provider-specific settings (container, hub, etc.)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "disabled",
+        "enabled"
+      ],
+      "default": "enabled"
+    },
+    "last_run": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_error": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_app_id",
+    "integration_type",
+    "settings"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

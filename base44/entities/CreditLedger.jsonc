@@ -1,0 +1,41 @@
+{
+  "name": "CreditLedger",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "ID of the tenant/user"
+    },
+    "monthly_allotment": {
+      "type": "number",
+      "default": 1000
+    },
+    "credits_remaining": {
+      "type": "number",
+      "default": 1000
+    },
+    "overage_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "overage_rate_cents_per_credit": {
+      "type": "number",
+      "default": 1
+    },
+    "last_reset_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "tenant_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "tenant_id"
+      ],
+      "unique": true
+    }
+  ]
+}

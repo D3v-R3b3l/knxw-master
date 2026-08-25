@@ -1,0 +1,136 @@
+{
+  "name": "EngagementDelivery",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "ID of the user who received this engagement"
+    },
+    "rule_id": {
+      "type": "string",
+      "description": "ID of the EngagementRule that triggered this delivery"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "ID of the EngagementTemplate used"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ID of the ClientApp this delivery belongs to"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "User session when this engagement was delivered"
+    },
+    "delivery_channel": {
+      "type": "string",
+      "enum": [
+        "in_app",
+        "email",
+        "sms",
+        "push"
+      ],
+      "default": "in_app",
+      "description": "Delivery channel used"
+    },
+    "delivery_context": {
+      "type": "object",
+      "description": "Context at the time of delivery",
+      "properties": {
+        "page_url": {
+          "type": "string"
+        },
+        "user_psychographic_state": {
+          "type": "object"
+        },
+        "trigger_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conditions_met": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provider_message_id": {
+          "type": "string"
+        },
+        "provider_response": {
+          "type": "object"
+        }
+      }
+    },
+    "rendered_content": {
+      "type": "object",
+      "description": "The actual content delivered to the user after personalization"
+    },
+    "response": {
+      "type": "object",
+      "description": "User's response to the engagement",
+      "properties": {
+        "action_taken": {
+          "type": "string",
+          "enum": [
+            "dismissed",
+            "responded",
+            "ignored",
+            "converted",
+            "clicked",
+            "replied"
+          ]
+        },
+        "response_data": {
+          "type": "object"
+        },
+        "response_time_seconds": {
+          "type": "number"
+        }
+      }
+    },
+    "delivery_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "delivered",
+        "failed",
+        "expired"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "user_id",
+    "rule_id",
+    "template_id",
+    "client_app_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

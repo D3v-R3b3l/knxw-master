@@ -1,0 +1,40 @@
+{
+  "name": "UsageEvent",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string"
+    },
+    "credits_consumed": {
+      "type": "number"
+    },
+    "operation_type": {
+      "type": "string"
+    },
+    "context": {
+      "type": "object",
+      "default": {}
+    },
+    "idempotency_key": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "credits_consumed"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "tenant_id",
+        "created_date"
+      ]
+    },
+    {
+      "fields": [
+        "idempotency_key"
+      ],
+      "unique": true
+    }
+  ]
+}

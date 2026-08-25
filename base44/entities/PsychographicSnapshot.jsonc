@@ -1,0 +1,163 @@
+{
+  "name": "PsychographicSnapshot",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User this snapshot belongs to"
+    },
+    "snapshot_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this snapshot was taken"
+    },
+    "motivation_stack": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Motivation state at this point in time"
+    },
+    "emotional_state": {
+      "type": "object",
+      "properties": {
+        "mood": {
+          "type": "string"
+        },
+        "confidence_score": {
+          "type": "number"
+        },
+        "energy_level": {
+          "type": "string"
+        }
+      }
+    },
+    "risk_profile": {
+      "type": "string",
+      "enum": [
+        "conservative",
+        "moderate",
+        "aggressive"
+      ]
+    },
+    "cognitive_style": {
+      "type": "string",
+      "enum": [
+        "analytical",
+        "intuitive",
+        "systematic",
+        "creative"
+      ]
+    },
+    "personality_traits": {
+      "type": "object",
+      "properties": {
+        "openness": {
+          "type": "number"
+        },
+        "conscientiousness": {
+          "type": "number"
+        },
+        "extraversion": {
+          "type": "number"
+        },
+        "agreeableness": {
+          "type": "number"
+        },
+        "neuroticism": {
+          "type": "number"
+        }
+      }
+    },
+    "cognitive_biases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bias_name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "number"
+          },
+          "confidence": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Detected cognitive biases at this snapshot",
+      "default": []
+    },
+    "custom_dimensions": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Custom psychographic dimensions and their values",
+      "default": {}
+    },
+    "change_indicators": {
+      "type": "object",
+      "description": "Indicators of change from previous snapshot",
+      "properties": {
+        "emotional_shift_magnitude": {
+          "type": "number"
+        },
+        "motivation_drift": {
+          "type": "number"
+        },
+        "behavior_volatility": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "user_id",
+    "snapshot_date"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "user_id",
+        "snapshot_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

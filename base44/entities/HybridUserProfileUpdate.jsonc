@@ -1,0 +1,97 @@
+{
+  "name": "HybridUserProfileUpdate",
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string"
+    },
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp id used for app-scoped querying"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "heuristic_inference": {
+      "type": "object",
+      "default": {}
+    },
+    "ml_inference": {
+      "type": "object",
+      "default": {}
+    },
+    "llm_inference": {
+      "type": "object",
+      "default": {}
+    },
+    "fused_profile": {
+      "type": "object",
+      "default": {}
+    },
+    "evidence": {
+      "type": "string"
+    },
+    "event_window": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why this update occurred"
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "user_id",
+        "created_date"
+      ],
+      "order": [
+        "asc",
+        "desc"
+      ]
+    },
+    {
+      "fields": [
+        "client_app_id",
+        "user_id"
+      ],
+      "order": [
+        "asc",
+        "asc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

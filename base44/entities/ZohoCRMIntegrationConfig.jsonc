@@ -1,0 +1,121 @@
+{
+  "name": "ZohoCRMIntegrationConfig",
+  "type": "object",
+  "properties": {
+    "client_app_id": {
+      "type": "string",
+      "description": "ClientApp this Zoho CRM config applies to"
+    },
+    "client_id": {
+      "type": "string",
+      "description": "Zoho OAuth Client ID"
+    },
+    "client_secret": {
+      "type": "string",
+      "description": "Zoho OAuth Client Secret (encrypted)"
+    },
+    "refresh_token": {
+      "type": "string",
+      "description": "Zoho OAuth Refresh Token (encrypted)"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "Zoho OAuth Access Token (encrypted)"
+    },
+    "token_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the access token expires"
+    },
+    "data_center": {
+      "type": "string",
+      "enum": [
+        "us",
+        "eu",
+        "in",
+        "au",
+        "jp",
+        "cn"
+      ],
+      "default": "us",
+      "description": "Zoho data center region"
+    },
+    "sync_config": {
+      "type": "object",
+      "properties": {
+        "sync_contacts": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_leads": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_deals": {
+          "type": "boolean",
+          "default": false
+        },
+        "enrich_custom_fields": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_frequency_hours": {
+          "type": "number",
+          "default": 24
+        }
+      },
+      "default": {}
+    },
+    "custom_field_mapping": {
+      "type": "object",
+      "description": "Mapping of knXw fields to Zoho custom fields",
+      "default": {}
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "error",
+        "pending_auth"
+      ],
+      "default": "pending_auth"
+    },
+    "error_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_app_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

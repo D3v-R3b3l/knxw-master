@@ -1,0 +1,165 @@
+{
+  "name": "DashboardWidget",
+  "type": "object",
+  "properties": {
+    "dashboard_id": {
+      "type": "string",
+      "description": "Foreign key to Dashboard"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "timeseries",
+        "kpi",
+        "table",
+        "markdown"
+      ],
+      "description": "Type of widget"
+    },
+    "title": {
+      "type": "string",
+      "description": "Widget title"
+    },
+    "query": {
+      "type": "object",
+      "description": "Query configuration for data widgets",
+      "properties": {
+        "metric_name": {
+          "type": "string"
+        },
+        "time_window_hours": {
+          "type": "number",
+          "default": 24
+        },
+        "group_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "filters": {
+          "type": "object",
+          "default": {}
+        },
+        "table_source": {
+          "type": "string",
+          "enum": [
+            "metrics_hour",
+            "system_events",
+            "access_logs"
+          ]
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "limit": {
+          "type": "number",
+          "default": 100
+        }
+      },
+      "default": {}
+    },
+    "layout": {
+      "type": "object",
+      "description": "Widget position and size in grid",
+      "properties": {
+        "x": {
+          "type": "number",
+          "default": 0
+        },
+        "y": {
+          "type": "number",
+          "default": 0
+        },
+        "w": {
+          "type": "number",
+          "default": 4
+        },
+        "h": {
+          "type": "number",
+          "default": 3
+        },
+        "min_w": {
+          "type": "number",
+          "default": 2
+        },
+        "min_h": {
+          "type": "number",
+          "default": 2
+        }
+      },
+      "default": {}
+    },
+    "content": {
+      "type": "object",
+      "description": "Widget-specific content",
+      "properties": {
+        "markdown": {
+          "type": "string"
+        },
+        "chart_type": {
+          "type": "string",
+          "enum": [
+            "line",
+            "bar",
+            "area"
+          ],
+          "default": "line"
+        },
+        "color_scheme": {
+          "type": "string",
+          "default": "blue"
+        },
+        "show_legend": {
+          "type": "boolean",
+          "default": true
+        },
+        "decimal_places": {
+          "type": "number",
+          "default": 2
+        }
+      },
+      "default": {}
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "dashboard_id",
+    "kind",
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    }
+  }
+}

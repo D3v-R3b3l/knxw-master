@@ -1,0 +1,152 @@
+{
+  "name": "ConfigCenter",
+  "type": "object",
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Organization or workspace identifier"
+    },
+    "log_retention_days": {
+      "type": "number",
+      "description": "Number of days to retain audit and access logs",
+      "minimum": 30,
+      "maximum": 3650,
+      "default": 90
+    },
+    "identity_resolution_strategy": {
+      "type": "string",
+      "enum": [
+        "email_first",
+        "authenticated_id",
+        "device_id_fallback"
+      ],
+      "default": "email_first",
+      "description": "Primary method for resolving user identities"
+    },
+    "feature_flags": {
+      "type": "object",
+      "description": "Feature toggle configuration",
+      "properties": {
+        "enable_advanced_segmentation": {
+          "type": "boolean",
+          "default": true
+        },
+        "enable_llm_evaluation": {
+          "type": "boolean",
+          "default": false
+        },
+        "enable_audience_preview": {
+          "type": "boolean",
+          "default": true
+        },
+        "enable_secret_rotation": {
+          "type": "boolean",
+          "default": false
+        },
+        "max_audience_size": {
+          "type": "number",
+          "default": 100000
+        }
+      },
+      "default": {}
+    },
+    "llm_budget_tokens": {
+      "type": "number",
+      "description": "Monthly token budget for LLM operations",
+      "minimum": 0,
+      "default": 1000000
+    },
+    "secret_rotation_days": {
+      "type": "number",
+      "description": "Number of days between automatic secret rotation",
+      "minimum": 7,
+      "maximum": 365,
+      "default": 90
+    },
+    "performance_budgets": {
+      "type": "object",
+      "description": "Performance targets and budgets",
+      "properties": {
+        "api_p95_ms": {
+          "type": "number",
+          "default": 500
+        },
+        "audience_preview_p95_ms": {
+          "type": "number",
+          "default": 250
+        },
+        "max_concurrent_llm_requests": {
+          "type": "number",
+          "default": 10
+        }
+      },
+      "default": {}
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this configuration was last updated"
+    },
+    "updated_by": {
+      "type": "string",
+      "description": "User who last updated this configuration"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "updated_at",
+    "updated_by"
+  ],
+  "indexes": [
+    {
+      "fields": [
+        "tenant_id"
+      ],
+      "unique": true
+    },
+    {
+      "fields": [
+        "updated_at"
+      ],
+      "order": [
+        "desc"
+      ]
+    }
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "owner"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "owner"
+          }
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    }
+  }
+}

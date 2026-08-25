@@ -1,0 +1,135 @@
+{
+  "name": "MetaPageAnalysis",
+  "type": "object",
+  "properties": {
+    "fb_page_id": {
+      "type": "string",
+      "description": "Facebook Page ID analyzed"
+    },
+    "page_name": {
+      "type": "string",
+      "description": "Page name at analysis time"
+    },
+    "period_days": {
+      "type": "number",
+      "default": 14
+    },
+    "posts_analyzed": {
+      "type": "number",
+      "default": 0
+    },
+    "comments_analyzed": {
+      "type": "number",
+      "default": 0
+    },
+    "summary": {
+      "type": "string"
+    },
+    "overall_sentiment": {
+      "type": "string",
+      "enum": [
+        "very_negative",
+        "negative",
+        "mixed",
+        "neutral",
+        "positive",
+        "very_positive"
+      ],
+      "default": "mixed"
+    },
+    "top_motivations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "cognitive_style_signals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "risk_profile_signals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "content_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "ad_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "top_posts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fb_post_id": {
+            "type": "string"
+          },
+          "why_it_worked": {
+            "type": "string"
+          },
+          "psychographic_appeal": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        }
+      },
+      "default": []
+    },
+    "computed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "fb_page_id",
+    "page_name",
+    "summary",
+    "overall_sentiment",
+    "computed_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

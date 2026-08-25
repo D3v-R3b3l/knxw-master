@@ -1,0 +1,76 @@
+{
+  "name": "ColdStorageLog",
+  "type": "object",
+  "description": "Stores archived logs from AccessLog and AuditLog entities.",
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "The organization these logs belong to."
+    },
+    "log_type": {
+      "type": "string",
+      "enum": [
+        "access_log",
+        "audit_log"
+      ],
+      "description": "The type of logs archived."
+    },
+    "archived_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date the logs are for (e.g., YYYY-MM-DD)."
+    },
+    "file_uri": {
+      "type": "string",
+      "description": "The private URI of the compressed log file."
+    },
+    "record_count": {
+      "type": "number",
+      "description": "Number of records in the archive file."
+    },
+    "checksum": {
+      "type": "string",
+      "description": "SHA-256 checksum of the archived file."
+    }
+  },
+  "required": [
+    "org_id",
+    "log_type",
+    "archived_date",
+    "file_uri",
+    "record_count"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "user_condition": {
+                "role": {
+                  "$in": [
+                    "owner",
+                    "admin"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

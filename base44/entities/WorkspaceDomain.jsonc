@@ -1,0 +1,34 @@
+{
+  "name": "WorkspaceDomain",
+  "type": "object",
+  "properties": {
+    "workspace_id": {
+      "type": "string",
+      "description": "Foreign key to the Workspace entity."
+    },
+    "origin": {
+      "type": "string",
+      "description": "The exact origin (scheme + host + port) for tenant resolution, e.g., 'https://www.example.com'."
+    },
+    "path_prefix": {
+      "type": "string",
+      "description": "Optional path prefix for more granular matching."
+    }
+  },
+  "required": [
+    "workspace_id",
+    "origin"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

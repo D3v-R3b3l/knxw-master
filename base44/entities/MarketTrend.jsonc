@@ -1,0 +1,96 @@
+{
+  "name": "MarketTrend",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": [
+        "news",
+        "social_media",
+        "competitor_content",
+        "industry_reports",
+        "deep_research"
+      ],
+      "description": "Source of the market trend data"
+    },
+    "content_url": {
+      "type": "string",
+      "description": "Original URL of the content analyzed"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title or headline of the content"
+    },
+    "content_snippet": {
+      "type": "string",
+      "description": "Key excerpt from the original content"
+    },
+    "psychographic_analysis": {
+      "type": "object",
+      "description": "AI-generated deep market analysis",
+      "additionalProperties": true
+    },
+    "industry_category": {
+      "type": "string",
+      "description": "Industry or sector this trend relates to"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "AI-assessed confidence in this analysis"
+    },
+    "competitor_name": {
+      "type": "string",
+      "description": "Competitor name if this is competitor content analysis"
+    },
+    "published_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Original publication date of the content"
+    },
+    "analyzed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When knXw analyzed this content"
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is demo/sample data"
+    }
+  },
+  "required": [
+    "source",
+    "title",
+    "psychographic_analysis",
+    "confidence_score",
+    "analyzed_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

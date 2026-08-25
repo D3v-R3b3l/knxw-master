@@ -1,0 +1,24 @@
+{
+  "name": "InterventionClassRisk",
+  "type": "object",
+  "properties": {
+    "class_id": {
+      "type": "string"
+    },
+    "risk_score": {
+      "type": "number",
+      "default": 0.5
+    },
+    "min_evidence_threshold": {
+      "type": "number",
+      "default": 100
+    },
+    "exploration_cost_multiplier": {
+      "type": "number",
+      "default": 1.0
+    }
+  },
+  "required": [
+    "class_id"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Audit event timestamp"
+    },
+    "org_id": {
+      "type": "string",
+      "description": "Organization ID"
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Workspace ID (if applicable)"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User who performed the action"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ],
+      "description": "Action performed"
+    },
+    "table_name": {
+      "type": "string",
+      "description": "Entity/table affected"
+    },
+    "record_id": {
+      "type": "string",
+      "description": "ID of the affected record"
+    },
+    "before": {
+      "type": "object",
+      "description": "Record state before change",
+      "default": {}
+    },
+    "after": {
+      "type": "object",
+      "description": "Record state after change",
+      "default": {}
+    },
+    "request_id": {
+      "type": "string",
+      "description": "Request identifier for correlation"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "Client IP address"
+    }
+  },
+  "required": [
+    "timestamp",
+    "org_id",
+    "user_id",
+    "action",
+    "table_name",
+    "record_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "$and": [
+            {
+              "org_id": "{{user.current_org_id}}"
+            },
+            {
+              "user_condition": {
+                "role": {
+                  "$in": [
+                    "owner",
+                    "admin"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
